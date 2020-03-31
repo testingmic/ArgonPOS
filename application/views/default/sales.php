@@ -84,17 +84,6 @@ require_once "headtags.php";
       
 
   </div><!--end row-->
-
-  
-
-
 <?php require_once 'foottags.php'; ?>
-
-<script>
-  $(function() {
-        hideLoader();
-    });
-</script>
-
 </body>
 </html>

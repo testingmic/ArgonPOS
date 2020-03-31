@@ -99,8 +99,8 @@ if(confirm_url_id(1)) {
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
-                <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>Order Total</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>GH¢ {$overall}</b></td>
+                <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc; background: #f4f4f4;\"><b>Order Total</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; border-bottom: solid 1px #ccc;\"><b>GH¢ {$overall}</b></td>
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
@@ -109,8 +109,8 @@ if(confirm_url_id(1)) {
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
-                <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light\"><b>Balance</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light\"><b>GH¢ {$order_balance}</b></td>
+                <td colspan=\"2\" style=\"padding-top: 10px; background: #f4f4f4; padding-bottom:10px; font-family: Calibri Light\"><b>Balance</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; \"><b>GH¢ {$order_balance}</b></td>
             </tr>
         ";
     }
@@ -151,10 +151,10 @@ if(!$found) {
 				</td>
 			</tr>
 			<tr>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #9932cc; color: #fff;"><strong>Product</strong></td>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #9932cc; color: #fff"><strong>Quantity</strong></td>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #9932cc; color: #fff"><strong>Unit Price</strong></td>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #9932cc; color: #fff"><strong>Subtotal</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff;"><strong>Product</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff"><strong>Quantity</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff"><strong>Unit Price</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff"><strong>Subtotal</strong></td>
 			</tr>
 			<?= $rows ?>
 			<?= $subTotalRow ?>

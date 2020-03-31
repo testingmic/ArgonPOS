@@ -1,4 +1,4 @@
-const DB_NAME = 'einventory-db';
+const DB_NAME = 'argonPOS-db';
 const DB_VERSION = 1;
 
 function createObjectStores() {

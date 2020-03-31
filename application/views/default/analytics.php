@@ -434,7 +434,7 @@ require_once "headtags.php";
                   <div class="card-body">
                       <div class="row justify-content-between">
                         <div>
-                          <h4 class="header-title mt-0">Top 100 Best Products Performance (Sales)</h4>  
+                          <h4 class="header-title mt-0">Top 5 Best Products Performance (Sales)</h4>  
                         </div>
                         <div>
                           
@@ -565,8 +565,6 @@ require_once "headtags.php";
     $(`table[class~="inventoryLists"]`).dataTable();
     $(`table[class~="thresholdLists"]`).dataTable();
 
-    hideLoader();
-    
     await doOnlineCheck().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;

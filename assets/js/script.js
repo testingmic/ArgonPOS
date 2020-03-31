@@ -169,7 +169,7 @@ $(function() {
 
 function deleteItem() {
     $(`div[class="form-result"]`).html(``);
-    $(`button[class~="delete-item"], a[class~="delete-item"]`).on('click', function(e) {
+    $(`div[class="main-content"]`).on('click', `button[class~="delete-item"], a[class~="delete-item"]`, function(e) {
         let itemId = $(this).attr('data-id');
         let itemMsg = $(this).attr('data-msg');
         let itemUrl = $(this).attr('data-url');
@@ -204,7 +204,7 @@ function inputController() {
 
 function dismissModal(sessionName, modalWindow) {
 
-    $(`button[class~="dismiss-modal"]`).on('click', function() {
+    $(`div[class="main-content"]`).on('click', `button[class~="dismiss-modal"]`, function() {
 
         let modalDiv = $(this).attr('data-modal');
 
@@ -397,7 +397,7 @@ async function listRequests(requestType, tableName) {
 }
 
 function removeItem(sessionName) {
-    $(`span[class~="remove-item"]`).on('click', function(e) {
+    $(`div[class="main-content"]`).on('click', `span[class~="remove-item"]`, function(e) {
         var productId = $(this).attr('data-value');
         var thisSum = $(this).attr('data-sum');
         $.ajax({
@@ -488,7 +488,7 @@ function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-$(`a[class~="logout"]`).on('click', async function(e) {
+$(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(e) {
     e.preventDefault();
 
     var toPerform = $(this).attr('data-value');
@@ -527,110 +527,6 @@ $(`a[class~="logout"]`).on('click', async function(e) {
     })
 });
 
-var getSelectedCompany = () => {
-    $(`div[class="autoselect-value"]`).on('click', function(e) {
-        let dataId = $(this).attr('data-id');
-        let dataContent = $(this).attr('data-content');
-
-        $(`input[class~="company_name"]`).val(dataContent);
-        $(`input[name="company_id"]`).val(dataId);
-        $(`div[class="organization_listing"]`).html(``);
-    });
-}
-
-$(`input[class~="company_name"]`).on('keyup', function(e) {
-
-    var searchTerm = $(this).val();
-    var searchedTerm = new RegExp(searchTerm, "i");
-    dataString = { searchWords: true };
-
-    $(`input[name="company_id"]`).val(``);
-
-    if (searchTerm.length >= 2) {
-
-        $.getJSON(`${baseUrl}assets/json/company_${companyVariables._cl}.json`, function(searchWords) {
-
-            var htmlData = '';
-
-            $.each(searchWords, function(i, e) {
-                if (e.name.search(searchedTerm) != -1) {
-                    htmlData += `<div class="autoselect-value" data-content="${e.name}" data-id="${e.id}">${e.name}</div>`;
-                }
-            });
-
-            $(`div[class="organization_listing"]`).html(`
-                <div class="autocomplete"><div class="autocomplete-items">${htmlData}</div></div>
-                `);
-
-        }, dataString).done(function(data) {
-            getSelectedCompany();
-        });
-
-    }
-});
-
-$(`input[class~="company_name"]`).on('mouseleave', function(e) {
-    $(`div[id="contactsModalWindow"]`).on('click', function(e) {
-        $(`div[class="organization_listing"]`).html(``);
-    });
-});
-
-function makeEditable() {
-    $(`div[class~="quick-editor-button"] i[class~="edit-item"]`).on('click', function(e) {
-        let contentData = $(this).attr('data-edit-content');
-        let currentButton = $(this).parent('div[class~="quick-editor-button"]');
-        let currentColumn = $(this).attr('data-column');
-        $(`div[class~="${contentData}"]`).prop('contenteditable', true).addClass('border');
-        currentButton.html(`<i data-edit-content="${contentData}" class="fa fa-save fa-1x save-item text-success" style="font-size:18px" data-column="${currentColumn}" title="Click to save user role"></i>
-            <i style="font-size:18px" data-edit-content="${contentData}" class="fa fa-1x fa-times-circle text-danger" data-column="${currentColumn}" title="Cancel test edit"></i>
-        `);
-        saveEditable();
-    });
-}
-
-function saveEditable() {
-    
-    $(`div[class~="quick-editor-button"] i[class~="save-item"]`).on('click', function(e) {
-        let contentData = $(this).attr('data-edit-content');
-        let currentButton = $(this).parent('div[class~="quick-editor-button"]');
-        let currentColumn = $(this).attr('data-column');
-        $.ajax({
-            url: `${baseUrl}doprocess_customer/quickSaveContactInfo`,
-            method: 'POST',
-            data: { quickSaveContactInfo: true, thisColumn: $(this).attr('data-column'), newData: $(`div[class~="${contentData}"]`).html() },
-            success: function() {
-
-            },
-            complete: function() {
-                $(`div[class~="${contentData}"]`).prop('contenteditable', false).removeClass('border');
-                $(`p[class~="user-role"]`).html($(`div[class~="user-role-editor"]`).html());
-                currentButton.html(`<i style="font-size:18px" class="fa text-success fa-edit fa-1x edit-item" data-edit-content="${contentData}" data-column="${currentColumn}" title="Click to edit"></i>`);
-                makeEditable();
-            }
-        });
-    });
-
-    $(`div[class~="quick-editor-button"] i[class~="fa-times-circle"]`).on('click', function(e) {
-        let contentData = $(this).attr('data-edit-content');
-        let currentButton = $(this).parent('div[class~="quick-editor-button"]');
-        let currentColumn = $(this).attr('data-column');
-
-        $(`div[class~="${contentData}"]`).prop('contenteditable', false).removeClass('border');
-        $(`div[class~="user-role-editor"]`).html($(`p[class~="user-role"]`).html());
-        currentButton.html(`<i data-edit-content="${contentData}" style="font-size:18px" class="fa text-success fa-edit fa-1x edit-item" data-column="${currentColumn}" title="Click to edit"></i>`);
-        makeEditable();
-    });
-}
-
-makeEditable();
-
-if ($(`button[class~="edit-contact-details"]`).length) {
-    $(`input[class~="datepicker"]`).bootstrapMaterialDatePicker({
-        weekStart: 0,
-        time: false
-    });
-}
-
 function stripHtml(html) {
     return html.replace(/(<([^>]+)>)/ig, "");
 }
@@ -643,7 +539,7 @@ var populateCustOptionsList = (data) => {
         $(`select[class~="customer-select"]`).append('<option value="null" data-contact="No Contact" selected="selected">-- Select Customer --</option>');
     }
     $.each(data, function(i, e) {
-        $(`select[class~="customer-select"]`).append(`<option data-prefered-payment='${e.preferred_payment_type}' data-email='${e.email}' data-contact='${e.phone_1}' value='${e.customer_id}'>${e.fullname}</option>`);
+        $(`select[class~="customer-select"]`).append(`<option data-prefered-payment='${e.preferred_payment_type}' data-email='${e.email}' data-contact='${e.phone_1}' value='${e.customer_id}'>${e.fullname} (${e.phone_1})</option>`);
     });
 }
 
@@ -850,9 +746,9 @@ var fetchUsersLists = async () => {
         }
 
         $.ajax({
-            url: baseUrl + "doprocess_users",
+            url: baseUrl + "ajax/userManagement/fetchUsersLists",
             type: "POST",
-            data: { request: "fetchUsersLists" },
+            data: { fetchUsersLists: true },
             dataType: "json",
             cache: false,
             beforeSend: function() {
@@ -1163,7 +1059,7 @@ var populateUserDetails = (data) => {
     $(`[name="phone"]`).val(data.contact);
     $(`[name="email"]`).val(data.email);
     $(`[name="branchId"]`).val(data.branchId).change();
-    $(`[name="user_id"]`).val(data.user_id);
+    $(`[name="userId"]`).val(data.user_id);
     $(`[name="record_type"]`).val("update-record");
 
     $("#newModalWindow").modal("show");
@@ -1171,12 +1067,12 @@ var populateUserDetails = (data) => {
 
 var editUserDetails = () => {
 
-    $(".edit-user").on("click", async function(e) {
+    $(`div[class="main-content"]`).on("click", ".edit-user", async function(e) {
 
         e.preventDefault();
         showLoader();
 
-        var user_id = $(this).data("user-id");
+        var userId = $(this).data("user-id");
 
         await doOnlineCheck().then((itResp) => {
             if(itResp == 1) {
@@ -1193,7 +1089,7 @@ var editUserDetails = () => {
 
         if(noInternet) {
 
-            var info = await getIndexRecord('users', user_id).then((resp) => {
+            var info = await getIndexRecord('users', userId).then((resp) => {
                 populateUserDetails(resp);
                 return false;
             });
@@ -1203,16 +1099,21 @@ var editUserDetails = () => {
             return false;
         }
 
-        if (user_id != "") {
+        if (userId != "") {
             $.ajax({
-                url: baseUrl + "doprocess_users",
-                data: { request: "getUserDetails", user_id: user_id },
+                url: baseUrl + "ajax/userManagement/getUserDetails",
+                data: { getUserDetails: true, userId: userId },
                 dataType: "json",
                 type: "POST",
                 cache: false,
                 success: function(resp) {
                     if (resp.status == true) {
                         populateUserDetails(resp.message);
+                    } else {
+                        Toast.fire({
+                            type: "error",
+                            title: "User there was an error while fetching user information."
+                        })
                     }
                 },
                 error: function(err) {
@@ -1227,48 +1128,38 @@ var editUserDetails = () => {
 
 var editUserAccessLevel = () => {
 
-    $(".edit-acl").on("click", function(e) {
+    $(`div[class="main-content"]`).on("click", `button[class~="edit-access-level"]`, function(e) {
         e.preventDefault();
 
         var user_id = $(this).data("user-id");
 
         if (user_id != "") {
             $.ajax({
-                url: baseUrl + "doprocess_users",
-                data: { request: "getUserAccessLevels", user_id: user_id },
+                url: baseUrl + "ajax/userManagement/permissionManagement",
+                data: { getUserAccessLevels: true, user_id: user_id },
                 dataType: "json",
                 type: "POST",
                 cache: false,
                 beforeSend: function() {
 
-                    $(".show-modal-title").html("Edit User Access Level");
-                    $(`.show-modal-body`).html(`
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="text-center">
-                                        <span class="fa fa-spinner fa-spin"></span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-                    $(".launchModal").modal("show");
+                    $(`div[class~="launchModal"] div[class~="show-modal-title"]`).html("Edit User Access Level");
+                    $(`div[class~="launchModal"] div[class~="show-modal-body"]`).html(`<div class="col-12"><div class="card"><div class="card-body"><p class="text-center"><span class="fa fa-spinner fa-spin"></span></p></div></div></div>`);
                 },
                 success: function(data) {
 
                     if (data.status == true) {
 
+                        $(`div[class~="launchModal"]`).modal("show");
+
                         var displayPermission = `
-                        <div class="row">
-                            <div class="settings-form-msg col-12"></div>`;
+                        <div class="row"><div class="settings-form-msg col-12"></div>`;
 
                         $.each(data.message.permissions, function(key, page) {
 
                             var permitted = null;
 
                             displayPermission += `
-                            <div class=" col-md-4 col-sm-6">
+                            <div class="col-md-4 col-sm-6">
                                 <div class="card">
                                     <div class="card-body">
                                         <h5 class="mt-0">${key[0].toUpperCase() + key.slice(1)}</h5>
@@ -1292,11 +1183,7 @@ var editUserAccessLevel = () => {
 
                             });
 
-                            displayPermission += `
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
+                            displayPermission += `</div></div></div></div>`;
 
                         });
 
@@ -1309,25 +1196,21 @@ var editUserAccessLevel = () => {
                         </div>
                         `;
 
-                        $(`.show-modal-body`).html(displayPermission);
+                        $(`div[class~="launchModal"] div[class~="show-modal-body"]`).html(displayPermission);
 
                     } else {
-                        $(`.show-modal-body`).html(`
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="alert alert-danger">${data.message}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
+                        Toast.fire({
+                            type: "error",
+                            title: data.message
+                        });
                     }
 
                 },
                 error: function() {
-                    $(".show-modal-body").html(`
-                        <p class="alert alert-danger">Error Processing Request</p>
-                    `);
+                    Toast.fire({
+                        type: "error",
+                        title: "Error Processing Request"
+                    });
                 },
                 complete: function() {
                     saveAccessLevelSettings();
@@ -1337,9 +1220,9 @@ var editUserAccessLevel = () => {
     });
 }
 
-var deleteUserDetails = () => {
+function deleteUserDetails() {
 
-    $(".delete-user").on("click", function(e) {
+    $(`div[class="main-content"]`).on("click", ".delete-user", function(e) {
         e.preventDefault();
 
         var user_id = $(this).data("user-id");
@@ -1354,13 +1237,13 @@ var deleteUserDetails = () => {
     });
 }
 
-$(`[name="access_level"]`).on("change", function(e) {
+$(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e) {
     e.preventDefault();
 
     var access_level = $(`[name="access_level"]`).val();
 
     $.ajax({
-        url: baseUrl + "doprocess_users",
+        url: baseUrl + "ajax/userManagement",
         type: "POST",
         data: { request: "fetchAccessLevelPermissions", access_level: access_level },
         dataType: "json",
@@ -1450,7 +1333,6 @@ $(`[name="access_level"]`).on("change", function(e) {
             `);
         },
         complete: function() {
-            saveAccessLevelSettings();
             setTimeout(function() {
                 $(".settings-form-msg").empty();
             }, 3000);
@@ -1461,8 +1343,9 @@ $(`[name="access_level"]`).on("change", function(e) {
 
 var saveAccessLevelSettings = () => {
 
-    $(".access-level-submit-btn").on("click", function(e) {
+    $(`div[class="main-content"]`).on("click", ".access-level-submit-btn", function(e) {
         e.preventDefault();
+        $(`.settings-form-msg`).html(``);
 
         if (confirm("Do You Want To Save Permissions Now?")) {
 
@@ -1481,9 +1364,9 @@ var saveAccessLevelSettings = () => {
 
             $.ajax({
 
-                url: baseUrl + "doprocess_users",
+                url: baseUrl + "ajax/userManagement/saveAccessLevelSettings",
                 type: "POST",
-                data: { request: "saveAccessLevelSettings", aclSettings: items_array, acl: acl, accessUser: aclUser },
+                data: { saveAccessLevelSettings: true, aclSettings: items_array, acl: acl, accessUser: aclUser },
                 dataType: "json",
                 cache: false,
                 beforeSend: function() {
@@ -1502,39 +1385,28 @@ var saveAccessLevelSettings = () => {
                     $("*", ".permissions-row").prop("disabled", true);
                 },
                 success: function(data) {
-
                     if (data.status == true) {
-                        $(`.settings-form-msg`).html(`
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="alert alert-success">${data.message}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
+                        $(`.settings-form-msg`).html(``);
+                        Toast.fire({
+                            type: "success",
+                            title: data.message
+                        });
                     } else {
-                        $(`.settings-form-msg`).html(`
-                            <div class="col-12">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="alert alert-danger">${data.message}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
+                        $(`.settings-form-msg`).html(``);
+                        Toast.fire({
+                            type: "error",
+                            title: data.message
+                        });
                     }
                 },
                 error: function() {
-                    $(`.settings-form-msg`).html(`
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="alert alert-danger">Error Processing Request</p>
-                                </div>
-                            </div>
-                        </div>
-                    `);
+                    $(`.settings-form-msg`).html(``);
+                    $("*", ".settings-form-a").prop("disabled", false);
+                    $("*", ".permissions-row").prop("disabled", false);
+                    Toast.fire({
+                        type: "error",
+                        title: "Error Processing Request"
+                    });
                 },
                 complete: function() {
                     $("*", ".settings-form-a").prop("disabled", false);
@@ -1547,6 +1419,7 @@ var saveAccessLevelSettings = () => {
             });
         }
     });
+
 }
 
 
@@ -1581,7 +1454,7 @@ var populateBranchesDetails = (data) => {
 
 var editBranchDetails = () => {
 
-    $(`button[class~="edit-branch"]`).on("click", async function(e) {
+    $(`div[class="main-content"]`).on("click", `button[class~="edit-branch"]`, async function(e) {
         e.preventDefault();
 
         $(`div[class="form-content-loader"]`).css("display","flex");
@@ -1732,7 +1605,7 @@ function customerPurchaseHistory() {
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}doprocess_reports/generateReport`,
+        url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
         data: {generateReport: true, salesAttendantHistory: true, queryMetric:"salesAttendantPerformance", userId: userId, recordType: recordType},
         dataType: "JSON",
         beforeSend: function() {

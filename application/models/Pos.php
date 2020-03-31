@@ -487,7 +487,7 @@ class Pos {
 		if($current_value > $previous_value) {
 			$prefix = '<span class="text-success"><i class="fa fa-arrow-circle-up"></i> '. $this->toDecimal($difference, 2, ',');
 		} else {
-			$prefix = '<span class="text-danger"><i class="fa fa-arrow-circle-down"></i>'. $this->toDecimal($difference, 2, ',');
+			$prefix = '<span class="text-danger"><i class="fa fa-arrow-circle-down"></i> '. $this->toDecimal($difference, 2, ',');
 		}
 
 		$percentile = $prefix . ' ('.number_format(round($percentage), 0).'%)</span>';

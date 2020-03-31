@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 31, 2020 at 09:13 AM
+-- Generation Time: Apr 01, 2020 at 12:48 AM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.10
 
@@ -40,10 +40,10 @@ CREATE TABLE `access_levels` (
 --
 
 INSERT INTO `access_levels` (`id`, `access_name`, `access_description`, `default_permissions`) VALUES
-(1, 'AI Staff', 'Analitica Innovare Staffs', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales-team\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\"}}}'),
-(2, 'Executive', 'Admin', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales-team\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\"}}}'),
-(3, 'Sales Manager', 'Admin', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales-team\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"access_levels\":{\"view\":\"0\",\"update\":\"0\"},\"branches\":{\"view\":\"0\",\"add\":\"0\",\"update\":\"0\",\"delete\":\"0\"}}}'),
-(4, 'Sales Officer', '', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"sales-team\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\",\"accesslevel\":\"0\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"0\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"orders\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"access_levels\":{\"view\":\"0\",\"update\":\"0\"},\"branches\":{\"view\":\"0\",\"add\":\"0\",\"update\":\"0\",\"delete\":\"0\"}}}');
+(1, 'AI Staff', 'Analitica Innovare Staffs', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\"}}}'),
+(2, 'Executive', 'Admin', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\"}}}'),
+(3, 'Sales Manager', 'Admin', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"access_levels\":{\"view\":\"0\",\"update\":\"0\"},\"branches\":{\"view\":\"0\",\"add\":\"0\",\"update\":\"0\",\"delete\":\"0\"}}}'),
+(4, 'Sales Officer', '', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\",\"inventory_branches\":\"0\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"0\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"orders\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"}}}');
 
 -- --------------------------------------------------------
 
@@ -730,7 +730,7 @@ CREATE TABLE `products` (
 
 INSERT INTO `products` (`id`, `clientId`, `branchId`, `source`, `product_id`, `category_id`, `product_title`, `product_type_id`, `product_description`, `product_image`, `product_price`, `cost_price`, `performance_rating`, `date_added`, `added_by`, `status`, `threshold`, `quantity`) VALUES
 (1, '54345231', 1, 'Evelyn', 'PDT8b4OgIfa7QKV', 'PCAT00001', 'Lenovo Thinkpad i7 Laptop', NULL, 'This is the lenovo thinkpad laptop useable at all levels of computing', 'assets/images/products/kX19AHu5FtGjdEeQPaJ7hMrvq.png', 1900.00, '1500.00', NULL, '2020-03-14 10:45:41', '2019DevAI', '1', 5, 35),
-(2, '54345231', 1, 'Evelyn', 'PDT0Roc2HhYBleu', 'PCAT00001', 'HP Pavilion i5 Laptop', NULL, 'This is the HP Pavilion Laptop that i love that much.', 'assets/images/products/hvgNJEKlOMYxcVuXZ5AeB27to.png', 3200.00, '2000.00', NULL, '2020-03-14 10:48:06', '2019DevAI', '1', 5, 8),
+(2, '54345231', 1, 'Evelyn', 'PDT0Roc2HhYBleu', 'PCAT00001', 'HP Pavilion i5 Laptop', NULL, 'This is the HP Pavilion Laptop that i love that much.', 'assets/images/products/hvgNJEKlOMYxcVuXZ5AeB27to.png', 3200.00, '2000.00', NULL, '2020-03-14 10:48:06', '2019DevAI', '1', 5, 6),
 (3, '54345231', 1, 'Evelyn', 'PDTqODR15MfeBtu', 'PCAT00003', 'Samsung Fridge U87', NULL, 'This is the samsung fridge', 'assets/images/products/7BGE3gmH02bM5SpwWxF8ol9fT.png', 850.00, '600.00', NULL, '2020-03-14 10:49:18', '2019DevAI', '1', 5, 10),
 (4, '54345231', 1, 'Evelyn', 'PDTKCB0UmoOnEZW', 'PCAT00001', 'Binatone Rice cooker A3456', NULL, '', 'assets/images/products/default.png', 200.00, '70.00', NULL, '2020-03-14 10:50:00', '2019DevAI', '1', 5, 20),
 (24, '54345231', 2, 'Evelyn', 'PDT8b4OgIfa7QKV', 'PCAT00001', 'Lenovo Thinkpad i7 Laptop', NULL, 'This is the lenovo thinkpad laptop useable at all levels of computing', 'assets/images/products/kX19AHu5FtGjdEeQPaJ7hMrvq.png', 1900.00, '1500.00', NULL, '2020-03-18 07:43:05', '2019DevAI', '1', 5, 0),
@@ -744,7 +744,7 @@ INSERT INTO `products` (`id`, `clientId`, `branchId`, `source`, `product_id`, `c
 (34, '54345231', 5, 'Evelyn', 'PDTMAbXIYQsHlai', 'PCAT00003', 'Pen', NULL, '', 'assets/images/products/default.png', 4.00, '1.00', NULL, '2020-03-25 16:34:20', '2019DevAI', '1', 30, 205),
 (35, '54345231', 1, 'Evelyn', 'PDT2faJrtN1j8Gp', 'PCAT00003', 'Note Book', NULL, '', 'assets/images/products/default.png', 20.00, '15.00', NULL, '2020-03-25 16:58:14', '2019DevAI', '1', 10, 200),
 (36, '54345231', 1, 'Evelyn', 'PDT3V8oiamnrlQc', 'PCAT00003', 'Pencil', NULL, '', 'assets/images/products/default.png', 6.00, '2.00', NULL, '2020-03-25 16:58:15', '2019DevAI', '1', 5, 42),
-(37, '54345231', 1, 'Evelyn', 'PDTMAbXIYQsHlai', 'PCAT00003', 'Pen', NULL, '', 'assets/images/products/default.png', 4.00, '1.00', NULL, '2020-03-25 16:58:15', '2019DevAI', '1', 30, 42);
+(37, '54345231', 1, 'Evelyn', 'PDTMAbXIYQsHlai', 'PCAT00003', 'Pen', NULL, '', 'assets/images/products/default.png', 4.00, '1.00', NULL, '2020-03-25 16:58:15', '2019DevAI', '1', 30, 40);
 
 -- --------------------------------------------------------
 
@@ -1128,7 +1128,11 @@ INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `branchId`, `order_id`,
 (140, '54345231', 'Argon', 'online', 1, 'POS2020030100141', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 5100.00, 5100.00, NULL, '2020-03-30 01:18:02', 'confirmed', '2020-03-30 01:18:02', '0', NULL, 'cash', '325766379291'),
 (141, '54345231', 'Argon', 'online', 1, 'POS2020030100142', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 926.50, 46.50, 18530.00, 17603.50, NULL, '2020-03-30 19:02:40', 'confirmed', '2020-03-30 19:02:40', '0', NULL, 'cash', '784561369972'),
 (142, '54345231', 'Argon', 'online', 1, 'POS2020030100143', 'EVC792158792336', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '1', 0.00, 10.00, 10.00, 10.00, NULL, '2020-03-31 05:34:28', 'confirmed', '2020-03-31 05:34:28', '0', NULL, 'credit', '767894565824'),
-(143, '54345231', 'Argon', 'online', 1, 'POS2020030100144', 'EVC792158792336', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 160.00, 0.00, 3200.00, 3040.00, NULL, '2020-03-31 07:14:01', 'confirmed', '2020-03-31 07:14:01', '0', NULL, 'cash', '819671793536');
+(143, '54345231', 'Argon', 'online', 1, 'POS2020030100144', 'EVC792158792336', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 160.00, 0.00, 3200.00, 3040.00, NULL, '2020-03-31 07:14:01', 'confirmed', '2020-03-31 07:14:01', '0', NULL, 'cash', '819671793536'),
+(144, '54345231', 'Argon', 'online', 1, 'POS2020030100145', 'EVC792158792336', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -4.00, 4.00, 4.00, NULL, '2020-03-31 23:11:41', 'pending', '2020-03-31 23:11:41', '0', NULL, 'MoMo', '615495423377'),
+(145, '54345231', 'Argon', 'online', 1, 'POS2020030100146', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -4.00, 4.00, 4.00, NULL, '2020-03-31 23:12:35', 'pending', '2020-03-31 23:12:35', '0', NULL, 'MoMo', '786251593298'),
+(146, '54345231', 'Argon', 'online', 1, 'POS2020030100147', 'EVC261795342893', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -3200.00, 3200.00, 3200.00, NULL, '2020-03-31 23:14:05', 'pending', '2020-03-31 23:14:05', '0', NULL, 'MoMo', '137582814967'),
+(147, '54345231', 'Argon', 'online', 1, 'POS2020030100148', 'EVC261795342893', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -3200.00, 3200.00, 3200.00, NULL, '2020-03-31 23:16:09', 'pending', '2020-03-31 23:16:09', '0', NULL, 'MoMo', '583156234724');
 
 -- --------------------------------------------------------
 
@@ -1492,7 +1496,11 @@ INSERT INTO `sales_details` (`id`, `auto_id`, `clientId`, `branchId`, `order_id`
 (337, 'JNBTOxm2t90YopFMqIjKA1gai', '54345231', 1, 'POS2020030100142', '37', 1, '1.00', 4.00, 4.00, '2020-03-30 19:02:40'),
 (338, '4HduJkRlG72qoWZ1BAXCLe9DI', '54345231', 1, 'POS2020030100143', '36', 1, '2.00', 6.00, 6.00, '2020-03-31 05:34:28'),
 (339, 'rqkgFC9GPczRo637dWiQJwYup', '54345231', 1, 'POS2020030100143', '37', 1, '1.00', 4.00, 4.00, '2020-03-31 05:34:28'),
-(340, '9KEOSoaM7C3TfXVpHq6A8z2ex', '54345231', 1, 'POS2020030100144', '2', 1, '2000.00', 3200.00, 3200.00, '2020-03-31 07:14:01');
+(340, '9KEOSoaM7C3TfXVpHq6A8z2ex', '54345231', 1, 'POS2020030100144', '2', 1, '2000.00', 3200.00, 3200.00, '2020-03-31 07:14:01'),
+(341, 'e4qGzhYsZWoS0JIkiyDa15Alb', '54345231', 1, 'POS2020030100145', '37', 1, '1.00', 4.00, 4.00, '2020-03-31 23:11:41'),
+(342, 'jWk57bUGi8h41pZaLTKlSrANv', '54345231', 1, 'POS2020030100146', '37', 1, '1.00', 4.00, 4.00, '2020-03-31 23:12:35'),
+(343, 'src5wCbz1HlST3kX049G2yMLu', '54345231', 1, 'POS2020030100147', '2', 1, '2000.00', 3200.00, 3200.00, '2020-03-31 23:14:05'),
+(344, '7MSPYEzNh4oZjRC1b9OH36BnX', '54345231', 1, 'POS2020030100148', '2', 1, '2000.00', 3200.00, 3200.00, '2020-03-31 23:16:09');
 
 -- --------------------------------------------------------
 
@@ -1569,11 +1577,35 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `clientId`, `branchId`, `user_id`, `name`, `gender`, `email`, `phone`, `login`, `password`, `access_level`, `theme`, `font_style`, `font_size`, `status`, `online`, `last_login`, `last_login_attempts`, `last_login_attempts_time`, `login_session`, `country_id`, `city_id`, `city`, `created_on`, `created_by`, `image`) VALUES
-(1, '54345231', 1, '2019DevAI', 'AI Dev user', 'Male', 'admin@mail.com', '0576641131', 'AiDevUser', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 1, '1', NULL, NULL, 1, 1, '2020-03-31 05:31:52', 1, '2020-01-23 14:52:33', NULL, 84, NULL, NULL, '2020-01-25 10:17:35', NULL, 'avatar.png'),
+(1, '54345231', 1, '2019DevAI', 'Visaminet User', 'Male', 'admin@mail.com', '0576641131', 'AiDevUser', '$2y$10$gHcSrrsHfvMTedpSeMJbNu6a4fmscHbh3KrZwUsJZEsrZifhkBizi', 1, '1', NULL, NULL, 1, 1, '2020-03-31 22:35:21', 1, '2020-01-23 14:52:33', NULL, 84, NULL, NULL, '2020-01-25 10:17:35', NULL, 'avatar.png'),
 (2, '54345231', 1, 'eqLTHf9MW7x0NBGP5Vs83vp', 'Branch Manger', 'Male', 'manager@mail.com', '0244022044', 'BranchManger', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 3, '1', NULL, NULL, 1, 1, '2020-03-27 18:48:16', 0, '2020-02-04 12:29:16', NULL, 84, NULL, NULL, '2020-02-04 12:29:16', NULL, 'avatar.png'),
 (3, '54345231', 1, 'oDGirP31jNnXYK6dza20m', 'Company Owner', 'Male', 'owner@mail.com', '0201202052', 'CompaneyOwner', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 2, '1', NULL, NULL, 1, 1, '2020-03-13 23:41:09', 0, '2020-02-05 12:53:03', NULL, 84, NULL, NULL, '2020-02-05 12:53:03', NULL, 'avatar.png'),
 (4, '54345231', 1, 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'Sales Officer', 'Male', 'sales@mail.com', '0550001110', 'SalesOfficer', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 4, '1', NULL, NULL, 1, 1, '2020-03-20 20:07:12', 0, '2020-02-05 12:54:24', NULL, 84, NULL, NULL, '2020-02-05 12:54:24', NULL, 'avatar.png'),
-(6, '54345231', 2, 'oDGirP31jNnXYK6dza20m', 'Philip Amponsah', 'Male', 'branch2@mail.com', '0201202052', 'Branch Two User', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 2, '1', NULL, NULL, 1, 1, '2020-03-27 18:46:48', 0, '2020-02-05 12:53:03', NULL, 84, NULL, NULL, '2020-02-05 12:53:03', NULL, 'avatar.png');
+(6, '54345231', 2, 'oDGirP31jNnXYK6dza20mw', 'Philip Amponsah', 'Male', 'branch2@mail.com', '0201202052', 'Branch Two User', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 2, '1', NULL, NULL, 1, 1, '2020-03-31 22:34:38', 0, '2020-02-05 12:53:03', NULL, 84, NULL, NULL, '2020-02-05 12:53:03', NULL, 'avatar.png');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_activity_logs`
+--
+
+CREATE TABLE `users_activity_logs` (
+  `id` int(11) NOT NULL,
+  `clientId` varchar(255) DEFAULT NULL,
+  `branchId` varchar(32) DEFAULT NULL,
+  `fulldate` date DEFAULT NULL,
+  `user_id` varchar(255) DEFAULT NULL,
+  `date_recorded` datetime NOT NULL DEFAULT current_timestamp(),
+  `username` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `users_activity_logs`
+--
+
+INSERT INTO `users_activity_logs` (`id`, `clientId`, `branchId`, `fulldate`, `user_id`, `date_recorded`, `username`, `description`) VALUES
+(1, '54345231', '1', '2020-03-31', '2019DevAI', '2020-03-31 22:20:35', 'AiDevUser', 'You have successfully changed your password.');
 
 -- --------------------------------------------------------
 
@@ -1615,7 +1647,14 @@ INSERT INTO `users_login_history` (`id`, `clientId`, `branchId`, `username`, `lo
 (15, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-30 21:23:28'),
 (16, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-30 21:24:47'),
 (17, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-30 21:33:21'),
-(18, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 05:31:52');
+(18, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 05:31:52'),
+(19, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 14:57:42'),
+(20, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 19:21:11'),
+(21, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 22:20:43'),
+(22, '54345231', '2', 'branch2@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'oDGirP31jNnXYK6dza20mw', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 22:21:50'),
+(23, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 22:24:07'),
+(24, '54345231', '2', 'branch2@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'oDGirP31jNnXYK6dza20mw', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 22:34:38'),
+(25, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Safari/537.36', '2020-03-31 22:35:21');
 
 -- --------------------------------------------------------
 
@@ -1631,8 +1670,17 @@ CREATE TABLE `users_reset_request` (
   `request_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `user_agent` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `expiry_time` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `date_logged` datetime DEFAULT current_timestamp()
+  `date_logged` datetime DEFAULT current_timestamp(),
+  `reset_date` datetime DEFAULT NULL,
+  `reset_agent` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `users_reset_request`
+--
+
+INSERT INTO `users_reset_request` (`id`, `token_status`, `username`, `user_id`, `request_token`, `user_agent`, `expiry_time`, `date_logged`, `reset_date`, `reset_agent`) VALUES
+(1, 'USED', 'AiDevUser', '2019DevAI', NULL, 'Chrome Windows 10|127.0.0.1', '1585689635', '2020-03-31 22:08:02', '2020-03-31 22:20:35', 'Chrome Windows 10|127.0.0.1');
 
 -- --------------------------------------------------------
 
@@ -1652,10 +1700,11 @@ CREATE TABLE `user_roles` (
 --
 
 INSERT INTO `user_roles` (`id`, `user_id`, `permissions`, `date_logged`) VALUES
-(1, '2019DevAI', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\",\"monitoring\":\"1\"},\"settings\":{\"view\":\"1\",\"update\":\"1\"},\"executive_dashboard\":{\"view\":\"1\"}}}', '2020-02-18 13:09:49'),
-(2, 'eqLTHf9MW7x0NBGP5Vs83vp', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales-team\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\"},\"settings\":{\"view\":\"1\",\"update\":\"1\"},\"executive_dashboard\":{\"view\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"}}}', '2020-02-18 13:12:05'),
-(3, 'oDGirP31jNnXYK6dza20m', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales-team\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"0\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"branches\":{\"view\":\"0\",\"add\":\"0\",\"update\":\"0\",\"delete\":\"0\"},\"access_levels\":{\"view\":\"0\",\"update\":\"0\"},\"executive_dashboard\":{\"view\":\"1\"}}}', '2020-02-18 13:12:27'),
-(4, 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"company\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"sales-team\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\",\"inventory_branches\":\"0\"},\"users\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\",\"accesslevel\":\"0\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"0\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"orders\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"}}}', '2020-02-18 13:12:33');
+(1, '2019DevAI', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\",\"monitoring\":\"1\"},\"settings\":{\"view\":\"1\",\"update\":\"1\"},\"executive_dashboard\":{\"view\":\"1\"}}}', '2020-02-18 13:09:49'),
+(2, 'eqLTHf9MW7x0NBGP5Vs83vp', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\"},\"settings\":{\"view\":\"1\",\"update\":\"1\"},\"executive_dashboard\":{\"view\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"}}}', '2020-02-18 13:12:05'),
+(3, 'oDGirP31jNnXYK6dza20m', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"0\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"branches\":{\"view\":\"0\",\"add\":\"0\",\"update\":\"0\",\"delete\":\"0\"},\"access_levels\":{\"view\":\"0\",\"update\":\"0\"},\"executive_dashboard\":{\"view\":\"1\"}}}', '2020-02-18 13:12:27'),
+(4, 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\",\"inventory_branches\":\"0\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"0\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"orders\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"}}}', '2020-02-18 13:12:33'),
+(6, 'oDGirP31jNnXYK6dza20mw', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"0\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"},\"branches\":{\"view\":\"0\",\"add\":\"0\",\"update\":\"0\",\"delete\":\"0\"},\"access_levels\":{\"view\":\"0\",\"update\":\"0\"},\"executive_dashboard\":{\"view\":\"1\"}}}', '2020-02-18 13:12:27');
 
 --
 -- Indexes for dumped tables
@@ -1788,6 +1837,12 @@ ALTER TABLE `users`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `users_activity_logs`
+--
+ALTER TABLE `users_activity_logs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
@@ -1909,13 +1964,13 @@ ALTER TABLE `requests_details`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=144;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
 
 --
 -- AUTO_INCREMENT for table `sales_details`
 --
 ALTER TABLE `sales_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=341;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=345;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -1930,22 +1985,28 @@ ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `users_activity_logs`
+--
+ALTER TABLE `users_activity_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `users_reset_request`
 --
 ALTER TABLE `users_reset_request`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

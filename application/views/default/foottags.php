@@ -67,7 +67,6 @@
 <script src="<?= $baseUrl ?>assets/vendor/select2/dist/js/select2.min.js"></script>
 <!-- Optional JS -->
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
-<?php if(in_array($SITEURL[0], ["dashboard", "sales", "inventory", "analytics", "products", "quotes", "orders", "users", "branches"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
@@ -75,16 +74,22 @@
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
-<?php } ?>
-<?php if(in_array($SITEURL[0], ["dashboard", "analytics"])) { ?>
-<script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.min.js"></script>
-<script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.extension.js"></script>
-<?php } ?>
-<?php if (confirm_url_id(0, 'reports-customers') || confirm_url_id(0, 'analytics') || (confirm_url_id(1, 'sales-insight'))) { ?>
+<?php if(in_array($SITEURL[0], ["reports-customers", "analytics", "dashboard", "index"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/apexcharts/apexcharts.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
 <?php } ?>
+<?php if(in_array($SITEURL[0], ["dashboard", "index"])) { ?>
+<script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.min.js"></script>
+<script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.extension.js"></script>
+<?php } ?>
+<script>
+<?php if(in_array($SITEURL[0], ["point-of-sale", "requests", "analytics"])) { ?>
+  Cookies.set("sidenav-state", "unpinned");
+<?php } else { ?>
+  Cookies.set("sidenav-state", "pinned");
+<?php } ?>
+</script>
 <!-- Argon JS -->
 <script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js?v=1.1.0"></script>
 <!-- Demo JS - remove this in your project -->

@@ -379,8 +379,8 @@ a[href="#finish"] {
 <script src="<?= $baseUrl ?>assets/vendor/jquery-steps/jquery.steps.min.js"></script>
 <script>
   $(function() {
-        hideLoader();
-    });
+    hideLoader();
+  });
 </script>
 <?php if($validDate) { ?>
 <script src="<?= $config->base_url('assets/js/pos.js'); ?>" type="text/javascript"></script>

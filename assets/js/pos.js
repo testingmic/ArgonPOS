@@ -575,7 +575,7 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 		`${baseUrl}receipt/${orderId}`,
 		`Sales Invoice - Receipt #${orderId}`,
 		`width=650,height=750,resizable,scrollbars=yes,status=1`
-	);
+		);
 	}
 
 	$(".make-online-payment").on("click", async function(e) {
@@ -584,7 +584,7 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
   		if (res.status == "success") {
   			$(`span[class="generated_order"]`).html(res.data._oid);
 	  		$.ajax({
-	  			url: baseUrl + "doprocess_payment/processMyPayment",
+	  			url: baseUrl + "ajax/pointOfSaleProcessor/processMyPayment",
 	  			data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal },
 	  			dataType: "json",
 	  			type: "POST",
@@ -644,7 +644,7 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 function checkPaymentStatus() {
 	
 	$.ajax({
-		url: `${baseUrl}doprocess_payment/checkPaymentStatus`,
+		url: `${baseUrl}ajax/pointOfSaleProcessor/checkPaymentStatus`,
 		type: "POST",
 		data: { checkPaymentStatus: true },
 		dataType: "json",
@@ -692,7 +692,7 @@ function checkPaymentStatus() {
 
 $(".cancel-online-payment").on("click", function() {
 
-	$.post(`${baseUrl}doprocess_payment/cancelPayment`, {cancelPayment: true}, function(data) {
+	$.post(`${baseUrl}ajax/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
 		data = $.parseJSON( data );
 		let toastType = "error";
 		let toastMsg  = "Failed To Cancel";

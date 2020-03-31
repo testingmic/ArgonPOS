@@ -141,12 +141,16 @@ function form_loader() {
                   <li class="nav-item">
                     <a href="<?= $baseUrl ?>sales" class="nav-link">Sales History</a>
                   </li>
+                  <?php if($accessObject->hasAccess('view', 'quotes')) { ?>
                   <li class="nav-item">
                     <a href="<?= $baseUrl ?>quotes" class="nav-link">Quotes</a>
                   </li>
+                  <?php } ?>
+                  <?php if($accessObject->hasAccess('view', 'orders')) { ?>
                   <li class="nav-item">
                     <a href="<?= $baseUrl ?>orders" class="nav-link">Orders</a>
                   </li>
+                  <?php } ?>
                 </ul>
               </div>
             </li>
@@ -162,37 +166,46 @@ function form_loader() {
                 <span class="nav-link-text">Analytics</span>
               </a>
             </li>
+            
             <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['branches'])) ? "active" : null; ?>" href="<?= $baseUrl ?>branches">
-                <i class="ni ni-archive-2 text-green"></i>
-                <span class="nav-link-text">Branches</span>
+              <a class="nav-link <?= (in_array($SITEURL[0], ['users-login-history', 'users', 'users-login-history', 'branches', 'settings'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
+                <i class="ni ni-map-big text-primary"></i>
+                <span class="nav-link-text">System</span>
               </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['users-login-history', 'users', 'users-login-history'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
-                <i class="ni ni-align-left-2 text-default"></i>
-                <span class="nav-link-text">Users</span>
-              </a>
-              <div class="collapse <?= (in_array($SITEURL[0], ['users', 'users-login-history', 'users-activity-logs'])) ? "show" : null; ?>" id="navbar-tables">
+              <div class="collapse <?= (in_array($SITEURL[0], ['users', 'users-login-history', 'users-activity-logs', 'branches', 'settings'])) ? "show" : null; ?>" id="navbar-tables">
                 <ul class="nav nav-sm flex-column">
+                  <?php if($accessObject->hasAccess('view', 'users')) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>users" class="nav-link">Users</a>
+                    <a href="<?= $baseUrl ?>users" class="nav-link">
+                      <i class="fa fa-users text-dark"></i>Users
+                    </a>
                   </li>
+                  <?php } ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>users-login-history" class="nav-link">Login History</a>
+                    <a href="<?= $baseUrl ?>users-login-history" class="nav-link">
+                      <i class="fa fa-list text-primary"></i>Login History
+                    </a>
                   </li>
+                  <?php if($accessObject->hasAccess('view', 'branches')) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>users-activity-logs" class="nav-link">Activity Logs</a>
+                    <a class="nav-link" href="<?= $baseUrl ?>branches">
+                      <i class="ni ni-archive-2 text-green"></i>
+                      <span class="nav-link-text">Branches</span>
+                    </a>
                   </li>
+                  <?php } ?>
+                  <?php if($accessObject->hasAccess('update', 'settings')) { ?>
+                  <li class="nav-item">
+                    <a class="nav-link <?= (in_array($SITEURL[0], ['settings'])) ? "active" : null; ?>" href="<?= $baseUrl ?>settings">
+                      <i class="ni ni-align-left-2 text-default"></i>
+                      <span class="nav-link-text">Settings</span>
+                    </a>
+                  </li>
+                  <?php } ?>
                 </ul>
               </div>
             </li>
-            <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['settings'])) ? "active" : null; ?>" href="<?= $baseUrl ?>settings">
-                <i class="ni ni-map-big text-primary"></i>
-                <span class="nav-link-text">Settings</span>
-              </a>
-            </li>
+            
           </ul>
           <!-- Divider -->
           <hr class="my-3">
@@ -224,42 +237,7 @@ function form_loader() {
               </a>
             </li>
             <li class="nav-item dropdown">
-              <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="ni ni-bell-55"></i>
-              </a>
-              <div class="dropdown-menu dropdown-menu-xl dropdown-menu-right py-0 overflow-hidden">
-                <!-- Dropdown header -->
-                <div class="px-3 py-3">
-                  <h6 class="text-sm text-muted m-0">You have <strong class="text-primary">2</strong> notifications.</h6>
-                </div>
-                <!-- List group -->
-                <div class="list-group list-group-flush">
-                  <a href="#!" class="list-group-item list-group-item-action">
-                    <div class="row align-items-center">
-                      <div class="col-auto">
-                        <!-- Avatar -->
-                        <img alt="Image placeholder" src="<?= $baseUrl ?>assets/img/theme/team-1.jpg" class="avatar rounded-circle">
-                      </div>
-                      <div class="col ml--2">
-                        <div class="d-flex justify-content-between align-items-center">
-                          <div>
-                            <h4 class="mb-0 text-sm">John Snow</h4>
-                          </div>
-                          <div class="text-right text-muted">
-                            <small>2 hrs ago</small>
-                          </div>
-                        </div>
-                        <p class="text-sm mb-0">Let's meet at Starbucks at 11:30. Wdyt?</p>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-                <!-- View all -->
-                <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">View all</a>
-              </div>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a class="nav-link text-white" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="ni ni-ungroup"></i>
               </a>
               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-dark bg-default dropdown-menu-right">
@@ -309,7 +287,7 @@ function form_loader() {
               <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <div class="media align-items-center">
                   <span class="avatar avatar-sm rounded-circle">
-                    <img alt="Image placeholder" src="<?= $baseUrl ?>assets/img/theme/team-4.jpg">
+                    <i class="fa fa-user"></i>
                   </span>
                   <div class="media-body ml-2 d-none d-lg-block">
                     <span class="mb-0 text-sm  font-weight-bold"><?= $session->userName; ?></span>
@@ -324,18 +302,20 @@ function form_loader() {
                   <i class="ni ni-single-02"></i>
                   <span>My profile</span>
                 </a>
+                <?php if($accessObject->hasAccess('view', 'settings')) { ?>
                 <a href="<?= $baseUrl ?>settings" class="dropdown-item">
                   <i class="ni ni-settings-gear-65"></i>
                   <span>Settings</span>
                 </a>
-                <a href="<?= $baseUrl ?>users-activity-logs" class="dropdown-item">
+                <?php } ?>
+                <!-- <a href="<?= $baseUrl ?>users-activity-logs" class="dropdown-item">
                   <i class="ni ni-calendar-grid-58"></i>
                   <span>Activity</span>
                 </a>
                 <a href="<?= $baseUrl ?>support" class="dropdown-item">
                   <i class="ni ni-support-16"></i>
                   <span>Support</span>
-                </a>
+                </a> -->
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item logout" data-value="logout" href="<?= $config->base_url('login?logout'); ?>">
                   <i class="ni ni-user-run"></i>
@@ -347,3 +327,6 @@ function form_loader() {
         </div>
       </div>
     </nav>
+    <div class="main-content-loader main-body-loader" style="display: flex">
+        <i class="fa fa-3x fa-pulse fa-spinner"></i>
+    </div>

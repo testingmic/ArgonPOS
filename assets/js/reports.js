@@ -659,7 +659,7 @@ $(function() {
                       stacked: false,
                       zoom: false,
                       toolbar: {
-                          show: true
+                          show: false
                       }
                   },
                   dataLabels: {
@@ -700,44 +700,44 @@ $(function() {
                     }, 
                   },
                   yaxis: [
-                      // {
-                      //     axisTicks: {
-                      //         show: true,
-                      //     },
-                      //     axisBorder: {
-                      //         show: true,
-                      //         color: '#fa5c7c'
-                      //     },
-                      //     labels: {
-                      //         style: {
-                      //             color: '#fa5c7c',
-                      //         }
-                      //     },
-                      //     title: {
-                      //         text: "Cost of Products Sold"
-                      //     },
-                      // },
-
-                      // {
-                      //     axisTicks: {
-                      //         show: true,
-                      //     },
-                      //     axisBorder: {
-                      //         show: true,
-                      //         color: '#20016c'
-                      //     },
-                      //     labels: {
-                      //         style: {
-                      //             color: '#20016c',
-                      //         },
-                      //         offsetX: 10
-                      //     },
-                      //     title: {
-                      //         text: "Revenue from Products Sold",
-                      //     },
-                      // },
                       {
-                          opposite: false,
+                          axisTicks: {
+                              show: true,
+                          },
+                          axisBorder: {
+                              show: true,
+                              color: '#fa5c7c'
+                          },
+                          labels: {
+                              style: {
+                                  color: '#fa5c7c',
+                              }
+                          },
+                          title: {
+                              text: "Cost of Products Sold"
+                          },
+                      },
+
+                      {
+                          axisTicks: {
+                              show: true,
+                          },
+                          axisBorder: {
+                              show: true,
+                              color: '#20016c'
+                          },
+                          labels: {
+                              style: {
+                                  color: '#20016c',
+                              },
+                              offsetX: 10
+                          },
+                          title: {
+                              text: "Revenue from Products Sold",
+                          },
+                      },
+                      {
+                          opposite: true,
                           axisTicks: {
                               show: true,
                           },
@@ -793,17 +793,21 @@ $(function() {
                     revenueOptions
                 );
                 revenueChart.render();
-
+                $(`div[class~="apexcharts-legend"]`).addClass('hidden');
             },
             error: function(err) {
                 console.log(err);
+            }, complete: function(data) {
+                setTimeout(function() {
+                    $(`div[class~="apexcharts-legend"]`).removeClass('center hidden');
+                }, 1000);
             }
         });
     }
 
     var salesAttendantHistory = () => {
 
-        $(`a[class~="view-user-sales"]`).on('click', function() {
+        $(`div[class="main-content"]`).on('click', `a[class~="view-user-sales"]`, function() {
 
             var userId = $(this).attr('data-value');
             var fullname = $(this).attr('data-name');
@@ -892,6 +896,7 @@ $(function() {
                 },
                 complete: function(data) {
                     salesAttendantHistory();
+                    $(`div[class~="apexcharts-legend"]`).removeClass('center');
                     $(`div[class~="sales-attendant-performance"] div[class~="dataTables_wrapper"] div[class="row"]:first`).children('div:first').remove();
                     $(`div[class~="sales-attendant-performance"] div[class~="dataTables_wrapper"] div[class="row"]:first`).children('div:last').removeClass('col-md-6 col-sm-12').addClass('col-lg-12 text-left');
                 },
@@ -983,9 +988,10 @@ $(function() {
                 }
                 new ApexCharts(document.querySelector("#dash_spark_1"), ordersTrend).render();
 
-            },
-            error: function(err) {
+            }, error: function(err) {
                 $(`div[class~="orders-loader"]`).html(``);
+            }, complete: function(data) {
+                $(`div[class~="apexcharts-legend"]`).removeClass('center');
             }
         });
     }
@@ -1093,7 +1099,14 @@ $(function() {
 
             },
             complete: function(data) {
-                // getSalesDetails();
+                $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
+                    let orderId = $(this).data('sales-id');
+                    window.open(
+                        `${baseUrl}receipt/${orderId}`,
+                        `Sales Invoice - Receipt #${orderId}`,
+                        `width=650,height=750,resizable,scrollbars=yes,status=1`
+                    );
+                });
                 hideLoader();
             }, error: function(err) {
             }
@@ -1555,12 +1568,18 @@ $(function() {
                 fetchInventoryRecords();
                 fetchSalesRecords();
                 fetchProductThresholds();
+
+                if($(`div[class~="sales-overview-data"]`).length) {
+                    salesOverview('this-week');
+                }
+
             } else if($(`div[class~="pos-reporting"]`).length) {
+
+                var period = $(`select[name="periodSelect"]`).val();
+                salesOverview(period);
                 
                 if ($(`div[class~="reports-summary"]`).length) {
-                    var period = $(`select[name="periodSelect"]`).val();
                     summaryItems(period);
-                    salesOverview(period);
                     salesAttendantPerformance(period);
                     ordersCount(period);
                     topContactsPerformance(period);

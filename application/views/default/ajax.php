@@ -159,7 +159,7 @@ if($admin_user->logged_InControlled()) {
 						'phone' => $data->phone_1,
 						'date' => $orderDate,
 						'amount' => "{$data->currency} {$totalOrder}",
-						'action' => "<a data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" onclick=\"return getSalesDetails('{$data->order_id}')\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-eye\"></i></a> &nbsp; <a title=\"Print/Download Transaction Details\" href=\"{$config->base_url('invoice/'.$data->order_id)}\" type=\"button\" class=\"text-primary\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-print\"></i></a>",
+						'action' => " <a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-print\"></i></a> &nbsp; <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$data->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-download\"></i></a>",
 					];
 
 					$totalDiscount += $data->order_discount;
@@ -175,7 +175,7 @@ if($admin_user->logged_InControlled()) {
 				}
 				$message = $results;
 			}
-			$averageSalesValue = ($totalSales / $totalServed);
+			$averageSalesValue = ($totalSales > 0 && $totalServed > 0) ? ($totalSales / $totalServed) : 0.00;
 
 			$prevSales = $posClass->getAllRows(
 				"sales a", 
@@ -884,7 +884,7 @@ if($admin_user->logged_InControlled()) {
 						);
 						
 						$paymentData = $queryData[0];
-						$paymentKeys[] = $eachOption;
+						$paymentKeys[] = ucfirst($eachOption);
 						$paymentValues[] = round($paymentData->total_amount);
 						
 					}
@@ -1743,6 +1743,113 @@ if($admin_user->logged_InControlled()) {
 				}
 			}
 		}
+
+		//: payment processor
+		elseif(isset($_POST["processMyPayment"], $_POST["orderId"], $_POST["orderTotal"]) && confirm_url_id(2, 'processMyPayment')) {
+			//: initializing
+			$postData = (Object) array_map("xss_clean", $_POST);
+			$theTeller = load_class('Payswitch', 'controllers');
+
+			// Check If Order Is Saved In Database
+			$check = $posClass->getAllRows(
+				"sales",
+				"COUNT(*) as orderExists",
+				"transaction_id = '{$postData->orderId}'"
+			);
+
+			if ($check != false && $check[0]->orderExists == 1) {
+
+				// Call Teller Processor
+				$process = $theTeller->initiatePayment($postData->orderTotal, "emmallob14@gmail.com", $postData->orderId);
+
+	            // Check Response Code & Execute
+	            if (isset($process['code']) && ($process['code'] == '200')) {
+
+	                $session->set_userdata("tellerPaymentTransID", $postData->orderId);
+
+	                if ($process['status'] == 'vbv required') {
+	                    // VBV Required
+	                    $message = [
+	                    	"msg" => '
+	                    	<p class="alert alert-warning">Your Card Needs Authorization.</p>
+	                    	<a href="'.($process['reason']).'" target="_blank" class="btn btn-success">Click To Verify Card</a>',
+	                    	"action" => false
+	                    ];
+	                } else {
+	                	// No VBV Required
+	                	$session->set_userdata("tellerUrl", $process['checkout_url']);
+
+	                	$message = [
+	                		"msg" => $process['checkout_url'],
+	                		"action" => true
+	                	];
+	                }
+	                $status = true;
+	            } else {
+	                $message = '<p class="text-danger">Failed To Process Payment!</p>';
+	            }
+
+			}
+		
+		}
+
+		//: check payment status
+		elseif (isset($_POST['checkPaymentStatus']) && confirm_url_id(1, "checkPaymentStatus")) {
+			// create new object
+			$theTeller = load_class('Payswitch', 'controllers');
+
+			// check the session has been set
+			if ($session->tellerPaymentStatus == true) {
+				$transaction_id = xss_clean($session->tellerPaymentTransID);
+
+				$checkStatus = $posClass->getAllRows(
+					"sales",
+					"order_status",
+					"payment_date IS NOT NULL && transaction_id = '{$transaction_id}'"
+				);
+
+				if ($checkStatus != false && $checkStatus[0]->order_status == "confirmed") {
+					$status = true;
+					// Unset Session
+					$session->unset_userdata("tellerPaymentStatus");
+					$session->unset_userdata("tellerPaymentTransID");
+					$session->unset_userdata("tellerUrl");
+				} else if ($checkStatus != false && $checkStatus[0]->order_status == "cancelled") {
+					$status = "cancelled";
+					// Unset Session
+					$session->unset_userdata("tellerPaymentStatus");
+					$session->unset_userdata("tellerPaymentTransID");
+					$session->unset_userdata("tellerUrl");
+				}
+			}
+
+		}
+
+		//: cancel payment
+		elseif(isset($_POST['cancelPayment']) && confirm_url_id(1, "cancelPayment")) {
+
+			// assign variable to the transaction id
+			$transaction_id = xss_clean($session->tellerPaymentTransID);
+
+			// update the sales table
+			$query = $posClass->updateData(
+				"sales",
+				"order_status = 'cancelled', deleted = '1'",
+				"transaction_id = '{$transaction_id}'"
+			);
+
+			// return true
+			if ($query == true) {
+				$status = 200;
+				// Unset Session
+				$session->unset_userdata("tellerPaymentStatus");
+				$session->unset_userdata("tellerPaymentTransID");
+				$session->unset_userdata("tellerUrl");
+			}
+
+		}
+
+
 	}
 
 	//: Quotes / Requests
@@ -1781,28 +1888,23 @@ if($admin_user->logged_InControlled()) {
 			// configure the
 			$row++;
 
-			$eachRequest->action = "<div align=\"center\"><div class=\"dropdown d-inline-block\">
-	            <a class=\"nav-link dropdown-toggle arrow-none\" id=\"dLabel1\" data-toggle=\"dropdown\" href=\"#\" role=\"button\" aria-haspopup=\"false\" aria-expanded=\"false\">
-	                <i class=\"fas fa-ellipsis-h font-20 text-muted\"></i>
-	            </a>
-	            <div class=\"dropdown-menu dropdown-menu-right\" aria-labelledby=\"dLabel1\">";
-	        $eachRequest->action .= "<a class=\"dropdown-item \" href=\"".$config->base_url('invoice/'.$eachRequest->request_id)."\"><i class=\"fa fa-edit\"></i> View Details</a>";        
-
-	        $eachRequest->action .= "<a class=\"dropdown-item\" data-value=\"{$eachRequest->request_id}\" href=\"".$config->base_url('export/'.$eachRequest->request_id)."\" target=\"_blank\"><i class=\"fa fa-file-pdf\"></i> Export ".$eachRequest->request_type."</a>";
+			$eachRequest->action = "<div align=\"center\">";
+	        
+	        $eachRequest->action .= "<a class=\"btn btn-sm btn-outline-primary\" title=\"Export the {$eachRequest->request_type} to PDF\" data-value=\"{$eachRequest->request_id}\" href=\"".$config->base_url('export/'.$eachRequest->request_id)."\" target=\"_blank\"><i class=\"fa fa-file-pdf\"></i> </a> &nbsp;";
 
 	        // check if the user has access to delete this item
 	        if($accessObject->hasAccess('delete', strtolower($eachRequest->request_type.'s'))) {
 	        	// print the delete button
-	        	$eachRequest->action .= "<a class=\"dropdown-item delete-item\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('doprocess_sales/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> Delete ".$eachRequest->request_type."</a>";
+	        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('doprocess_sales/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
 	        }
 
-	        $eachRequest->action .= "</div></div></div>";
+	        $eachRequest->action .= "</div>";
 
 			// append to the list of items
 			$results[] = [
 				'row_id' => $row,
 				'request_type' => $eachRequest->request_type,
-				'request_id' => $eachRequest->request_id,
+				'request_id' => "<a class=\"text-success\" title=\"Click to view full details\" href=\"".$config->base_url('invoice/'.$eachRequest->request_id)."\">{$eachRequest->request_id}</a>",
 				'branch_name' => $eachRequest->branch_name,
 				'customer_name' => $eachRequest->customer_name,
 				'quote_value' => 'GH&cent; '. number_format($eachRequest->request_sum, 2),
@@ -2078,7 +2180,7 @@ if($admin_user->logged_InControlled()) {
 				// get the branch status using the id parsed
 				$query = $pos->prepare("SELECT status FROM branches WHERE id = ? && deleted = ? && clientId = ?");
 				// execute and fetch the record
-				if ($query->execute([$branchData->itemId, '0', $session->clientId])) {
+				if ($query->execute([$branchData->itemId, '0', $posClass->clientId])) {
 					// get the data
 					$data = $query->fetch(PDO::FETCH_OBJ);
 					
@@ -2089,7 +2191,7 @@ if($admin_user->logged_InControlled()) {
 					$posClass->updateData(
 						"branches",
 						"status='{$state}'",
-						"clientId='{$session->clientId}' AND id='{$branchData->itemId}'"
+						"clientId='{$posClass->clientId}' AND id='{$branchData->itemId}'"
 					);
 
 					$status = true;
@@ -2156,7 +2258,7 @@ if($admin_user->logged_InControlled()) {
 					$response = $posClass->updateData(
 						"settings",
 						"client_name='{$postData->company_name}', client_email='{$postData->email}', client_website='{$postData->website}', primary_contact='{$postData->primary_contact}', secondary_contact='{$postData->secondary_contact}', address_1='{$postData->address}'",
-						"clientId='{$session->clientId}'"
+						"clientId='{$posClass->clientId}'"
 					);
 
 					// continue
@@ -2167,7 +2269,7 @@ if($admin_user->logged_InControlled()) {
 						$posClass->updateData(
 							"settings",
 							"client_logo='{$uploadedFile}'",
-							"clientId='{$session->clientId}'"
+							"clientId='{$posClass->clientId}'"
 						);
 
 						$status = 201;
@@ -2203,7 +2305,7 @@ if($admin_user->logged_InControlled()) {
 					receipt_message='".xss_clean($postData->receipt_message)."',
 					terms_and_conditions='".htmlentities($postData->terms_and_conditions)."'
 				",
-				"clientId='{$session->clientId}'"
+				"clientId='{$posClass->clientId}'"
 			);
 
 			$uploadDir = 'assets/images/company/';
@@ -2235,7 +2337,7 @@ if($admin_user->logged_InControlled()) {
 		        $posClass->updateData(
 					"settings",
 					"manager_signature='{$uploadedFile}'",
-					"clientId='{$session->clientId}'"
+					"clientId='{$posClass->clientId}'"
 				);
 				$message = $config->base_url($uploadedFile);
 		    }		
@@ -2251,7 +2353,7 @@ if($admin_user->logged_InControlled()) {
 				$posClass->updateData(
 					"settings",
 					"reports_sales_attendant='".xss_clean($postData->attendantPerformance)."'",
-					"clientId='{$session->clientId}'"
+					"clientId='{$posClass->clientId}'"
 				);
 			}
 		}
@@ -2280,7 +2382,7 @@ if($admin_user->logged_InControlled()) {
 						"square_feet_area='".xss_clean($value)."', 
 						recurring_expenses='".$postData->recurringExpense[$key]."',
 						fixed_expenses='".$postData->fixedExpense[$key]."'",
-						"clientId='{$session->clientId}' AND id='{$key}'"
+						"clientId='{$posClass->clientId}' AND id='{$key}'"
 					);
 
 				}
@@ -2289,7 +2391,7 @@ if($admin_user->logged_InControlled()) {
 					"settings",
 					"total_expenditure='".xss_clean($totalExpenses)."',
 					space_per_square_foot='".xss_clean($totalSquareFoot)."'",
-					"clientId='{$session->clientId}'"
+					"clientId='{$posClass->clientId}'"
 				);
 
 				$status = 201;
@@ -2365,7 +2467,7 @@ if($admin_user->logged_InControlled()) {
 				$posClass->updateData(
 					"settings",
 					"payment_options='".implode(",", $options)."'",
-					"clientId='{$session->clientId}'"
+					"clientId='{$posClass->clientId}'"
 				);
 
 				$message = $options;
@@ -2507,7 +2609,7 @@ if($admin_user->logged_InControlled()) {
 							);
 
 							// Add Product Transfer To Inventory
-							$postData->clientId = $session->clientId;
+							$postData->clientId = $posClass->clientId;
 							$postData->userId = $session->userId;
 							$postData->selling_price = $sellPrice;
 							$productsClass->addToInventory($postData);
@@ -2622,7 +2724,7 @@ if($admin_user->logged_InControlled()) {
 								);
 
 								// Add Product Transfer To Inventory
-								$postData->clientId = $session->clientId;
+								$postData->clientId = $posClass->clientId;
 								$postData->userId = $session->userId;
 								$postData->selling_price = $sellPrice;
 								$productsClass->addToInventory($postData);
@@ -2690,9 +2792,9 @@ if($admin_user->logged_InControlled()) {
 					$newQuantity = $eachProduct->quantity+$quantity;
 
 					//: form the sql query to insert
-					$updateQuery .= "UPDATE products SET quantity = (quantity+$quantity), threshold='{$threshold}', cost_price = '{$costPrice}', product_price='{$retailPrice}' WHERE id = '{$productId}' AND branchId='{$session->currentBranchId}' AND clientId='{$session->clientId}';";
+					$updateQuery .= "UPDATE products SET quantity = (quantity+$quantity), threshold='{$threshold}', cost_price = '{$costPrice}', product_price='{$retailPrice}' WHERE id = '{$productId}' AND branchId='{$session->currentBranchId}' AND clientId='{$posClass->clientId}';";
 
-					$insertQuery .= "('{$session->clientId}', '{$session->currentBranchId}', '{$autoId}', '{$productId}', '{$costPrice}', '{$retailPrice}', '{$eachProduct->quantity}', '{$quantity}', '{$newQuantity}', '{$threshold}', '{$session->userId}'),";
+					$insertQuery .= "('{$posClass->clientId}', '{$session->currentBranchId}', '{$autoId}', '{$productId}', '{$costPrice}', '{$retailPrice}', '{$eachProduct->quantity}', '{$quantity}', '{$newQuantity}', '{$threshold}', '{$session->userId}'),";
 				}
 
 			}
@@ -2886,6 +2988,371 @@ if($admin_user->logged_InControlled()) {
 			echo json_encode($res);
 			exit;
 		}
+	}
+
+	//: user management
+	elseif(confirm_url_id(1, "userManagement")) {
+
+		//: initializing
+		$message = "Error Processing Request";
+		$status = false;
+
+		//: fetch the list of all users
+		if (isset($_POST['fetchUsersLists']) && confirm_url_id(2, 'fetchUsersLists')) {
+
+			$condition = "";
+			$message = [];
+
+			$query = $pos->prepare("
+				SELECT a.*, b.access_name, c.branch_name 
+				  FROM users a 
+			INNER JOIN access_levels b
+					ON a.access_level = b.id
+			INNER JOIN branches c
+					ON c.id = a.branchId
+				 WHERE a.clientId = ? && a.status = ? {$condition}");
+
+			if ($query->execute([$session->clientId, '1'])) {
+				$i = 0;
+
+				// create a new object for the access level
+				$accessObject->userId = $session->userId;
+
+				while ($data = $query->fetch(PDO::FETCH_OBJ)) {
+					$i++;
+
+					$date = date('jS F, Y', strtotime($data->created_on));
+
+					$action = '<div width="100%" align="center">';
+
+					if($accessObject->hasAccess('update', 'users')) {
+						if(in_array($data->access_level, [1, 2]) && (in_array($session->accessLevel, [1, 2]))) {
+								$action .= "<button class=\"btn btn-sm btn-outline-success edit-user\" data-user-id=\"{$data->user_id}\">
+								<i class=\"fa fa-edit\"></i>
+							</button> ";
+						} elseif(!in_array($data->access_level, [1, 2])) {
+							$action .= "<button class=\"btn btn-sm btn-outline-success edit-user\" data-user-id=\"{$data->user_id}\">
+								<i class=\"fa fa-edit\"></i>
+							</button> ";
+						}
+					}
+
+					if($accessObject->hasAccess('accesslevel', 'users')) {
+						$action .= "<button class=\"btn btn-sm btn-outline-primary edit-access-level\" data-user-id=\"{$data->user_id}\">
+								<i class=\"fa fa-sitemap\"></i>
+							</button> ";
+					}
+
+					if($accessObject->hasAccess('delete', 'users')) {
+						if(in_array($data->access_level, [1, 2]) && (in_array($session->accessLevel, [1, 2]))) {
+							$action .= "<button class=\"btn btn-sm btn-outline-danger delete-user\" data-user-id=\"{$data->user_id}\">
+								<i class=\"fa fa-trash\"></i>
+							</button> ";
+						} elseif(!in_array($data->access_level, [1, 2])) {
+							$action .= "<button class=\"btn btn-sm btn-outline-danger delete-user\" data-user-id=\"{$data->user_id}\">
+								<i class=\"fa fa-trash\"></i>
+							</button> ";
+						}
+					}
+
+					$action .= "</div>";
+
+					$message[] = [
+						'user_id' => $data->user_id,
+						'row_id' => $i,
+						'fullname' => $data->name,
+						'branch_name' => $data->branch_name,
+						'access_level' => $data->access_name,
+						'access_level_id' => $data->access_level,
+						'gender' => $data->gender,
+						'branchId' => $data->branchId,
+						'contact' => $data->phone,
+						'email' => $data->email,
+						'registered_date' => $date,
+						'action' => $action,
+						'deleted' => 0
+					];
+
+				}
+				$status = true;
+			}
+
+		}
+
+		//: get the details of a single user
+		elseif(isset($_POST['getUserDetails'], $_POST['userId']) && confirm_url_id(2, "getUserDetails")) {
+
+			$userId = xss_clean($_POST['userId']);
+
+			// Check If User Exists
+			$query = $pos->prepare(
+				"SELECT u.*, al.access_name FROM users u INNER JOIN access_levels al ON u.access_level = al.id WHERE u.user_id = ? && u.status = ?"
+			);
+
+			if ($query->execute([$userId, '1'])) {
+
+				$data = $query->fetch(PDO::FETCH_OBJ);
+
+				$message = [
+					"user_id"	=> $data->user_id,
+					"fullname"	=> $data->name,
+					"access_level_id" => $data->access_level,
+					"acl_name"	=> $data->access_name,
+					"gender"	=> $data->gender,
+					"contact"	=> $data->phone,
+					"email"		=> $data->email,
+					"country"	=> $data->country_id,
+					"branchId" => $data->branchId
+				];
+				$status = true;
+			} else {
+				$message = "Sorry! User Cannot Be Found.";
+			}
+			
+		} 
+
+		//: add or update user information
+		elseif(isset($_POST['fullName'], $_POST['access_level']) && confirm_url_id(2, "addUserRecord")) {
+
+			// Check If Fields Are Not Empty
+			if (!empty($_POST['fullName']) && !empty($_POST['access_level']) && !empty($_POST['gender'])  && !empty($_POST['phone']) && !empty($_POST['email'])) {
+
+				$userData = (Object) array_map("xss_clean", $_POST);
+
+				if(!empty($userData->email) && !filter_var($userData->email, FILTER_VALIDATE_EMAIL)) {
+					$message = "Please enter a valid email address";
+				} elseif(!empty($userData->phone) && !preg_match('/^[0-9+]+$/', $userData->phone)) {
+					$message = "Please enter a valid contact number";
+				} else {
+
+					if ($userData->record_type == "new-record") {
+
+						// Check Email Exists
+						$checkData = $posClass->getAllRows("users", "COUNT(*) AS proceed", "email='{$userData->email}' && status = '1'");
+
+						if ($checkData != false && $checkData[0]->proceed == '0') {
+
+							// Add Record To Database
+							$getUserId   = random_string('alnum', mt_rand(20, 30));
+							$getPassword = random_string('alnum', mt_rand(8, 10));
+							$hashPassword= password_hash($getPassword, PASSWORD_DEFAULT);
+
+							$response = $posClass->addData(
+								"users" ,
+								"clientId='{$session->clientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}'"
+							);
+
+							if ($response == true) {
+
+								// Assign Roles To User
+								$accessObject->assignUserRole($getUserId, $userData->access_level);
+
+								// Send Email To User With Password
+
+								// Show Success Message
+								$message = "User Have Been Successfully Registered.";
+								$status = true;
+							} else {
+								$message = "Sorry! User Records Failed To Save.";
+							}
+						} else {
+							$message = "Sorry! Email Already Belongs To Another User.";
+						}
+					} else if ($userData->record_type == "update-record") {
+						// CHeck If User ID Exists
+						$checkData = $posClass->getAllRows("users", "COUNT(*) AS userTotal, access_level", "user_id='{$userData->userId}'");
+
+						if ($checkData != false && $checkData[0]->userTotal == '1') {
+
+							// update user data
+							$response = $posClass->updateData(
+								"users",
+								"name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}'",
+								"user_id='{$userData->userId}' && clientId='{$session->clientId}'"
+							);
+
+							if ($response == true) {
+
+								// check if the user has the right permissions to perform this action
+								if($accessObject->hasAccess('accesslevel', 'users')) {
+
+									// Check If User ID Exists
+									$userRole = $posClass->getAllRows("user_roles", "COUNT(*) AS userTotal, permissions", "user_id='{$userData->userId}'");
+
+									// confirm if the user has no credentials
+									if($userRole[0]->userTotal == 0) {
+										// insert the permissions to this user
+										$getPermissions = $accessObject->getPermissions($userData->access_level);
+										// assign these permissions to the user
+										$accessObject->assignUserRole($userData->userId, $userData->access_level);
+									}
+
+									// Check Access Level
+									if ($userData->access_level != $checkData[0]->access_level) {
+
+										$getPermissions = $accessObject->getPermissions($userData->access_level);
+
+										$accessObject->assignUserRole($userData->userId, $userData->access_level, $getPermissions);
+									}
+								}
+
+								$message = "User Details Have Been Successfully Updated.";
+								$status = true;
+							} else {
+								$message = "Sorry! User Records Failed To Update.";
+							}
+						} else {
+							$message = "Sorry! User Does Not Exist.";
+						}
+						// Update Record
+					} else {
+						$message = "Your Request Is Not Recognized";
+					}
+				}
+			} else {
+				$message = "Please Check All Required Fields.";
+			}
+		} 
+
+		//: load the user access level details
+		else if (isset($_POST['fetchAccessLevelPermissions']) && (isset($_POST['access_level'])) || (isset($_POST['user_id']) && $_POST['getUserAccessLevels']) && confirm_url_id(2, "permissionManagement")) {
+
+			if (isset($_POST["getUserAccessLevels"]) ||(isset($_POST['access_level']) && !empty($_POST['access_level']) && $_POST['access_level'] != "null")) {
+
+				$access_level = (isset($_POST['access_level'])) ? xss_clean($_POST['access_level']) : null;
+				$access_user  = (isset($_POST['user_id'])) ? xss_clean($_POST['user_id']) : null;
+
+				// Check If User Is Selected
+				if (!empty($access_user) && $access_user != "null") {
+
+					// Get User Permissions
+					$query = $posClass->getAllRows("user_roles", "permissions", "user_id='{$access_user}'");
+
+					if ($query != false) {
+						$message = json_decode($query[0]->permissions);
+						$status = true;
+					} else {
+						$message = "Sorry! No Permission Found For This User";
+					}
+				} else {
+
+					$query = $accessObject->getPermissions($access_level);
+					if ($query != false) {
+						$message = json_decode($query[0]->default_permissions);
+						$status = true;
+					} else {
+						$message = "Sorry! No Permission Found.";
+					}
+
+				}
+			} else {
+				$message = "Sorry! You Need To Select An Access Level";
+			}
+
+		}
+
+		//: save user access level settings
+		elseif(isset($_POST['saveAccessLevelSettings'], $_POST['aclSettings'], $_POST['acl'], $_POST['accessUser']) && confirm_url_id(2, "saveAccessLevelSettings")) {
+
+			if (!empty($_POST['acl']) && $_POST['acl'] != "null" && !empty($_POST['aclSettings']) && $_POST['aclSettings'] != "null") {
+
+				$access_level = xss_clean($_POST['acl']);
+				$access_user  = xss_clean($_POST['accessUser']);
+				$aclSettings  = $_POST['aclSettings'];
+
+				// Prepare Settings
+				$aclPermissions = array();
+				$array_merged = array();
+
+				foreach($aclSettings as $eachItem) {
+					$expl = explode(",", $eachItem);
+
+					$aclPermissions[$expl[0]][$expl[1]] =  xss_clean($expl[2]);
+
+				}
+
+				$permissions = json_encode(array("permissions" => $aclPermissions));
+
+				if ($access_user != "" && $access_user != "null") {
+					// Update Settings For User
+					$checkData = $posClass->getAllRows("users", "COUNT(*) AS userTotal", "user_id='{$access_user}' && status = '1'");
+
+					if ($checkData != false && $checkData[0]->userTotal == '1') {
+
+						$query = $accessObject->assignUserRole($access_user, $access_level, $permissions);
+
+						if ($query == true) {
+							$message = "Access Level Updated Successfully!";
+							$status = true;
+						} else {
+							$message = "Sorry! Access Level Update Failed.";
+						}
+
+					} else {
+						// $message = "Sorry! User Does Not Exist.";
+					}
+
+				} else {
+					// Update Settings For Access Level Group
+					$checkData = $posClass->getAllRows("access_levels", "COUNT(*) AS aclTotal", "id='{$access_level}'");
+
+					if ($checkData != false && $checkData[0]->aclTotal == '1') {
+
+						$stmt = $pos->prepare(
+			                "UPDATE access_levels SET default_permissions = '{$permissions}' WHERE id = '{$access_level}'"
+			            );
+
+			            if ($stmt->execute()) {
+			                $message = "Access Level Updated Successfully";
+			                $status  = true;
+			            } else {
+							$message = "Sorry! Access Level Update Failed.";
+						}
+
+					} else {
+						$message = "Sorry! Access Level Does Not Exist.";
+					}
+				}
+			} else {
+				$message = "Sorry! You Need To Select An Access Level";
+			}
+
+		}
+
+		//: save the user profile information
+		elseif(isset($_POST["userId"], $_POST["email"], $_POST["phone"], $_POST["gender"], $_POST["fullName"]) && confirm_url_id(2, "quickUpdate")) {
+			//: process the user information parsed
+			$postData = (Object) array_map('xss_clean', $_POST);
+
+			//: validate the user information
+			if(!empty($postData->email) && !filter_var($postData->email, FILTER_VALIDATE_EMAIL)) {
+					$message = "Please enter a valid email address";
+			} elseif(!empty($postData->phone) && !preg_match('/^[0-9+]+$/', $postData->phone)) {
+				$message = "Please enter a valid contact number";
+			} elseif($postData->userId != $session->userId) {
+				$message = "You are not permitted to update this account.";
+			} else {
+				//: update the user information
+				$stmt = $pos->prepare("UPDATE users SET name=?, phone=?, email=?, gender=? WHERE user_id =?");
+				$stmt->execute([
+					$postData->fullName, $postData->phone, 
+					$postData->email, $postData->gender, $postData->userId
+				]);
+
+				//: update the password column of the user
+
+				// print success message
+				$status = true;
+				$message = "Profile was successfully updated.";
+
+			}
+
+		}
+		//: set the response to return
+		$response = [
+			"message"	=> $message,
+			"status"	=> $status
+		];
 	}
 }
 
