@@ -1,0 +1,8 @@
+RewriteEngine on
+RewriteBase /pos
+RewriteCond $1 !^(index\.php|assets|robots\.txt)
+RewriteRule ^original($|/) - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+RewriteRule !\.(txt|xml|docx|gif|jpg|JPG|png|cur|css|js|ico|pdf|woff2|woff|svg|eot|ttf|jpeg|csv|map|json)$ index.php
