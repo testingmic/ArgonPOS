@@ -1950,7 +1950,7 @@ if($admin_user->logged_InControlled()) {
 			$productsList = $_POST['selectedProducts'];
 
 			# call the orders controller
-			$requestClass = load_class('requests', 'controllers');
+			$requestClass = load_class('Requests', 'controllers');
 
 			# get the request type
 			$request = ($_POST["request"] == 'QuotesList') ? 'Quote' : 'Order';
@@ -2113,6 +2113,9 @@ if($admin_user->logged_InControlled()) {
 									"clientId='{$posClass->clientId}', branch_type='{$branchData->branchType}', branch_name='{$branchData->branchName}', location='{$branchData->location}', branch_email='{$branchData->email}', branch_contact='{$branchData->phone}', branch_logo='{$clientData->client_logo}', branch_id = '{$branch_id}'"
 								);
 
+								// Record user activity
+								$posClass->userLogs('branches', $branch_id, 'Added a new branch into the System.');
+
 								if ($response == true) {
 									// Show Success Message
 									$message = "Branch Have Been Successfully Registered.";
@@ -2143,6 +2146,9 @@ if($admin_user->logged_InControlled()) {
 									"branch_name='{$branchData->branchName}', location='{$branchData->location}', branch_type='{$branchData->branchType}', branch_email='{$branchData->email}', branch_contact='{$branchData->phone}'",
 									"branch_id='{$branchData->branchId}' && clientId='{$posClass->clientId}'"
 								);
+
+								// Record user activity
+								$posClass->userLogs('branches', $branchData->branchId, 'Updated the details of the branch.');
 
 								if ($response == true) {
 
@@ -2193,6 +2199,9 @@ if($admin_user->logged_InControlled()) {
 						"status='{$state}'",
 						"clientId='{$posClass->clientId}' AND id='{$branchData->itemId}'"
 					);
+
+					// Record user activity
+					$posClass->userLogs('branches', $branchData->itemId, 'Updated the status of the branch and set it as '.(($state) ? "Active" : "Inactive"));
 
 					$status = true;
 					$message = "Branch status was Successfully updated";
@@ -2261,6 +2270,9 @@ if($admin_user->logged_InControlled()) {
 						"clientId='{$posClass->clientId}'"
 					);
 
+					// Record user activity
+					$posClass->userLogs('settings', $session->clientId, 'Updated the general settings tab of the Company.');
+
 					// continue
 		            $status = 200;
 
@@ -2307,6 +2319,9 @@ if($admin_user->logged_InControlled()) {
 				",
 				"clientId='{$posClass->clientId}'"
 			);
+
+			// Record user activity
+			$posClass->userLogs('settings', $session->clientId, 'Updated the sales details tab of the Company.');
 
 			$uploadDir = 'assets/images/company/';
 
@@ -2394,6 +2409,9 @@ if($admin_user->logged_InControlled()) {
 					"clientId='{$posClass->clientId}'"
 				);
 
+				// Record user activity
+				$posClass->userLogs('settings', $session->clientId, 'Updated the reports details tab of the Company.');
+
 				$status = 201;
 			}
 		}
@@ -2470,6 +2488,9 @@ if($admin_user->logged_InControlled()) {
 					"clientId='{$posClass->clientId}'"
 				);
 
+				// Record user activity
+				$posClass->userLogs('settings', $session->clientId, 'Updated the payment options of the Company.');
+
 				$message = $options;
 
 			}
@@ -2490,7 +2511,7 @@ if($admin_user->logged_InControlled()) {
 		$status = false;
 		
 		// create a new products object
-		$productsClass = load_class("products", "controllers");
+		$productsClass = load_class("Products", "controllers");
 
 		$baseUrl = $config->base_url();
 
@@ -3144,6 +3165,9 @@ if($admin_user->logged_InControlled()) {
 
 							if ($response == true) {
 
+								// Record user activity
+								$posClass->userLogs('users', $getUserId, 'Added a new user.');
+								
 								// Assign Roles To User
 								$accessObject->assignUserRole($getUserId, $userData->access_level);
 
@@ -3172,6 +3196,9 @@ if($admin_user->logged_InControlled()) {
 							);
 
 							if ($response == true) {
+
+								// Record user activity
+								$posClass->userLogs('users', $userData->userId, 'Update the user details.');
 
 								// check if the user has the right permissions to perform this action
 								if($accessObject->hasAccess('accesslevel', 'users')) {

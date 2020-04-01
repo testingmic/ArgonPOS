@@ -1,9 +1,8 @@
 <?php 
 /**
  * @class Users
- * Extends the HR Super Class
+ * Extends the POS Super Class
  * @desc Controls all aspects of Users Management
- *
  **/
 class Users extends Pos {
 
@@ -41,11 +40,6 @@ class Users extends Pos {
 
 			//: insert the user access permissions
 			$this->db->query("INSERT INTO user_roles SET user_id = '{$postData->unique_id}', permissions='{$accessLevel}'");
-
-			/**
-			 * @method sendEmail - Send the user credentials to the new user
-			 */
-			// $this->addEmail($fullname = null, $subject, $sent_to, $copy_to = null, $sent_from, $message);
 
 			/**
 			 * @method userLogs - Update the user activity 
@@ -106,24 +100,14 @@ class Users extends Pos {
 	 * @return bool
 	 **/
 	public function updatePassword($postData) {
-		/* Fetch the existing password */
-		// $dbPassword = $this->recordDetails($postData->unique_id, "password")[0]->password;
-
-		/* Confirm if the password */
-		// if(password_verify($postData->curPassword, $dbPassword)) {
-
-			/* Update the user password */
-			$stmt = $this->db->prepare("
-				UPDATE users SET password = ? WHERE unique_id = ? AND clientId = ?
-			");
-			return $stmt->execute([
-				password_hash($postData->password, PASSWORD_DEFAULT), 
-				$postData->unique_id, $this->clientId
-			]);
-
-		// } else {
-		// 	return false;
-		// }
+		/* Update the user password */
+		$stmt = $this->db->prepare("
+			UPDATE users SET password = ? WHERE unique_id = ? AND clientId = ?
+		");
+		return $stmt->execute([
+			password_hash($postData->password, PASSWORD_DEFAULT), 
+			$postData->unique_id, $this->clientId
+		]);
 	}
 
 	/**
@@ -147,8 +131,5 @@ class Users extends Pos {
 		
 	}
 	
-	public function logged_Role() {
-		// return ($this->session->userdata("accessLevel") AND $this->session->userdata("accessLevel")) ? true : false;	
-	}
 }
 ?>

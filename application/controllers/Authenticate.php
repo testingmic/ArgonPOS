@@ -98,6 +98,8 @@ class Authenticate {
                     $user_id = $results["user_id"];
                     $fullname = $results["name"];
                     $username = $results["login"];
+                    $clientId = $results["clientId"];
+                    $branchId = $results["branchId"];
 
                     #create the reset password token
                     $request_token = random_string('alnum', mt_rand(40, 75));
@@ -112,25 +114,43 @@ class Authenticate {
                     #deactivate all reset tokens
                     $stmt = $pos->prepare("UPDATE users_reset_request SET token_status='ANNULED' where username='$username' AND user_id='$user_id' AND token_status='PENDING'");
                     $stmt->execute();
+
+                    #remove the item from the mailing list
+                    $stmt = $pos->prepare("UPDATE email_list SET deleted='1' WHERE itemId='$user_id' AND template_type='recovery'");
+                    $stmt->execute();
                     
                     #process the form
                     $stmt = $pos->prepare("INSERT INTO users_reset_request SET username='$username', user_id='$user_id', request_token='$request_token', user_agent='$br|$ip', expiry_time='$expiry_time'");
                     $stmt->execute();
+                    
                     #FORM THE MESSAGE TO BE SENT TO THE USER
                     $message = 'Hi '.$fullname.'<br>You have requested to reset your password at '.config_item('site_name');
-                    $message .= '<br><br>The scoreg are your login details:<br>';
-                    $message .= '<strong>Email Address:</strong> '.$email_address;
-                    $message .= '<br><strong>Username:</strong> '.$username;
                     $message .= '<br><br>Before you can reset your password please follow this link.<br><br>';
                     $message .= '<a class="alert alert-success" href="'.$config->base_url().'verify?pwd&tk='.$request_token.'">Click Here to Reset Password</a>';
                     $message .= '<br><br>If it does not work please copy this link and place it in your browser url.<br><br>';
                     $message .= $config->base_url().'verify?pwd&tk='.$request_token;
 
-                    #send email to the user
-                    @send_email(
-                        $email_address, "[".config_item('site_name')."] Change Password",
-                        $message, config_item('site_name'), config_item('site_email'), NULL, 'default', $username
-                    );
+                    $reciepient = [
+                        "recipients_list" => [
+                            [
+                                "fullname" => $fullname,
+                                "email" => $email_address,
+                                "customer_id" => $user_id,
+                                "branchId" => $branchId
+                            ]
+                        ]
+                    ];
+
+                    $stmt = $pos->prepare("
+                        INSERT INTO email_list 
+                        SET clientId = ?, branchId = ?,
+                            template_type = ?, itemId = ?, recipients_list = ?,
+                            request_performed_by = ?, subject = ?, message = ?
+                    ");
+                    $stmt->execute([
+                        $clientId, $branchId, 'recovery', $user_id, json_encode($reciepient),
+                        $user_id, "[".config_item('site_name')."] Change Password", $message
+                    ]);
 
                     #record the password change request
                     return true;
@@ -188,16 +208,23 @@ class Authenticate {
                     $stmt->execute();
 
                     #process the form
-                    $stmt = $pos->prepare("
+                    $stmt1 = $pos->prepare("
                         UPDATE users_reset_request SET request_token=NULL, reset_date=now(), reset_agent='$br|$ip', token_status='USED', expiry_time='".time()."' WHERE request_token='$reset_token'
                     ");
-                    $stmt->execute();
+                    $stmt1->execute();
 
-                        #record the activity
-                    $stmt = $pos->prepare("
-                        INSERT INTO users_activity_logs SET branchId='{$branchId}', clientId='{$clientId}', fulldate=now(), user_id='$user_id', date_recorded=now(), username='$username', description='You have successfully changed your password.'
+                    #record the activity
+                    $stmt2 = $this->pos->prepare("
+                        INSERT INTO 
+                            users_activity_logs 
+                        SET
+                            clientId = ?, branchId = ?, page = ?, itemId = ?, 
+                            description = ?, userId = ?, user_agent = ?
                     ");
-                    $stmt->execute();
+                    $stmt2->execute([
+                        $clientId, $branchId, "login", null, 
+                        "You have successfully changed your password.", $user_id, $ip." ".$br
+                    ]);
 
                     //FORM THE MESSAGE TO BE SENT TO THE USER
                     $message = 'Hi '.$fullname.'<br>You have successfully changed your password at '.config_item('site_name');
@@ -208,7 +235,7 @@ class Authenticate {
                     #send email to the user
                     @send_email(
                         $email, "[".config_item('site_name')."] Password Change Successful",
-                        $message, config_item('site_name'), config_item('site_email'), NULL, 'default', $username
+                        $message, $fullname
                     );
 
                     #record the password change request

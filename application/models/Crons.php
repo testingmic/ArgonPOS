@@ -6,15 +6,10 @@ class Crons {
 
 	public function __construct() {
 		$this->baseUrl = "https://pos.visaminetsolutions.com/";
+		$this->siteName = "ArgonPOS";
 	}
 
-	public function addToMailList(stdClass $mailData) {
-		
-		global $pos;
-
-	}
-
-	public function dbConn() {
+	private function dbConn() {
 		
 		// CONNECT TO THE DATABASE
 		$connectionArray = array(
@@ -214,7 +209,7 @@ class Crons {
 	    // generate a new pdf document
 		$fileName = strtolower("C:\\xampp\htdocs\\analitica_innovare\\einventory\\assets\\pdfs\\".$request_type."_".$invoiceId);
 
-		$this->generateEmailAttachment($fileName, $mailerContent);
+		// $this->generateEmailAttachment($fileName, $mailerContent);
 
 		return $mailerContent;
 	}
@@ -277,7 +272,44 @@ class Crons {
 
 	}
 
-	public function loadEmailRequests() {
+	private function generateGeneralMessage($message, $subject, $template_type) {
+
+		$mailerContent = '
+		<div style="margin: auto auto; width: 610px;">
+			<table width="600px" border="1" cellpadding="0" style="min-height: 400px; margin: auto auto;" cellspacing="0">
+				<tr style="padding: 5px; border-bottom: solid 1px #ccc;">
+					<td colspan="4" align="center" style="padding: 10px;">
+						<h1 style="margin-bottom: 0px; margin-top:0px">'.$this->siteName.'</h1>
+						<hr style="border: dashed 1px #ccc;">
+						<div style="font-family: Calibri Light; background: #9932cc; font-size: 20px; padding: 5px;color: white; text-transform: uppercase; font-weight; bolder">
+						<strong>'.$subject.'</strong>
+						</div>
+						<hr style="border: dashed 1px #ccc;">
+					</td>
+				</tr>
+
+				<tr>
+					<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase;">
+						'.$message.'
+					</td>
+				</tr>
+			</table>
+			<table width="600px">
+				<tbody style="text-align: center;">
+					<tr>
+						<td colspan="4">
+							<hr style="border: dashed 1px #ccc; text-align: center;">
+							<img width="150px" src="'.$this->baseUrl.'assets/images/logo.png"  alt="logo-small" class="logo-sm">
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>';
+
+		return $mailerContent;
+	}
+
+	private function loadEmailRequests() {
 		
 		// begin the database connection
 		$this->dbConn();
@@ -293,7 +325,7 @@ class Crons {
 	            FROM email_list a
 	            LEFT JOIN settings b ON a.clientId = b.clientId
 	            LEFT JOIN branches c ON c.branch_id = a.branchId
-	            WHERE a.sent_status='0' LIMIT 5
+	            WHERE a.sent_status='0' AND a.deleted='0' LIMIT 5
 	        ");
 	        $stmt->execute();
 
@@ -305,8 +337,10 @@ class Crons {
 	        	// commence the processing
 	        	if(in_array($result->template_type, array("invoice", "request"))) {
 	        		$subject = ($result->template_type == "invoice") ? "Sales Invoice #{$result->itemId}" : ucfirst($result->template_type)." Invoice #{$result->itemId}";
-
 	        		$dataToUse = $this->loadSalesInvoice($result->itemId, $result->template_type);
+	        	} elseif(in_array($result->template_type, array("login", "recovery"))) {
+	        		$subject = $result->subject;
+	        		$dataToUse = $this->generateGeneralMessage($result->message, $subject, $result->template_type);
 	        	}
 
 	        	// use the content submitted
@@ -337,13 +371,9 @@ class Crons {
 
 	private function cronSendMail($recipient_list, $subject, $message) {
 
-		global $libs;
-
 		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Phpmailer.php";
 		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Smtp.php";
 
-		// require "/home/www/dev.analiticainnovare.net/pos/pos/system/libraries/Phpmailer.php";
-		// require "/home/www/dev.analiticainnovare.net/pos/pos/system/libraries/Smtp.php";
 		$mail = new Phpmailer();
 		$smtp = new Smtp();
 
@@ -353,10 +383,9 @@ class Crons {
 			'Smtp' => true,
 			'SmtpHost' => 'mail.supremecluster.com',
 			'SmtpPort' => '465',
-			'SmtpUser' => 'apis@analiticainnovare.net',
-			'SmtpPass' => 'x24Ffuz7CK',
-			'SmtpSecure' => 'ssl',
-			'from' => 'apis@analiticainnovare.net <Argon POS - VisamiNetSolutions>',
+			'SmtpUser' => 'no-reply@analiticainnovare.net',
+			'SmtpPass' => '8MiF3u8vkD',
+			'SmtpSecure' => 'ssl'
 		);
 
 		$mail->isSMTP();
@@ -369,7 +398,7 @@ class Crons {
 		$mail->Port = $config->SmtpPort;
 
 		// set the user from which the email is been sent
-		$mail->setFrom($config->from);
+		$mail->setFrom('no-reply@analiticainnovare.net', 'EvelynPOS - Analitica Innovare');
 
 		// loop through the list of recipients for this mail
         foreach($recipient_list as $emailRecipient) {
@@ -392,7 +421,7 @@ class Crons {
 
 	}
 
-	public function customerPreferredPayment() {
+	private function customerPreferredPayment() {
 		// begin the database connection
 		$this->dbConn();
 		$last30Days = date("Y-m-d", strtotime("30 days ago"));
@@ -481,9 +510,14 @@ class Crons {
 
 	}
 
+	public function processAllMails() {
+		$this->loadEmailRequests();
+		$this->customerPreferredPayment();
+	}
+
 }
 
 // create new object
 $cronMailer = new Crons;
-$cronMailer->customerPreferredPayment();
+$cronMailer->processAllMails();
 ?>

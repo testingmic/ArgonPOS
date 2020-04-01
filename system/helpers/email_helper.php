@@ -349,75 +349,53 @@ if ( ! function_exists('send_email'))
 	 * @param	(bool)	$save_copy	default=true
 	 * @return	(bool)
 	 */
-	function send_email($to, $_subject, $_message, $name=NULL, $from, $cc = NULL, $temp_id = 'default', $user_id=NULL)
-	{
-		$save_copy = true;
+	function send_email($_recipients, $_subject, $_message, $name=NULL, $cc = NULL) {
 		
-		# create random strings 
-		load_helpers('string_helper');
-		$random_string = random_string('alnum', 45);
+		// send the email
+		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Phpmailer.php";
+		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Smtp.php";
 
-		# initialize the mail sender variables
-		$errors_found 	= true;
-		$_header_str 	= '';
-		global $_headers, $followin;
+		$mail = new Phpmailer();
+		$smtp = new Smtp();
+
+		$config = (Object) array(
+			'subject' => $subject,
+			'headers' => "From: (Evelyn POS - Analitica Innovare) <info@analiticainnovare.com> \r\n Content-type: text/html; charset=utf-8",
+			'Smtp' => true,
+			'SmtpHost' => 'mail.supremecluster.com',
+			'SmtpPort' => '465',
+			'SmtpUser' => 'apis@analiticainnovare.net',
+			'SmtpPass' => 'x24Ffuz7CK',
+			'SmtpSecure' => 'ssl'
+		);
+
+		$mail->isSMTP();
+		$mail->SMTPDebug = 0;
+		$mail->Host = $config->SmtpHost;
+		$mail->SMTPAuth = true;
+		$mail->Username = $config->SmtpUser;
+		$mail->Password = $config->SmtpPass;
+		$mail->SMTPSecure = $config->SmtpSecure;
+		$mail->Port = $config->SmtpPort;
+
+		// set the user from which the email is been sent
+		$mail->setFrom('no-reply@analiticainnovare.net', 'EvelynPOS - Analitica Innovare');
+
+		// loop through the list of recipients for this mail
+		$mail->addAddress($_recipients, $name);
 		
-		//clean the sender of the email
-		$from = clean_email(_str_to_array($from));
-		set_header('From', implode(', ', $from));
-		set_header('Reply-To', implode(', ', $from));
-		set_header('Return-Path', '<'.$from[0].'>');
+		// this is an html message
+		$mail->isHTML(true);
+
+		// set the subject and message
+		$mail->Subject = $_subject;
+		$mail->Body    = $_message;
 		
-		if(!empty($name)) {
-			$name = $name;
-		}
-		
-		//clean the receipient of the email
-		$to = clean_email(_str_to_array($to));
-		set_header('To', implode(', ', $to));
-		$_recipients = $to;
-		
-		// clean the persons whom we want to copy the message to.
-		$cc = clean_email(_str_to_array($cc));
-		set_header('Cc', implode(', ', $cc));
-		
-	
-		//build all the headers
-		_build_headers();
-		
-		//confirm that the receipients are set 
-		if (is_array($_recipients)) {
-			$_recipients = implode(', ', $_recipients);
-		}
-		
-		// clean the senders email address 
-		$from = clean_email($_headers['Return-Path']);
-		
-		
-		//clean the message to get a neater one 
-		$_message = message($_message);
-		
-		// submit the subject and message to the template function 
-		// this will call the default template to be used 
-		$_finalbody = template($temp_id, $_subject, $_message);
-		
-		//using foreach loop to get the headers
-		foreach ($_headers as $key => $val) {
-			$val = trim($val);
-			if ($val !== '') {
-				$_header_str .= $key.': '.$val."\r\n";
-			}
-		}
-		
-		$_finalbody = wordwrap($_finalbody, 70);
-		
-		if($_finalbody == 'Failed') {
-			return;
-		} else {
-			// send the email
-			@mail($_recipients, $_subject, $_finalbody, $_header_str, '-f '.$from);
+		// send the email message to the users
+		if($mail->send()) {
 			return true;
+		} else {
+ 			return false;
 		}
-		
 	}
 }

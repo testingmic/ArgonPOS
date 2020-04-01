@@ -119,6 +119,7 @@ class Orders extends Pos {
 
 			if($this->pos->commit()){
 				
+				$this->userLogs('pos', $computed->orderId, 'Recorded a new Sale at the POS');
 				$this->session->set_userdata("_oid_Generated", $computed->orderId);
 				$this->session->set_userdata("_uid_Generated", $register->customer);
 
@@ -151,8 +152,9 @@ class Orders extends Pos {
 				INSERT INTO email_list 
 				SET clientId = ?, branchId = ?,
 					template_type = ?, itemId = ?, recipients_list = ?,
-					requested_performed_by = ?
+					request_performed_by = ?
 			");
+			$this->userLogs('pos-invoice', $mail->itemId, 'Requested to send this receipt has mail.');
 			return $stmt->execute([
 				$this->session->clientId, $mail->branchId, $mail->template_type, 
 				$mail->itemId, json_encode($mail->recipients_list),

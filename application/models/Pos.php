@@ -26,7 +26,7 @@ class Pos {
 		$this->session = $session;
 		$this->ip_address = ip_address();
 
-		$this->ur = load_class('user_agent', 'libraries');
+		$this->ur = load_class('User_agent', 'libraries');
 		$this->platform = $this->ur->platform();
 		$this->browser = $this->ur->browser();
 
@@ -237,7 +237,7 @@ class Pos {
 	 * @return null
 	 *
 	 **/
-	public function userLogs($page, $itemId, $description) {
+	public function userLogs($page, $itemId = null, $description) {
 		
 		try {
 
@@ -245,11 +245,15 @@ class Pos {
 
 			$stmt = $this->pos->prepare("
 				INSERT INTO 
-					users_activity_history 
-				SET 
-					user_id = ?, page = ?, unique_id = ?, description = ?, user_agent = ?, clientId = ?
+					users_activity_logs 
+				SET
+					clientId = ?, branchId = ?, page = ?, itemId = ?, 
+					description = ?, userId = ?, user_agent = ?
 			");
-			$stmt->execute([$this->session->userId, $page, $itemId, $description, $ur_agent, $this->clientId]);
+			$stmt->execute([
+				$this->clientId, $this->session->branchId, $page, $itemId, 
+				$description, $this->session->userId, $ur_agent
+			]);
 
 		} catch(PDOException $e) {
 			return false;
@@ -348,17 +352,14 @@ class Pos {
 
 	}
 
-	public function quickSave($tableName, $columnName, $newData, $itemId) {
-		try {
-
-			$stmt = $this->pos->prepare("UPDATE $tableName SET $columnName = ? WHERE id = ?");
-			return $stmt->execute([$newData, $itemId]);
-
-		} catch(PDOException $e) {
-			return false;
-		}
-	}
-
+	/**
+	 * This method fetches rows and returns it as an object
+	 * @param string $table this is the table name
+	 * @param string $columns This is the columns that the user wants to fetch the value
+	 * @param string $where_clause this is the where clause to apply to the call
+	 * LEFT JOIN query can be added to this call by appending it after the table name query
+	 * @return Object 
+	 **/
 	public function getAllRows($table, $columns, $where_clause = 1) {
 		$response = false;
 		$stmt = $this->pos->prepare("SELECT {$columns} FROM {$table} WHERE {$where_clause}");
@@ -385,6 +386,11 @@ class Pos {
 		return $array;
 	}
 
+	/**
+	 * @method attachmentsTotalSize
+	 * @desc calculates the size of all attachements in the session tree
+	 * @return string size of files in actual form
+	 **/
 	public function attachmentsTotalSize() {
 
 		//: Process the email attachments
@@ -406,6 +412,12 @@ class Pos {
 		}
 	}
 
+	/**
+	 * This method fetches the last column value of any table
+	 * @param string $column This is the column that the user wants to fetch the value
+	 * @param string $table this is the table name
+	 * @return bool
+	 **/
 	public function maximumColumnId($column, $table) {
 		
 		try {
@@ -417,6 +429,12 @@ class Pos {
 		} catch(PDOException $e) { }
 	}
 
+	/**
+	 * This method fetches the last column value of any table
+	 * @param string $column This is the column that the user wants to fetch the value
+	 * @param string $table this is the table name
+	 * @return bool
+	 **/
 	public function lastColumnValue($column, $table) {
 		
 		try {
@@ -428,11 +446,23 @@ class Pos {
 		} catch(PDOException $e) { }
 	}
 
+	/**
+	 * This method generates a unique id by adding preceeding zeros to the number
+	 * @param string $requestId this is the id that has been submitted to be reformated.
+	 * @param string $number This is the number of zeros to add
+	 * @return bool
+	 **/
 	public function orderIdFormat($requestId, $number = 5) {
 		$preOrder = str_pad($requestId, $number, '0', STR_PAD_LEFT);
 		return $preOrder;
 	}
 
+	/**
+	 * This method inserts into a table 
+	 * @param string $table This is the table name to be updated
+	 * @param string $columnValues These are the columns to update
+	 * @return bool
+	 **/
 	public function addData($table, $columnValues) {
 		$response = false;
 		$stmt = $this->pos->prepare("INSERT INTO {$table} SET {$columnValues}");
@@ -442,6 +472,13 @@ class Pos {
 		return $response;
 	}
 
+	/**
+	 * This method updates a table 
+	 * @param string $table This is the table name to be updated
+	 * @param string $columnValues These are the columns to update
+	 * @param string $where_clause This is the clause to apply
+	 * @return bool
+	 **/
 	public function updateData($table, $columnValues, $where_clause) {
 		$response = false;
 		$stmt = $this->pos->prepare("UPDATE {$table} SET {$columnValues} WHERE {$where_clause}");
@@ -451,6 +488,12 @@ class Pos {
 		return $response;
 	}
 
+	/**
+	 * This method counts the number of rows in a particular table
+	 * @param string $table This is the table name
+	 * @param string $where_clause This is the clause to be used for the query
+	 * @return numeric Number of row count
+	 */
 	public function countRows($table, $where_clause = 1) {
 		$stmt = $this->pos->prepare("SELECT * FROM $table WHERE $where_clause");
 		$stmt->execute();
@@ -459,17 +502,22 @@ class Pos {
 
 	/**
      * A method to convert to decimal place
-     * 
      * @param Float $isValue Pass value to convert
-     * 
      * @return String
-     */
+     **/
     public function toDecimal($isValue, $decimal = 2, $delimiter = "") {
         $this->_total = number_format((float)$isValue, $decimal, '.', $delimiter);
 
         return $this->_total;
     }
 
+    /**
+     * @method percent Different
+     * @desc This method calculates the percentage difference between two values
+     * @param numeric or float $current_value The first value to be compared
+     * @param numeric or float $previous_value The value to compare with
+     * @return string
+     **/
     public function percentDifference($current_value, $previous_value) {
 
 		$percentage = 0;

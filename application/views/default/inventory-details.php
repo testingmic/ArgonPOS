@@ -23,7 +23,6 @@ $accessObject->userId = $session->userId;
 
 // continue
 $productsObj = load_class("Products", "controllers");
-$insights = load_class("Insights", "controllers");
 
 $accessChecker = $accessObject->hasAccess('inventory_branches', 'products');
 

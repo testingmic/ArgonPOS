@@ -112,6 +112,7 @@ class Customers extends Pos {
 					$this->session->branchId,
 					$this->clientId
 				])) {
+					$this->userLogs('customer', $customer_id, 'Added a new Customer');
 					return (object)[
 						$customer_id, 
 						$customerData->nc_firstname, 
