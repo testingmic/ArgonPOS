@@ -43,7 +43,7 @@ class Authenticate {
                         // unset session locked
                         $session->userSessionLocked = null;
 
-                        $user_agent = load_class('user_agent', 'libraries');
+                        $user_agent = load_class('User_agent', 'libraries');
 
                         #update the table
                         $ip = ip_address();

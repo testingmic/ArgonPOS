@@ -248,65 +248,6 @@ var populateRequestsList = (requestsData, tableName) => {
     hideLoader();
 }
 
-function populateProductsList(productsList) {
-    $(`table[class~="productsList"]`).dataTable().fnDestroy();
-    $(`table[class~="productsList"]`).dataTable({
-        "aaData": productsList,
-        "iDisplayLength": 10,
-        "buttons": ["copy", "print","csvHtml5"],
-        "lengthChange": !1,
-        "dom": "Bfrtip",
-        "columns": [
-           {"data": 'row_id'},
-           {"data": 'product_code'},
-           {"data": 'product_title'},
-           {"data": 'product_price'},
-           {"data": 'quantity'},
-           {"data": 'overall'},
-           {"data": 'action'}
-        ]
-    });
-
-    inputController();
-}
-
-async function loadProducts() {
-
-    await doOnlineCheck().then((itResp) => {
-        if(itResp == 1) {
-            noInternet = false;
-            $(`div[class="connection"]`).css('display','none');
-        } else {
-            noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-        }
-    }).catch((err) => {
-        noInternet = true;
-        $(`div[class="connection"]`).css('display','block');
-    });
-    
-    if(noInternet) {
-
-        await listIndexDBRecords(`request_products`).then((res) => {
-            populateProductsList(res);
-        });
-
-        return false;
-    }
-
-    $.ajax({
-        method: "POST",
-        url: `${baseUrl}doprocess_sales/loadProducts`,
-        data: { loadProducts: "true" },
-        dataType: "JSON",
-        success: function(resp) {                        
-            populateProductsList(resp);
-        }, complete: function(data) {
-            
-        }
-    });
-}
-
 var discountCalculator = () => {
 
     $(`input[name="discount_type"]`).on('change', function() {
@@ -347,9 +288,60 @@ var discountCalculator = () => {
     });
 }
 
-function loadSessionProducts(sessionName) {
-            
-    
+if($(`table[class~="customersList"]`).length) {
+
+    $(`div[class="main-content"]`).on('click', `a[class~="edit-customer"]`, function(e) {
+        let userId = $(this).data('value');
+            userData = $(`a[data-id='${userId}']`).data('info');
+
+        $(`div[id="newCustomerModal"]`).modal('show');
+        $(`select[name="nc_title"]`).val(userData.title).change();
+        $(`input[name="nc_firstname"]`).val(userData.firstname);
+        $(`input[name="nc_lastname"]`).val(userData.lastname);
+        $(`input[name="nc_email"]`).val(userData.email);
+        $(`input[name="nc_contact"]`).val(userData.phone_1);
+        $(`input[name="residence"]`).val(userData.residence);
+        $(`input[name="customer_id"]`).val(userId);
+    });
+
+    var populateCustomersList = (customerData) => {
+        hideLoader();
+        $(`table[class~="customersList"]`).dataTable().fnDestroy();
+        $(`table[class~="customersList"]`).dataTable({
+            "aaData": customerData,
+            "iDisplayLength": 10,
+            "buttons": ["copy", "print","csvHtml5"],
+            "lengthChange": !1,
+            "dom": "Bfrtip",
+            "columns": [
+               {"data": 'row_id'},
+               {"data": 'fullname'},
+               {"data": 'email'},
+               {"data": 'phone_1'},
+               {"data": 'date_log'},
+               {"data": 'action'}
+            ]
+        });
+
+    }
+
+    function listCustomers() {
+        $.ajax({
+            method: "POST",
+            url: `${baseUrl}ajax/customerManagement/listCustomers`,
+            data: { listCustomers: true},
+            dataType: "JSON",
+            success: function(resp) {
+                populateCustomersList(resp.result);
+            }, complete: function(data) {
+                hideLoader();
+            }, error: function(err) {
+                hideLoader();
+            }
+        });
+    }
+
+    listCustomers();
 }
 
 async function listRequests(requestType, tableName) {
@@ -398,6 +390,7 @@ async function listRequests(requestType, tableName) {
 
 function removeItem(sessionName) {
     $(`div[class="main-content"]`).on('click', `span[class~="remove-item"]`, function(e) {
+
         var productId = $(this).attr('data-value');
         var thisSum = $(this).attr('data-sum');
         $.ajax({
@@ -511,6 +504,9 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
         $(`div[class~="clearCache"]`).modal('show');
 
         $(`button[class~="confirm-clear-cache"]`).on('click', function(e) {
+            caches.delete('argonPOS-Static-v1').then((res) => {
+                window.location.href = baseUrl;
+            });
         });
     }
 
@@ -520,11 +516,11 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
         data: {doLogout: true, toPerform: toPerform},
         dataType: "json",
         success: function(e) {
-            if(e.status == 200) {
-                window.location.href = href;
+            if(e == 200) {
+                window.location.href = baseUrl;
             }
         }
-    })
+    });
 });
 
 function stripHtml(html) {
@@ -1039,9 +1035,9 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                 $(`div[class="form-content-loader"]`).css("display","none");
             },
             complete: function(data) {
+                $(`div[class~="delete-modal"]`).modal('hide');
                 setTimeout(function() {
                     $(".form-result").empty();
-                    $(`div[class~="delete-modal"]`).modal('hide');
                 }, 1200);
                 $(`div[class="form-content-loader"]`).css("display","none");
                 $(".submit-form").prop("disabled", false);
@@ -1746,6 +1742,37 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
         thisEmail.prop('disabled', false);
         thisBtn.prop('disabled', false).html(`Send`);
     }
+});
+
+$("#updateCustomerForm").on("submit", async function(event) {
+    
+    event.preventDefault();
+    let formData = $(this).serialize();
+
+    $.post(baseUrl+"ajax/customerManagement/updateCustomerDetails", formData, (res) => {
+        if(res.status == 200){
+            Toast.fire({
+                type: 'success',
+                title: "Customer data Successfully updated"
+            });
+            listCustomers();
+            $("#updateCustomerForm").parents(".modal").modal("hide");
+            $("#updateCustomerForm").trigger("reset");
+        } else {
+            Toast.fire({
+                type: 'error',
+                title: res.message
+            });                 
+        }
+        $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
+    })
+    .catch((err) => {
+        Toast.fire({
+            type: 'error',
+            title: "Error Processing Request"
+        })      
+        $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
+    })
 });
 
 $("#newCustomer_form").on("submit", async function(event) {

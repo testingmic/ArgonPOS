@@ -1396,7 +1396,6 @@ $(function() {
                             ]
                         });
 
-                        // getSalesDetails();
 
                     }
 
@@ -1428,8 +1427,12 @@ $(function() {
                             populateBranchData(Object.values(branchInsight));
                         }).then((resp) => {
                             getIndexRecord('reports', "sales_attendant_performance").then((attendantInsight) => {
-
                                 populateSalesTeamData(Object.values(attendantInsight.list), Object.values(attendantInsight.names), Object.values(attendantInsight.sales))
+                            });
+                        }).then((res) => {
+                            getIndexRecord('reports', "products_performance").then((productsInsight) => {
+                                delete productsInsight.reports_id;
+                                populateProductsPerformance(Object.values(productsInsight));
                             });
                         });
 

@@ -127,6 +127,35 @@ class Customers extends Pos {
 		} catch(PDOException $e) { return false; }
 	}
 
+	public function quickUpdate(stdClass $customerData) {
+
+		try {
+
+			if(!empty($customerData)) {
+
+				// insert user organization details first				
+				$stmt = $this->db->prepare("UPDATE customers SET residence = ?, firstname=?, lastname=?, phone_1=?, title=?, email=? WHERE branchId = ? AND clientId = ? AND customer_id = ?");
+				
+				if($stmt->execute([
+					$customerData->residence, 
+					$customerData->nc_firstname, 
+					$customerData->nc_lastname, 
+					$customerData->nc_contact,
+					$customerData->nc_title, 
+					$customerData->nc_email,
+					$this->session->branchId,
+					$this->clientId,
+					$customerData->customer_id
+				])) {
+					$this->userLogs('customer', $customerData->customer_id, 'Updated the customer details');
+					return true;
+				}
+				return false;
+			}
+
+		} catch(PDOException $e) { return false; }
+	}
+
 	//
 	public function addCustomer(stdClass $postData) {
 

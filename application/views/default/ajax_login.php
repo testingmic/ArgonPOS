@@ -45,7 +45,7 @@ if(isset($_POST["username"], $_POST["password"]) && confirm_url_id(1, "doLogin")
 			$status = 200;
 			$data = "<div class='alert alert-success'>Login successful</div>";
 		} else {
-			$data = $auth->response;
+			$data = "<div class='alert alert-danger'>Invalid Username/Password</div>";
 		}
 
 	}

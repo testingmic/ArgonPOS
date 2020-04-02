@@ -1586,7 +1586,7 @@ if($admin_user->logged_InControlled()) {
 	elseif(isset($_POST["fetchCustomersOptionsList"]) && confirm_url_id (1, "fetchCustomersOptionsList")) {
 		// fetch the data
 		$customersClass = load_class("Customers", "controllers");
-		$customers = $customersClass->fetch("id, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, clientId, branchId, phone_1, phone_2, email, residence", "AND customer_id != 'WalkIn'");
+		$customers = $customersClass->fetch("id, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, branchId, phone_1, phone_2, email, residence", "AND customer_id != 'WalkIn'");
 
 		// fetch the data
 		$customers_list = [];
@@ -1595,8 +1595,6 @@ if($admin_user->logged_InControlled()) {
 			"status" => 200,
 			"result" => $customers
 		];
-
-		// print json_encode($response);
 	}
 
 	// fetch customers list for json
@@ -1661,6 +1659,8 @@ if($admin_user->logged_InControlled()) {
 			// validate the user data
 			if(empty(trim($customer->nc_firstname))){
 				$response->message = "Please enter customer's name";
+			} elseif(!empty($customer->nc_email) && !filter_var($customer->nc_email, FILTER_VALIDATE_EMAIL)) {
+				$response->message = "Please enter a valid email address";
 			}
 			else{
 				$newCustomer = $customersObj->quickAdd($customer);
@@ -1760,7 +1760,7 @@ if($admin_user->logged_InControlled()) {
 			if ($check != false && $check[0]->orderExists == 1) {
 
 				// Call Teller Processor
-				$process = $theTeller->initiatePayment($postData->orderTotal, "emmallob14@gmail.com", $postData->orderId);
+				$process = $theTeller->initiatePayment($postData->orderTotal, $postData->userEmail, $postData->orderId);
 
 	            // Check Response Code & Execute
 	            if (isset($process['code']) && ($process['code'] == '200')) {
@@ -1790,14 +1790,19 @@ if($admin_user->logged_InControlled()) {
 	            }
 
 			}
+
+			$response = [
+				"status" => $status,
+				"message" => $message
+			];
 		
 		}
 
 		//: check payment status
-		elseif (isset($_POST['checkPaymentStatus']) && confirm_url_id(1, "checkPaymentStatus")) {
+		elseif (isset($_POST['checkPaymentStatus']) && confirm_url_id(2, "checkPaymentStatus")) {
 			// create new object
 			$theTeller = load_class('Payswitch', 'controllers');
-
+			$status = false;
 			// check the session has been set
 			if ($session->tellerPaymentStatus == true) {
 				$transaction_id = xss_clean($session->tellerPaymentTransID);
@@ -1823,14 +1828,20 @@ if($admin_user->logged_InControlled()) {
 				}
 			}
 
+			$response = [
+				"status" => $status,
+				"result" => ""
+			];
+			
+
 		}
 
 		//: cancel payment
-		elseif(isset($_POST['cancelPayment']) && confirm_url_id(1, "cancelPayment")) {
+		elseif(isset($_POST['cancelPayment']) && confirm_url_id(2, "cancelPayment")) {
 
 			// assign variable to the transaction id
 			$transaction_id = xss_clean($session->tellerPaymentTransID);
-
+			$status = false;
 			// update the sales table
 			$query = $posClass->updateData(
 				"sales",
@@ -1847,8 +1858,12 @@ if($admin_user->logged_InControlled()) {
 				$session->unset_userdata("tellerUrl");
 			}
 
-		}
+			$response = [
+				"status" => $status,
+				"result" => ""
+			];
 
+		}
 
 	}
 
@@ -1895,7 +1910,7 @@ if($admin_user->logged_InControlled()) {
 	        // check if the user has access to delete this item
 	        if($accessObject->hasAccess('delete', strtolower($eachRequest->request_type.'s'))) {
 	        	// print the delete button
-	        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('doprocess_sales/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
+	        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('ajax/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
 	        }
 
 	        $eachRequest->action .= "</div>";
@@ -3381,6 +3396,90 @@ if($admin_user->logged_InControlled()) {
 			"status"	=> $status
 		];
 	}
+
+	//: customers management
+	elseif (confirm_url_id(1, "customerManagement")) {
+		
+		//: begin the queries
+		if(isset($_POST["listCustomers"]) && confirm_url_id(2, "listCustomers")) {
+			//: query for the list of all customers
+			$customersClass = load_class("Customers", "controllers");
+			$customersList = $customersClass->fetch("id, title, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, branchId, phone_1, phone_2, email, residence", "AND customer_id != 'WalkIn'");
+
+			// fetch the data
+			$customers = [];
+			$row_id = 0;
+			// loop through the list
+			foreach($customersList as $eachCustomer) {
+				$row_id++;
+				// set the action button
+				$eachCustomer->row_id = $row_id;
+				$eachCustomer->action = "<div align=\"center\">";
+		        $eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a> &nbsp;";
+		        $eachCustomer->action .= "</div>";
+
+		        $eachCustomer->fullname = "<a data-id=\"{$eachCustomer->customer_id}\" data-info='".json_encode($eachCustomer)."'>{$eachCustomer->fullname}</a>";
+				//append to the list
+				$customers[] = $eachCustomer;
+			}
+
+			$response = [
+				"status" => 200,
+				"result" => $customers
+			];
+		}
+
+		//: update the customer information
+		elseif(isset($_POST["nc_firstname"], $_POST["customer_id"]) && confirm_url_id(2, "updateCustomerDetails")) {
+			//: update the information
+			$postData = (Object) array_map('xss_clean', $_POST);
+
+			// create a new object
+			$customersObj = load_class("Customers", "controllers");
+
+			// validate the user data
+			if(empty(trim($postData->nc_firstname))){
+				$response->message = "Please enter customer's name";
+			} elseif(!empty($postData->nc_email) && !filter_var($postData->nc_email, FILTER_VALIDATE_EMAIL)) {
+				$response->message = "Please enter a valid email address";
+			} elseif(!empty($postData->nc_contact) && !preg_match("/^[0-9+]+$/", $postData->nc_contact)) {
+				$response->message = "Please enter a valid contact number";
+			}
+			else{
+				$updateCustomer = $customersObj->quickUpdate($postData);
+				if(!empty($updateCustomer)){
+					$response->status = 200;
+					$response->message = "Customer data Successfully updated";
+				}
+			}
+		}
+
+	}
+
+	//: delete data
+	elseif(isset($_POST['itemToDelete'], $_POST['itemId']) and confirm_url_id(1, 'deleteData')) {
+		// confirm if an id was parsed
+		$itemId = (isset($_POST['itemId'])) ? xss_clean($_POST["itemId"]) : null;
+		
+		$process = $pos->prepare("UPDATE requests SET deleted = ? WHERE request_id = ?");
+		$process->execute([1, $itemId]);
+
+		if($process) {
+			$status = true;
+			$message = 'Record was successfully deleted.';
+		}
+
+		$response = array(
+			"status" => $status,
+			"message" => $message,
+			"request" => 'deleteItem',
+			"itemId" => $itemId,
+			"thisRequest" => xss_clean($_POST['itemToDelete']),
+			"tableName" => xss_clean($_POST['itemToDelete']).'sList'
+		);
+		
+	}
+
 }
 
 echo json_encode($response);

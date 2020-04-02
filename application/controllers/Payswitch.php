@@ -29,7 +29,7 @@ class Payswitch extends Pos
      * 
      * @return Boolean
      */
-    public function initiatePayment($isAmount, $isEmail, $isOrderNumber)
+    public function initiatePayment($isAmount, $isEmail = null, $isOrderNumber)
     {
         $this->_status = '';
 

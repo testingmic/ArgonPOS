@@ -300,6 +300,9 @@ $(`div[class~="request-form"] button[class~="save-request"]`).on('click', functi
 		    		});
 		    		$(`div[class="form-content-loader"]`).css("display","none");
 		    	} else {
+
+		    		$(`div[class="form-content-loader"]`).css("display","none");
+		    		
 		    		Toast({
 		    			type: "success",
 		    			title: resp.result.message

@@ -127,7 +127,7 @@ function form_loader() {
             </li>
             <li class="nav-item">
               <a class="nav-link <?= (in_array($SITEURL[0], ['point-of-sale'])) ? "active" : null; ?>" href="<?= $baseUrl ?>point-of-sale">
-                <i class="ni ni-ui-04 text-info"></i>
+                <i class="ni ni-ui-04 text-success"></i>
                 <span class="nav-link-text">Point of Sale</span>
               </a>
             </li>
@@ -153,6 +153,12 @@ function form_loader() {
                   <?php } ?>
                 </ul>
               </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['customers'])) ? "active" : null; ?>" href="<?= $baseUrl ?>customers">
+                <i class="fa fa-users text-purple"></i>
+                <span class="nav-link-text">Customers</span>
+              </a>
             </li>
             <li class="nav-item">
               <a class="nav-link <?= (in_array($SITEURL[0], ['inventory', 'product'])) ? "active" : null; ?>" href="<?= $baseUrl ?>inventory">
@@ -219,8 +225,10 @@ function form_loader() {
     <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <!-- Search form -->
+          
           <!-- Navbar links -->
-          <ul class="navbar-navalign-items-center ml-md-auto">
+          <ul class="navbar-nav align-items-center ml-md-auto">
             <li class="nav-item d-xl-none">
               <!-- Sidenav toggler -->
               <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin" data-target="#sidenav-main">
@@ -236,8 +244,9 @@ function form_loader() {
                 <i class="ni ni-zoom-split-in"></i>
               </a>
             </li>
+            
             <li class="nav-item dropdown">
-              <a class="nav-link text-white" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="ni ni-ungroup"></i>
               </a>
               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-dark bg-default dropdown-menu-right">

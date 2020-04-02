@@ -31,6 +31,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'branches'])) { ?>
   <div class="modal fade delete-modal" tabindex="-1" id="deleteData" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">
@@ -57,6 +58,32 @@
         </div>
     </div>
   </div>
+  <?php } ?>
+  
+  <?php if(in_array($SITEURL[0], ['users'])) { ?>
+  <div class="modal fade deleteModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0" id="myLargeModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                  <div class="card mb-0 p-3">
+                    <p class="show-delete-msg"></p>
+                    <p class="show-delete-body">Are You Sure You Want To Delete This?</p>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success confirm-delete-btn" type="button">
+                        <i class="fa fa-check"></i> Yes Confirm
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <?php } ?>
   <!-- Argon Scripts -->
 <!-- Core -->
 <script src="<?= $baseUrl ?>assets/vendor/jquery/dist/jquery.min.js"></script>
@@ -97,4 +124,6 @@
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
 <script src="<?= $baseUrl ?>assets/js/indexdb.js"></script>
 <script src="<?= $baseUrl ?>assets/js/script.js"></script>
+<?php if(!in_array($SITEURL[0], ["point-of-sale", "requests", "customers", "branches", "users", "inventory"])) { ?>
 <script src="<?= $baseUrl ?>assets/js/reports.js"></script>
+<?php } ?>

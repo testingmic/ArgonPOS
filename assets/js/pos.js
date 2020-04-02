@@ -97,7 +97,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 
 			if(newIndex == productsIndex) $("[data-step-action='next']").prop("disabled", false);
   			$(".newCustomer_trigger").toggle(newIndex == customerIndex);
-  			// $(`button[class~="discardSale_trigger"]`).toggle(newIndex != completeIndex);
+  			
   			if(newIndex != customerIndex) {
   				$(`button[class~="discardSale_trigger"]`).css('display', 'block');
   			} else {
@@ -143,7 +143,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		        			$(`span[class="generated_order"]`).html(resp.orderId);
 		  					Toast.fire({
 		  						type: 'success',
-		  						title: "Payment Recorded"
+		  						title: "Payment Successfully Recorded"
 		  					});
 		  					$(".cash-process-loader").removeClass("d-flex");
 
@@ -159,7 +159,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 	  					$(`span[class="generated_order"]`).html(res.data._oid);
 	  					Toast.fire({
 	  						type: 'success',
-	  						title: "Payment Recorded"
+	  						title: "Payment Successfully Recorded"
 	  					});
 	  					fetchPOSProductsList();
 	  					fetchPOSCustomersList();
@@ -366,9 +366,9 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		let firstTab = $(".register-form ul[role='tablist'] li.first");
 		regForm.trigger("reset");
 		firstTab.removeClass("disabled")
-	$("a", firstTab).trigger("click");
-	$(".receipt-table-body").html('');
-	$(`input[name="discount_amount"]`).val('');
+		$("a", firstTab).trigger("click");
+		$(".receipt-table-body").html('');
+		$(`input[name="discount_amount"]`).val('');
 		$(".selected-customer-name").html("No Customer Selected");
 		$(`button[class~="discardSale_trigger"]`).css('display', 'none');
 		$(".products-table-body tr:not(.empty-message-row)").remove();
@@ -583,9 +583,10 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 		await saveRegister().then(function(res) {
   		if (res.status == "success") {
   			$(`span[class="generated_order"]`).html(res.data._oid);
+  			var userEmail = $("input[id='receipt-email']").val();
 	  		$.ajax({
 	  			url: baseUrl + "ajax/pointOfSaleProcessor/processMyPayment",
-	  			data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal },
+	  			data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
 	  			dataType: "json",
 	  			type: "POST",
 	  			cache: false,

@@ -55,7 +55,7 @@ require_once "headtags.php";
             }
         </style>
         <div class="row justify-content-center reports-summary">
-            <div class="col-md-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="total-sales">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -69,7 +69,7 @@ require_once "headtags.php";
                     </div><!--end card-body bg-default--> 
                 </div><!--end card--> 
             </div> <!--end col-->
-            <div class="col-md-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="average-sales">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -83,7 +83,7 @@ require_once "headtags.php";
                     </div><!--end card-body--> 
                 </div><!--end card--> 
             </div> <!--end col-->
-            <div class="col-md-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="net-profit-margin">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -97,7 +97,7 @@ require_once "headtags.php";
                     </div><!--end card-body--> 
                 </div><!--end card--> 
             </div> <!--end col-->
-            <div class="col-md-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="break-even-point">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -154,7 +154,7 @@ require_once "headtags.php";
               </div>
             </div>
 
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="order-discount">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -168,7 +168,7 @@ require_once "headtags.php";
                     </div><!--end card-body--> 
                 </div><!--end card--> 
             </div> <!--end col-->
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
               <div class="card report-card" data-report="average-unit-per-transaction">
                   <div class="card-body bg-default">
                       <div class="float-right">
@@ -182,7 +182,7 @@ require_once "headtags.php";
                   </div><!--end card-body--> 
               </div><!--end card--> 
             </div> <!--end col-->
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="sales-per-employee">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -197,7 +197,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
             
-            <div class="col-lg-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="highest-sales">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -212,7 +212,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
 
-            <div class="col-lg-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="gross-profit">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -227,7 +227,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
 
-            <div class="col-lg-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="gross-profit-margin">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -242,7 +242,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
             
-            <div class="col-lg-3">
+            <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="net-profit">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -309,7 +309,7 @@ require_once "headtags.php";
               </div><!--end card-->
             </div><!--end col-->
             
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="customers-retention-rate">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -321,7 +321,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
             
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="sell-through-percentage">
                     <div class="card-body bg-default" style="padding-left: 10px; padding-right: 10px;">
                         <div class="float-right">
@@ -333,7 +333,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
 
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="sales-per-category">
                     <div class="card-body bg-default" style="padding-left: 10px; padding-right: 10px;">
                         <div class="float-right">
@@ -345,7 +345,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
 
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="stock-turnover-rate">
                     <div class="card-body bg-default" style="padding-left: 10px; padding-right: 10px;">
                         <div class="float-right">
@@ -357,7 +357,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
 
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="gross-margin-return-investment">
                     <div class="card-body bg-default">
                         <div class="float-right">
@@ -369,7 +369,7 @@ require_once "headtags.php";
                 </div><!--end card--> 
             </div> <!--end col-->
 
-            <div class="col-lg-4">
+            <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="year-over-year-growth">
                     <div class="card-body bg-default">
                         <div class="float-right">

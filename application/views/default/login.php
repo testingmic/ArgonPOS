@@ -79,7 +79,7 @@ if($admin_user->logged_InControlled()) {
                   <button type="submit" class="btn btn-primary my-4">Sign in</button>
                 </div>
               </form>
-              <div class="form-result"></div>
+              <div class="form-result text-center"></div>
             </div>
           </div>
           <div class="row mt-3">
