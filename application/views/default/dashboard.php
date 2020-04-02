@@ -214,7 +214,7 @@ global $posClass, $baseUrl;
   
   
   <div class="row">
-    <div class="col-xl-12">
+    <div class="col-xl-12 col-md-12">
       <div class="card">
         <div class="card-header border-0">
           <div class="row align-items-center">

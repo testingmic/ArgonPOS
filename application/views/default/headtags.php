@@ -186,11 +186,11 @@ function form_loader() {
               </a>
             </li>            
             <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['users-login-history', 'users', 'users-login-history', 'outlets', 'settings'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'settings'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
                 <i class="ni ni-map-big text-primary"></i>
                 <span class="nav-link-text">Setup</span>
               </a>
-              <div class="collapse <?= (in_array($SITEURL[0], ['users', 'users-login-history', 'users-activity-logs', 'outlets', 'settings'])) ? "show" : null; ?>" id="navbar-tables">
+              <div class="collapse <?= (in_array($SITEURL[0], ['users','outlets', 'settings'])) ? "show" : null; ?>" id="navbar-tables">
                 <ul class="nav nav-sm flex-column">
                   <?php if($accessObject->hasAccess('view', 'users')) { ?>
                   <li class="nav-item">
@@ -199,11 +199,6 @@ function form_loader() {
                     </a>
                   </li>
                   <?php } ?>
-                  <li class="nav-item">
-                    <a href="<?= $baseUrl ?>users-login-history" class="nav-link">
-                      <i class="fa fa-list text-primary"></i>Login History
-                    </a>
-                  </li>
                   <?php if($accessObject->hasAccess('view', 'branches')) { ?>
                   <li class="nav-item">
                     <a class="nav-link" href="<?= $baseUrl ?>outlets">
@@ -329,11 +324,11 @@ function form_loader() {
                   <span>Settings</span>
                 </a>
                 <?php } ?>
-                <!-- <a href="<?= $baseUrl ?>users-activity-logs" class="dropdown-item">
+                <a href="<?= $baseUrl ?>users-login-history" class="dropdown-item">
                   <i class="ni ni-calendar-grid-58"></i>
-                  <span>Activity</span>
+                  <span>Login History</span>
                 </a>
-                <a href="<?= $baseUrl ?>support" class="dropdown-item">
+                <!-- <a href="<?= $baseUrl ?>support" class="dropdown-item">
                   <i class="ni ni-support-16"></i>
                   <span>Support</span>
                 </a> -->
