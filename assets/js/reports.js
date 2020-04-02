@@ -764,8 +764,10 @@ $(function() {
             },
             error: function(err) {
                 console.log(err);
+                hideLoader();
             }, complete: function(data) {
                 setTimeout(function() {
+                    hideLoader();
                     $(`div[class~="apexcharts-legend"]`).removeClass('center hidden');
                 }, 1000);
             }

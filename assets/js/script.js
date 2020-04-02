@@ -606,7 +606,7 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
         data: {doLogout: true, toPerform: toPerform},
         dataType: "json",
         success: function(e) {
-            if(e == 200) {
+            if(e.status == 200) {
                 window.location.href = baseUrl;
             }
         }

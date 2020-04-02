@@ -44,7 +44,6 @@ require_once "headtags.php";
       <div class="col-lg-12 col-sm-12">
           
 
-        <?php if($accessObject->hasAccess('view', 'reports')) { ?>
         <style>
             .reports-summary .card p, .reports-details .card p {
                 font-size: 12px;
@@ -115,12 +114,7 @@ require_once "headtags.php";
 
         <div class="row reports-details">
 
-            <?php if($accessObject->hasAccess('sales-overview','reports')) { ?>
-            <?php if($accessObject->hasAccess('sales-team-performance', 'reports')) { ?>
             <div class="col-lg-8 sales-overview-container">
-            <?php } else { ?>
-            <div class="col-lg-12 sales-overview-container">
-            <?php } ?>
                 <div class="card">
 
                     <div class="card-body"> 
@@ -142,7 +136,6 @@ require_once "headtags.php";
                     
                 </div><!--end card-->
             </div><!--end col-->
-            <?php } ?>
             <div class="col-lg-4 offline">
               <div class="card">
                 <div class="card-body sales-payment-options">
@@ -383,7 +376,6 @@ require_once "headtags.php";
 
             <div class="clearfix"></div>
 
-            <?php if($accessObject->hasAccess('sales-team-performance', 'reports')) { ?>
             <div class="col-lg-12 sales-attendant-performance <?= ($clientData->reports_sales_attendant != "sales-attendant-performance") ? "hidden" : null ?> offline">
                 <div class="card">
                   <div class="card-body">
@@ -392,7 +384,7 @@ require_once "headtags.php";
                           <h4 class="header-title mt-0">Top Sales People</h4>  
                         </div>
                       </div>
-                      <div class="mt-4 table-responsive" style="min-height: 385px">
+                      <div class="mt-4 table-responsive">
                           <table width="100%" class="table mb-0 attendant-performance">
                               <thead class="thead-light">
                               <tr>
@@ -426,8 +418,7 @@ require_once "headtags.php";
                   </div>
               </div>
             </div>
-            <?php } ?>
-
+            
             <div class="col-lg-12 offline">
               <div class="card">
                   <div class="card-body">
@@ -488,7 +479,6 @@ require_once "headtags.php";
               </div>
             </div>
 
-            <?php if($accessObject->hasAccess('branch-performance','reports')) { ?>
             <div class="col-lg-12 branch-performance offline">
                 <div class="card">
                     <div class="card-body table-responsive">
@@ -508,8 +498,7 @@ require_once "headtags.php";
                     </div>
                 </div>
             </div>
-            <?php } ?>
-
+            
             <div class="col-lg-12 offline">
                 
               <div class="card">
@@ -540,8 +529,6 @@ require_once "headtags.php";
           </div> 
 
 
-        <?php } ?>
-
       </div>
     
   </div><!--end row-->
@@ -565,7 +552,6 @@ require_once "headtags.php";
     $(`table[class~="salesLists"]`).dataTable();
     $(`table[class~="inventoryLists"]`).dataTable();
     $(`table[class~="thresholdLists"]`).dataTable();
-
     await doOnlineCheck().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;

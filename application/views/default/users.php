@@ -1,11 +1,20 @@
 <?php
 $PAGETITLE = "User Management";
 
+// ensure that the user is logged in
+if(!$admin_user->logged_InControlled()) {
+  include_once "login.php";
+  exit;
+}
+
 //: check online status
 if(isset($_POST["onlineCheck"]) && confirm_url_id(1, 'onlineCheck')) {
     print 1;
     exit;
 }
+
+// run this page if the user has the required permissions
+if($accessObject->hasAccess('view', 'users')) {
 
 // include the important files
 require_once "headtags.php";
@@ -188,3 +197,8 @@ require_once "headtags.php";
 </script>
 </body>
 </html>
+<?php 
+} else {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+}
+?>

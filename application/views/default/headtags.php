@@ -128,13 +128,13 @@ function form_loader() {
             <li class="nav-item">
               <a class="nav-link <?= (in_array($SITEURL[0], ['point-of-sale'])) ? "active" : null; ?>" href="<?= $baseUrl ?>point-of-sale">
                 <i class="ni ni-ui-04 text-success"></i>
-                <span class="nav-link-text">Point of Sale</span>
+                <span class="nav-link-text">Sales Register</span>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link <?= (in_array($SITEURL[0], ['sales', 'quotes', 'orders'])) ? "active" : null; ?>" href="#navbar-forms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-forms">
                 <i class="ni ni-single-copy-04 text-pink"></i>
-                <span class="nav-link-text">Sales</span>
+                <span class="nav-link-text">History</span>
               </a>
               <div class="collapse <?= (in_array($SITEURL[0], ['sales', 'quotes', 'orders'])) ? "show" : null; ?>" id="navbar-forms">
                 <ul class="nav nav-sm flex-column">
@@ -173,9 +173,6 @@ function form_loader() {
                   <li class="nav-item">
                     <a href="<?= $baseUrl ?>product-types" class="nav-link">Product Types</a>
                   </li>
-                  <li class="nav-item">
-                    <a href="<?= $baseUrl ?>product-brands" class="nav-link">Product Brands</a>
-                  </li>
                 </ul>
               </div>
             </li>
@@ -184,7 +181,8 @@ function form_loader() {
                 <i class="ni ni-chart-pie-35 text-info"></i>
                 <span class="nav-link-text">Analytics</span>
               </a>
-            </li>            
+            </li>
+            <?php if($accessObject->hasAccess('view', 'settings')) { ?>    
             <li class="nav-item">
               <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'users', 'settings', 'import'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
                 <i class="ni ni-map-big text-primary"></i>
@@ -224,7 +222,7 @@ function form_loader() {
                 </ul>
               </div>
             </li>
-            
+            <?php } ?>            
           </ul>
           <!-- Divider -->
           <hr class="my-3">

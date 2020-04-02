@@ -15,6 +15,12 @@ if(!confirm_url_id(1) || (isset($SITEURL[1]) && !in_array($SITEURL[1], $accepted
     exit;
 }
 
+// ensure the user has the required permissions
+if(!$accessObject->hasAccess('view', 'quotes') && !$accessObject->hasAccess('view', 'orders')) {
+    show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+    exit;
+}
+
 // set the page title
 $PAGETITLE = ucfirst($SITEURL[1])."s";
 

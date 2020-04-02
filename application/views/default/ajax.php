@@ -1316,6 +1316,12 @@ if($admin_user->logged_InControlled()) {
 
 				} else {
 
+					// access control
+					$userLimit = "";
+					if(!$accessObject->hasAccess('monitoring', 'branches')) {
+						$userLimit = "AND a.user_id='{$session->userId}'";
+					}
+
 					// begin the query
 					$salesAttendants = $posClass->getAllRows(
 						"users a", 
@@ -1337,7 +1343,7 @@ if($admin_user->logged_InControlled()) {
 								(DATE(b.order_date) >= '{$dateFrom}' && DATE(b.order_date) <= '{$dateTo}') 
 								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner}
 						) AS orders",
-						"a.status='1' {$branchAccess} {$clientAccess} ORDER BY amnt DESC LIMIT 10"
+						"a.status='1' {$userLimit} {$branchAccess} {$clientAccess} ORDER BY amnt DESC LIMIT 10"
 					);
 					
 					$personnelNames = array();
@@ -3501,7 +3507,20 @@ if($admin_user->logged_InControlled()) {
             	$i++;
             	
             	$eachCategory->row = $i;
-            	$eachCategory->action = "<a data-content='".json_encode($eachCategory)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-category\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-edit\"></i></a> <a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('ajax/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
+            	$eachCategory->action = "";
+
+            	if($accessObject->hasAccess('category_edit', 'products')) {
+
+            		$eachCategory->action .= "<a data-content='".json_encode($eachCategory)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-category\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-edit\"></i></a>";
+            	}
+            	
+            	if($accessObject->hasAccess('category_delete', 'products')) {
+            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('ajax/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
+            	}
+
+            	if(empty($eachCategory->action)) {
+            		$eachCategory->action = "---";
+            	}
 
                 $categories[] = $eachCategory;
            	}

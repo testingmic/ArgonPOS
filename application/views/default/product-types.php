@@ -3,6 +3,8 @@ $PAGETITLE = "Product Types";
 
 // include the important files
 require_once "headtags.php";
+
+global $accessObject;
 ?>
 <!-- Page Content-->
 <!-- Header -->
@@ -19,9 +21,11 @@ require_once "headtags.php";
             </ol>
           </nav>
         </div>
+        <?php if($accessObject->hasAccess('category_add', 'products')) { ?>
         <div class="col-lg-6 col-5 text-right">
           <a href="javascript:void(0)" class="btn btn-sm add-category btn-neutral"><i class="fa fa-plus"></i> New Product Type</a>
         </div>
+        <?php } ?>
       </div>
     </div>
   </div>
@@ -52,6 +56,7 @@ require_once "headtags.php";
       </div>     
 
   </div><!--end row-->
+<?php if($accessObject->hasAccess('category_add', 'products') || $accessObject->hasAccess('category_edit', 'products')) { ?>
 <div class="modal fade categoryModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
   <div class="modal-dialog">
       <div class="modal-content">
@@ -78,6 +83,7 @@ require_once "headtags.php";
       </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<?php } ?>
 <?php require_once 'foottags.php'; ?>
 </body>
 </html>
