@@ -186,11 +186,11 @@ function form_loader() {
               </a>
             </li>            
             <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'settings'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'users', 'settings', 'import'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
                 <i class="ni ni-map-big text-primary"></i>
                 <span class="nav-link-text">Setup</span>
               </a>
-              <div class="collapse <?= (in_array($SITEURL[0], ['users','outlets', 'settings'])) ? "show" : null; ?>" id="navbar-tables">
+              <div class="collapse <?= (in_array($SITEURL[0], ['users','outlets', 'settings', 'import'])) ? "show" : null; ?>" id="navbar-tables">
                 <ul class="nav nav-sm flex-column">
                   <?php if($accessObject->hasAccess('view', 'users')) { ?>
                   <li class="nav-item">
@@ -212,6 +212,12 @@ function form_loader() {
                     <a class="nav-link <?= (in_array($SITEURL[0], ['settings'])) ? "active" : null; ?>" href="<?= $baseUrl ?>settings">
                       <i class="ni ni-align-left-2 text-default"></i>
                       <span class="nav-link-text">Settings</span>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link <?= (in_array($SITEURL[0], ['import'])) ? "active" : null; ?>" href="<?= $baseUrl ?>import">
+                      <i class="fa fa-download text-purple"></i>
+                      <span class="nav-link-text">Import Data</span>
                     </a>
                   </li>
                   <?php } ?>
@@ -276,24 +282,28 @@ function form_loader() {
                     </span>
                     <small>Analytics</small>
                   </a>
+                  <?php if($accessObject->hasAccess('view', 'branches')) { ?>
                   <a href="<?= $baseUrl ?>branches" class="col-4 shortcut-item">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-purple">
                       <i class="ni ni-pin-3"></i>
                     </span>
                     <small>Branches</small>
                   </a>
+                  <?php } ?>
                   <a href="<?= $baseUrl ?>inventory" class="col-4 shortcut-item">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-orange">
                       <i class="fa fa-list"></i>
                     </span>
                     <small>Inventory</small>
                   </a>
+                  <?php if($accessObject->hasAccess('view', 'users')) { ?>
                   <a href="<?= $baseUrl ?>users" class="col-4 shortcut-item">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-gray-dark">
                       <i class="fa fa-users"></i>
                     </span>
                     <small>Users</small>
                   </a>
+                  <?php } ?>
                 </div>
               </div>
             </li>
