@@ -321,11 +321,11 @@ global $clientData;
                                 <label for="opening_days">Point of Sale Outlets</label>
                                 <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
                                   <input type="checkbox" name="email_receipt" value="" class="custom-control-input" id="email_receipt">
-                                  <label class="custom-control-label" for="">Email Receipt</label>
+                                  <label class="custom-control-label" for="email_receipt">Email Receipt</label>
                                 </div>
                                 <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
                                   <input type="checkbox" name="print_receipt" value="" class="custom-control-input" id="print_receipt">
-                                  <label class="custom-control-label" for="">Print Receipt</label>
+                                  <label class="custom-control-label" for="print_receipt">Print Receipt</label>
                                 </div>
                               </div>
                             </div>

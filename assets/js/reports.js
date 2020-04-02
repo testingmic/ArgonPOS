@@ -163,8 +163,11 @@ $(function() {
 
         $(`table[class~="attendant-performance"]`).dataTable().fnDestroy();
         $(`table[class~="attendant-performance"]`).dataTable({
-            "iDisplayLength": 4,
+            "iDisplayLength":4,
             "aaData": teamInfo,
+            "buttons": ["copy", "print","csvHtml5"],
+            "lengthChange": !1,
+            "dom": "Bfrtip",
             "columns": [
                 { "data": 'fullname' },
                 { "data": 'amnt' },
@@ -240,8 +243,8 @@ $(function() {
     var populateProductsPerformance = (productsInfo) => {
         $(`table[class~="products-performance"]`).dataTable().fnDestroy();
         $(`table[class~="products-performance"]`).dataTable({
+            "iDisplayLength": 7,
             "aaData": productsInfo,
-            "iDisplayLength": 5,
             "buttons": ["copy", "print","csvHtml5"],
             "lengthChange": !1,
             "dom": "Bfrtip",
@@ -700,42 +703,6 @@ $(function() {
                     }, 
                   },
                   yaxis: [
-                      {
-                          axisTicks: {
-                              show: true,
-                          },
-                          axisBorder: {
-                              show: true,
-                              color: '#fa5c7c'
-                          },
-                          labels: {
-                              style: {
-                                  color: '#fa5c7c',
-                              }
-                          },
-                          title: {
-                              text: "Cost of Products Sold"
-                          },
-                      },
-
-                      {
-                          axisTicks: {
-                              show: true,
-                          },
-                          axisBorder: {
-                              show: true,
-                              color: '#20016c'
-                          },
-                          labels: {
-                              style: {
-                                  color: '#20016c',
-                              },
-                              offsetX: 10
-                          },
-                          title: {
-                              text: "Revenue from Products Sold",
-                          },
-                      },
                       {
                           opposite: true,
                           axisTicks: {

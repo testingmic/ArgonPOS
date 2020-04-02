@@ -344,6 +344,96 @@ if($(`table[class~="customersList"]`).length) {
     listCustomers();
 }
 
+if($(`table[class~="productsList"]`).length) {
+
+    $(`div[class="main-content"]`).on('click', `a[class~="add-category"]`, function(e) {
+        $(`input[name="category_name"]`).val('');
+        $(`input[name="categoryId"]`).val('');
+        $(`input[name="request"]`).val("add");
+        $(`div[class~="categoryModal"]`).modal('show');
+    });
+
+    $(`div[class~="categoryModal"] button[type="submit"]`).on('click', function() {
+        let name = $(`input[name="category_name"]`).val();
+        let id = $(`input[name="categoryId"]`).val();
+        let request = $(`input[name="request"]`).val();
+
+        $(`div[class="form-content-loader"]`).css("display","none");
+
+        $.post(baseUrl+"ajax/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
+            if(res.status == 200){
+                $(`div[class~="categoryModal"]`).modal('hide');
+                Toast.fire({
+                    type: 'success',
+                    title: res.message
+                });
+                $(`div[class="form-content-loader"]`).css("display","none");
+                listProductCategories();
+            } else {
+                Toast.fire({
+                    type: 'error',
+                    title: res.message
+                });
+                $(`div[class="form-content-loader"]`).css("display","none");                 
+            }
+        }, 'json')
+        .catch((err) => {
+            Toast.fire({
+                type: 'error',
+                title: "Error Processing Request"
+            })      
+            $(`div[class="form-content-loader"]`).css("display","none");
+        });
+    });
+
+    var populateCategoryList = (customerData) => {
+        hideLoader();
+        $(`table[class~="productsList"]`).dataTable().fnDestroy();
+        $(`table[class~="productsList"]`).dataTable({
+            "aaData": customerData,
+            "iDisplayLength": 10,
+            "buttons": ["copy", "print","csvHtml5"],
+            "lengthChange": !1,
+            "dom": "Bfrtip",
+            "columns": [
+               {"data": 'row'},
+               {"data": 'category'},
+               {"data": 'products_count'},
+               {"data": 'action'}
+            ]
+        });
+
+        deleteItem();
+
+        $(`div[class="main-content"]`).on('click', `a[class~="edit-category"]`, function(e) {
+            let categoryId = $(this).data('id');
+            let categoryData = $(this).data('content');    
+            $(`input[name="category_name"]`).val(categoryData.category);
+            $(`input[name="categoryId"]`).val(categoryData.id);
+            $(`input[name="request"]`).val("update");
+            $(`div[class~="categoryModal"]`).modal('show');
+        });
+    }
+
+    function listProductCategories() {
+        $.ajax({
+            method: "POST",
+            url: `${baseUrl}ajax/categoryManagement/listProductCategories`,
+            data: { listProductCategories: true},
+            dataType: "JSON",
+            success: function(resp) {
+                populateCategoryList(resp.result);
+            }, complete: function(data) {
+                hideLoader();
+            }, error: function(err) {
+                hideLoader();
+            }
+        });
+    }
+
+    listProductCategories();
+}
+
 async function listRequests(requestType, tableName) {
 
     showLoader();
@@ -1017,6 +1107,9 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                     }
                     fetchUsersLists();
                     fetchBranchLists();
+                    if($(`table[class~="productsList"]`).length) {
+                        listProductCategories();
+                    }
                     if((data.thisRequest == 'Quote') || (data.thisRequest == 'Order')) {
                         listRequests(data.thisRequest, data.tableName);
                     }
@@ -1050,7 +1143,7 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
 
 var populateUserDetails = (data) => {
     $(`[name="fullName"]`).val(data.fullname);
-    $(`[name="access_level"]`).val(data.access_level_id);
+    $(`[name="access_level"]`).val(data.access_level_id).change();
     $(`[name="gender"]`).val(data.gender).change();
     $(`[name="phone"]`).val(data.contact);
     $(`[name="email"]`).val(data.email);

@@ -155,7 +155,7 @@ function addProductRow(rowData) {
 		<input type='number' onkeypress="return isNumber(event)" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
 		</td>
 		<td class='row-subtotal'><div class="mt-2">${subTotal}</div></td>
-		<td class='p-0'><button class='btn mt-4 btn-sm mb-1 remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
+		<td class='p-0'><button class='btn mt-4 btn-sm btn-outline-danger mb-1 remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
 		</tr>`;
 		let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
 			<td>${rowData.productName}</td>

@@ -31,7 +31,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
-  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'branches'])) { ?>
+  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'branches', 'product-types'])) { ?>
   <div class="modal fade delete-modal" tabindex="-1" id="deleteData" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">
@@ -41,7 +41,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding-top:0px">
                 <div class="card mb-0 p-3">
                     <form method="POST" class="submitThisForm" action="">
                         <div class="form-group mb-3 details-pane"></div><!--end form-group-->
@@ -111,7 +111,7 @@
 <script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.extension.js"></script>
 <?php } ?>
 <script>
-<?php if(in_array($SITEURL[0], ["point-of-sale", "requests", "analytics"])) { ?>
+<?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>
   Cookies.set("sidenav-state", "unpinned");
 <?php } else { ?>
   Cookies.set("sidenav-state", "pinned");

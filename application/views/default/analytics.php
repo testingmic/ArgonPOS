@@ -440,7 +440,7 @@ require_once "headtags.php";
                         </div>
                       </div>
                       <div class="table-responsive">
-                          <table width="100%" class="table mb-0 dataTable products-performance datatable-buttons">
+                          <table width="100%" class="table mb-0 products-performance">
                               <thead class="thead-light">
                               <tr>
                                   <th>#</th>

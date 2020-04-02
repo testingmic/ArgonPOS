@@ -396,13 +396,13 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 			let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
 			
 			<td class='products-row-number'>${rowCount}</td>
-			<td>${rowData.productName}</td>
-			<td>${rowData.productPrice}</td>
+			<td style="padding-top:20px">${rowData.productName}</td>
+			<td style="padding-top:20px">${rowData.productPrice}</td>
 			<td>
 			<input type='number' data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
 			<input type="hidden" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
-			<td class='row-subtotal'>${subTotal}</td>
-			<td class='p-0'><button class='btn btn-sm mb-1 remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
+			<td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
+			<td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
 			</tr>`;
 			let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
 				<td>${rowData.productName}</td>

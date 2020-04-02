@@ -990,7 +990,7 @@ if($admin_user->logged_InControlled()) {
 					FROM 
 						products a
 					LEFT JOIN branches b ON b.id = a.branchId
-					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT 5
+					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT 50
 
 				");
 				$products_stmt->execute();
@@ -2291,6 +2291,8 @@ if($admin_user->logged_InControlled()) {
 					// continue
 		            $status = 200;
 
+		            $message = "Settings updated";
+
 					// update the client logo
 					if($uploadStatus == 1) {
 						$posClass->updateData(
@@ -2362,6 +2364,7 @@ if($admin_user->logged_InControlled()) {
 	        }
 
 	        $status = 201;
+	        $message = "Settings updated";
 	        
 	        if($uploadStatus) {
 		        $posClass->updateData(
@@ -3190,8 +3193,6 @@ if($admin_user->logged_InControlled()) {
 								// Assign Roles To User
 								$accessObject->assignUserRole($getUserId, $userData->access_level);
 
-								// Send Email To User With Password
-
 								// Show Success Message
 								$message = "User Have Been Successfully Registered.";
 								$status = true;
@@ -3228,7 +3229,7 @@ if($admin_user->logged_InControlled()) {
 									// confirm if the user has no credentials
 									if($userRole[0]->userTotal == 0) {
 										// insert the permissions to this user
-										$getPermissions = $accessObject->getPermissions($userData->access_level);
+										$getPermissions = $accessObject->getPermissions($userData->access_level)[0]->default_permissions;
 										// assign these permissions to the user
 										$accessObject->assignUserRole($userData->userId, $userData->access_level);
 									}
@@ -3236,7 +3237,7 @@ if($admin_user->logged_InControlled()) {
 									// Check Access Level
 									if ($userData->access_level != $checkData[0]->access_level) {
 
-										$getPermissions = $accessObject->getPermissions($userData->access_level);
+										$getPermissions = $accessObject->getPermissions($userData->access_level)[0]->default_permissions;
 
 										$accessObject->assignUserRole($userData->userId, $userData->access_level, $getPermissions);
 									}
@@ -3482,6 +3483,90 @@ if($admin_user->logged_InControlled()) {
 			"tableName" => xss_clean($_POST['itemToDelete']).'sList'
 		);
 		
+	}
+
+	//: Products category management
+	elseif(confirm_url_id(1, "categoryManagement")) {
+
+		//: list categories
+		if(isset($_POST["listProductCategories"]) && confirm_url_id(2, "listProductCategories")) {
+			//: run the query
+			$i = 0;
+            # list categories
+            $categoryList = $posClass->getAllRows("products_categories a", "a.*, (SELECT COUNT(*) FROM products b WHERE a.category_id = b.category_id) AS products_count", "a.clientId='{$session->clientId}'");
+
+            $categories = [];
+            // loop through the branches list
+            foreach($categoryList as $eachCategory) {
+            	$i++;
+            	
+            	$eachCategory->row = $i;
+            	$eachCategory->action = "<a data-content='".json_encode($eachCategory)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-category\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-edit\"></i></a> <a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('ajax/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
+
+                $categories[] = $eachCategory;
+           	}
+
+           	$response = [
+           		'status' => 200,
+           		'result' => $categories
+           	];
+		}
+		elseif(isset($_POST["name"], $_POST["dataset"]) && confirm_url_id(2, 'saveCategory')) {
+			$postData = (Object) array_map("xss_clean", $_POST);
+
+			//: initializing
+			$response = (Object) [
+				'status' => 'error', 
+				'message' => 'Error Processing Request',
+				'branchId' => $session->branchId
+			];
+
+			if(empty($postData->name)) {
+				$response->message = "Category name cannot be empty";
+			} else {
+				if($postData->dataset == "update") {
+					$query = $pos->prepare("UPDATE products_categories SET category = '{$postData->name}' WHERE id='{$postData->id}' AND clientId='{$session->clientId}'");
+
+					if($query->execute()) {
+						$response->status = 200;
+						$response->message = "Product category was updated";
+						$response->href = $config->base_url('settings/prd');
+					}
+				}
+				elseif($postData->dataset == "add") {
+					$category_id = "PCAT".random_string('nozero', 5);
+					$query = $pos->prepare("INSERT INTO products_categories SET category = '{$postData->name}', category_id='{$category_id}', clientId='{$session->clientId}'");
+					if($query->execute()) {
+						$response->status = 200;
+						$response->message = "Product category was inserted";
+						$response->href = $config->base_url('settings/prd');
+					}
+				}
+			}
+
+		}
+		elseif(isset($_POST["itemId"], $_POST["itemToDelete"]) && confirm_url_id(2, 'deleteCategory')) {
+			$postData = (Object) array_map("xss_clean", $_POST);
+
+			//: initializing
+			$response = (Object) [
+				'status' => 'error', 
+				'message' => 'Error Processing Request',
+				'branchId' => $session->branchId
+			];
+
+			if(empty($postData->itemId)) {
+				$response->message = "Error processing request";
+			} else {
+				$query = $pos->prepare("DELETE FROM products_categories WHERE id='{$postData->itemId}' AND clientId='{$session->clientId}'");
+				if($query->execute()) {
+					$response->reload = true;
+					$response->status = true;
+					$response->href = $config->base_url('settings/prd');
+					$response->message = "Product category successfully deleted";
+				}
+			}
+		}
 	}
 
 }
