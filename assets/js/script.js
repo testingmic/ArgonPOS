@@ -1057,6 +1057,9 @@ var populateUserDetails = (data) => {
     $(`[name="branchId"]`).val(data.branchId).change();
     $(`[name="userId"]`).val(data.user_id);
     $(`[name="record_type"]`).val("update-record");
+    $(`[name="weekly_target"]`).val(data.weekly_target);
+    $(`[name="daily_target"]`).val(data.daily_target);
+    $(`[name="monthly_target"]`).val(data.monthly_target);
 
     $("#newModalWindow").modal("show");
 }

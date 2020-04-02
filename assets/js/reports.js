@@ -167,8 +167,8 @@ $(function() {
             "aaData": teamInfo,
             "columns": [
                 { "data": 'fullname' },
-                { "data": 'orders' },
-                { "data": 'amnt' }
+                { "data": 'amnt' },
+                { "data": 'orders' }
             ]
         });
 
@@ -897,8 +897,6 @@ $(function() {
                 complete: function(data) {
                     salesAttendantHistory();
                     $(`div[class~="apexcharts-legend"]`).removeClass('center');
-                    $(`div[class~="sales-attendant-performance"] div[class~="dataTables_wrapper"] div[class="row"]:first`).children('div:first').remove();
-                    $(`div[class~="sales-attendant-performance"] div[class~="dataTables_wrapper"] div[class="row"]:first`).children('div:last').removeClass('col-md-6 col-sm-12').addClass('col-lg-12 text-left');
                 },
                 error: function(err) {
                     console.log(err);

@@ -129,3 +129,19 @@
 [02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
 [02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
 [02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:29:44 Africa/Accra] PHP Notice:  Undefined property: stdClass::$montly_target in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3213
+[02-Apr-2020 10:29:44 Africa/Accra] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'montly_target' in 'field list' in C:\xampp\htdocs\pos\application\models\Pos.php:485
+Stack trace:
+#0 C:\xampp\htdocs\pos\application\models\Pos.php(485): PDOStatement->execute()
+#1 C:\xampp\htdocs\pos\application\views\default\ajax.php(3214): Pos->updateData('users', 'name='Visaminet...', 'user_id='2019De...')
+#2 C:\xampp\htdocs\pos\index.php(105): include('C:\\xampp\\htdocs...')
+#3 {main}
+  thrown in C:\xampp\htdocs\pos\application\models\Pos.php on line 485
+[02-Apr-2020 10:29:53 Africa/Accra] PHP Notice:  Undefined property: stdClass::$montly_target in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3213
+[02-Apr-2020 10:29:54 Africa/Accra] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'montly_target' in 'field list' in C:\xampp\htdocs\pos\application\models\Pos.php:485
+Stack trace:
+#0 C:\xampp\htdocs\pos\application\models\Pos.php(485): PDOStatement->execute()
+#1 C:\xampp\htdocs\pos\application\views\default\ajax.php(3214): Pos->updateData('users', 'name='Visaminet...', 'user_id='2019De...')
+#2 C:\xampp\htdocs\pos\index.php(105): include('C:\\xampp\\htdocs...')
+#3 {main}
+  thrown in C:\xampp\htdocs\pos\application\models\Pos.php on line 485

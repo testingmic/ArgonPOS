@@ -396,9 +396,11 @@ require_once "headtags.php";
                           <table width="100%" class="table mb-0 attendant-performance">
                               <thead class="thead-light">
                               <tr>
-                                  <th width="40%">Name</th>
-                                  <th>Sales Count</th>
+                                  <th width="30%">Name</th>
                                   <th>Revenue</th>
+                                  <th>Sales Count</th>
+                                  <th>Sales Target (%)</th>
+                                  <th>Target</th>
                                   <th>Items Sold</th>
                                   <th>Avg. Sale Value</th>
                                   <th>Avg. Items per Sale</th>

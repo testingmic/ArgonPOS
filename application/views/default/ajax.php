@@ -3138,7 +3138,10 @@ if($admin_user->logged_InControlled()) {
 					"contact"	=> $data->phone,
 					"email"		=> $data->email,
 					"country"	=> $data->country_id,
-					"branchId" => $data->branchId
+					"branchId" => $data->branchId,
+					'daily_target' => $data->daily_target,
+					'monthly_target' => $data->monthly_target,
+					'weekly_target' => $data->weekly_target,
 				];
 				$status = true;
 			} else {
@@ -3175,7 +3178,8 @@ if($admin_user->logged_InControlled()) {
 
 							$response = $posClass->addData(
 								"users" ,
-								"clientId='{$session->clientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}'"
+								"clientId='{$session->clientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', montly_target='{$userData->montly_target}'
+								"
 							);
 
 							if ($response == true) {
@@ -3206,7 +3210,7 @@ if($admin_user->logged_InControlled()) {
 							// update user data
 							$response = $posClass->updateData(
 								"users",
-								"name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}'",
+								"name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}'",
 								"user_id='{$userData->userId}' && clientId='{$session->clientId}'"
 							);
 
