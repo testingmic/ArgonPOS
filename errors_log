@@ -1,0 +1,131 @@
+[02-Apr-2020 10:02:41 Africa/Accra] PHP Parse error:  syntax error, unexpected '}', expecting end of file in C:\xampp\htdocs\pos\application\views\default\headtags.php on line 179
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:51 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_id' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Undefined variable: result in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:10:52 Africa/Accra] PHP Notice:  Trying to get property 'customer_name' of non-object in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:05 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418
+[02-Apr-2020 10:11:06 Africa/Accra] PHP Notice:  Undefined property: stdClass::$customer_name in C:\xampp\htdocs\pos\application\views\default\ajax.php on line 3418

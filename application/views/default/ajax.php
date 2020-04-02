@@ -1432,9 +1432,9 @@ if($admin_user->logged_InControlled()) {
 						if($result->total_amount > 0) {
 							$row++;
 							$result->row_id = $row;
-							$result->fullname = "<a href=\"{$config->base_url('reports-customers/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$result->customer_id}\" class=\"customer-orders\" data-name=\"{$result->customer_name}\">{$result->customer_name}</a>";
+							$result->fullname = "<a href=\"{$config->base_url('reports/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$result->customer_id}\" class=\"customer-orders\" data-name=\"{$result->customer_name}\">{$result->customer_name}</a>";
 
-							$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('reports-customers/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
+							$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('reports/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
 
 							$result->total_amount = 'GH&cent; '.number_format($result->total_amount, 2);
 							$resultData[] = $result;
@@ -2129,7 +2129,7 @@ if($admin_user->logged_InControlled()) {
 								);
 
 								// Record user activity
-								$posClass->userLogs('branches', $branch_id, 'Added a new branch into the System.');
+								$posClass->userLogs('branches', $branch_id, 'Added a new Store Outlet into the System.');
 
 								if ($response == true) {
 									// Show Success Message
@@ -2163,21 +2163,21 @@ if($admin_user->logged_InControlled()) {
 								);
 
 								// Record user activity
-								$posClass->userLogs('branches', $branchData->branchId, 'Updated the details of the branch.');
+								$posClass->userLogs('branches', $branchData->branchId, 'Updated the details of the Store Outlet.');
 
 								if ($response == true) {
 
-									$message = "Branch Details Have Been Successfully Updated.";
+									$message = "Store Outlet Details Have Been Successfully Updated.";
 									$status = true;
 								} else {
-									$message = "Sorry! Branch Records Failed To Update.";
+									$message = "Sorry! Store Outlet Records Failed To Update.";
 								}
 							} else {
 								$message = "Sorry! You do not have the required permissions to perform this action.";
 							}
 
 						} else {
-							$message = "Sorry! Branch Does Not Exist.";
+							$message = "Sorry! Store Outlet Does Not Exist.";
 						}
 						// Update Record
 					} else {
@@ -3415,7 +3415,7 @@ if($admin_user->logged_InControlled()) {
 				// set the action button
 				$eachCustomer->row_id = $row_id;
 				$eachCustomer->action = "<div align=\"center\">";
-		        $eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a> &nbsp;";
+		        $eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a> &nbsp; <a href=\"{$config->base_url('reports/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
 		        $eachCustomer->action .= "</div>";
 
 		        $eachCustomer->fullname = "<a data-id=\"{$eachCustomer->customer_id}\" data-info='".json_encode($eachCustomer)."'>{$eachCustomer->fullname}</a>";

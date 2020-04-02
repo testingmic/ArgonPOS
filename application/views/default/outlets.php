@@ -1,5 +1,5 @@
 <?php
-$PAGETITLE = "Branch Management";
+$PAGETITLE = "Store Outlets";
 
 // include the important files
 require_once "headtags.php";
@@ -20,7 +20,7 @@ require_once "headtags.php";
         </div>
         <?php if($accessObject->hasAccess('add', 'branches') || $accessObject->hasAccess('update', 'branches')) { ?>
         <div class="col-lg-6 col-5 text-right">
-          <a href="javascript:void(0)" data-toggle="modal" data-target="#newModalWindow" class="btn add-new-modal btn-sm btn-neutral"><i class="fa fa-plus"></i> New Branch</a>
+          <a href="javascript:void(0)" data-toggle="modal" data-target="#newModalWindow" class="btn add-new-modal btn-sm btn-neutral"><i class="fa fa-plus"></i> New Outlet</a>
         </div>
         <?php } ?>
       </div>
@@ -39,7 +39,7 @@ require_once "headtags.php";
                     <thead class="text-capitalize">
                       <tr>
                         <th>ID</th>
-                        <th>Branch</th>
+                        <th>Outlet Name</th>
                         <th>Location</th>
                         <th>Phone</th>
                         <th>Email</th>
@@ -63,7 +63,7 @@ require_once "headtags.php";
       <div class="modal-content">
         <?= form_loader(); ?>
         <div class="modal-header">
-          <h5 class="modal-title">User Details</h5>
+          <h5 class="modal-title">Store Outlet Details</h5>
           <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
         </div>
         <div class="modal-body">
@@ -71,11 +71,11 @@ require_once "headtags.php";
           <form autocomplete="Off" class="needs-validation submitThisForm" method="post" action="<?= $config->base_url('ajax/branchManagment/addBranchRecord'); ?>">
             <div class="form-row">
               <div class="col-md-8 mb-3">
-                <label for="branchName">Branch Name *</label>
-                <input type="text" class="form-control" id="branchName" name="branchName" placeholder="Branch name" value="" required="">
+                <label for="branchName">Outlet Name *</label>
+                <input type="text" class="form-control" id="branchName" name="branchName" placeholder="Outlet name" value="" required="">
               </div>
               <div class="col-md-4 mb-3">
-                <label for="branchType">Branch Type *</label>
+                <label for="branchType">Outlet Type *</label>
                 <select name="branchType" id="branchType" class="form-control">
                   <option value="Store">Store</option>
                   <option value="Warehouse">Warehouse</option>

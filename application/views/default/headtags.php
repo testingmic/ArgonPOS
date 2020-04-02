@@ -161,24 +161,36 @@ function form_loader() {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['inventory', 'product'])) ? "active" : null; ?>" href="<?= $baseUrl ?>inventory">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'product', 'product-types', 'product-brands'])) ? "active" : null; ?>" href="#navbar-inventory" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-inventory">
                 <i class="ni ni-ungroup text-orange"></i>
                 <span class="nav-link-text">Inventory</span>
               </a>
+              <div class="collapse <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'product', 'product-types', 'product-brands'])) ? "show" : null; ?>" id="navbar-inventory">
+                <ul class="nav nav-sm flex-column">
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>inventory" class="nav-link">Inventory List</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>product-types" class="nav-link">Product Types</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>product-brands" class="nav-link">Product Brands</a>
+                  </li>
+                </ul>
+              </div>
             </li>
             <li class="nav-item">
               <a class="nav-link <?= (in_array($SITEURL[0], ['analytics'])) ? "active" : null; ?>" href="<?= $baseUrl ?>analytics">
                 <i class="ni ni-chart-pie-35 text-info"></i>
                 <span class="nav-link-text">Analytics</span>
               </a>
-            </li>
-            
+            </li>            
             <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['users-login-history', 'users', 'users-login-history', 'branches', 'settings'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['users-login-history', 'users', 'users-login-history', 'outlets', 'settings'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
                 <i class="ni ni-map-big text-primary"></i>
-                <span class="nav-link-text">System</span>
+                <span class="nav-link-text">Setup</span>
               </a>
-              <div class="collapse <?= (in_array($SITEURL[0], ['users', 'users-login-history', 'users-activity-logs', 'branches', 'settings'])) ? "show" : null; ?>" id="navbar-tables">
+              <div class="collapse <?= (in_array($SITEURL[0], ['users', 'users-login-history', 'users-activity-logs', 'outlets', 'settings'])) ? "show" : null; ?>" id="navbar-tables">
                 <ul class="nav nav-sm flex-column">
                   <?php if($accessObject->hasAccess('view', 'users')) { ?>
                   <li class="nav-item">
@@ -194,9 +206,9 @@ function form_loader() {
                   </li>
                   <?php if($accessObject->hasAccess('view', 'branches')) { ?>
                   <li class="nav-item">
-                    <a class="nav-link" href="<?= $baseUrl ?>branches">
+                    <a class="nav-link" href="<?= $baseUrl ?>outlets">
                       <i class="ni ni-archive-2 text-green"></i>
-                      <span class="nav-link-text">Branches</span>
+                      <span class="nav-link-text">Store Outlets</span>
                     </a>
                   </li>
                   <?php } ?>

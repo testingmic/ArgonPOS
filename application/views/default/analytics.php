@@ -384,15 +384,12 @@ require_once "headtags.php";
             <div class="clearfix"></div>
 
             <?php if($accessObject->hasAccess('sales-team-performance', 'reports')) { ?>
-            <div class="col-lg-4 sales-attendant-performance <?= ($clientData->reports_sales_attendant != "sales-attendant-performance") ? "hidden" : null ?> offline">
+            <div class="col-lg-12 sales-attendant-performance <?= ($clientData->reports_sales_attendant != "sales-attendant-performance") ? "hidden" : null ?> offline">
                 <div class="card">
                   <div class="card-body">
                       <div class="row justify-content-between">
                         <div>
-                          <h4 class="header-title mt-0">Sales Attendant Performance (Orders)</h4>  
-                        </div>
-                        <div>
-                          <span data-show-content="team-performance" data-hide-content="sales-attendant-performance" data-toggle="tooltip" title="Display chart content" class="text-primary switch-button"><i class="fa fa-chart-bar cursor"></i></span>
+                          <h4 class="header-title mt-0">Top Sales People</h4>  
                         </div>
                       </div>
                       <div class="mt-4 table-responsive" style="min-height: 385px">
@@ -400,8 +397,11 @@ require_once "headtags.php";
                               <thead class="thead-light">
                               <tr>
                                   <th width="40%">Name</th>
-                                  <th>Orders</th>
-                                  <th>Sales</th>
+                                  <th>Sales Count</th>
+                                  <th>Revenue</th>
+                                  <th>Items Sold</th>
+                                  <th>Avg. Sale Value</th>
+                                  <th>Avg. Items per Sale</th>
                               </tr>
                               </thead>
                               <tbody></tbody>
@@ -417,9 +417,6 @@ require_once "headtags.php";
                         <div>
                           <h4 class="header-title mt-0">Sales Attendant Performance (Sales)</h4>  
                         </div>
-                        <div>
-                          <span data-show-content="sales-attendant-performance" data-hide-content="team-performance" data-toggle="tooltip" title="Display table content" class="text-success switch-button"><i class="fa fa-list cursor"></i></span>
-                        </div>
                       </div>
                       <div class="attendant-chart">
                           <div id="attendant-performance" class="apex-charts"></div>
@@ -429,7 +426,7 @@ require_once "headtags.php";
             </div>
             <?php } ?>
 
-            <div class="col-lg-8 offline">
+            <div class="col-lg-12 offline">
               <div class="card">
                   <div class="card-body">
                       <div class="row justify-content-between">
@@ -440,20 +437,22 @@ require_once "headtags.php";
                           
                         </div>
                       </div>
-                      <table width="100%" class="table mb-0  table-responsive dataTable products-performance datatable-buttons">
-                          <thead class="thead-light">
-                          <tr>
-                              <th>#</th>
-                              <th width="30%">Name</th>
-                              <th>Orders</th>
-                              <th>Quantity Sold</th>
-                              <th>Cost</th>
-                              <th>Revenue</th>
-                              <th>Profit</th>
-                          </tr>
-                          </thead>
-                          <tbody></tbody>
-                      </table>
+                      <div class="table-responsive">
+                          <table width="100%" class="table mb-0 dataTable products-performance datatable-buttons">
+                              <thead class="thead-light">
+                              <tr>
+                                  <th>#</th>
+                                  <th width="30%">Name</th>
+                                  <th>Orders</th>
+                                  <th>Quantity Sold</th>
+                                  <th>Cost</th>
+                                  <th>Revenue</th>
+                                  <th>Profit</th>
+                              </tr>
+                              </thead>
+                              <tbody></tbody>
+                          </table>
+                      </div>
                     </div>
               </div>
             </div>

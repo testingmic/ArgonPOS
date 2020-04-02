@@ -87,7 +87,7 @@ global $clientData;
                           <div class="row">
                             <div class="col-md-4">
                               <div class="form-group">
-                                <label for="company_name">Company Name</label>
+                                <label for="company_name">Store Name</label>
                                 <input value="<?= $clientData->client_name ?>" type="text" class="form-control" name="company_name" id="company_name" placeholder="Full Name">
                               </div><!--end form-group-->
                               <div class="form-group">
@@ -124,7 +124,7 @@ global $clientData;
                               <div class="col-lg-10"><div class="form-result"></div></div>
                               <div class="col-lg-2 text-right">
                                 <input type="hidden" name="updateCompanyDetail" value="updateCompanyDetail">
-                                <button type="submit" class="btn btn-primary btn-sm">Save Change</button>
+                                <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Save Changes</button>
                               </div>
                             <?php } ?>
                           </div> 
@@ -265,7 +265,7 @@ global $clientData;
 
               <div class="tab-pane fade" id="sales_options">
                 <div class="row">
-                  <div class="col-12">
+                  <div class="col-lg-12">
                     <div class="card">
                       <?= form_loader(); ?>
                       <?= connectionLost(); ?>
@@ -315,11 +315,28 @@ global $clientData;
                               </div>
                             </div>
 
+                            <div class="col-lg-12">
+                              <hr>
+                              <div class="form-group">
+                                <label for="opening_days">Point of Sale Outlets</label>
+                                <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
+                                  <input type="checkbox" name="email_receipt" value="" class="custom-control-input" id="email_receipt">
+                                  <label class="custom-control-label" for="">Email Receipt</label>
+                                </div>
+                                <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
+                                  <input type="checkbox" name="print_receipt" value="" class="custom-control-input" id="print_receipt">
+                                  <label class="custom-control-label" for="">Print Receipt</label>
+                                </div>
+                              </div>
+                            </div>
+
+
+
                             <?php if($accessObject->hasAccess('update', 'settings')) { ?>
                               <div class="col-lg-10"><div class="form-result"></div></div>
                               <div class="col-lg-2 text-right">
                                 <input type="hidden" name="updateSalesDetails" value="updateSalesDetails">
-                                <button type="submit" class="btn btn-primary btn-sm">Save Change</button>
+                                <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Save Changes</button>
                               </div>
                             <?php } ?>
 
@@ -391,7 +408,7 @@ global $clientData;
                               <div class="col-lg-10"><div class="form-result"></div></div>
                               <div class="col-lg-2 text-right">
                                 <input type="hidden" name="updateReportDetails" value="updateReportDetails">
-                                <button type="submit" class="btn btn-primary btn-sm">Save Change</button>
+                                <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Save Changes</button>
                               </div>
                             <?php } ?>
 

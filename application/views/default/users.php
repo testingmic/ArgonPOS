@@ -139,6 +139,29 @@ require_once "headtags.php";
 								</select>
 							</div>
 						</div>
+						<div class="form-row">
+							<div class="col-lg-4 col-md-6">
+								<label for="cost" class="text-primary-light">Daily Target</label>
+                              	<div class="input-group">
+                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                                  <input type="number" step="1" value="" class="form-control" name="daily_target">
+                              	</div>
+							</div>
+							<div class="col-lg-4 col-md-6">
+								<label for="cost" class="text-primary-light">Weekly Target</label>
+                              	<div class="input-group">
+                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                                  <input type="number" step="1" value="" class="form-control" name="weekly_target">
+                              	</div>
+							</div>
+							<div class="col-lg-4 col-md-6">
+								<label for="cost" class="text-primary-light">Monthly Target</label>
+                              	<div class="input-group">
+                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                                  <input type="number" step="1" value="" class="form-control" name="monthly_target">
+                              	</div>
+							</div>
+						</div>
 						<div class="modal-footer">
 							<input type="hidden" name="this-form" value="users">
 							<input type="hidden" name="record_type" value="new-record">
