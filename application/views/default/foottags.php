@@ -64,7 +64,7 @@
   <div class="modal fade deleteModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" style="padding-bottom: 0px">
                     <h5 class="modal-title mt-0" id="myLargeModalLabel">Confirm Delete</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
@@ -72,13 +72,13 @@
                   <div class="card mb-0 p-3">
                     <p class="show-delete-msg"></p>
                     <p class="show-delete-body">Are You Sure You Want To Delete This?</p>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <button class="btn btn-success confirm-delete-btn" type="button">
+                            <i class="fa fa-check"></i> Yes Confirm
+                        </button>
+                    </div>
                   </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                    <button class="btn btn-success confirm-delete-btn" type="button">
-                        <i class="fa fa-check"></i> Yes Confirm
-                    </button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
