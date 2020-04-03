@@ -40,10 +40,10 @@ function nonWorkingDay($message = "Please note that the Point of Sale is Closed 
 
 function form_loader() {
   return '<div class="form-content-loader" style="display: none;">
-              <div class="offline-content text-center">
-                  <p><i class="fa fa-spin fa-spinner fa-3x"></i></p>
-              </div>
-          </div>';
+        <div class="offline-content text-center">
+            <p><i class="fa fa-spin fa-spinner fa-3x"></i></p>
+        </div>
+    </div>';
 }
 ?>
 <!DOCTYPE html>

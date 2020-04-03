@@ -1,7 +1,0 @@
-[02-Apr-2020 18:19:40 Africa/Accra] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near 'a.user_id='mjbpdYvK3zwC7lns4QeyIkV90WBFHM'  AND a.branchId = '1'  AND a.clientId' at line 18 in C:\xampp\htdocs\pos\application\models\Pos.php:367
-Stack trace:
-#0 C:\xampp\htdocs\pos\application\models\Pos.php(367): PDOStatement->execute()
-#1 C:\xampp\htdocs\pos\application\views\default\ajax.php(1346): Pos->getAllRows('users a', 'a.user_id,\r\n\t\t\t...', 'a.status='1' a....')
-#2 C:\xampp\htdocs\pos\index.php(105): include('C:\\xampp\\htdocs...')
-#3 {main}
-  thrown in C:\xampp\htdocs\pos\application\models\Pos.php on line 367

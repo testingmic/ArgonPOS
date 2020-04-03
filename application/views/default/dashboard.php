@@ -226,14 +226,14 @@ global $posClass, $baseUrl;
             </div>
           </div>
         </div>
-        <div class="table-responsive">
+        <div class="s-responsive">
           <!-- Projects table -->
             <table class="table salesLists table-flush datatable-buttons">
             <thead class="thead-light">
               <tr>
                 <th>ID</th>
                 <th>Transaction ID</th>
-                <th width="15%">Customer</th>
+                <th>Customer</th>
                 <th>Contact</th>
                 <th>Date</th>
                 <th width="10%">Sales Value</th>
