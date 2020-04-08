@@ -18,6 +18,11 @@ require_once "headtags.php";
             </ol>
           </nav>
         </div>
+        <?php if($accessObject->hasAccess('add', 'customers')) { ?>
+        <div class="col-lg-6 col-5 text-right">
+          <a href="javascript:void(0)" class="btn btn-sm add-customer btn-neutral"><i class="fa fa-plus"></i> New Customer</a>
+        </div>
+        <?php } ?>
       </div>
     </div>
   </div>
@@ -50,63 +55,65 @@ require_once "headtags.php";
       </div>     
 
   </div><!--end row-->
-<div class="modal fade" id="newCustomerModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="content-loader"><i class="fa fa-spinner fa-pulse fa-3x"></i></div>
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">Update Customer</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-              <form autocomplete="Off" class="form py-0" id="updateCustomerForm">
-                <div class="form-row mb-2">
-                  <div class="form-group col-md-2">
-                    <label for="inputState">Title</label>
-                    <select id="newCustomer_title" name="nc_title" class="form-control selectpicker">
-                      <option value="Mr">Mr.</option>
-                      <option value="Mrs">Mrs.</option>
-                      <option  value="Dr">Dr.</option>
-                      <option  value="Miss">Miss.</option>
-                      <option value="Prof">Prof.</option>
-                      <option value="Hon">Hon.</option>
-                    </select>
+  <div class="modal fade" id="newCustomerModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-content">
+            <div class="content-loader"><i class="fa fa-spinner fa-pulse fa-3x"></i></div>
+              <div class="modal-header">
+                  <h5 class="modal-title" id="modalLabel">Update Customer</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                <form autocomplete="Off" class="form py-0" id="updateCustomerForm">
+                  <div class="form-row mb-2">
+                    <div class="form-group col-md-2">
+                      <label for="inputState">Title</label>
+                      <select id="newCustomer_title" name="nc_title" class="form-control selectpicker">
+                        <option value="null">-- Select --</option>
+                        <option value="Mr">Mr.</option>
+                        <option value="Mrs">Mrs.</option>
+                        <option  value="Dr">Dr.</option>
+                        <option  value="Miss">Miss.</option>
+                        <option value="Prof">Prof.</option>
+                        <option value="Hon">Hon.</option>
+                      </select>
+                    </div>
+                    <div class="form-group col-md-5">
+                      <label for="newCustomer_firstname">First Name</label>
+                      <input type="text" class="form-control" name="nc_firstname" id="newCustomer_firstname" placeholder="First Name">
+                    </div>
+                    <div class="form-group col-md-5">
+                      <label for="newCustomer_lastname">Last Name</label>
+                      <input type="text" class="form-control" name="nc_lastname" id="newCustomer_lastname" placeholder="Last Name">
+                    </div>
                   </div>
-                  <div class="form-group col-md-5">
-                    <label for="newCustomer_firstname">First Name</label>
-                    <input type="text" class="form-control" name="nc_firstname" id="newCustomer_firstname" placeholder="First Name">
+                  <div class="form-row">
+                    <div class="form-group col-md-4">
+                      <label for="newCustomer_primarycontact">Primary Phone No.</label>
+                      <input placeholder="Contact Number" type="text" class="form-control" name="nc_contact" id="newCustomer_primarycontact">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="newCustomer_seccontact">Email Address</label>
+                      <input placeholder="Email Address" type="text" class="form-control" name="nc_email" id="newCustomer_seccontact">
+                    </div>
+                    <div class="form-group col-md-4">
+                      <label for="newCustomer_residence">Place of Residence</label>
+                      <input placeholder="Place of Residence" type="text" class="form-control" name="residence" id="newCustomer_residence">
+                    </div>
                   </div>
-                  <div class="form-group col-md-5">
-                    <label for="newCustomer_lastname">Last Name</label>
-                    <input type="text" class="form-control" name="nc_lastname" id="newCustomer_lastname" placeholder="Last Name">
-                  </div>
-                </div>
-                <div class="form-row">
-                  <div class="form-group col-md-4">
-                    <label for="newCustomer_primarycontact">Primary Phone No.</label>
-                    <input type="text" class="form-control" name="nc_contact" id="newCustomer_primarycontact">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="newCustomer_seccontact">Email Address</label>
-                    <input type="text" class="form-control" name="nc_email" id="newCustomer_seccontact">
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label for="newCustomer_residence">Place of Residence</label>
-                    <input type="text" class="form-control" name="residence" id="newCustomer_residence">
-                  </div>
-                </div>
-                <input type="hidden" name="customer_id">
-              </form>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" form="updateCustomerForm" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
+                  <input type="hidden" name="customer_id">
+                  <input type="hidden" name="request" value="update-record">
+                </form>
+              </div>
+              <div class="modal-footer">
+                  <button type="submit" form="updateCustomerForm" class="btn btn-primary">Save</button>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+          </div>
+      </div>
+  </div>
 <?php require_once 'foottags.php'; ?>
 </body>
 </html>

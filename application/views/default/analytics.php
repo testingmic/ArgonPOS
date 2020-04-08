@@ -391,10 +391,10 @@ require_once "headtags.php";
                                   <th width="30%">Name</th>
                                   <th>Revenue</th>
                                   <th>Sales Count</th>
-                                  <th>Sales Target (%)</th>
-                                  <th>Target</th>
-                                  <th>Items Sold</th>
                                   <th>Avg. Sale Value</th>
+                                  <th>Target</th>
+                                  <th>% of Target Met</th>
+                                  <th>Items Sold</th>
                                   <th>Avg. Items per Sale</th>
                               </tr>
                               </thead>
@@ -424,7 +424,7 @@ require_once "headtags.php";
                   <div class="card-body">
                       <div class="row justify-content-between">
                         <div>
-                          <h4 class="header-title mt-0">Top 5 Best Products Performance (Sales)</h4>  
+                          <h4 class="header-title mt-0">Top 50 Best Products Performance (Sales)</h4>  
                         </div>
                         <div>
                           
@@ -507,7 +507,7 @@ require_once "headtags.php";
                       <h4 class="header-title mt-0 mb-3">Top 30 Best Performing Customers</h4>
                       <div class="table-responsive">
 
-                          <table class="table table-hover text-center custPerformance datatable-buttons">
+                          <table class="table table-hover text-left custPerformance datatable-buttons">
                               <thead class="thead-light">
                                   <tr>
                                       <th class="border-top-0">#</th>

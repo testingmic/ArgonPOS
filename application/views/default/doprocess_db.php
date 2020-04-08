@@ -13,7 +13,7 @@ if($admin_user->logged_InControlled()) {
 	// client data
 	$clientData = $posClass->getAllRows(
 		"settings", "*", 
-		"clientId='{$posClass->clientId}'
+		"clientId='{$session->clientId}'
 	");
 
 	// client access controls
@@ -24,8 +24,9 @@ if($admin_user->logged_InControlled()) {
 	$accessLimitInner = '';
 	$customerLimit = '';
 	$customerLimitInner = '';
-	$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
-	$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
+	$accessLimitInner2 = '';
+	$clientAccess = " AND a.clientId = '{$session->clientId}'";
+	$clientAccessInner = " AND b.clientId = '{$session->clientId}'";
 	
 	$accessObject->userId = $session->userId;
 
@@ -36,6 +37,7 @@ if($admin_user->logged_InControlled()) {
 		$branchAccessInner = " AND b.branchId = '{$session->branchId}'";
 		$accessLimit = " AND a.recorded_by = '{$session->userId}'";
 		$accessLimitInner = " AND b.recorded_by = '{$session->userId}'";
+		$accessLimitInner2 = " AND c.recorded_by = '{$session->userId}'";
 	}
 
 	// set the data set
@@ -63,7 +65,7 @@ if($admin_user->logged_InControlled()) {
 					$userId = xss_clean($eachData['user_id']);
 
 					if(isset($eachData['deleted']) && ($eachData['deleted'] == 1)) {
-						$stmt = $evelyn->prepare("UPDATE users SET status='0' WHERE user_id='{$userId}'");
+						$stmt = $pos->prepare("UPDATE users SET status='0' WHERE user_id='{$userId}'");
 						$stmt->execute();
 					} else {
 						$email = xss_clean($eachData['email']);
@@ -85,7 +87,7 @@ if($admin_user->logged_InControlled()) {
 
 							$response = $posClass->addData(
 								"users" ,
-								"clientId='{$posClass->clientId}', user_id='{$getUserId}', name='{$fullname}', gender='{$gender}', email='{$email}', phone='{$contact}', access_level='{$access_level_id}', branchId='{$branchId}', password='{$hashPassword}'"
+								"clientId='{$session->clientId}', user_id='{$getUserId}', name='{$fullname}', gender='{$gender}', email='{$email}', phone='{$contact}', access_level='{$access_level_id}', branchId='{$branchId}', password='{$hashPassword}'"
 							);
 
 							$accessObject->assignUserRole($getUserId, $access_level_id);
@@ -94,8 +96,8 @@ if($admin_user->logged_InControlled()) {
 							//: update the users datable
 							$response = $posClass->updateData(
 								"users" ,
-								"clientId='{$posClass->clientId}', name='{$fullname}', gender='{$gender}', email='{$email}', phone='{$contact}', access_level='{$access_level_id}', branchId='{$branchId}'",
-								"user_id='{$userId}' && clientId='{$posClass->clientId}'"
+								"clientId='{$session->clientId}', name='{$fullname}', gender='{$gender}', email='{$email}', phone='{$contact}', access_level='{$access_level_id}', branchId='{$branchId}'",
+								"user_id='{$userId}' && clientId='{$session->clientId}'"
 							);
 
 							// check if the user has the right permissions to perform this action
@@ -161,7 +163,7 @@ if($admin_user->logged_InControlled()) {
 							$transaction_id = xss_clean($eachData['transaction_id']);
 
 							//: execute the query
-							$salesSQL = $evelyn->prepare("
+							$salesSQL = $pos->prepare("
 								INSERT INTO sales SET 
 									clientId = '{$clientId}', source = '{$source}', 
 									branchId = '{$branchId}', order_id = '{$orderId}',
@@ -201,7 +203,7 @@ if($admin_user->logged_InControlled()) {
 										$product_total = xss_clean($eachDetail['product_total']);
 										$order_date = (isset($eachDetail['order_date'])) ?xss_clean($eachDetail['order_date']) : date("Y-m-d H:i:s");
 
-										$salesDetailsSQL = $evelyn->prepare("
+										$salesDetailsSQL = $pos->prepare("
 											INSERT INTO sales_details SET 
 												clientId = '{$clientId}', branchId = '{$branchId}',
 												order_id = '{$orderId}', product_id = '{$product_id}', 
@@ -212,7 +214,7 @@ if($admin_user->logged_InControlled()) {
 										");
 										$salesDetailsSQL->execute();
 
-										$stmt2 = $evelyn->prepare("
+										$stmt2 = $pos->prepare("
 											UPDATE products SET quantity = (quantity-$product_quantity) WHERE id = '$product_id'
 										");
 										$stmt2->execute();						
@@ -246,7 +248,7 @@ if($admin_user->logged_InControlled()) {
 						if ($checkData != false && $checkData[0]->proceed == '0') {
 							$response = $posClass->addData(
 								"branches" ,
-								"clientId='{$posClass->clientId}', branch_type='{$branchData->branch_type}', branch_name='{$branchData->branch_name_text}', location='{$branchData->location}', branch_email='{$branchData->email}', branch_contact='{$branchData->contact}', branch_logo='{$clientData->client_logo}', branch_id='{$branchData->branch_id}'"
+								"clientId='{$session->clientId}', branch_type='{$branchData->branch_type}', branch_name='{$branchData->branch_name_text}', location='{$branchData->location}', branch_email='{$branchData->email}', branch_contact='{$branchData->contact}', branch_logo='{$clientData->client_logo}', branch_id='{$branchData->branch_id}'"
 							);
 						} else {
 							// update user data
@@ -255,7 +257,7 @@ if($admin_user->logged_InControlled()) {
 								"branch_name='{$branchData->branch_name_text}', location='{$branchData->location}', branch_email='{$branchData->email}',
 									branch_type='{$branchData->branch_type}', 
 									branch_contact='{$branchData->contact}'",
-								"branch_id='{$branchData->branch_id}' && clientId='{$posClass->clientId}'"
+								"branch_id='{$branchData->branch_id}' && clientId='{$session->clientId}'"
 							);
 						}
 					}
@@ -307,10 +309,10 @@ if($admin_user->logged_InControlled()) {
 		if($dataType == "customers") {
 
 			//: query string
-			$stmt = $evelyn->prepare("
+			$stmt = $pos->prepare("
 				SELECT title, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, phone_1, title, email, date_of_birth, residence, gender, city, phone_2, residence 
 				FROM `customers` 
-				WHERE status='1' AND clientId='{$posClass->clientId}' AND branchId='{$session->branchId}' 
+				WHERE status='1' AND clientId='{$session->clientId}' AND branchId='{$session->branchId}' 
 				ORDER BY firstname
 			");
 
@@ -326,7 +328,7 @@ if($admin_user->logged_InControlled()) {
 			// query the database
 			$result = $posClass->getAllRows("products", 
 				"id, product_image, category_id, product_title, quantity, category_id, product_image AS image, cost_price, threshold, date_added,
-					product_id, product_price, product_price", "status = '1' AND branchId = '{$session->branchId}' AND clientId = '{$posClass->clientId}'");
+					product_id, product_price, product_price", "status = '1' AND branchId = '{$session->branchId}' AND clientId = '{$session->clientId}'");
 
 			// data
 			$productsList = [];
@@ -373,7 +375,7 @@ if($admin_user->logged_InControlled()) {
 			$request = $dataType;
 			# code...
 			if($dataType == "sales") {
-				$stmt = $evelyn->prepare("
+				$stmt = $pos->prepare("
 					SELECT 
 						a.id, a.clientId, a.branchId, a.mode, a.order_id, a.customer_id,
 						a.recorded_by, a.order_amount_paid, a.order_discount, 
@@ -392,7 +394,6 @@ if($admin_user->logged_InControlled()) {
 					WHERE 
 						DATE(a.order_date) = CURDATE() 
 					AND 
-						a.source = 'Evelyn' AND
 						a.deleted='0' {$branchAccess} {$accessLimit} {$clientAccess}
 				");
 				$stmt->execute();
@@ -402,17 +403,24 @@ if($admin_user->logged_InControlled()) {
 					$result->saleItems = $posClass->getAllRows("sales_details", "*", "order_id='{$result->order_id}'");
 					$data[] = $result;
 				}
-			
 			} elseif($dataType == "reports") {
-				$branches = $evelyn->prepare("
+				$branches = $pos->prepare("
 					SELECT 
-						a.branch_name, a.id,
+						a.branch_name, a.id, a.square_feet_area,
+						(
+							SELECT 
+								COUNT(*)
+							FROM sales b
+							WHERE b.branchId = a.id AND b.deleted='0'
+								AND (DATE(b.order_date) = CURDATE()) AND order_status='confirmed'
+								{$accessLimitInner} {$clientAccessInner}
+						) AS orders_count,
 						(
 							SELECT 
 								ROUND(SUM(b.order_amount_paid) ,2) 
 							FROM sales b
 							WHERE b.branchId = a.id 
-								AND (DATE(b.order_date)) = CURDATE() AND order_status='confirmed'
+								AND (DATE(b.order_date) = CURDATE()) AND order_status='confirmed'
 								{$accessLimitInner} {$clientAccessInner}
 						) AS total_sales,
 						(
@@ -420,7 +428,7 @@ if($admin_user->logged_InControlled()) {
 								ROUND(MAX(b.order_amount_paid) ,2)
 							FROM sales b
 							WHERE b.branchId = a.id 
-								AND (DATE(b.order_date)) = CURDATE() AND order_status='confirmed'
+								AND (DATE(b.order_date) = CURDATE()) AND order_status='confirmed'
 								{$accessLimitInner} {$clientAccessInner}
 						) AS highest_sales,
 						(
@@ -428,7 +436,7 @@ if($admin_user->logged_InControlled()) {
 								ROUND(MIN(b.order_amount_paid) ,2) 
 							FROM sales b
 							WHERE b.branchId = a.id
-								AND (DATE(b.order_date)) = CURDATE() AND order_status='confirmed'
+								AND (DATE(b.order_date) = CURDATE()) AND order_status='confirmed'
 								{$accessLimitInner} {$clientAccessInner}
 						) AS lowest_sales,
 						(
@@ -436,7 +444,7 @@ if($admin_user->logged_InControlled()) {
 								ROUND(AVG(b.order_amount_paid) ,2)
 							FROM sales b
 							WHERE b.branchId = a.id 
-								AND (DATE(b.order_date)) = CURDATE() AND order_status='confirmed'
+								AND (DATE(b.order_date) = CURDATE()) AND order_status='confirmed'
 								{$accessLimitInner} {$clientAccessInner}
 						) AS average_sales
 					FROM branches a
@@ -498,12 +506,94 @@ if($admin_user->logged_InControlled()) {
 				$branch = ["reports_id" => "branch_performance"];
 				//: branch summaries
 				while($result = $branches->fetch(PDO::FETCH_OBJ)) {
+					$result->square_feet_sales = 'GH&cent;'.number_format(($result->total_sales / $result->square_feet_area), 2);
 					$result->lowest_sales = 'GH&cent;'.number_format($result->lowest_sales, 2);
 					$result->highest_sales = 'GH&cent;'.number_format($result->highest_sales, 2);
 					$result->average_sales = 'GH&cent;'.number_format($result->average_sales, 2);
 					$result->total_sales = 'GH&cent;'.number_format($result->total_sales, 2);
 					$branch[] = $result;
 				}
+
+				//: products performance
+				$products_stmt = $pos->prepare("
+					SELECT
+						a.id, a.category_id, a.product_title, b.branch_name,
+						(
+							SELECT 
+								COUNT(c.order_id) 
+							FROM sales_details b
+							LEFT JOIN sales c ON b.order_id = c.order_id
+							WHERE 
+								c.deleted='0' AND b.product_id = a.id AND
+								(DATE(b.order_date) = CURDATE()) 
+								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+						) AS orders_count,
+						(
+							SELECT 
+								SUM(b.product_quantity) 
+							FROM sales_details b
+							LEFT JOIN sales c ON b.order_id = c.order_id
+							WHERE 
+								c.deleted='0' AND b.product_id = a.id AND
+								(DATE(b.order_date) = CURDATE())
+								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+						) AS totalQuantitySold,
+						(
+							SELECT 
+								SUM(b.product_quantity*b.product_cost_price) 
+							FROM sales_details b
+							LEFT JOIN sales c ON b.order_id = c.order_id
+							WHERE 
+								c.deleted='0' AND b.product_id = a.id AND
+								(DATE(b.order_date) = CURDATE())
+								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+						) AS totalProductsSoldCost,
+						(
+							SELECT 
+								SUM(b.product_quantity*b.product_unit_price) 
+							FROM sales_details b
+							LEFT JOIN sales c ON b.order_id = c.order_id
+							WHERE 
+								c.deleted='0' AND b.product_id = a.id AND
+								(DATE(b.order_date) = CURDATE())
+								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+						) AS totalProductsRevenue,
+						(
+							SELECT 
+								SUM((b.product_quantity*b.product_unit_price) - (b.product_quantity*b.product_cost_price)) 
+							FROM sales_details b
+							LEFT JOIN sales c ON b.order_id = c.order_id
+							WHERE 
+								c.deleted='0' AND b.product_id = a.id AND
+								(DATE(b.order_date) = CURDATE()) 
+								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+						) AS totalProductsProfit
+					FROM 
+						products a
+					LEFT JOIN branches b ON b.id = a.branchId
+					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT 100
+
+				");
+				$products_stmt->execute();
+				
+				// initializing
+				$iv = 0;
+				$productsData = ["reports_id" => "products_performance"];
+				//: branch summaries
+				while($product_result = $products_stmt->fetch(PDO::FETCH_OBJ)) {
+					$iv++;
+					$productsData[] =  [
+						'row_id' => $iv,
+						'product_id' => $product_result->id,
+						'category_id' => $product_result->category_id,
+						'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/product-details/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
+						'orders_count' => $product_result->orders_count,
+						'quantity_sold' => $product_result->totalQuantitySold,
+						'total_selling_cost' => number_format($product_result->totalProductsSoldCost, 2),
+						'total_selling_revenue' => number_format($product_result->totalProductsRevenue, 2),
+						'product_profit' => number_format($product_result->totalProductsProfit, 2)
+					];
+				}		
 
 				// parse the data to use back
 				$data = [
@@ -512,6 +602,9 @@ if($admin_user->logged_InControlled()) {
 					],
 					"sales_attendant_performance" => [
 						"reports_id" => $resultData
+					],
+					"products_performance" => [
+						"reports_id" => $productsData
 					]
 				];
 			}

@@ -51,7 +51,7 @@ a[href="#finish"] {
   <div class="row">
       <div class="col-lg-7">
         <div class="card">
-          <?php //= (!$validDate) ? nonWorkingDay() : null; ?>
+          <?= (!$validDate) ? nonWorkingDay() : null; ?>
           <div class="card-body" style="padding-top: 10px; padding-bottom: 0px">
             <div class="content-loader register-form-loader" style="display: none"><i class="fa fa-3x fa-pulse fa-spinner"></i></div>
             <form id="pos-form-horizontal" class="pos-form-horizontal form-wizard-wrapper register-form" method="POST" action="">
@@ -243,7 +243,7 @@ a[href="#finish"] {
       </div><!--end col-->
       <div class="col-lg-5">
         <div class="card">
-          <?php //= (!$validDate) ? nonWorkingDay() : null; ?>
+          <?= (!$validDate) ? nonWorkingDay() : null; ?>
           <div class="card-body register-build">
             <div class="content-loader register-form-loader" style="display: none"><i class="fa fa-3x fa-pulse fa-spinner"></i></div>
             <h5 class="text-center text-default">Customer</h5>
@@ -272,7 +272,7 @@ a[href="#finish"] {
             <div class="row payment_type_div mt-3 justify-content-between">
               <div class="col-lg-6 col-md-5"><br>
                 <div title="Subtotal of Products" data-toggle="tooltip">
-                  Subtotal: <br><span class="sub_total" id="sub_total">GH&cent; 0.00</span>
+                  Subtotal: <br><span class="sub_total" id="sub_total"><?= $clientData->default_currency ?> 0.00</span>
                 </div>
               </div>
               <div class="order_discounting col-lg-6 col-md-6 text-right">
@@ -290,7 +290,7 @@ a[href="#finish"] {
             </div>
 
             <h6 class="font-weight-bold text-center mt-3">Total To Pay</h6>
-            <button class="btn-primary btn-block btn"><h3 class="text-white"><span class="font-16">GHC</span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h3></button>
+            <button class="btn-primary btn-block btn"><h3 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h3></button>
           </div>
         </div>
       </div>

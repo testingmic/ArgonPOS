@@ -420,13 +420,13 @@ $(`div[class~="update-stock-rows"] button[class~="append-row"]`).on('click', fun
             </div>
             <div class="col-md-2 mb-3">
                 <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                    <div class="input-group-prepend"><span class="input-group-text">${companyVariables.cur}</span></div>
                     <input type="number" step="0.1" value="0.00" class="form-control" name="cost_${lastRowId}">
                 </div>
             </div>
             <div class="col-md-2 mb-3">
                 <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                    <div class="input-group-prepend"><span class="input-group-text">${companyVariables.cur}</span></div>
                     <input type="number" step="0.1" value="0.00" class="form-control" name="price_${lastRowId}">
                 </div>
             </div>

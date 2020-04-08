@@ -209,8 +209,8 @@ $style
 					<td width=\"10%\">{$ii}</td>
 					<td width=\"30%\">{$results4->product_title}</td>
 					<td width=\"20%\">{$results4->product_quantity}</td>
-					<td width=\"20%\" align=\"left\">{$result->currency} ".number_format($results4->product_price, 2)."</td>
-					<td width=\"20%\" align=\"left\">{$result->currency} {$pricetotal}</td>
+					<td width=\"20%\" align=\"left\">{$clientData->default_currency} ".number_format($results4->product_price, 2)."</td>
+					<td width=\"20%\" align=\"left\">{$clientData->default_currency} {$pricetotal}</td>
 				</tr>";
 			}
 		}
@@ -227,32 +227,32 @@ $style
 		$invoice_data .= "<tr style=\"border-top: #ccc 1px solid\">
 				<td style=\"padding:10px\" colspan=\"2\"></td>
 				<td style=\"padding:10px\" align=\"right\" style=\"font-weight:none;text-transform:uppercase\">SUB TOTAL (".$user_orders->rowCount()." Items):</td>
-				<td style=\"text-transform:uppercase\">{$result->currency} ".number_format($orderTotal, 2)."</td>
+				<td style=\"text-transform:uppercase\">{$clientData->default_currency} ".number_format($orderTotal, 2)."</td>
 			</tr>";
 			$invoice_data .= "<tr>
 				<td colspan=\"2\"></td>
 				<td align=\"right\" style=\"text-transform:uppercase\">DISCOUNT:</td>
-				<td style=\"text-transform:uppercase\">{$result->currency} ".number_format($o_discount, 2)."</td>
+				<td style=\"text-transform:uppercase\">{$clientData->default_currency} ".number_format($o_discount, 2)."</td>
 			</tr>";
 		$invoice_data .= "<tr>
 			<td style=\"padding:10px\"></td>
 			<td style=\"padding:10px\"></td>
 			<td align=\"right\" style=\"background-color:#f4f4f4;padding:10px;font-weight:bolder;text-transform:uppercase\"><strong>TOTAL PAYABLE:</strong></td>
-			<td align=\"left\"x style=\"padding:10px;font-weight:bolder;background-color:#5e2572;color:#fff;text-transform:uppercase\"><strong>{$result->currency} ".number_format($overall_price, 2)."</strong></td>
+			<td align=\"left\"x style=\"padding:10px;font-weight:bolder;background-color:#5e2572;color:#fff;text-transform:uppercase\"><strong>{$clientData->default_currency} ".number_format($overall_price, 2)."</strong></td>
 		</tr>";
 		if(in_array($initials, ["INV", "POS"])) {
 			$invoice_data .= "<tr>
 			<td style=\"padding:10px\"></td>
 			<td style=\"padding:10px\"></td>
 			<td align=\"right\" style=\"padding:10px;text-transform:uppercase\">TOTAL PAID:</td>
-			<td align=\"left\"x style=\"padding:10px;text-transform:uppercase\">{$result->currency} ".number_format($result->order_amount_paid, 2)."</td>
+			<td align=\"left\"x style=\"padding:10px;text-transform:uppercase\">{$clientData->default_currency} ".number_format($result->order_amount_paid, 2)."</td>
 		</tr>";
 		}
 		
 		$invoice_data .= "<tr>
 			<td style=\"padding:10px\" colspan=\"2\"></td>
 			<td  align=\"right\" style=\"padding:10px\" style=\"background-color:#f4f4f4;font-weight:bolder;text-transform:uppercase\"><strong>BALANCE:</strong></td>
-			<td style=\"padding:10px\" style=\"font-weight:bolder;background-color:#5e2572;color:#fff;text-transform:uppercase\"><strong>{$result->currency} ".number_format(($result->order_amount_balance), 2)."</strong></td>
+			<td style=\"padding:10px\" style=\"font-weight:bolder;background-color:#5e2572;color:#fff;text-transform:uppercase\"><strong>{$clientData->default_currency} ".number_format(($result->order_amount_balance), 2)."</strong></td>
 		</tr>";
 		
 		$invoice_data .= "</table>";

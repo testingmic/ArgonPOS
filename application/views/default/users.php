@@ -1,11 +1,17 @@
 <?php
 $PAGETITLE = "User Management";
 
+// call the access object
+global $accessObject;
+
 // ensure that the user is logged in
 if(!$admin_user->logged_InControlled()) {
   include_once "login.php";
   exit;
 }
+
+// create a new object for the access level
+$accessObject->userId = $session->userId;
 
 //: check online status
 if(isset($_POST["onlineCheck"]) && confirm_url_id(1, 'onlineCheck')) {

@@ -21,31 +21,32 @@ if($admin_user->logged_InControlled()) {
 	$clientData = $clientData[0];
 	$branchData = $branchData[0];
 
+	// create new objects
 	$accessObject->userId = $session->userId;
+	
+	// where clause for the user role
+	$branchAccess = '';
+	$branchAccessInner = '';
+	$accessLimit = '';
+	$accessLimitInner = '';
+	$customerLimit = '';
+	$customerLimitInner = '';
+	$accessLimitInner2 = '';
+	$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
+	$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
+
+	// use the access level for limit contents that is displayed
+	if(!$accessObject->hasAccess('monitoring', 'branches')) {
+		$branchAccess = " AND a.branchId = '{$session->branchId}'";
+		$branchAccessInner = " AND b.branchId = '{$session->branchId}'";
+		$accessLimit = " AND a.recorded_by = '{$session->userId}'";
+		$accessLimitInner = " AND b.recorded_by = '{$session->userId}'";
+		$accessLimitInner2 = " AND c.recorded_by = '{$session->userId}'";
+	}
 
 	// dashboard inights
 	if(confirm_url_id(1, 'dashboardAnalytics')) {
-		// create new objects
-		$accessObject->userId = $session->userId;
 		
-		// where clause for the user role
-		$branchAccess = '';
-		$branchAccessInner = '';
-		$accessLimit = '';
-		$accessLimitInner = '';
-		$customerLimit = '';
-		$customerLimitInner = '';
-		$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
-		$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
-
-		// use the access level for limit contents that is displayed
-		if(!$accessObject->hasAccess('monitoring', 'branches')) {
-			$branchAccess = " AND a.branchId = '{$session->branchId}'";
-			$branchAccessInner = " AND b.branchId = '{$session->branchId}'";
-			$accessLimit = " AND a.recorded_by = '{$session->userId}'";
-			$accessLimitInner = " AND b.recorded_by = '{$session->userId}'";
-		}
-
 		if (isset($_POST['getUserAllSalesRecords']) && confirm_url_id(2, "getUserAllSalesRecords")) {
 
 			$period = (isset($_POST['salesPeriod'])) ? xss_clean($_POST['salesPeriod']) : "today";
@@ -158,7 +159,7 @@ if($admin_user->logged_InControlled()) {
 						'fullname' => "<a onclick=\"return getSalesDetails('{$data->order_id}')\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$data->order_id}\">{$data->title} {$data->firstname} {$data->lastname}</a>",
 						'phone' => $data->phone_1,
 						'date' => $orderDate,
-						'amount' => "{$data->currency} {$totalOrder}",
+						'amount' => "{$clientData->default_currency} {$totalOrder}",
 						'action' => " <a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-print\"></i></a> &nbsp; <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$data->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-download\"></i></a>",
 					];
 
@@ -239,7 +240,7 @@ if($admin_user->logged_InControlled()) {
 				"message" => [
 					"table" => $message, 
 					"totalSales" => [
-						"total" => "GH&cent; " . $hrClass->toDecimal($totalSales, 2, ','), 
+						"total" => $clientData->default_currency . $hrClass->toDecimal($totalSales, 2, ','), 
 						"trend" => $totalSalesTrend ." ". $display
 					],
 					"totalServed" => [
@@ -247,23 +248,23 @@ if($admin_user->logged_InControlled()) {
 						"trend" => $totalServedTrend ." ". $display
 					],
 					"totalDiscount" => [
-						"total" => "GH&cent; " . $hrClass->toDecimal($totalDiscount, 0, ','),
+						"total" => $clientData->default_currency . $hrClass->toDecimal($totalDiscount, 0, ','),
 						"trend" => $totalDiscountTrend ." ". $display
 					],
 					"averageSales" => [
-						"total"	=> "GH&cent; " . number_format($averageSalesValue, 2),
+						"total"	=> $clientData->default_currency . number_format($averageSalesValue, 2),
 						"trend" => $averageSalesTrend ." ". $display
 					],
 					"totalCredit" => [
-						"total" => "GH&cent; " . $hrClass->toDecimal($totalCreditSales, 2, ','),
+						"total" => $clientData->default_currency . $hrClass->toDecimal($totalCreditSales, 2, ','),
 						"trend" =>  "<span class='text-gray'>{$totalPercent}% of Total Sales ({$creditProfitPercentage}% of profit)</span>"
 					],
 					"salesComparison" => [
-						"profit" => "GH&cent; " . $hrClass->toDecimal(($totalProfit-$totalDiscount), 2, ','),
+						"profit" => $clientData->default_currency . $hrClass->toDecimal(($totalProfit-$totalDiscount), 2, ','),
 						"profit_trend" =>  $totalProfitTrend ." ". $display,
-						"selling" => "GH&cent; " . $hrClass->toDecimal($totalSellingPrice, 2, ','),
+						"selling" => $clientData->default_currency . $hrClass->toDecimal($totalSellingPrice, 2, ','),
 						"selling_trend" =>  $totalSellingTrend ." ". $display,
-						"cost" => "GH&cent; " . $hrClass->toDecimal($totalCostPrice, 2, ','),
+						"cost" => $clientData->default_currency . $hrClass->toDecimal($totalCostPrice, 2, ','),
 						"cost_trend" =>  $totalCostTrend ." ". $display
 					]
 				],
@@ -291,7 +292,7 @@ if($admin_user->logged_InControlled()) {
 						'row' => "$i.",
 						'product' => "$data->product_title",
 						'quantity' => $data->quantity,
-						'price' => "GH&cent; $data->selling_price",
+						'price' => "{$clientData->default_currency} $data->selling_price",
 						'recordedBy' => $data->recordedBy,
 						'orderDate' => $orderDate
 					];
@@ -355,8 +356,8 @@ if($admin_user->logged_InControlled()) {
 							<tr>
 								<td>{$data->product_title}</td>
 								<td>{$data->product_quantity}</td>
-								<td class=\"text-right\">GH&cent; {$data->product_unit_price}</td>
-								<td class=\"text-right\">GH&cent; {$productTotal}</td>
+								<td class=\"text-right\">{$clientData->default_currency} {$data->product_unit_price}</td>
+								<td class=\"text-right\">{$clientData->default_currency} {$productTotal}</td>
 							</tr>";
 
 						$subTotal += $data->product_total;
@@ -367,16 +368,16 @@ if($admin_user->logged_InControlled()) {
 						<tr>
 							<td style=\"font-weight:bolder;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Subtotal</td>
 							<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">
-								GH&cent; ".$hrClass->toDecimal($subTotal, 2, ',')."
+								{$clientData->default_currency} ".$hrClass->toDecimal($subTotal, 2, ',')."
 							</td>
 						</tr>
 						<tr>
 							<td style=\"font-weight:;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Discount</td>
-							<td style=\"font-weight:;text-transform:uppercase\" class=\"text-right\">GH&cent; {$discount}</td>
+							<td style=\"font-weight:;text-transform:uppercase\" class=\"text-right\">{$clientData->default_currency} {$discount}</td>
 						</tr>
 						<tr>
 							<td style=\"font-weight:bolder;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Overall Total</td>
-							<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">GH&cent; {$overall}</td>
+							<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">{$clientData->default_currency} {$overall}</td>
 						</tr>
 					";
 
@@ -452,34 +453,6 @@ if($admin_user->logged_InControlled()) {
 			// set the range in a session
 			if(isset($postData->salesPeriod)) {
 				$session->set_userdata("reportPeriod", $period);
-			}
-
-			// where clause for the user role
-			$brAccess = '';
-			$branchAccess = '';
-			$branchAccessInner = '';
-			$accessLimit = '';
-			$accessLimitInner = '';
-			$customerLimit = '';
-			$customerLimitInner = '';
-			$accessLimitInner2 = '';
-			$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
-			$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
-
-			// filter the record based on the customer id that has been parsed
-			if(!empty($session->reportingCustomerId)) {
-				$customerLimit = " AND a.customer_id = '{$session->reportingCustomerId}'";
-				$customerLimitInner = " AND b.customer_id = '{$session->reportingCustomerId}'";
-			}
-
-			// use the access level for limit contents that is displayed
-			if(!$accessObject->hasAccess('monitoring', 'branches')) {
-				$brAccess = " AND a.id = '{$session->branchId}'";
-				$branchAccess = " AND a.branchId = '{$session->branchId}'";
-				$branchAccessInner = " AND b.branchId = '{$session->branchId}'";
-				$accessLimit = " AND a.recorded_by = '{$session->userId}'";
-				$accessLimitInner = " AND b.recorded_by = '{$session->userId}'";
-				$accessLimitInner2 = " AND c.recorded_by = '{$session->userId}'";
 			}
 
 			// Check Sales Period
@@ -767,17 +740,17 @@ if($admin_user->logged_InControlled()) {
 				];
 				$resultData[] = [
 					"column" => "gross-margin-return-investment",
-					"total" => "GH&cent; " . number_format($grossMarginInvestmentReturn, 2), 
+					"total" => $clientData->default_currency . number_format($grossMarginInvestmentReturn, 2), 
 					"trend" => "Gross margin investment returns"
 				];
 				$resultData[] = [
 					"column" => "stock-turnover-rate",
-					"total" => "GH&cent; " . number_format($stockTurnoverRate, 2), 
+					"total" => $clientData->default_currency . number_format($stockTurnoverRate, 2), 
 					"trend" => "Total Stock Turnover Rate"
 				];
 				$resultData[] = [
 					"column" => "total-sales",
-					"total" => "GH&cent; " . number_format($totalSales, 2), 
+					"total" => $clientData->default_currency . number_format($totalSales, 2), 
 					"trend" => $totalSalesTrend ." ". $display
 				];
 				$resultData[] = [
@@ -787,17 +760,17 @@ if($admin_user->logged_InControlled()) {
 				];
 				$resultData[] = [
 					"column" => "average-sales",
-					"total" => "GH&cent; " . number_format($averageSalesValue, 2),
+					"total" => $clientData->default_currency . number_format($averageSalesValue, 2),
 					"trend" => $averageSalesTrend ." ". $display
 				];
 				$resultData[] = [
 					"column" => "highest-sales",
-					"total" => "GH&cent; " . number_format($highestSalesValue, 2),
+					"total" => $clientData->default_currency . number_format($highestSalesValue, 2),
 					"trend" => $highestSalesTrend ." ". $display
 				];
 				$resultData[] = [
 					"column" => "order-discount",
-					"total" => "GH&cent; " . number_format($orderDiscount, 2),
+					"total" => $clientData->default_currency . number_format($orderDiscount, 2),
 					"trend" => $orderDiscountTrend ." ". $display
 				];
 				$resultData[] = [
@@ -807,12 +780,12 @@ if($admin_user->logged_InControlled()) {
 				];
 				$resultData[] = [
 					"column" => "sales-per-employee",
-					"total" => "GH&cent; " . number_format($salesPerEmployee, 2),
+					"total" => $clientData->default_currency . number_format($salesPerEmployee, 2),
 					"trend" => $salesPerEmployeeTrend . " ".$display
 				];
 				$resultData[] = [
 					"column" => "gross-profit",
-					"total" => "GH&cent; " . number_format($grossProfit, 2),
+					"total" => $clientData->default_currency . number_format($grossProfit, 2),
 					"trend" => $grossProfitTrend . " " .$display
 				];
 				$resultData[] = [
@@ -827,12 +800,12 @@ if($admin_user->logged_InControlled()) {
 				];
 				$resultData[] = [
 					"column" => "sales-per-category",
-					"total" => "GH&cent; " . number_format(($totalSales/$inventoryCount), 2),
+					"total" => $clientData->default_currency . number_format(($totalSales/$inventoryCount), 2),
 					"trend" => "Sales Per Category"
 				];
 				$resultData[] = [
 					"column" => "net-profit",
-					"total" => "GH&cent; " . number_format($netProfit, 2),
+					"total" => $clientData->default_currency . number_format($netProfit, 2),
 					"trend" => $netProfitTrend . " " .$display
 				];
 				$resultData[] = [
@@ -842,7 +815,7 @@ if($admin_user->logged_InControlled()) {
 				];
 				$resultData[] = [
 					"column" => "sales-per-square-feet",
-					"total" => "GH&cent; " . number_format($salesPerSquareFeet, 2),
+					"total" => $clientData->default_currency . number_format($salesPerSquareFeet, 2),
 					"trend" => $salesPerSquareFeetTrend . " " .$display
 				];
 				$resultData[] = [
@@ -1009,9 +982,9 @@ if($admin_user->logged_InControlled()) {
 						'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/product-details/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
 						'orders_count' => $product_result->orders_count,
 						'quantity_sold' => $product_result->totalQuantitySold,
-						'total_selling_cost' => number_format($product_result->totalProductsSoldCost, 2),
-						'total_selling_revenue' => number_format($product_result->totalProductsRevenue, 2),
-						'product_profit' => number_format($product_result->totalProductsProfit, 2)
+						'total_selling_cost' => $clientData->default_currency.number_format($product_result->totalProductsSoldCost, 2),
+						'total_selling_revenue' => $clientData->default_currency.number_format($product_result->totalProductsRevenue, 2),
+						'product_profit' => $clientData->default_currency.number_format($product_result->totalProductsProfit, 2)
 					];
 				}
 				
@@ -1251,17 +1224,17 @@ if($admin_user->logged_InControlled()) {
 						'discount_effect' => [
 							'with_discount' => array_values($freshData),
 							'without_discount' => array_values($amountNotDiscounted),
-							'total_sale' => 'GH&cent;' . number_format(array_sum(array_values($amountNotDiscounted)), 2),
-							'discounted_sale' => 'GH&cent;' . number_format(array_sum(array_values($freshData)), 2)
+							'total_sale' => $clientData->default_currency . number_format(array_sum(array_values($amountNotDiscounted)), 2),
+							'discounted_sale' => $clientData->default_currency . number_format(array_sum(array_values($freshData)), 2)
 						],
-						'highest' => 'GH&cent;' . number_format($highestSalesValue, 2),
-						'lowest' => 'GH&cent;' . number_format($lowestSalesValue, 2),
+						'highest' => $clientData->default_currency . number_format($highestSalesValue, 2),
+						'lowest' => $clientData->default_currency . number_format($lowestSalesValue, 2),
 						'actuals' => array_values($actualSalesRecord),
 						'credit' => array_values($creditSalesRecord),
 						'comparison' => [
-							'total_sales' => 'GH&cent;' . number_format(array_sum($amount_discounted), 2),
-							'total_actual_sales' => 'GH&cent;' . number_format(array_sum($actualSalesRecord), 2),
-							'total_credit_sales' => 'GH&cent;' . number_format(array_sum($creditSalesRecord), 2),
+							'total_sales' => $clientData->default_currency . number_format(array_sum($amount_discounted), 2),
+							'total_actual_sales' => $clientData->default_currency . number_format(array_sum($actualSalesRecord), 2),
+							'total_credit_sales' => $clientData->default_currency . number_format(array_sum($creditSalesRecord), 2),
 						],
 						'revenue' => [
 							'cost' => array_values($totalCostRecord),
@@ -1325,7 +1298,7 @@ if($admin_user->logged_InControlled()) {
 					// begin the query
 					$salesAttendants = $posClass->getAllRows(
 						"users a", 
-						"a.user_id,
+						"a.user_id, a.daily_target, a.monthly_target, a.weekly_target,
 						CONCAT(a.name) AS fullname,
 						(
 							SELECT 
@@ -1334,14 +1307,25 @@ if($admin_user->logged_InControlled()) {
 							WHERE 
 								b.recorded_by=a.user_id AND b.order_status='confirmed' AND b.deleted='0' AND
 								(DATE(b.order_date) >= '{$dateFrom}' && DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner}
+								{$branchAccessInner} {$clientAccessInner}
 						) AS amnt,
+						(
+							SELECT 
+								SUM(b.product_quantity)
+							FROM sales_details b
+							LEFT JOIN sales c ON c.order_id = b.order_id
+							WHERE c.recorded_by = a.user_id AND c.order_status='confirmed'
+								AND c.deleted = '0' AND
+								(DATE(c.order_date) >= '{$dateFrom}' && DATE(c.order_date) <= '{$dateTo}')
+								{$branchAccessInner} {$clientAccessInner}
+
+						) AS total_items_sold,
 						(
 							SELECT COUNT(*) FROM sales b 
 							WHERE 
 								b.recorded_by=a.user_id AND b.order_status='confirmed' AND b.deleted='0' AND
 								(DATE(b.order_date) >= '{$dateFrom}' && DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner}
+								{$branchAccessInner} {$clientAccessInner}
 						) AS orders",
 						"a.status='1' {$userLimit} {$branchAccess} {$clientAccess} ORDER BY amnt DESC LIMIT 10"
 					);
@@ -1349,6 +1333,7 @@ if($admin_user->logged_InControlled()) {
 					$personnelNames = array();
 					$personnelSales = array();
 					$attendantSales = array();
+					$salesTarget = 0;
 
 					//: loop throught the dataset
 					foreach($salesAttendants as $eachPersonnel) {
@@ -1358,10 +1343,33 @@ if($admin_user->logged_InControlled()) {
 
 						$uName = "<div class='text-left'><a data-name=\"{$eachPersonnel->fullname}\" data-record=\"attendant\" data-value=\"{$eachPersonnel->user_id}\" class=\"view-user-sales font-weight-bold\" href='javascript:void(0)'>{$eachPersonnel->fullname}</a></div>";
 
+						if($period == "today") {
+							$salesTarget = $eachPersonnel->daily_target;
+						} elseif($period == "this-week") {
+							$salesTarget = $eachPersonnel->weekly_target;
+						} elseif($period == "this-month") {
+							$salesTarget = $eachPersonnel->monthly_target;
+						} elseif($period == "this-year") {
+							$salesTarget = ($eachPersonnel->monthly_target * 12);
+						}
+
+						$salesTargetPercentage = ($eachPersonnel->amnt > 0) ? (($eachPersonnel->amnt / $salesTarget) * 100) : 0; 
+
 						$attendantSales[] = [
 							'fullname' => $uName,
-							'orders' => $eachPersonnel->orders,
-							'amnt' => "GH&cent; ".number_format($eachPersonnel->amnt, 2)
+							'sales' => [
+								'orders' => $eachPersonnel->orders,
+								'amount' => $clientData->default_currency.number_format($eachPersonnel->amnt, 2),
+								'average_sale' => ($eachPersonnel->orders > 0) ? $clientData->default_currency.number_format(($eachPersonnel->amnt/$eachPersonnel->orders), 2) : $clientData->default_currency."0.00"
+							],
+							'items' => [
+								'total_items_sold' => (int) $eachPersonnel->total_items_sold,
+								'average_items_sold' => ($eachPersonnel->orders > 1) ? number_format($eachPersonnel->total_items_sold / $eachPersonnel->orders) : 0
+							],
+							'targets' => [
+								'target_amount' => $clientData->default_currency.number_format($salesTarget, 2),
+								'target_percent' => number_format($salesTargetPercentage, 2)."%"
+							]
 						];
 					}
 
@@ -1442,7 +1450,7 @@ if($admin_user->logged_InControlled()) {
 
 							$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('reports/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
 
-							$result->total_amount = 'GH&cent; '.number_format($result->total_amount, 2);
+							$result->total_amount = "{$clientData->default_currency} ".number_format($result->total_amount, 2);
 							$resultData[] = $result;
 						}
 					}
@@ -1498,7 +1506,7 @@ if($admin_user->logged_InControlled()) {
 								{$accessLimitInner} {$clientAccessInner}
 						) AS average_sales
 					FROM branches a
-					WHERE 1 {$brAccess} {$clientAccess}
+					WHERE 1 {$branchAccess} {$clientAccess}
 						ORDER BY total_sales ASC
 				");
 				$stmt->execute();
@@ -1543,11 +1551,11 @@ if($admin_user->logged_InControlled()) {
 
 				//: branch summaries
 				while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-					$result->square_feet_sales = 'GH&cent;'.number_format(($result->total_sales / $result->square_feet_area), 2);
-					$result->lowest_sales = 'GH&cent;'.number_format($result->lowest_sales, 2);
-					$result->highest_sales = 'GH&cent;'.number_format($result->highest_sales, 2);
-					$result->average_sales = 'GH&cent;'.number_format($result->average_sales, 2);
-					$result->total_sales = 'GH&cent;'.number_format($result->total_sales, 2);
+					$result->square_feet_sales = $clientData->default_currency.number_format(($result->total_sales / $result->square_feet_area), 2);
+					$result->lowest_sales = $clientData->default_currency.number_format($result->lowest_sales, 2);
+					$result->highest_sales = $clientData->default_currency.number_format($result->highest_sales, 2);
+					$result->average_sales = $clientData->default_currency.number_format($result->average_sales, 2);
+					$result->total_sales = $clientData->default_currency.number_format($result->total_sales, 2);
 					
 					$summary[] = $result;
 				}
@@ -1925,10 +1933,10 @@ if($admin_user->logged_InControlled()) {
 			$results[] = [
 				'row_id' => $row,
 				'request_type' => $eachRequest->request_type,
-				'request_id' => "<a class=\"text-success\" title=\"Click to view full details\" href=\"".$config->base_url('invoice/'.$eachRequest->request_id)."\">{$eachRequest->request_id}</a>",
+				'request_id' => "<a target=\"_blank\" class=\"text-success\" title=\"Click to view full details\" href=\"{$config->base_url('export/'.$eachRequest->request_id)}\">{$eachRequest->request_id}</a>",
 				'branch_name' => $eachRequest->branch_name,
 				'customer_name' => $eachRequest->customer_name,
-				'quote_value' => 'GH&cent; '. number_format($eachRequest->request_sum, 2),
+				'quote_value' => "{$clientData->default_currency} ". number_format($eachRequest->request_sum, 2),
 				'recorded_by' => $eachRequest->recorded_by,
 				'request_date' => $eachRequest->request_date,
 				'action' => $eachRequest->action
@@ -2333,10 +2341,14 @@ if($admin_user->logged_InControlled()) {
 			if(isset($postData->opening_days) && !empty($postData->opening_days)) {
 				$workingDays = implode(",", $postData->opening_days);
 			}
+			$print_receipt = isset($postData->print_receipt) ? xss_clean($postData->print_receipt) : null;
 			// update user data
 			$response = $posClass->updateData(
 				"settings",
-				"	shop_opening_days='".xss_clean($workingDays)."',
+				"	print_receipt='{$print_receipt}',
+					expiry_notification_days='".xss_clean($postData->exp_notifi_days)."',
+					shop_opening_days='".xss_clean($workingDays)."',
+					default_currency='".xss_clean($postData->default_currency)."',
 					receipt_message='".xss_clean($postData->receipt_message)."',
 					terms_and_conditions='".htmlentities($postData->terms_and_conditions)."'
 				",
@@ -2570,7 +2582,7 @@ if($admin_user->logged_InControlled()) {
 						);
 
 						$action = "<div class='text-center'>
-								<a class=\"btn btn-outline-info btn-sm\" href=\"{$baseUrl}product/{$product->pid}\">
+								<a class=\"btn btn-outline-info btn-sm\" href=\"{$baseUrl}products/{$product->pid}\">
 	                                <i class=\"fa fa-edit\"></i></a>";
 			            // ensure the user has the needed permissions
 			            if($accessObject->hasAccess('inventory_branches', 'products')) {
@@ -2585,13 +2597,13 @@ if($admin_user->logged_InControlled()) {
 							'row_id' => $i,
 							'product_name' => "<img src=\"".(($product->source == 'Vend') ? $product->product_image : ((!empty($product->product_image) && file_exists("assets/images/products/".$product->product_image) ? $config->base_url("assets/images/products/{$product->product_image}") : (empty($product->product_image) ? $config->base_url("assets/images/products/default.png") : $config->base_url($product->product_image)))))."\" alt=\"\" height=\"52\">
 			                    <p class=\"d-inline-block align-middle mb-0\">
-			                        <a href=\"{$baseUrl}product/{$product->pid}\" class=\"d-inline-block align-middle mb-0 product-name\">
+			                        <a href=\"{$baseUrl}products/{$product->pid}\" class=\"d-inline-block align-middle mb-0 product-name\">
 			                        {$product->product_title}</a> 
 			                        <br>
 			                        ".(($product->source == 'Vend') ? "<span class='badge badge-success'> {$product->source}</span>" : null)."
 			                    </p>",
 			                'category' => $product->category,
-			                'price' => "GH&cent; {$price}",
+			                'price' => "{$clientData->default_currency} {$price}",
 			                'quantity' => "<div class='text-center'>{$product->quantity}</div>",
 			                'indicator' => "<div class='text-center'><span style=\"font-size: 9px;\" class=\"fa fa-circle text-{$indicator}\"></span></div>",
 			                'action' => $action
@@ -3060,9 +3072,6 @@ if($admin_user->logged_InControlled()) {
 			if ($query->execute([$session->clientId, '1'])) {
 				$i = 0;
 
-				// create a new object for the access level
-				$accessObject->userId = $session->userId;
-
 				while ($data = $query->fetch(PDO::FETCH_OBJ)) {
 					$i++;
 
@@ -3415,7 +3424,9 @@ if($admin_user->logged_InControlled()) {
 		if(isset($_POST["listCustomers"]) && confirm_url_id(2, "listCustomers")) {
 			//: query for the list of all customers
 			$customersClass = load_class("Customers", "controllers");
-			$customersList = $customersClass->fetch("id, title, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, branchId, phone_1, phone_2, email, residence", "AND customer_id != 'WalkIn'");
+			$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, b.branch_name", "AND a.customer_id != 'WalkIn' {$branchAccess}",
+				"LEFT JOIN branches b ON b.id = a.branchId"
+			);
 
 			// fetch the data
 			$customers = [];
@@ -3426,10 +3437,19 @@ if($admin_user->logged_InControlled()) {
 				// set the action button
 				$eachCustomer->row_id = $row_id;
 				$eachCustomer->action = "<div align=\"center\">";
-		        $eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a> &nbsp; <a href=\"{$config->base_url('reports/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
+
+				if($accessObject->hasAccess('update', 'customers')) {
+		        	$eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a>";
+		        } 
+
+		        $eachCustomer->action .= "&nbsp;<a href=\"{$config->base_url('reports/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
+
+		        if($accessObject->hasAccess('delete', 'customers')) {
+                    $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('ajax/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";
+                }
 		        $eachCustomer->action .= "</div>";
 
-		        $eachCustomer->fullname = "<a data-id=\"{$eachCustomer->customer_id}\" data-info='".json_encode($eachCustomer)."'>{$eachCustomer->fullname}</a>";
+		        $eachCustomer->fullname = "<a data-id=\"{$eachCustomer->customer_id}\" data-info='".json_encode($eachCustomer)."'>{$eachCustomer->title} {$eachCustomer->fullname}<br><span style='background-color: #9ba7ca;' class='badge badge-default'>{$eachCustomer->branch_name}</span></a>";
 				//append to the list
 				$customers[] = $eachCustomer;
 			}
@@ -3457,10 +3477,36 @@ if($admin_user->logged_InControlled()) {
 				$response->message = "Please enter a valid contact number";
 			}
 			else{
-				$updateCustomer = $customersObj->quickUpdate($postData);
-				if(!empty($updateCustomer)){
-					$response->status = 200;
-					$response->message = "Customer data Successfully updated";
+				// update the customer information
+                if($postData->request == "update-record") {
+                    $updateCustomer = $customersObj->quickUpdate($postData);
+                    if(!empty($updateCustomer)){
+                        $response->status = 200;
+                        $response->message = "Customer data successfully updated";
+                    }
+                } else {
+                    // add the customer information
+                    $addCustomer = $customersObj->quickAdd($postData);
+                    if(!empty($addCustomer)){
+                        $response->status = 200;
+                        $response->message = "Customer data successfully inserted";
+                    }
+                }
+			}
+		}
+
+		elseif(isset($_POST["itemId"], $_POST["itemToDelete"]) && confirm_url_id(2, 'deleteCustomer')) {
+			$postData = (Object) array_map("xss_clean", $_POST);
+
+			if(empty($postData->itemId)) {
+				$response->message = "Error processing request";
+			} else {
+				$query = $pos->prepare("UPDATE customers SET status='0' WHERE id='{$postData->itemId}' AND clientId='{$session->clientId}'");
+				if($query->execute()) {
+					$posClass->userLogs('customer', $postData->itemId, 'Deleted the customer details.');
+					$response->status = true;
+					$response->href = $config->base_url('customers');
+					$response->message = "Customer successfully deleted";
 				}
 			}
 		}
@@ -3586,6 +3632,251 @@ if($admin_user->logged_InControlled()) {
 				}
 			}
 		}
+	}
+
+	//: Import manager
+	elseif(confirm_url_id(1, "importManager")) {
+
+		// create a new object for the access level
+		if($accessObject->hasAccess('view', 'settings')) {
+			
+			// set the valid requests that can be made
+			$validRequests = [
+			    "customer" => [
+			        "fa fa-users",
+			        "Import Customers List in Bulk"
+			    ],
+			    "product" => [
+			        "fa fa-shopping-cart",
+			        "Import Products List in Bulk"
+			    ],
+			    "user" => [
+			        "fa fa-user",
+			        "Import Admin Users into the Database"
+			    ]
+			];
+				
+			// assign the variable
+		    $currentData = (isset($SITEURL[3])) ? strtolower($SITEURL[3]) : strtolower(xss_clean($SITEURL[2]));
+		    $branchId = $session->useBranchId;
+
+		    // columns to use for the query
+	        if($currentData == "customer") {
+	            // accepted column names
+	            $acpCols = [
+	                "customer_id"=>"Customer Code", "title"=>"Title", "firstname"=>"Firstname", "gender"=>"Gender", "lastname"=>"Lastname", 
+	                "phone_1"=>"Contact Number", "email"=>"Email Address", 
+	                "date_of_birth"=>"Date of Birth", "residence"=>"Residence", "city"=>"City"
+	            ];
+	        } elseif($currentData == "product") {
+	            // accepted column names for the products
+	            $acpCols = [
+	            	"product_id" => "Product Code", 
+	                "category_id" => "Product Category", "product_title" => "Product Title", 
+	                "product_description" => "Product Description",
+	                "product_price" => "Retail Price", "cost_price" => "Product Cost Price",
+	                "threshold" => "Product Threshold", "quantity" => "Product Quantity"
+	            ];
+	        } elseif($currentData == "user") {
+	            // accepted column names for the products
+	            $acpCols = [
+	                "user_id" => "User ID", "name" => "Fullname", 
+	                "gender" => "Gender", "email" => "Email Address",
+	                "phone" => "Contact Number", "username" => "username",
+	                "password" => "Password"
+	            ];
+	        }
+
+	        // set the branch id in session
+	        if(isset($_POST["setBranchId"], $_POST["curBranchId"]) && confirm_url_id(2, 'setBranchId')) {
+	            // set the branch id in session
+	            $session->curBranchId = (int) $_POST["curBranchId"];
+
+	            // parse success response
+	            $response->status = 200;
+	            $response->result = "Branch successfully set";
+	        }
+
+	        // if there is any file uploaded
+	        elseif(isset($_FILES['csv_file']) && !empty($_FILES['csv_file']) && confirm_url_id(2, 'loadCSV')) {
+
+	            // reading tmp_file name
+	            $fileData = fopen($_FILES['csv_file']['tmp_name'], 'r');
+
+	            // get the content of the file
+	            $column = fgetcsv($fileData);
+	            $csvData = array();
+	            $csvSessionData = array();
+	            $error = false;
+	            $i = 0;
+
+	            //using while loop to get the information
+	            while($row = fgetcsv($fileData)) {
+	            	// session data
+	            	$csvSessionData[] = $row;
+
+	                // push the data parsed by the user to the page
+	                if($i < 10)  {
+	                	$csvData[] = $row;
+	                }
+	                // increment
+	                $i++;
+	            }
+	            // set the content in a session
+	            $session->set_userdata('csvSessionData', $csvSessionData);
+
+	            // set the data to send finally
+	            $response = array(
+	                'column'	=> $column,
+	                'csvData'	=>  $csvData,
+	                'data_count' => count($csvSessionData)
+	            );
+	        }
+
+	        // form content has been submitted
+	        elseif(isset($_POST["csvKey"], $_POST["csvValues"], $_POST["uploadCSVData"]) && confirm_url_id(2, "uploadCSVData")) {
+
+	            // initializing
+				$response = (Object) [
+					'status' => "error",
+					'result' => "Unknown request parsed"
+				];
+
+	            // begin processing
+	            $response->result = "Error processing request.";
+	            
+	            // confirm that the keys are not empty
+	            if(!empty($_POST["csvKey"]) and is_array($_POST["csvKey"])) {
+	                // not found
+	                $notFound = 0;
+
+	                // check if the keys are all valid
+	                foreach($_POST["csvKey"] as $thisKey) {
+	                    if(!in_array($thisKey, array_values($acpCols))) {
+	                        $notFound++;
+	                    }
+	                }
+
+	                // check if the branch id session is not empty
+	                if(empty($session->curBranchId)) {
+	                	// break the code if an error was found
+	                    $response->result = 'Please select a Branch to continue.';
+	                    $response->trigger= 'importModal';
+	                }
+	                // count the number of columns parsed to the accepted 
+	                elseif(count($_POST["csvKey"]) > count(array_keys($acpCols))) {
+	                    // break the code if an error was found
+	                    $response->result = 'Required columns exceeded. Please confirm and try.';
+	                } elseif($notFound) {
+	                    // break the code if an error was found
+	                    $response->result = 'Invalid column parsed. Please confirm all columns match.';
+	                } else {
+	                    // start at zero
+	                    $i = 0;
+	                    $unqKey = '';
+	                	$unqData = '';
+
+	                    // other configuration for missing unique ids
+		                //: search if customer code was not parsed then set it
+		            	if(($currentData == "customer") && (!in_array("Customer Code", $_POST["csvKey"]))) {
+		            		// append the customer_id column and value
+		            		$unqKey = "`customer_id`,";
+		            	} elseif(($currentData == "product") && (!in_array("Product Code", $_POST["csvKey"]))) {
+		            		// append the product_id column and value
+		            		$unqKey = "`product_id`,";
+		            	} elseif(($currentData == "user") && (!in_array("User ID", $_POST["csvKey"]))) {
+		            		// append the user_id column and value
+		            		$unqKey = "`user_id`,";
+		            	}
+
+		                // begin the processing of the array data
+		            	$sqlQuery = "INSERT INTO {$currentData}s (`clientId`,`branchId`, {$unqKey}";
+	                    
+	                    // continue processing the request
+	                    foreach($_POST["csvKey"] as $thisKey) {
+	                        // increment
+	                        $i++;
+	                        // append to the sql query
+	                        $sqlQuery .= "`".array_search(xss_clean($thisKey), $acpCols)."`";
+	                        // append a comma if the loop hasn't ended yet
+	                        if($i < count($_POST["csvKey"])) $sqlQuery .= ",";
+	                    }
+	                    // append the last bracket
+	                    $sqlQuery .= ") VALUES";
+
+	                    $newCSVArray = [];
+	                    // set the values
+	                    if(!empty($_POST["csvValues"]) and is_array($_POST["csvValues"])) {
+	                        // begin
+	                        $iv = 0;
+
+	                        // loop through the values list
+	                        foreach($_POST["csvValues"] as $key => $eachCsvValue) {
+	                            // print each csv value
+	                            foreach($eachCsvValue as $eKey => $eValue) {
+	                                $newCSVArray[$eKey][] = $eachCsvValue[$eKey];
+	                            }
+	                        }
+
+	                        foreach($session->csvSessionData as $key => $eachCsvValue) {
+	                            $newCSVArray[$key] = $eachCsvValue;
+	                        }
+	                    }
+
+	                    // run this section if the new array is not empty
+	                    if(!empty($newCSVArray)) {
+
+	                        // loop through each array dataset
+	                        foreach($newCSVArray as $eachData) {
+
+	                        	//: search if customer code was not parsed then set it
+	                            if(($currentData == "customer") && (!in_array("Customer Code", $_POST["csvKey"]))) {
+	                                // append the customer_id column and value
+	                                $unqData = "'".random_string('alnum', 15)."',";
+	                            } elseif(($currentData == "product") && (!in_array("Product Code", $_POST["csvKey"]))) {
+	                                // append the product_id column and value
+	                                $unqData = "'".random_string('alnum', 15)."',";
+	                            } elseif(($currentData == "user") && (!in_array("User ID", $_POST["csvKey"]))) {
+	                                // append the user_id column and value
+	                                $unqData = "'".random_string('alnum', 15)."',";
+	                            }
+
+	                            // initializing
+	                            $sqlQuery .= "('{$session->clientId}','{$session->curBranchId}',{$unqData}";
+	                            $ik = 0;
+	                            // loop through each data
+	                            foreach($eachData as $eachKey => $eachValue) {
+	                                $ik++;
+	                                // create sql string for the values
+	                                $sqlQuery .= "'".xss_clean($eachValue)."'";
+
+	                                if($ik < count($_POST["csvKey"])) $sqlQuery .= ",";
+	                            }
+	                            // end
+	                            $sqlQuery .= "),";
+	                        }
+
+	                        $sqlQuery = substr($sqlQuery, 0, -1) . ';';
+
+	                        // execute the sql statement
+	                        $query = $pos->prepare($sqlQuery);
+
+	                        // confirm that the query was successful
+	                        if($query->execute()) {
+	                            // set the status to true
+	                            $session->csvSessionData = null;
+	                            $session->curBranchId = null;
+	                            $response->result = $currentData;
+	                            $response->status = "success";
+	                            $response->message = ucfirst($currentData)."s data was successfully imported.";
+	                        }
+	                    }
+	                }
+	            }
+	        }
+
+		}
+
 	}
 
 }

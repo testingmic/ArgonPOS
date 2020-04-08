@@ -451,3 +451,28 @@ table#product-select-table thead tr th {
         background-color: #f4f2f2;
     }
 }
+
+.offline .card {
+  min-height: 200px
+}
+
+.switch-button {
+  font-size: 17px;
+  background: none;
+}
+
+.branch-select {
+  min-height: 100px;
+  cursor: pointer;
+  border-radius: 7px;
+  padding: 0px;
+  margin-bottom: 0px;
+}
+
+.branch-select:hover, .import-cards:hover {
+  border: solid 0.5px #ccc;
+}
+
+.branch-select h3 {
+  font-size: 20px;
+}

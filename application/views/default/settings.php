@@ -19,6 +19,15 @@ if($accessObject->hasAccess('view', 'settings')) {
 require_once "headtags.php";
 
 global $clientData;
+
+// array for product expiry period
+$expiryRange = [
+  '2 WEEK' => 'Two Weeks (14 Days)',
+  '1 MONTH' => 'One Month (30 Days)',
+  '2 MONTH' => 'Two Months (60 Days)',
+  '3 MONTH' => 'Three Months (Quarterly)',
+  '6 MONTH' => 'Six Months (Semi Annually)'
+];
 ?>
 <!-- Page Content-->
 <!-- Header -->
@@ -58,7 +67,7 @@ global $clientData;
                     <a class="nav-link" id="payment_options_tab" data-toggle="pill" href="#payment_options">Payment Options</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" id="sales_options_tab" data-toggle="pill" href="#sales_options">Sales & Invoices</a>
+                    <a class="nav-link" id="sales_options_tab" data-toggle="pill" href="#sales_options">Sales, Invoices & Stock Notifications</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" id="reports_options_tab" data-toggle="pill" href="#reports_options">Reports</a>
@@ -277,15 +286,11 @@ global $clientData;
                                 <label for="receipt_message">Receipt Invoice Message</label>
                                 <input value="<?= $clientData->receipt_message ?>" type="text" class="form-control" name="receipt_message" id="receipt_message" placeholder="Message to appear beneath printed invoices">
                               </div><!--end form-group-->
-                            </div>
-                            <div class="col-md-6 col-lg-6">
                               <div class="form-group">
                                 <label for="company_logo">Manager's Signature</label><br>
                                 <input type="file" name="company_logo" id="company_logo2" class="form-control">
                                 <img data-name="company_logo" width="100px" src="<?= $config->base_url($clientData->manager_signature) ?>" alt="">
                               </div>
-                            </div>
-                            <div class="col-lg-6 col-md-6">
                               <div class="form-group">
                                 <label for="terms_and_conditions">Terms & Conditions</label>
                                 <textarea name="terms_and_conditions" id="terms_and_conditions" rows="10" class="form-control"><?= $clientData->terms_and_conditions ?></textarea>
@@ -313,27 +318,45 @@ global $clientData;
                                   </div>
                                 <?php } ?>
                               </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                              <hr>
-                              <div class="form-group">
-                                <label for="opening_days">Point of Sale Outlets</label>
-                                <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
-                                  <input type="checkbox" name="email_receipt" value="" class="custom-control-input" id="email_receipt">
-                                  <label class="custom-control-label" for="email_receipt">Email Receipt</label>
+                              <div class="form-group col-lg-6 col-md-12 col-sm-12">
+                                  <label for="default_currency">Default Currency</label>
+                                    <select name="default_currency" id="default_currency" class="form-control selectpicker">
+                                    <?php
+                                    $curList = $posClass->getAllRows("settings_currency", "*");
+                                    // loop through the branches list
+                                    foreach($curList as $eachCur) {
+                                      ?>
+                                      <option <?= ($eachCur->currency == $clientData->default_currency) ? "selected" : null; ?> value="<?= $eachCur->currency ?>"><?= $eachCur->currency ?></option>
+                                      <?php 
+                                    }
+                                    ?>
+                                    </select>
                                 </div>
-                                <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
-                                  <input type="checkbox" name="print_receipt" value="" class="custom-control-input" id="print_receipt">
-                                  <label class="custom-control-label" for="print_receipt">Print Receipt</label>
+                                <hr>
+                                <div class="form-group">
+                                  <label for="opening_days">Print Receipts automatically at Point of Sale Outlets</label>
+                                  <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
+                                    <input type="checkbox" <?= ($clientData->print_receipt == "yes") ? "checked" : null; ?> name="print_receipt" value="yes" class="custom-control-input" id="print_receipt">
+                                    <label class="custom-control-label" for="print_receipt">Print Receipt</label>
+                                  </div>
                                 </div>
-                              </div>
                             </div>
+                            <div class="col-lg-12"><hr></div>
+                            <div class="col-md-4">
+                              <label for="exp_notifi_days">Dashboard Product Expiry Notification Period</label>
+                              <select name="exp_notifi_days" id="exp_notifi_days" class="form-control selectpicker">
 
-
+                                <?php
+                                foreach($expiryRange as $key => $value) {
+                                  // print the period range
+                                  print "<option ".(($clientData->expiry_notification_days == $key) ? "selected" : null)." value='{$key}'>{$value}</option>";
+                                }
+                                ?>
+                              </select>
+                            </div>
 
                             <?php if($accessObject->hasAccess('update', 'settings')) { ?>
-                              <div class="col-lg-10"><div class="form-result"></div></div>
+                              <div class="col-lg-10 mt-4"><div class="form-result"></div></div>
                               <div class="col-lg-2 text-right">
                                 <input type="hidden" name="updateSalesDetails" value="updateSalesDetails">
                                 <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Save Changes</button>

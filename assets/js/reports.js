@@ -63,8 +63,8 @@ async function getSalesDetails(salesID) {
             			<tr>
 							<td>${e.product_title}</td>
 							<td>${e.product_quantity}</td>
-							<td class=\"text-right\">GH¢ ${e.product_unit_price}</td>
-							<td class=\"text-right\">GH¢ ${e.product_total}</td>
+							<td class=\"text-right\">${companyVariables.cur} ${e.product_unit_price}</td>
+							<td class=\"text-right\">${companyVariables.cur} ${e.product_total}</td>
 						</tr>`;
                     subTotal += parseFloat(e.product_total);
                 }
@@ -75,16 +75,16 @@ async function getSalesDetails(salesID) {
             trData += `<tr>
 					<td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Subtotal</td>
 					<td style="font-weight:bolder;text-transform:uppercase" class="text-right">
-						GH¢ ${formatCurrency(subTotal)}
+						${companyVariables.cur} ${formatCurrency(subTotal)}
 					</td>
 				</tr>
 				<tr>
 					<td style="font-weight:;text-transform:uppercase" colspan="3" class="text-right">Discount</td>
-					<td style="font-weight:;text-transform:uppercase" class="text-right">GH¢ ${discount}</td>
+					<td style="font-weight:;text-transform:uppercase" class="text-right">${companyVariables.cur} ${discount}</td>
 				</tr>
 				<tr>
 					<td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Overall Total</td>
-					<td style="font-weight:bolder;text-transform:uppercase" class="text-right">GH¢ ${formatCurrency(overall)}</td>
+					<td style="font-weight:bolder;text-transform:uppercase" class="text-right">${companyVariables.cur} ${formatCurrency(overall)}</td>
 				</tr>
 
 				</tbody>
@@ -163,15 +163,20 @@ $(function() {
 
         $(`table[class~="attendant-performance"]`).dataTable().fnDestroy();
         $(`table[class~="attendant-performance"]`).dataTable({
-            "iDisplayLength":4,
+            "iDisplayLength": 5,
             "aaData": teamInfo,
             "buttons": ["copy", "print","csvHtml5"],
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-                { "data": 'fullname' },
-                { "data": 'amnt' },
-                { "data": 'orders' }
+                {"data":'fullname'},
+                {"data":'sales.amount'},
+                {"data":'sales.orders'},
+                {"data":'sales.average_sale'},
+                {"data":'targets.target_amount'},
+                {"data":'targets.target_percent'},
+                {"data":'items.total_items_sold'},
+                {"data":'items.average_items_sold'}
             ]
         });
 
@@ -223,7 +228,7 @@ $(function() {
                 y: {
                     formatter: function(y) {
                         if (typeof y !== "undefined") {
-                            return "GH&cent; " + formatCurrency(y);
+                            return companyVariables.cur + formatCurrency(y);
                         }
                         return y;
 
@@ -406,7 +411,7 @@ $(function() {
                         y: {
                             formatter: function(y) {
                                 if (typeof y !== "undefined") {
-                                    return "GH&cent; " + formatCurrency(y);
+                                    return companyVariables.cur + formatCurrency(y);
                                 }
                                 return y;
 
@@ -434,223 +439,229 @@ $(function() {
                 chart.render();
 
 
-                $(`div[class="chart-comparison"]`).html(``);
-                $(`div[class="chart-comparison"]`).html(`<div id="sales-comparison" class="apex-charts"></div>`);
-                var compareSales = {
-                    chart: {
-                        height: 420,
-                        type: 'line',
-                        stacked: false,
-                        toolbar: {
-                            show: true
+                if($(`div[class="chart-comparison"]`).length){
+                   
+                    $(`div[class="chart-comparison"]`).html(``);
+                    $(`div[class="chart-comparison"]`).html(`<div id="sales-comparison" class="apex-charts"></div>`);
+                    var compareSales = {
+                        chart: {
+                            height: 420,
+                            type: 'line',
+                            stacked: false,
+                            toolbar: {
+                                show: true
+                            },
+                            zoom: false,
+                            shadow: {
+                                enabled: false,
+                                color: '#bbb',
+                                top: 3,
+                                left: 2,
+                                blur: 3,
+                                opacity: 1
+                            },
                         },
-                        zoom: false,
-                        shadow: {
-                            enabled: false,
-                            color: '#bbb',
-                            top: 3,
-                            left: 2,
-                            blur: 3,
-                            opacity: 1
+                        stroke: {
+                            width: [0, 2, 4],
+                            curve: 'smooth'
                         },
-                    },
-                    stroke: {
-                        width: [0, 2, 4],
-                        curve: 'smooth'
-                    },
-                    plotOptions: {
-                        bar: {
-                            columnWidth: '40%'
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '40%'
+                            }
+                        },
+                        colors: ["#1ecab8", "#fbb624", "#f93b7a"],
+                        series: [{
+                            name: 'Total Sales',
+                            type: 'column',
+                            data: resp.result.data
+                        }, {
+                            name: 'Paid Sales',
+                            type: 'area',
+                            data: resp.result.sales.actuals
+                        }, {
+                            name: 'Credit Sales',
+                            type: 'line',
+                            data: resp.result.sales.credit
+                        }],
+                        fill: {
+                            opacity: [0.85, 0.25, 1],
+                            gradient: {
+                                inverseColors: false,
+                                shade: 'light',
+                                type: "vertical",
+                                opacityFrom: 0.85,
+                                opacityTo: 0.55,
+                                stops: [0, 100, 100, 100]
+                            }
+                        },
+                        labels: resp.result.labeling,
+                        markers: {
+                            size: 2,
+                            opacity: 0.9,
+                            colors: ["#ffbc00"],
+                            strokeColor: "#fff",
+                            strokeWidth: 2,
+                            style: 'hollow',
+                            hover: {
+                                size: 7,
+                            }
+                        },
+                        xaxis: {
+                            type: 'datetime',
+                            axisBorder: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                            axisTicks: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Saes Values',
+                            },
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function(y) {
+                                    if (typeof y !== "undefined") {
+                                        return companyVariables.cur + formatCurrency(y);
+                                    }
+                                    return y;
+
+                                }
+                            }
+                        },
+                        grid: {
+                            borderColor: '#f1f3fa'
                         }
-                    },
-                    colors: ["#1ecab8", "#fbb624", "#f93b7a"],
-                    series: [{
-                        name: 'Total Sales',
-                        type: 'column',
-                        data: resp.result.data
-                    }, {
-                        name: 'Paid Sales',
-                        type: 'area',
-                        data: resp.result.sales.actuals
-                    }, {
-                        name: 'Credit Sales',
-                        type: 'line',
-                        data: resp.result.sales.credit
-                    }],
-                    fill: {
-                        opacity: [0.85, 0.25, 1],
-                        gradient: {
-                            inverseColors: false,
-                            shade: 'light',
-                            type: "vertical",
-                            opacityFrom: 0.85,
-                            opacityTo: 0.55,
-                            stops: [0, 100, 100, 100]
-                        }
-                    },
-                    labels: resp.result.labeling,
-                    markers: {
-                        size: 2,
-                        opacity: 0.9,
-                        colors: ["#ffbc00"],
-                        strokeColor: "#fff",
-                        strokeWidth: 2,
-                        style: 'hollow',
-                        hover: {
-                            size: 7,
-                        }
-                    },
-                    xaxis: {
-                        type: 'datetime',
-                        axisBorder: {
-                            show: true,
-                            color: '#bec7e0',
-                        },
-                        axisTicks: {
-                            show: true,
-                            color: '#bec7e0',
-                        },
-                    },
-                    yaxis: {
-                        title: {
-                            text: 'Saes Values',
-                        },
-                    },
-                    tooltip: {
+                    }
+                    if (periodSelected == 'today') {
+                        delete compareSales.xaxis.type;
+                    }
+                    var compareChart = new ApexCharts(
+                        document.querySelector("#sales-comparison"),
+                        compareSales
+                    );
+                    compareChart.render();
+                }
+
+
+                if($(`div[class="payment-chart"]`).length){
+                    $(`div[class="payment-chart"]`).html(``);
+                    $(`div[class="payment-chart"]`).html(`<div id="payment-options" class="apex-charts"></div>`);
+                    var paymentOptions = {
+                      chart: {
+                          height: 380,
+                          type: 'donut',
+                      }, 
+                      series: resp.result.sales.payment_options.payment_values,
+                      legend: {
+                          show: true,
+                          position: 'bottom',
+                          horizontalAlign: 'center',
+                          verticalAlign: 'middle',
+                          floating: false,
+                          fontSize: '14px',
+                          offsetX: 0,
+                          offsetY: -10
+                      },
+                      tooltip: {
                         shared: true,
                         intersect: false,
                         y: {
                             formatter: function(y) {
                                 if (typeof y !== "undefined") {
-                                    return "GH&cent; " + formatCurrency(y);
+                                    return companyVariables.cur + formatCurrency(y);
                                 }
                                 return y;
 
                             }
                         }
-                    },
-                    grid: {
-                        borderColor: '#f1f3fa'
-                    }
-                }
-                if (periodSelected == 'today') {
-                    delete compareSales.xaxis.type;
-                }
-                var compareChart = new ApexCharts(
-                    document.querySelector("#sales-comparison"),
-                    compareSales
-                );
-                compareChart.render();
-
-
-                $(`div[class="payment-chart"]`).html(``);
-                $(`div[class="payment-chart"]`).html(`<div id="payment-options" class="apex-charts"></div>`);
-                var paymentOptions = {
-                  chart: {
-                      height: 380,
-                      type: 'donut',
-                  }, 
-                  series: resp.result.sales.payment_options.payment_values,
-                  legend: {
-                      show: true,
-                      position: 'bottom',
-                      horizontalAlign: 'center',
-                      verticalAlign: 'middle',
-                      floating: false,
-                      fontSize: '14px',
-                      offsetX: 0,
-                      offsetY: -10
-                  },
-                  tooltip: {
-                    shared: true,
-                    intersect: false,
-                    y: {
-                        formatter: function(y) {
-                            if (typeof y !== "undefined") {
-                                return "GH&cent; " + formatCurrency(y);
-                            }
-                            return y;
-
-                        }
-                    }
-                  },
-                  labels: resp.result.sales.payment_options.payment_option,
-                  colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
-                  responsive: [{
-                      breakpoint: 600,
-                      options: {
-                          chart: {
-                              height: 270
-                          },
-                          legend: {
-                              show: true
-                          },
+                      },
+                      labels: resp.result.sales.payment_options.payment_option,
+                      colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
+                      responsive: [{
+                          breakpoint: 600,
+                          options: {
+                              chart: {
+                                  height: 270
+                              },
+                              legend: {
+                                  show: true
+                              },
+                          }
+                      }],
+                      fill: {
+                          type: 'gradient'
                       }
-                  }],
-                  fill: {
-                      type: 'gradient'
-                  }
-                }
-                var paymentChart = new ApexCharts(
-                    document.querySelector("#payment-options"),
-                    paymentOptions
-                );
-                paymentChart.render();
-
-
-                $(`div[class="category-chart"]`).html(``);
-                $(`div[class="category-chart"]`).html(`<div id="category-options" class="apex-charts"></div>`);
-                var productCategoryOptions = {
-                  chart: {
-                      height: 450,
-                      type: 'donut',
-                  }, 
-                  series: resp.result.sales.category_sales.data,
-                  legend: {
-                      show: true,
-                      position: 'bottom',
-                      horizontalAlign: 'center',
-                      verticalAlign: 'middle',
-                      floating: false,
-                      fontSize: '14px',
-                      offsetX: 0,
-                      offsetY: -10
-                  },
-                  tooltip: {
-                    shared: true,
-                    intersect: false,
-                    y: {
-                        formatter: function(y) {
-                            if (typeof y !== "undefined") {
-                                return "GH&cent; " + formatCurrency(y);
-                            }
-                            return y;
-
-                        }
                     }
-                  },
-                  labels: resp.result.sales.category_sales.labels,
-                  colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
-                  responsive: [{
-                      breakpoint: 600,
-                      options: {
-                          chart: {
-                              height: 270
-                          },
-                          legend: {
-                              show: true
-                          },
-                      }
-                  }],
-                  fill: {
-                      type: 'gradient'
-                  }
+                    var paymentChart = new ApexCharts(
+                        document.querySelector("#payment-options"),
+                        paymentOptions
+                    );
+                    paymentChart.render();
                 }
-                var productCategoryChart = new ApexCharts(
-                    document.querySelector("#category-options"),
-                    productCategoryOptions
-                );
-                productCategoryChart.render();
+
+                if($(`div[class="category-chart"]`).length) {
+                    $(`div[class="category-chart"]`).html(``);
+                    $(`div[class="category-chart"]`).html(`<div id="category-options" class="apex-charts"></div>`);
+                    var productCategoryOptions = {
+                      chart: {
+                          height: 450,
+                          type: 'donut',
+                      }, 
+                      series: resp.result.sales.category_sales.data,
+                      legend: {
+                          show: true,
+                          position: 'bottom',
+                          horizontalAlign: 'center',
+                          verticalAlign: 'middle',
+                          floating: false,
+                          fontSize: '14px',
+                          offsetX: 0,
+                          offsetY: -10
+                      },
+                      tooltip: {
+                        shared: true,
+                        intersect: false,
+                        y: {
+                            formatter: function(y) {
+                                if (typeof y !== "undefined") {
+                                    return companyVariables.cur + formatCurrency(y);
+                                }
+                                return y;
+
+                            }
+                        }
+                      },
+                      labels: resp.result.sales.category_sales.labels,
+                      colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
+                      responsive: [{
+                          breakpoint: 600,
+                          options: {
+                              chart: {
+                                  height: 270
+                              },
+                              legend: {
+                                  show: true
+                              },
+                          }
+                      }],
+                      fill: {
+                          type: 'gradient'
+                      }
+                    }
+                    var productCategoryChart = new ApexCharts(
+                        document.querySelector("#category-options"),
+                        productCategoryOptions
+                    );
+                    productCategoryChart.render();
+                }
 
 
                 $(`div[class="revenue-chart"]`).html(``);
@@ -728,7 +739,7 @@ $(function() {
                       y: {
                           formatter: function (y) {
                               if (typeof y !== "undefined") {
-                                  return "GH&cent; " + formatCurrency(y);
+                                  return companyVariables.cur + formatCurrency(y);
                               }
                               return y;
                           }
@@ -824,7 +835,7 @@ $(function() {
                         trData += `<tr>`;
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
-                        trData += `<td>GH¢${e.order_amount_paid}</td>`;
+                        trData += `<td>${companyVariables.cur}${e.order_amount_paid}</td>`;
                         trData += `<td>${e.order_date}</td>`;
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="${baseUrl}invoices/${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
                         trData += `</tr>`;
@@ -1249,15 +1260,15 @@ $(function() {
             }
         });
 
-        var lowestSale = `GH&cent; ${formatCurrency(Math.min(...salesFigures))}`;
-        var highestSale = `GH&cent; ${formatCurrency(Math.max(...salesFigures))}`;
-        var totalDiscount = `GH&cent; (${formatCurrency(expectedSellingPrice - totals)})`;
-        var creditTotal = `GH&cent; ${formatCurrency(credits)}`;
-        var salesTotal = `GH&cent; ${formatCurrency(totals)}`;
-        var totalCost = `GH&cent; ${formatCurrency(productsCostPrice)}`;
-        var totalProfit = `GH&cent; ${formatCurrency(totals-productsCostPrice)}`;
-        var creditPercent = `<span class='text-danger'>GH&cent; ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
-        var average = `GH&cent; ${formatCurrency(totals/orders)}`;
+        var lowestSale = `${companyVariables.cur} ${formatCurrency(Math.min(...salesFigures))}`;
+        var highestSale = `${companyVariables.cur} ${formatCurrency(Math.max(...salesFigures))}`;
+        var totalDiscount = `${companyVariables.cur} (${formatCurrency(expectedSellingPrice - totals)})`;
+        var creditTotal = `${companyVariables.cur} ${formatCurrency(credits)}`;
+        var salesTotal = `${companyVariables.cur} ${formatCurrency(totals)}`;
+        var totalCost = `${companyVariables.cur} ${formatCurrency(productsCostPrice)}`;
+        var totalProfit = `${companyVariables.cur} ${formatCurrency(totals-productsCostPrice)}`;
+        var creditPercent = `<span class='text-danger'>${companyVariables.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
+        var average = `${companyVariables.cur} ${formatCurrency(totals/orders)}`;
 
         var hValues = new Array();
         for(var i = 0; i < vHours.length; i++) {
@@ -1485,7 +1496,7 @@ $(function() {
                                 y: {
                                     formatter: function(y) {
                                         if (typeof y !== "undefined") {
-                                            return "GH&cent; " + formatCurrency(y);
+                                            return companyVariables.cur + formatCurrency(y);
                                         }
                                         return y;
 
@@ -1550,8 +1561,11 @@ $(function() {
                 
                 if ($(`div[class~="reports-summary"]`).length) {
                     summaryItems(period);
+                    salesOverview(period);
                     salesAttendantPerformance(period);
-                    ordersCount(period);
+                    if($(`div[id="dash_spark_1"]`).length) {
+                        ordersCount(period);
+                    }
                     topContactsPerformance(period);
                     branchPerformance(period);
                 }
@@ -1561,7 +1575,9 @@ $(function() {
                     var periodSelected = $(this).val();
                     summaryItems(periodSelected);
                     salesOverview(periodSelected);
-                    ordersCount(periodSelected);
+                    if($(`div[id="dash_spark_1"]`).length) {
+                        ordersCount(periodSelected);
+                    }
                     salesAttendantPerformance(periodSelected);
                     topContactsPerformance(periodSelected);
                     branchPerformance(periodSelected);

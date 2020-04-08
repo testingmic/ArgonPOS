@@ -12,42 +12,43 @@ class Customers extends Pos {
 		parent::__construct();
 	}
 
-	public function fetch($columns = "*", $whereClause = null){
-		$sql = "SELECT $columns FROM customers WHERE clientId = ? AND status = ? AND branchId = ? {$whereClause} ORDER BY firstname, lastname";
+	public function fetch($columns = "*", $whereClause = null, $leftJoin = null){
+		$sql = "SELECT $columns FROM customers a {$leftJoin} WHERE a.clientId = ? AND a.status = ? {$whereClause} ORDER BY a.id DESC";
 		$stmt = $this->db->prepare($sql);
-		$stmt->execute([$this->clientId, "1", $this->session->branchId]);
+		$stmt->execute([$this->clientId, 1]);
 		return $stmt->fetchAll(PDO::FETCH_OBJ);	
 	}
 
-	public function quickAdd(stdClass $customerData) {
+	public function quickAdd(stdClass $postData) {
 
 		try {
 
-			if(!empty($customerData)) {
+			if(!empty($postData)) {
 
 				// insert user organization details first
-				$customer_id = "EVC".random_string('nozero', 12);
+				$customer_id = "POS".random_string('nozero', 12);
 								
-				$stmt = $this->db->prepare("INSERT INTO customers SET customer_id=?, firstname=?, lastname=?, phone_1=?, title=?, owner_id=?, email=?, branchId = ?, clientId = ?");
+				$stmt = $this->db->prepare("INSERT INTO customers SET customer_id=?, firstname=?, lastname=?, phone_1=?, title=?, owner_id=?, email=?, branchId = ?, clientId = ?, residence = ?");
 				
 				if($stmt->execute([
 					$customer_id, 
-					$customerData->nc_firstname, 
-					$customerData->nc_lastname, 
-					$customerData->nc_contact,
-					$customerData->nc_title, 
+					$postData->nc_firstname, 
+					$postData->nc_lastname, 
+					$postData->nc_contact,
+					$postData->nc_title, 
 					$this->session->userId,
-					$customerData->nc_email,
+					$postData->nc_email,
 					$this->session->branchId,
-					$this->clientId
+					$this->clientId,
+					(isset($postData->residence)) ? $postData->residence : null
 				])) {
 					$this->userLogs('customer', $customer_id, 'Added a new Customer');
 					return (object)[
 						$customer_id, 
-						$customerData->nc_firstname, 
-						$customerData->nc_lastname,
-						$customerData->nc_email,
-						$customerData->nc_contact
+						$postData->nc_firstname, 
+						$postData->nc_lastname,
+						$postData->nc_email,
+						$postData->nc_contact
 					];
 				}
 				return false;
@@ -56,27 +57,26 @@ class Customers extends Pos {
 		} catch(PDOException $e) { return false; }
 	}
 
-	public function quickUpdate(stdClass $customerData) {
+	public function quickUpdate(stdClass $postData) {
 
 		try {
 
-			if(!empty($customerData)) {
+			if(!empty($postData)) {
 
 				// insert user organization details first				
-				$stmt = $this->db->prepare("UPDATE customers SET residence = ?, firstname=?, lastname=?, phone_1=?, title=?, email=? WHERE branchId = ? AND clientId = ? AND customer_id = ?");
+				$stmt = $this->db->prepare("UPDATE customers SET residence = ?, firstname=?, lastname=?, phone_1=?, title=?, email=? WHERE clientId = ? AND customer_id = ?");
 				
 				if($stmt->execute([
-					$customerData->residence, 
-					$customerData->nc_firstname, 
-					$customerData->nc_lastname, 
-					$customerData->nc_contact,
-					$customerData->nc_title, 
-					$customerData->nc_email,
-					$this->session->branchId,
+					$postData->residence, 
+					$postData->nc_firstname,
+					$postData->nc_lastname,
+					$postData->nc_contact,
+					$postData->nc_title, 
+					$postData->nc_email,
 					$this->clientId,
-					$customerData->customer_id
+					$postData->customer_id
 				])) {
-					$this->userLogs('customer', $customerData->customer_id, 'Updated the customer details');
+					$this->userLogs('customer', $postData->customer_id, 'Updated the customer details');
 					return true;
 				}
 				return false;

@@ -86,9 +86,6 @@ if($admin_user->logged_InControlled()) {
             <div class="col-6">
               <a href="<?= $config->base_url('forgotten') ?>" class="text-light"><small>Forgot password?</small></a>
             </div>
-            <!-- <div class="col-6 text-right">
-              <a href="<?= $config->base_url('register') ?>" class="text-light"><small>Create new account</small></a>
-            </div> -->
           </div>
         </div>
       </div>
@@ -113,9 +110,9 @@ if($admin_user->logged_InControlled()) {
             },
             success: function(resp) {
                 if(resp.status == 500) {
-                    $(`div[class="form-result"]`).html(resp.result);
+                    $(`div[class~="form-result"]`).html(resp.result);
                 } else {
-                    $(`div[class="form-result"]`).html('<div class="alert alert-success">Login Successful. Redirecting <i class="fa fa-spinner fa-spin"></i></div>');
+                    $(`div[class~="form-result"]`).html('<div class="alert alert-success">Login Successful. Redirecting <i class="fa fa-spinner fa-spin"></i></div>');
                     setTimeout(function() {
                         window.location.href='<?= $config->base_url('dashboard'); ?>';
                     }, 1000);
@@ -123,12 +120,12 @@ if($admin_user->logged_InControlled()) {
             },
             error: function(err) {
                 formButton.prop('disabled', false);
-                $(`div[class="form-result"]`).html(``);
+                $(`div[class~="form-result"]`).html(``);
             },
             complete: function(data) {
                 formButton.prop('disabled', false);
                 setTimeout(function() {
-                    $(`div[class="form-result"]`).html(``);
+                    $(`div[class~="form-result"]`).html(``);
                 }, 7000);
             }
         })

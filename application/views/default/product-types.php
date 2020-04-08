@@ -7,7 +7,7 @@ require_once "headtags.php";
 global $accessObject;
 ?>
 <!-- Page Content-->
-<!-- Header -->
+<?= connectionLost(); ?>
 <div class="header bg-primary pb-6">
   <div class="container-fluid">
     <div class="header-body">
@@ -45,7 +45,7 @@ global $accessObject;
                               <th width="7%">#</th>
                               <th>Name</th>
                               <th>Products Count</th>
-                              <th>Action</th>
+                              <th width="10%">Action</th>
                           </tr>
                       </thead>
                       <tbody></tbody>

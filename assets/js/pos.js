@@ -38,28 +38,30 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		onStepChanging(event, currentIndex, newIndex){
 
 			var selectedPayType = $(`select[class~="payment-type-select"]`).val();
-  		var amountPaid = parseFloat($(`input[name="amount_paying"]`).val());
-  		var amountPayable = parseFloat($(`input[name="amount_to_pay"]`).attr("max"));
-  		var customerSelected = $(`select[class~="customer-select"]`).val();
+	  		var amountPaid = parseFloat($(`input[name="amount_paying"]`).val());
+	  		var amountPayable = parseFloat($(`input[name="amount_to_pay"]`).attr("max"));
+	  		var customerSelected = $(`select[class~="customer-select"]`).val();
 
-  		if (isNaN(amountPaid)) {
-  			amountPaid = 0;
-  		}
+	  		if (isNaN(amountPaid)) {
+	  			amountPaid = 0;
+	  		}
 
-  		if(currentIndex == customerIndex) {
-  			if(customerSelected == "WalkIn") {
-  				$(`h6[class~="selected-customer-name"]`).html('Walk In Customer');
-  				$("[data-bind-html='customer']").html(`Walk In Customer`);
-  			}
-  		}
+	  		if(currentIndex == customerIndex) {
+	  			if(customerSelected == "WalkIn") {
+	  				$(`h6[class~="selected-customer-name"]`).html('Walk In Customer');
+	  				$("[data-bind-html='customer']").html(`Walk In Customer`);
+	  			}
+	  		}
 
-      if(newIndex == paymentIndex) {
-        let preferredPayment = $(`select[class~="customer-select"]`).children("option:selected").data('prefered-payment');
-        
-        if(preferredPayment.length > 0) {
-          $(`select[name="payment_type"]`).val(preferredPayment).change();
-        }
-      }
+	      	if(newIndex == paymentIndex) {
+	        let preferredPayment = $(`select[class~="customer-select"]`).children("option:selected").data('prefered-payment');
+	        
+		        if(preferredPayment != null) { 	
+			        if(preferredPayment.length > 0) {
+			          $(`select[name="payment_type"]`).val(preferredPayment).change();
+			        }
+			    }
+	      	}
 
 			if(currentIndex == customerIndex && customerSelected == "0"){
 				Toast.fire({
@@ -84,9 +86,9 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 			}
 			else if(((selectedPayType == "cash") && (amountPaid < amountPayable) && (newIndex == completeIndex))) {
 				Toast.fire({
-				type: 'error',
-				title: "Amount being paid is less than the total amount."
-			});
+					type: 'error',
+					title: "Amount being paid is less than the total amount."
+				});
 				return false;
 			}
 			else {
@@ -146,7 +148,9 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		  						title: "Payment Successfully Recorded"
 		  					});
 		  					$(".cash-process-loader").removeClass("d-flex");
-
+		  					if(companyVariables.prt == "yes") {
+		  						$(`button[class~="print-receipt"]`).trigger('click');
+		  					}
 		  					fetchPOSProductsList();
 		  					fetchPOSCustomersList();
 		        		}
@@ -161,6 +165,9 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 	  						type: 'success',
 	  						title: "Payment Successfully Recorded"
 	  					});
+	  					if(companyVariables.prt == "yes") {
+	  						$(`button[class~="print-receipt"]`).trigger('click');
+	  					}
 	  					fetchPOSProductsList();
 	  					fetchPOSCustomersList();
 	  					$(".cash-process-loader").removeClass("d-flex");
@@ -301,9 +308,11 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 			let selectedContact = $(this).children("option:selected").data('contact');
       let preferredPayment = $(this).children("option:selected").data('prefered-payment');
 
-      if(preferredPayment.length > 0) {
-        $(`select[name="payment_type"]`).val(preferredPayment)
-      }
+      if(preferredPayment != null) { 	
+	      if(preferredPayment.length > 0) {
+	        $(`select[name="payment_type"]`).val(preferredPayment)
+	      }
+	  }
 
   		$("[data-bind-html='customer']").html(`
   			${selectedOption.text()}<br>
@@ -459,7 +468,7 @@ var overallSubTotal = 0, totalDiscountDeducted = 0;
 		}
 
 		let paymentType = $(".payment-type-select").val();
-		$(`span[class="sub_total"]`).html(`GH&cent; ${formatCurrency(overallSubTotal)}`);
+		$(`span[class="sub_total"]`).html(`${companyVariables.cur} ${formatCurrency(overallSubTotal)}`);
 		$("[data-bind-html='totaltopay']").html(formatCurrency(overallSubTotal));
 		$(".total-to-pay-amount").text(formatCurrency(totalToPay));
 		$(".total-to-pay-amount").attr("data-order-total", totalToPay);
@@ -480,17 +489,17 @@ var overallSubTotal = 0, totalDiscountDeducted = 0;
 		$(".make-online-payment").removeAttr("data-order-total");
 		$("[data-step-action='next']").prop("disabled", false);
 
-		$(`[data-bind-html='amount_paid']`).html(`GH&cent; ${formatCurrency(value)}`);
-		$("[data-bind-html='payment']").html(`GH&cent; ${formatCurrency(overallSubTotal-totalDiscountDeducted)}`);
-			$("[data-bind-html='balance']").html(paymentType == 'credit' ? `GH&cent; ${formatCurrency(value)}` : `GH&cent; ${formatCurrency(balance)}`);
+		$(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(value)}`);
+		$("[data-bind-html='payment']").html(`${companyVariables.cur} ${formatCurrency(overallSubTotal-totalDiscountDeducted)}`);
+			$("[data-bind-html='balance']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(value)}` : `${companyVariables.cur} ${formatCurrency(balance)}`);
 		} else {
 			$(`input[name="amount_balance"]`).val('0.00');
 
 			$(".make-online-payment").addClass("d-none");
 		$(".make-online-payment").attr("data-order-total", max);
-		$(`[data-bind-html='amount_paid']`).html(`GH&cent; 0.00`);
-		$("[data-bind-html='payment']").html(paymentType == 'credit' ? `GH&cent; ${formatCurrency(max)}` : "GH&cent; 0.00");
-			$("[data-bind-html='balance']").html(paymentType == 'credit' ? `GH&cent; ${formatCurrency(max)}` : "GH&cent; 0.00");
+		$(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} 0.00`);
+		$("[data-bind-html='payment']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(max)}` : "${companyVariables.cur} 0.00");
+			$("[data-bind-html='balance']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(max)}` : "${companyVariables.cur} 0.00");
 		}
 }
 
@@ -601,7 +610,7 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 	  			success: function(data) {
 	  				if (data.status == true) {
 	  					if (data.message.action == true) {
-	  						$(`[data-bind-html='amount_paid']`).html(`GH&cent; ${formatCurrency(res.data.orderTotal)}`);
+	  						$(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(res.data.orderTotal)}`);
 	  						paymentWindow = window.open(data.message.msg, "_blank");
 	  						paymentCheck = setInterval(function() {
 	  							checkPaymentStatus();

@@ -1,4 +1,4 @@
-var companyVariables = $.parseJSON($(`link[rel="company_parameters"]`).attr('_cl'));
+var companyVariables = $.parseJSON($(`link[rel="params"]`).attr('_cl'));
 $(".overlay").css('display', 'block');
 
 const menuItems = $('.left-sidenav ul.metismenu'),
@@ -55,11 +55,9 @@ async function doOnlineCheck() {
     });
 }
 
-// $(`table[class~="dataTable"]`).dataTable({
-//     "buttons": ["copy", "print","csvHtml5"],
-//     "lengthChange": !1,
-//     "dom": "Bfrtip",
-// });
+$(`table[class~="simple-table"]`).dataTable({
+    iDisplayLength: 5,
+});
 
 doOnlineCheck().then((itResp) => {
     if(itResp == 1) {
@@ -288,62 +286,6 @@ var discountCalculator = () => {
     });
 }
 
-if($(`table[class~="customersList"]`).length) {
-
-    $(`div[class="main-content"]`).on('click', `a[class~="edit-customer"]`, function(e) {
-        let userId = $(this).data('value');
-            userData = $(`a[data-id='${userId}']`).data('info');
-
-        $(`div[id="newCustomerModal"]`).modal('show');
-        $(`select[name="nc_title"]`).val(userData.title).change();
-        $(`input[name="nc_firstname"]`).val(userData.firstname);
-        $(`input[name="nc_lastname"]`).val(userData.lastname);
-        $(`input[name="nc_email"]`).val(userData.email);
-        $(`input[name="nc_contact"]`).val(userData.phone_1);
-        $(`input[name="residence"]`).val(userData.residence);
-        $(`input[name="customer_id"]`).val(userId);
-    });
-
-    var populateCustomersList = (customerData) => {
-        hideLoader();
-        $(`table[class~="customersList"]`).dataTable().fnDestroy();
-        $(`table[class~="customersList"]`).dataTable({
-            "aaData": customerData,
-            "iDisplayLength": 10,
-            "buttons": ["copy", "print","csvHtml5"],
-            "lengthChange": !1,
-            "dom": "Bfrtip",
-            "columns": [
-               {"data": 'row_id'},
-               {"data": 'fullname'},
-               {"data": 'email'},
-               {"data": 'phone_1'},
-               {"data": 'date_log'},
-               {"data": 'action'}
-            ]
-        });
-
-    }
-
-    function listCustomers() {
-        $.ajax({
-            method: "POST",
-            url: `${baseUrl}ajax/customerManagement/listCustomers`,
-            data: { listCustomers: true},
-            dataType: "JSON",
-            success: function(resp) {
-                populateCustomersList(resp.result);
-            }, complete: function(data) {
-                hideLoader();
-            }, error: function(err) {
-                hideLoader();
-            }
-        });
-    }
-
-    listCustomers();
-}
-
 if($(`table[class~="productsList"]`).length) {
 
     $(`div[class="main-content"]`).on('click', `a[class~="add-category"]`, function(e) {
@@ -386,11 +328,11 @@ if($(`table[class~="productsList"]`).length) {
         });
     });
 
-    var populateCategoryList = (customerData) => {
+    var populateCategoryList = (productsCategoryData) => {
         hideLoader();
         $(`table[class~="productsList"]`).dataTable().fnDestroy();
         $(`table[class~="productsList"]`).dataTable({
-            "aaData": customerData,
+            "aaData": productsCategoryData,
             "iDisplayLength": 10,
             "buttons": ["copy", "print","csvHtml5"],
             "lengthChange": !1,
@@ -1110,6 +1052,9 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                     if($(`table[class~="productsList"]`).length) {
                         listProductCategories();
                     }
+                    if($(`table[class~="customersList"]`).length) {
+                        listCustomers();
+                    }
                     if((data.thisRequest == 'Quote') || (data.thisRequest == 'Order')) {
                         listRequests(data.thisRequest, data.tableName);
                     }
@@ -1732,7 +1677,7 @@ function customerPurchaseHistory() {
                 trData += `<tr>`;
                 trData += `<td>${count}</td>`;
                 trData += `<td><a class="get-sales-details text-success" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a></td>`;
-                trData += `<td>GH¢${e.order_amount_paid}</td>`;
+                trData += `<td>${companyVariables.cur} ${e.order_amount_paid}</td>`;
                 trData += `<td>${e.order_date}</td>`;
                 trData += `<td>${creditBadge}</td>`;
                 trData += `<td><a href="${baseUrl}invoice/${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
@@ -1783,7 +1728,7 @@ $(`form[id="updateProductForm"]`).on('submit', function(e) {
 
             if(resp.status == "success") {
                 setTimeout(function() {
-                    window.location.href = `${baseUrl}product/${resp.message.productId}`;
+                    window.location.href = `${baseUrl}products/${resp.message.productId}`;
                 }, 1500);
             }
             $(`div[class="form-content-loader"]`).css("display","none");
@@ -1840,36 +1785,105 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
     }
 });
 
-$("#updateCustomerForm").on("submit", async function(event) {
-    
-    event.preventDefault();
-    let formData = $(this).serialize();
+if($(`table[class~="customersList"]`).length) {
 
-    $.post(baseUrl+"ajax/customerManagement/updateCustomerDetails", formData, (res) => {
-        if(res.status == 200){
-            Toast.fire({
-                type: 'success',
-                title: "Customer data Successfully updated"
-            });
-            listCustomers();
-            $("#updateCustomerForm").parents(".modal").modal("hide");
-            $("#updateCustomerForm").trigger("reset");
-        } else {
+    $("#updateCustomerForm").on("submit", async function(event) {
+    
+        event.preventDefault();
+        let formData = $(this).serialize();
+
+        $.post(baseUrl+"ajax/customerManagement/updateCustomerDetails", formData, (res) => {
+            if(res.status == 200){
+                Toast.fire({
+                    type: 'success',
+                    title: res.message
+                });
+                listCustomers();
+                $("#updateCustomerForm").parents(".modal").modal("hide");
+                $("#updateCustomerForm").trigger("reset");
+            } else {
+                Toast.fire({
+                    type: 'error',
+                    title: res.message
+                });                 
+            }
+            $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
+        })
+        .catch((err) => {
             Toast.fire({
                 type: 'error',
-                title: res.message
-            });                 
-        }
-        $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
-    })
-    .catch((err) => {
-        Toast.fire({
-            type: 'error',
-            title: "Error Processing Request"
-        })      
-        $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
-    })
-});
+                title: "Error Processing Request"
+            })      
+            $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
+        })
+    });
+
+    $(`div[class="main-content"]`).on('click', `a[class~="add-customer"]`, function(e) {
+        $(`div[id="newCustomerModal"]`).modal('show');
+        $(`select[name="nc_title"]`).val('null').change();
+        $(`div[id="newCustomerModal"] input[name="request"]`).val('add-record');
+        $(`div[id="newCustomerModal"] h5[class="modal-title"]`).html('Add Customer');
+        $(`div[id="newCustomerModal"] form[id="updateCustomerForm"] input`).val('');
+        $(`input[name="customer_id"] form[id="updateCustomerForm"] input`).val('');
+    });
+
+    $(`div[class="main-content"]`).on('click', `a[class~="edit-customer"]`, function(e) {
+        let userId = $(this).data('value');
+            userData = $(`a[data-id='${userId}']`).data('info');
+
+        $(`div[id="newCustomerModal"]`).modal('show');
+        $(`div[id="newCustomerModal"] h5[class="modal-title"]`).html('Update Customer');
+        $(`div[id="newCustomerModal"] select[name="nc_title"]`).val(userData.title).change();
+        $(`div[id="newCustomerModal"] input[name="nc_firstname"]`).val(userData.firstname);
+        $(`div[id="newCustomerModal"] input[name="nc_lastname"]`).val(userData.lastname);
+        $(`div[id="newCustomerModal"] input[name="nc_email"]`).val(userData.email);
+        $(`div[id="newCustomerModal"] input[name="nc_contact"]`).val(userData.phone_1);
+        $(`div[id="newCustomerModal"] input[name="residence"]`).val(userData.residence);
+        $(`div[id="newCustomerModal"] input[name="customer_id"]`).val(userId);
+        $(`div[id="newCustomerModal"] input[name="request"]`).val('update-record');
+    });
+
+    var populateCustomersList = (customerData) => {
+        hideLoader();
+        $(`table[class~="customersList"]`).dataTable().fnDestroy();
+        $(`table[class~="customersList"]`).dataTable({
+            "aaData": customerData,
+            "iDisplayLength": 10,
+            "buttons": ["copy", "print","csvHtml5"],
+            "lengthChange": !1,
+            "dom": "Bfrtip",
+            "columns": [
+               {"data": 'row_id'},
+               {"data": 'fullname'},
+               {"data": 'email'},
+               {"data": 'phone_1'},
+               {"data": 'date_log'},
+               {"data": 'action'}
+            ]
+        });
+
+        deleteItem();
+
+    }
+
+    function listCustomers() {
+        $.ajax({
+            method: "POST",
+            url: `${baseUrl}ajax/customerManagement/listCustomers`,
+            data: { listCustomers: true},
+            dataType: "JSON",
+            success: function(resp) {
+                populateCustomersList(resp.result);
+            }, complete: function(data) {
+                hideLoader();
+            }, error: function(err) {
+                hideLoader();
+            }
+        });
+    }
+
+    listCustomers();
+}
 
 $("#newCustomer_form").on("submit", async function(event) {
     event.preventDefault();
@@ -1965,4 +1979,34 @@ $("#newCustomer_form").on("submit", async function(event) {
         })      
         $(".content-loader", $("#newCustomerModal")).css({display: "none"});
     })
+});
+
+$(`a[class="select-branch"], a[class~="change-branch"]`).on('click', function(e) {
+    e.preventDefault();
+    let redir = $(this).data('href');
+    $(`div[class="redirection-href"]`).attr('data-href', redir);
+    $(`div[class~="importModal"]`).modal('show');
+});
+
+$(`div[class~="complete-branch-selection"]`).on('click', function() {
+    let branchId = $(this).data('branch-id');
+    $(this).children('div').css({'border': 'solid 1px blue'});
+
+    Toast.fire({
+        type: "success",
+        title: "Branch selection was successful."
+    });
+
+    $(`div[class="form-content-loader"]`).css("display","flex");
+
+    $.ajax({
+        type: "POST",
+        url: `${baseUrl}ajax/importManager/setBranchId`,
+        data: {setBranchId: true, curBranchId: branchId},
+        success: function(resp) {
+            window.location.href = $(`div[class="redirection-href"]`).attr('data-href');
+        }, complete: function(data) {
+            $(`div[class="form-content-loader"]`).css("display","none");
+        }
+    });
 });

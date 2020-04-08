@@ -188,7 +188,7 @@ $categories = $productsClass->getCategories();
                                     </div>
 
                                     <h6 class="font-weight-bold text-center mt-3"><?= strtoupper($SITEURL[1]) ?> TOTAL</h6>
-                                    <button class="btn-primary btn-block btn"><h3 class="text-white"><span class="font-16">GHC</span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h3></button>
+                                    <button class="btn-primary btn-block btn"><h3 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h3></button>
                                   </div>
                             </div><!--end row-->                                             
                         </div><!--end general detail-->                        

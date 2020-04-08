@@ -72,8 +72,8 @@ if(confirm_url_id(1)) {
                 <tr>
                     <td style='border-bottom: solid 1px #ccc; padding-bottom: 10px;padding-top: 10px; font-family: Calibri Light;'>{$data->product_title}</td>
                     <td style='border-bottom: solid 1px #ccc; font-family: Calibri Light;'>{$data->product_quantity}</td>
-                    <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc; padding-bottom: 10px;padding-top: 10px;\">GH¢ {$data->product_price}</td>
-                    <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc; padding-bottom: 10px;padding-top: 10px;\">GH¢ {$productTotal}</td>
+                    <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc; padding-bottom: 10px;padding-top: 10px;\">{$clientData->default_currency} {$data->product_price}</td>
+                    <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc; padding-bottom: 10px;padding-top: 10px;\">{$clientData->default_currency} {$productTotal}</td>
                 </tr>";
 
             $subTotal += $data->product_total;
@@ -90,27 +90,27 @@ if(confirm_url_id(1)) {
             <tr>                                                        
                 <td class=\"border-0\"></td>
                 <td colspan=\"2\" style=\"padding-top: 30px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>Sub Total (".count($query)." Items)</b></td>
-                <td style=\"padding-top: 10px; padding-left: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>GH¢ ".number_format($subTotal, 2)."</b></td>
+                <td style=\"padding-top: 10px; padding-left: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} ".number_format($subTotal, 2)."</b></td>
             </tr>
             <tr>
                 <th class=\"border-0\"></th>                                                        
                 <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>Discount</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>GH¢ {$discount}</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} {$discount}</b></td>
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
                 <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc; background: #f4f4f4;\"><b>Order Total</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; border-bottom: solid 1px #ccc;\"><b>GH¢ {$overall}</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} {$overall}</b></td>
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
                 <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>Amount Paid</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>GH¢ {$order_amount_paid}</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} {$order_amount_paid}</b></td>
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
                 <td colspan=\"2\" style=\"padding-top: 10px; background: #f4f4f4; padding-bottom:10px; font-family: Calibri Light\"><b>Balance</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; \"><b>GH¢ {$order_balance}</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; \"><b>{$clientData->default_currency} {$order_balance}</b></td>
             </tr>
         ";
     }

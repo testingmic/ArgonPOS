@@ -47,7 +47,7 @@ function recalculateTotalToPay(){
 	}
 
 	let paymentType = $(".payment-type-select").val();
-	$(`span[class="sub_total"]`).html(`GH&cent; ${formatCurrency(overallSubTotal)}`);
+	$(`span[class="sub_total"]`).html(`${companyVariables.cur} ${formatCurrency(overallSubTotal)}`);
 	$("[data-bind-html='totaltopay']").html(formatCurrency(overallSubTotal));
 	$(".total-to-pay-amount").text(formatCurrency(totalToPay));
 	$(".total-to-pay-amount").attr("data-order-total", totalToPay);

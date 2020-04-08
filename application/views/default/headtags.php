@@ -31,9 +31,12 @@ function connectionLost($message = "Connection lost. Reconnect to view content")
 }
 
 function nonWorkingDay($message = "Please note that the Point of Sale is Closed for Today.") {
+  global $clientData, $posClass;
+  $openingDays = $clientData->shop_opening_days;
+
   return '<div class="offline-placeholder main-body-loader" style="display: true">
           <div class="offline-content text-center">
-              <p class="alert alert-warning text-white" style="border-radius:0px">'.$message.'</p>
+              <p class="alert alert-warning text-white" style="border-radius:0px">'.$message.' Come back on <strong>'.$posClass->stringToArray($openingDays)[0].'</strong></p>
           </div>
       </div>';
 }
@@ -91,7 +94,7 @@ function form_loader() {
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/select2/dist/css/select2.min.css" type="text/css">
   <link href="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.css" rel="stylesheet" />
-  <link rel="company_parameters" _cl='{"_un":"Emmallen Networks","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>"}'>
+  <link rel="params" _cl='{"_un":"Emmallen Networks","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>","cur":"<?= $clientData->default_currency ?>","prt":"<?= $clientData->print_receipt ?>"}'>
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/argon.min9f1e.css?v=1.1.0" type="text/css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/custom.css" type="text/css">
 </head>
@@ -161,11 +164,11 @@ function form_loader() {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'product', 'product-types', 'product-brands'])) ? "active" : null; ?>" href="#navbar-inventory" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-inventory">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'products', 'product-types', 'product-brands'])) ? "active" : null; ?>" href="#navbar-inventory" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-inventory">
                 <i class="ni ni-ungroup text-orange"></i>
                 <span class="nav-link-text">Inventory</span>
               </a>
-              <div class="collapse <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'product', 'product-types', 'product-brands'])) ? "show" : null; ?>" id="navbar-inventory">
+              <div class="collapse <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'products', 'product-types', 'product-brands'])) ? "show" : null; ?>" id="navbar-inventory">
                 <ul class="nav nav-sm flex-column">
                   <li class="nav-item">
                     <a href="<?= $baseUrl ?>inventory" class="nav-link">Inventory List</a>

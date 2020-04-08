@@ -174,14 +174,14 @@ if(isset($branch->branch_name)) {
                               <div class="col-md-12 mb-3">
                                   <label for="cost" class="text-primary-light">Supply Cost</label>
                                   <div class="input-group">
-                                      <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                                      <div class="input-group-prepend"><span class="input-group-text"><?= $clientData->default_currency ?></span></div>
                                       <input type="number" step="0.1" value="0.00" class="form-control" name="cost">
                                   </div>
                               </div>
                               <div class="col-md-12 mb-3">
                                   <label for="price" class="text-primary-light">Retail Price</label>
                                   <div class="input-group">
-                                      <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                                      <div class="input-group-prepend"><span class="input-group-text"><?= $clientData->default_currency ?></span></div>
                                       <input type="number" step="0.1" value="0.00" class="form-control" name="price">
                                   </div>
                               </div>
@@ -261,14 +261,14 @@ if(isset($branch->branch_name)) {
                           <div class="col-md-2 mb-3">
                               <label for="cost" class="text-primary-light">Supply Cost</label>
                               <div class="input-group">
-                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                                  <div class="input-group-prepend"><span class="input-group-text"><?= $clientData->default_currency ?></span></div>
                                   <input type="number" step="0.1" value="0.00" class="form-control" name="cost_1">
                               </div>
                           </div>
                           <div class="col-md-2 mb-3">
                               <label for="price" class="text-primary-light">Retail Price</label>
                               <div class="input-group">
-                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+                                  <div class="input-group-prepend"><span class="input-group-text"><?= $clientData->default_currency ?></span></div>
                                   <input type="number" step="0.1" value="0.00" class="form-control" name="price_1">
                               </div>
                           </div>

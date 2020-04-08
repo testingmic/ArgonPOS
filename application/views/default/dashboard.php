@@ -6,7 +6,7 @@ $PAGETITLE = "Dashboard";
 require_once "headtags.php";
 
 // Global functions
-global $posClass, $baseUrl;
+global $posClass, $baseUrl, $clientData;
 
 ?>	
 <!-- Header -->
@@ -96,7 +96,7 @@ global $posClass, $baseUrl;
             <div class="card-body">
               <div class="row">
                 <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
+                  <h5 class="card-title text-uppercase text-muted mb-0">Sales Processed</h5>
                   <span class="h2 font-weight-bold mb-0 total-served">0</span>
                 </div>
                 <div class="col-auto">
@@ -142,7 +142,6 @@ global $posClass, $baseUrl;
       </div>
     </div>
     <div class="col-xl-4">
-      
       <div class="col-xl-12 col-md-12">
         <div class="card card-stats">
           <!-- Card body -->
@@ -228,10 +227,10 @@ global $posClass, $baseUrl;
         </div>
         <div class="s-responsive">
           <!-- Projects table -->
-            <table class="table salesLists table-flush datatable-buttons">
+            <table class="table salesLists table-flush">
             <thead class="thead-light">
               <tr>
-                <th>ID</th>
+                <th>#</th>
                 <th>Transaction ID</th>
                 <th>Customer</th>
                 <th>Contact</th>
@@ -245,7 +244,160 @@ global $posClass, $baseUrl;
         </div>
       </div>
     </div>
+    
+    <div class="col-xl-6 col-md-6">
+      <div class="card">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Stock Levels Alert</h3>
+            </div>
+          </div>
+
+          <div class="s-responsive">
+            <!-- Projects table -->
+              <table class="table simple-table table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th>#</th>
+                  <th>Product Name</th>
+                  <th>Available</th>
+                  <th>Threshold</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                // run the query
+                $stmt = $pos->prepare("
+                  SELECT 
+                    a.id, a.branchId, a.product_title, a.product_description, a.quantity,
+                    a.product_image, a.product_price, a.cost_price, a.expiry_date, 
+                    a.threshold, b.branch_name, b.branch_color
+                  FROM products a
+                  LEFT JOIN branches b ON b.id = a.branchId
+                  WHERE 
+                    a.status = ? AND a.clientId = ? AND
+                    ((a.quantity/2) < (a.threshold)) LIMIT 10
+                ");
+                $stmt->execute([1, $posClass->clientId]);
+                // initializing
+                $i = 0;
+
+                // loop through the list of products
+                while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
+                  // increment
+                  $i++;
+                  // print the list of result
+                  print "<tr>";
+                  print "<td>{$i}</td>";
+                  print "<td>{$result->product_title} <br> <span class='badge {$result->branch_color}'>{$result->branch_name}</span></td>";
+                  print "<td>{$result->quantity}</td>";
+                  print "<td>{$result->threshold}</td>";
+                  print "</tr>";
+                }
+                ?>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-6 col-md-6">
+      <div class="card">
+        <div class="card-header border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Product Expiry Alert</h3>
+            </div>
+          </div>
+
+          <div class="s-responsive">
+            <!-- Projects table -->
+              <table class="table simple-table table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th>#</th>
+                  <th>Product Name</th>
+                  <th>Available</th>
+                  <th>Expiry Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                // run the query
+                $stmt = $pos->prepare("
+                  SELECT 
+                    a.id, a.branchId, a.product_title, a.product_description, a.quantity,
+                    a.product_image, a.product_price, a.cost_price, a.expiry_date, 
+                    a.threshold, b.branch_name, b.branch_color
+                  FROM products a
+                  LEFT JOIN branches b ON b.id = a.branchId
+                  WHERE 
+                    a.status = ? AND a.clientId = ? AND
+                    (
+                      DATE_ADD(a.expiry_date,
+                        INTERVAL YEAR(CURDATE()) - YEAR(a.expiry_date)
+                          + IF(DAYOFYEAR(CURDATE()) >DAYOFYEAR(a.expiry_date), 1, 0)
+                        YEAR)
+                      BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL {$clientData->expiry_notification_days})
+                    ) ORDER BY a.expiry_date
+                ");
+                $stmt->execute([1, $posClass->clientId]);
+                // initializing
+                $i = 0;
+
+                // loop through the list of products
+                while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
+                  // increment
+                  $i++;
+                  // print the list of result
+                  print "<tr>";
+                  print "<td>{$i}</td>";
+                  print "<td><a href='{$config->base_url('products/'.$result->id)}'>{$result->product_title}</a> <br> <span class='badge {$result->branch_color}'>{$result->branch_name}</span></td>";
+                  print "<td>{$result->quantity}</td>";
+                  print "<td>".date("jS M, Y", strtotime($result->expiry_date))."</td>";
+                  print "</tr>";
+                }
+                ?>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 <?php require_once 'foottags.php'; ?>
+<script type="text/javascript">
+$(async function() {
+    hideLoader();    
+    await doOnlineCheck().then((itResp) => {
+        if(itResp == 1) {
+            noInternet = false;
+            $(`div[class="connection"]`).css('display','none');
+        } else {
+            noInternet = true;
+            $(`div[class="connection"]`).css('display','block');
+        }
+    }).catch((err) => {
+        noInternet = true;
+        $(`div[class="connection"]`).css('display','block');
+    });
+
+    if(!noInternet) {
+        syncOfflineData('sales').then((resp) => {
+            delPrevs('sales').then((res) => {
+                preloadData('sales').then((res) => {
+                    preloadData('reports');
+                });
+            });
+        });
+    }
+
+});
+</script>
 </body>
 </html>

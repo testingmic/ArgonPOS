@@ -31,7 +31,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
-  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'branches', 'product-types'])) { ?>
+  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'branches', 'product-types','customers'])) { ?>
   <div class="modal fade delete-modal" tabindex="-1" id="deleteData" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">
@@ -119,7 +119,6 @@
 </script>
 <!-- Argon JS -->
 <script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js?v=1.1.0"></script>
-<!-- Demo JS - remove this in your project -->
 <script src="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
 <script src="<?= $baseUrl ?>assets/js/indexdb.js"></script>

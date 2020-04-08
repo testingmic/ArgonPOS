@@ -73,6 +73,28 @@ class Pos {
 	}
 
 	/**
+	 * @method quickData
+	 * @desc This method enables quick query for information from the DB
+	 * @param string $column name of the query to fetch
+	 * @param string $tableName name of the table to query
+	 * @param string $where_clause The clause to be used for the query
+	 * @return string 
+	 **/
+	public function quickData($column, $tableName, $where_clause = 1) {
+		try {
+			$stmt = $this->pos->prepare("
+				SELECT $column FROM $tableName WHERE $where_clause
+			");
+			$stmt->execute();
+			$result = $stmt->fetch(PDO::FETCH_OBJ);
+			
+			return (isset($result->$column)) ? $result->$column : null;
+		} catch(PDOException $e) {
+			return false;
+		}
+	}
+
+	/**
 	 * @method recordDetails($recordId, $whereClause)
 	 * @desc This call returns the details of a single / multiple records in the database that meets the filter
 	 * @return array

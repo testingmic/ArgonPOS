@@ -8,7 +8,7 @@ global $accessObject, $posClass;
 $accessObject->userId = $session->userId;
 
 // ensure an id has been parsed
-if(!confirm_url_id(0, 'product') || !confirm_url_id(1)) {
+if(!confirm_url_id(0, 'products') || !confirm_url_id(1)) {
     show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
     exit;
 }
@@ -32,6 +32,7 @@ if(!empty($product)) {
     require_once "headtags.php";
 
     // set this product in a session
+    global $clientData, $branchData;
     $session->productId = $productId;
 
     // products insight analitics
@@ -50,6 +51,9 @@ if(!empty($product)) {
     ");
     $stmt->execute([$productId, $productId]);
     $productInsight = $stmt->fetch(PDO::FETCH_OBJ);
+
+    // expiry color model
+    $expiry_color = '';
 ?>
 <!-- Page Content-->
 <!-- Header -->
@@ -90,11 +94,12 @@ if(!empty($product)) {
                             <h3 class="pro-title"><?= $product->product_title ?></h3>
                             <p class="mb-0"><strong>Stock Quantity</strong>: <?= $product->quantity ?></p>
                             <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>
-                            <h6><strong>Cost Price</strong>: <span class="text-muted">GHC </span><?= number_format(floatval($product->cost_price), 2, '.', ',') ?> </h6>
+                            <h6><strong>Cost Price</strong>: <span class="text-muted"><?= $clientData->default_currency ?> </span><?= number_format(floatval($product->cost_price), 2, '.', ',') ?> </h6>
                             <?php } ?>
-                            <h6><strong>Retail Price</strong>: <span class="text-muted">GHC </span><?= number_format(floatval($product->product_price), 2, '.', ',') ?> </h6>                   
+                            <h6><strong>Retail Price</strong>: <span class="text-muted"><?= $clientData->default_currency ?> </span><?= number_format(floatval($product->product_price), 2, '.', ',') ?> </h6>
                             <h6 class="text-muted font-13">Description :</h6> 
                             <p><?= !empty($product->product_description) ? $product->product_description : "<span class='text-muted'>No description for product</span>" ?></p>
+                            <div><strong>Product Expiry Date:</strong> <span class="<?= $expiry_color ?>"><?= date("jS F, Y", strtotime($product->expiry_date)) ?></span></div>
                             <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>
                             <div class="quantity mt-3 ">
                                 <button type="button" class="btn btn-success waves-effect waves-light" data-toggle="modal" data-animation="bounce" data-target=".bs-example-modal-lg">
@@ -145,7 +150,7 @@ if(!empty($product)) {
                       </div>
                     </div>
                     <div class="col-lg-12">
-                      <h3 class="font-weight-bold">GH&cent; <?= number_format($productInsight->product_cost_price, 2) ?></h3>
+                      <h3 class="font-weight-bold"><?= $clientData->default_currency ?> <?= number_format($productInsight->product_cost_price, 2) ?></h3>
                     </div>
                   </div>                                     
                   <p class="mb-0 text-muted text-truncate"></p>
@@ -165,7 +170,7 @@ if(!empty($product)) {
                       </div>
                     </div>
                     <div class="col-lg-12">
-                      <h3 class="font-weight-bold">GH&cent; <?= number_format($productInsight->product_selling_price, 2) ?></h3>
+                      <h3 class="font-weight-bold"><?= $clientData->default_currency ?> <?= number_format($productInsight->product_selling_price, 2) ?></h3>
                     </div>
                   </div>                                     
                   <p class="mb-0 text-muted text-truncate"></p>
@@ -185,7 +190,7 @@ if(!empty($product)) {
                       </div>
                     </div>
                     <div class="col-lg-12">
-                      <h3 class="font-weight-bold">GH&cent; <?= number_format($productInsight->product_revenue, 2) ?></h3>
+                      <h3 class="font-weight-bold"><?= $clientData->default_currency ?> <?= number_format($productInsight->product_revenue, 2) ?></h3>
                     </div>
                   </div>                                     
                   <p class="mb-0 text-muted text-truncate"></p>
@@ -236,7 +241,7 @@ if(!empty($product)) {
                                   <label for="NewOppEmail">Cost Price</label>
                                   <div class="input-group">
                                       <div class="input-group-prepend">
-                                          <span class="input-group-text">GH&cent;</span>
+                                          <span class="input-group-text"><?= $clientData->default_currency ?></span>
                                       </div>
                                       <input type="number" name="cost" class="form-control" value="<?= $product->cost_price ?>">
                                   </div>
@@ -249,7 +254,7 @@ if(!empty($product)) {
                                   <label for="NewOppEmail">Retail Price</label>
                                   <div class="input-group">
                                       <div class="input-group-prepend">
-                                          <span class="input-group-text">GHS</span>
+                                          <span class="input-group-text"><?= $clientData->default_currency ?></span>
                                       </div>
                                       <input type="number" name="price" class="form-control" value="<?= $product->product_price?>">
                                   </div>
@@ -286,8 +291,8 @@ if(!empty($product)) {
                       <div class="row">
                           <div class="col-lg-12 text-right">
                               <input type="hidden" name="productId" value="<?= $productId ?>" class="productId">
-                              <button type="submit" class="btn btn-sm btn-primary">Save</button>  
-                              <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Save</button>  
+                              <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                           </div>
                       </div>
                   </form>  
