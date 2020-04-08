@@ -135,11 +135,11 @@ function form_loader() {
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['sales', 'quotes', 'orders'])) ? "active" : null; ?>" href="#navbar-forms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-forms">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['sales', 'return', 'quotes', 'orders'])) ? "active" : null; ?>" href="#navbar-forms" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-forms">
                 <i class="ni ni-single-copy-04 text-pink"></i>
                 <span class="nav-link-text">History</span>
               </a>
-              <div class="collapse <?= (in_array($SITEURL[0], ['sales', 'quotes', 'orders'])) ? "show" : null; ?>" id="navbar-forms">
+              <div class="collapse <?= (in_array($SITEURL[0], ['sales', 'return', 'quotes', 'orders'])) ? "show" : null; ?>" id="navbar-forms">
                 <ul class="nav nav-sm flex-column">
                   <li class="nav-item">
                     <a href="<?= $baseUrl ?>sales" class="nav-link">Sales History</a>
@@ -152,6 +152,11 @@ function form_loader() {
                   <?php if($accessObject->hasAccess('view', 'orders')) { ?>
                   <li class="nav-item">
                     <a href="<?= $baseUrl ?>orders" class="nav-link">Orders</a>
+                  </li>
+                  <?php } ?>
+                  <?php if($clientData->allow_product_return) { ?>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>return" class="nav-link">Return Sale</a>
                   </li>
                   <?php } ?>
                 </ul>

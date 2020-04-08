@@ -9,11 +9,7 @@ class Orders extends Pos {
 	const PENDING = "pending";
 
 	public function __construct() {
-
-		global $pos, $session;
-		$this->pos = $pos;
-		$this->user_agent = load_class('User_agent', 'libraries');
-		$this->session = $session;
+		parent::__construct();
 	}
 
 	public function saveRegister(stdClass $register){
@@ -164,5 +160,56 @@ class Orders extends Pos {
 			return false;
 		}
 
+	}
+
+	public function saleDetails($orderId) {
+		// global variables
+		global $accessObject;
+
+		// where clause for the user role
+		$branchAccess = '';
+		$accessLimit = '';
+		$clientAccess = " AND a.clientId = '{$this->session->clientId}'";
+
+		// create new objects
+		$accessObject->userId = $this->session->userId;
+
+		// parse the access information
+		if(!$accessObject->hasAccess('monitoring', 'branches')) {
+			$branchAccess = " AND a.branchId = '{$this->session->branchId}'";
+			$accessLimit = " AND a.recorded_by = '{$this->userId}'";
+		}
+
+		//: search for the product details
+		$stmt = $this->pos->prepare("
+			SELECT 
+				a.id, a.clientId, a.branchId, a.mode, a.order_id, a.customer_id,
+				a.recorded_by, a.order_amount_paid, a.order_discount, 
+				a.order_amount_balance, a.overall_order_amount, a.log_date,
+				a.payment_type, a.transaction_id, a.payment_date,
+				a.order_date, a.source, a.ordered_by_id,
+				a.credit_sales, a.order_status, DATE(a.order_date) AS today_date,
+				CONCAT(b.firstname, ' ', b.lastname) AS customer_fullname,
+				b.phone_1 AS customer_contact,
+				HOUR(a.order_date) AS hour_of_day,
+				(SELECT SUM(c.product_cost_price*c.product_quantity) FROM sales_details c WHERE c.order_id = a.order_id) AS total_cost_price,
+				(SELECT SUM(c.product_unit_price*c.product_quantity) FROM sales_details c WHERE c.order_id = a.order_id) AS total_expected_selling_price
+			FROM
+				sales a 
+			LEFT JOIN customers b ON b.customer_id = a.customer_id
+			WHERE 
+				a.order_id LIKE '%{$orderId}%'
+			AND 
+				a.deleted='0' {$branchAccess} {$accessLimit} {$clientAccess}
+		");
+		$stmt->execute();
+
+		$data = [];
+		while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
+			$result->saleItems = $this->getAllRows("sales_details a LEFT JOIN products b ON b.id=a.product_id", "a.*, b.product_title", "a.order_id='{$result->order_id}'");
+			$data[] = $result;
+		}
+
+		return $data;
 	}
 }

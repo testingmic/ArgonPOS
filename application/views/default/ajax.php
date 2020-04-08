@@ -3879,6 +3879,27 @@ if($admin_user->logged_InControlled()) {
 
 	}
 
+	//: Return product
+	elseif(confirm_url_id(1, "returnOrderProcessor")) {
+		//: search for product
+		if(confirm_url_id(2, 'searchOrder')) {
+			//: order id
+			$orderId = xss_clean($_POST["orderId"]);
+
+			//: create a new object
+			$orderObj = load_class('Orders', 'controllers');
+
+			//: load the data
+			$data = $orderObj->saleDetails($orderId);
+
+			$response = [
+				'orderId' => $orderId,
+				'orderDetails' => $data,
+				'count' => count($data)
+			];
+		}
+	}
+
 }
 
 echo json_encode($response);
