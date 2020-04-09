@@ -9,7 +9,7 @@ async function getSalesDetails(salesID) {
     
     $(".launchModal").modal("show");
 
-    await doOnlineCheck().then((itResp) => {
+    await dOC().then((itResp) => {
         if (itResp == 1) {
             offline = false;
             $(`div[class="connection"]`).css('display', 'none');
@@ -24,12 +24,12 @@ async function getSalesDetails(salesID) {
 
     if (offline) {
 
-        listIndexDBRecords('sales_details').then(async(salesDetailsResult) => {
+        listIDB('sales_details').then(async(salesDetailsResult) => {
 
             var trData = `
         		<div class="row table-responsive">`;
 
-            var salesInfo = await getIndexRecord('sales', salesID).then((salesResult) => {
+            var salesInfo = await gIDBR('sales', salesID).then((salesResult) => {
 
                 trData += `<table class="table table-bordered">
 						<tr>
@@ -109,7 +109,7 @@ async function getSalesDetails(salesID) {
     }
 
     $.ajax({
-        url: baseUrl + "ajax/dashboardAnalytics/getSalesDetails",
+        url: baseUrl + "aj/dashboardAnalytics/getSalesDetails",
         type: "POST",
         dataType: "json",
         data: { getSalesDetails: true, salesID: salesID },
@@ -269,7 +269,7 @@ $(function() {
         if ($(`table[class~="branch-overview"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "branchPerformance", salesPeriod: periodSelected},
                 dataType: "JSON",
                 beforeSend: function() {
@@ -277,7 +277,7 @@ $(function() {
                 success: function(resp) {
                     populateBranchData(resp.result.summary);
                 }, complete: function(data) {
-                    hideLoader();
+                    hL();
                 }
             });
         }
@@ -286,11 +286,11 @@ $(function() {
     var summaryItems = (periodSelected = 'today') => {
         $.ajax({
             type: "POST",
-            url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "summaryItems", salesPeriod: periodSelected },
             dataType: "JSON",
             beforeSend: function() {
-                showLoader();
+                sL();
                 $(`div[data-report] p[class~="text-truncate"]`).html(`
 					Loading <i class="fa fa-spin fa-spinner"></i>
 				`);
@@ -311,7 +311,7 @@ $(function() {
 
         $.ajax({
             type: "POST",
-            url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "salesOverview", salesPeriod: periodSelected },
             dataType: "JSON",
             success: function(resp) {
@@ -375,8 +375,7 @@ $(function() {
                             show: true,
                             color: '#f1646c',
                         },
-                    },
-                    // colors: ["#1ecab8", "#f164ac"],   
+                    },   
                     colors: ["#1ecab8", "#f7cda0"],                 
                     markers: {
                         size: 4,
@@ -420,7 +419,7 @@ $(function() {
                     },
                     grid: {
                       row: {
-                        colors: ['transparent', 'transparent'], // takes an array which will be repeated on columns
+                        colors: ['transparent', 'transparent'], 
                         opacity: 0.2
                       },
                       borderColor: '#185a9d'
@@ -775,10 +774,10 @@ $(function() {
             },
             error: function(err) {
                 console.log(err);
-                hideLoader();
+                hL();
             }, complete: function(data) {
                 setTimeout(function() {
-                    hideLoader();
+                    hL();
                     $(`div[class~="apexcharts-legend"]`).removeClass('center hidden');
                 }, 1000);
             }
@@ -802,7 +801,7 @@ $(function() {
 
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
                 data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
                 dataType: "JSON",
                 beforeSend: function() {
@@ -863,7 +862,7 @@ $(function() {
         if ($(`div[id="attendant-performance"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "salesAttendantPerformance", salesPeriod: periodSelected },
                 dataType: "JSON",
                 beforeSend: function() {
@@ -888,7 +887,7 @@ $(function() {
     var ordersCount = (periodSelected = 'today') => {
         $.ajax({
             type: "POST",
-            url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "ordersCount", salesPeriod: periodSelected },
             dataType: "JSON",
             beforeSend: function() {
@@ -979,7 +978,7 @@ $(function() {
         if ($(`table[class~="custPerformance"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
                 dataType: "JSON",
                 beforeSend: function() {},
@@ -1018,10 +1017,10 @@ $(function() {
         var period = $(`select[name="periodSelected"]`).val();
 
         $.ajax({
-            url: `${baseUrl}ajax/dashboardAnalytics/getUserAllSalesRecords`,
+            url: `${baseUrl}aj/dashboardAnalytics/getSales`,
             type: "POST",
             dataType: "json",
-            data: { getUserAllSalesRecords: true, salesPeriod: period },
+            data: { getSales: true, salesPeriod: period },
             beforeSend: function() {
                 $(".total-sales-trend, .total-served-trend, .total-products-worth, .total-credit-sales-trend").html(`
                     <span class="fa fa-spin fa-spinner"></span>
@@ -1085,7 +1084,7 @@ $(function() {
                         `width=650,height=750,resizable,scrollbars=yes,status=1`
                     );
                 });
-                hideLoader();
+                hL();
             }, error: function(err) {
             }
         });
@@ -1097,7 +1096,7 @@ $(function() {
             var colspan = "7";
 
             $.ajax({
-                url: `${baseUrl}ajax/dashboardAnalytics/fetchInventoryRecords`,
+                url: `${baseUrl}aj/dashboardAnalytics/fetchInventoryRecords`,
                 type: "POST",
                 dataType: "json",
                 data: { fetchInventoryRecords: true, request: "fetchInventoryRecords" },
@@ -1127,7 +1126,7 @@ $(function() {
         if ($(`table[class~="thresholdLists"]`).length) {
             var colspan = "3";
             $.ajax({
-                url: baseUrl + "ajax/dashboardAnalytics",
+                url: baseUrl + "aj/dashboardAnalytics",
                 type: "POST",
                 dataType: "json",
                 data: { request: "getProductThresholds" },
@@ -1154,7 +1153,7 @@ $(function() {
 
         async function loadSalesData() {
             return new Promise((resolve, reject) => {
-                var data = listIndexDBRecords('sales');
+                var data = listIDB('sales');
                 resolve(data);
             });
         }
@@ -1335,7 +1334,7 @@ $(function() {
 
         async function loadDashboardInformation() {
 
-            await doOnlineCheck().then((itResp) => {
+            await dOC().then((itResp) => {
                 if (itResp == 1) {
                     offline = false;
                     $(`div[class="connection"]`).css('display', 'none');
@@ -1399,16 +1398,16 @@ $(function() {
 
                     if($(`div[class~="pos-reporting"]`).length) {
 
-                        await getIndexRecord('reports', "branch_performance").then((branchInsight) => {
+                        await gIDBR('reports', "branch_performance").then((branchInsight) => {
                             delete branchInsight.reports_id;
                             var branchData = new Array();
                             populateBranchData(Object.values(branchInsight));
                         }).then((resp) => {
-                            getIndexRecord('reports', "sales_attendant_performance").then((attendantInsight) => {
+                            gIDBR('reports', "sales_attendant_performance").then((attendantInsight) => {
                                 populateSalesTeamData(Object.values(attendantInsight.list), Object.values(attendantInsight.names), Object.values(attendantInsight.sales))
                             });
                         }).then((res) => {
-                            getIndexRecord('reports', "products_performance").then((productsInsight) => {
+                            gIDBR('reports', "products_performance").then((productsInsight) => {
                                 delete productsInsight.reports_id;
                                 populateProductsPerformance(Object.values(productsInsight));
                             });
@@ -1537,7 +1536,7 @@ $(function() {
                     }
                 });
                 
-                hideLoader();
+                hL();
 
                 return false;
             }
@@ -1571,7 +1570,7 @@ $(function() {
                 }
 
                 $(`select[name="periodSelect"]`).on('change', function() {
-                    showLoader();
+                    sL();
                     var periodSelected = $(this).val();
                     summaryItems(periodSelected);
                     salesOverview(periodSelected);

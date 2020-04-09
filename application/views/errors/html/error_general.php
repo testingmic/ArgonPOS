@@ -1,6 +1,6 @@
 <?php
 #FETCH SOME GLOBAL FUNCTIONS
-global $config, $message;
+global $config, $message, $button;
 
 // Define Root Directory
 $rootDir = $config->base_url();
@@ -13,7 +13,7 @@ $rootDir = $config->base_url();
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
   <meta name="author" content="Creative Tim">
-  <title>Page Not Found - <?= config_item('site_name'); ?></title>
+  <title><?= $heading ?> - <?= config_item('site_name'); ?></title>
   <link rel="canonical" href="<?= $rootDir; ?>" />
   <meta name="keywords" content="dashboard, pos">
   <link rel="icon" href="<?= $rootDir; ?>assets/img/brand/favicon.png" type="image/png">
@@ -53,8 +53,12 @@ $rootDir = $config->base_url();
             <img src="<?= $config->base_url('assets/img/404.jpg'); ?>" alt="" class="d-block mx-auto mt-4" height="250">
             <div class="card-body text-center px-lg-5 py-lg-5">
               <div class="form-result">
-                <h4 class="mt-0 mb-3"><p>Sorry the page you are trying to view does not exist on this server</p></h4>
+                <h4 class="mt-0 mb-3"><p><?= $message; ?></p></h4>
+                <?php if(isset($button) && !empty($button)) { ?>
+                <?= $button; ?>
+                <?php } else { ?>
                 <a href="<?= $config->base_url('dashboard'); ?>" class="btn btn-sm btn-primary">Back to Dashboard</a>
+                <?php } ?>
               </div>
             </div>
           </div>

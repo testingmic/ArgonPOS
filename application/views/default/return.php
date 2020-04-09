@@ -172,7 +172,7 @@ if(confirm_url_id(1)) {
 <?php require_once 'foottags.php'; ?>
 <script>
   $(() => {
-    hideLoader();
+    hL();
     <?php if($clientData->allow_product_return) { ?>
     $(`input[name="order_id_search"]`).focus();
     $(`input[name="order_id_search"]`).on('keyup', async function(e) {
@@ -182,7 +182,7 @@ if(confirm_url_id(1)) {
 
       if(orderId.length > 12) {
         $.ajax({
-          url: `${baseUrl}ajax/returnOrderProcessor/searchOrder`,
+          url: `${baseUrl}aj/returnOrderProcessor/searchOrder`,
           data: {searchOrder:true, orderId},
           dataType: `json`,
           type: `POST`,

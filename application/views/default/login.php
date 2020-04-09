@@ -1,10 +1,8 @@
 <?php
 #FETCH SOME GLOBAL FUNCTIONS
 global $config;
-
 // Define Root Directory
 $rootDir = $config->base_url();
-
 // ensure that the user is logged in
 if($admin_user->logged_InControlled()) {
     include_once "dashboard.php";
@@ -58,7 +56,7 @@ if($admin_user->logged_InControlled()) {
               <div class="text-center text-muted mb-4">
                 <small>Sign in with credentials</small>
               </div>
-              <form autocomplete="Off" action="<?= $config->base_url('ajax_login/doLogin') ?>" class="submitForm">
+              <form autocomplete="Off" action="<?= $config->base_url('al/dL') ?>" class="sF">
                 <div class="form-group mb-3">
                   <div class="input-group input-group-merge input-group-alternative">
                     <div class="input-group-prepend">
@@ -96,21 +94,21 @@ if($admin_user->logged_InControlled()) {
   <script src="<?= $rootDir; ?>assets/vendor/jquery/dist/jquery.min.js"></script>
   <script src="<?= $rootDir; ?>assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    $(`form[class~="submitForm"]`).on('submit', function(e) {
+    $(`form[class~="sF"]`).on('submit', function(e) {
         e.preventDefault();
-        var formButton = $(`form[class~="submitForm"] [type="submit"]`);
+        var fb = $(`form[class~="sF"] [type="submit"]`);
         $.ajax({
             type: "POST",
             url: $(this).attr('action'),
             data: $(this).serialize(),
             dataType: "json",
             beforeSend: function() {
-                formButton.prop('disabled', true);
+                fb.prop('disabled', true);
                 $(`div[class="form-result"]`).html(`<div align="center">Processing request <i class="fa fa-spin fa-spinner"></i></div>`);
             },
-            success: function(resp) {
-                if(resp.status == 500) {
-                    $(`div[class~="form-result"]`).html(resp.result);
+            success: function(rs) {
+                if(rs.status == 500) {
+                    $(`div[class~="form-result"]`).html(rs.result);
                 } else {
                     $(`div[class~="form-result"]`).html('<div class="alert alert-success">Login Successful. Redirecting <i class="fa fa-spinner fa-spin"></i></div>');
                     setTimeout(function() {
@@ -119,11 +117,11 @@ if($admin_user->logged_InControlled()) {
                 }
             },
             error: function(err) {
-                formButton.prop('disabled', false);
+                fb.prop('disabled', false);
                 $(`div[class~="form-result"]`).html(``);
             },
             complete: function(data) {
-                formButton.prop('disabled', false);
+                fb.prop('disabled', false);
                 setTimeout(function() {
                     $(`div[class~="form-result"]`).html(``);
                 }, 7000);

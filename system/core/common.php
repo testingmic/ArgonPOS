@@ -454,7 +454,7 @@ if ( ! function_exists('is_cli'))
 	}
 }
 
-function show_error($heading, $message, $template = 'error_general', $status_code = 500)
+function show_error($heading = 'Page Not Found', $message='Sorry the page you are trying to view does not exist on this server', $template = 'error_general', $status_code = 500)
 {
 	$ob_level = ob_get_level();
 	

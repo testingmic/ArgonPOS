@@ -291,7 +291,7 @@ $(`div[class~="request-form"] button[class~="save-request"]`).on('click', functi
 	    }
 
 	    if(confirm("Are you sure you want to complete this transaction?")) {
-		    $.post(`${baseUrl}ajax/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
+		    $.post(`${baseUrl}aj/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
 		    	
 		    	if(resp.status != 200) {
 		    		Toast({

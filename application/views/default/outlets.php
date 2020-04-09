@@ -68,7 +68,7 @@ require_once "headtags.php";
         </div>
         <div class="modal-body">
           <div class="form-result"></div>
-          <form autocomplete="Off" class="needs-validation submitThisForm" method="post" action="<?= $config->base_url('ajax/branchManagment/addBranchRecord'); ?>">
+          <form autocomplete="Off" class="needs-validation submitThisForm" method="post" action="<?= $config->base_url('aj/branchManagment/addBranchRecord'); ?>">
             <div class="form-row">
               <div class="col-md-8 mb-3">
                 <label for="branchName">Outlet Name *</label>
@@ -119,7 +119,6 @@ require_once "headtags.php";
 <?php require_once 'foottags.php'; ?>
 <script>
   $(function() {
-    hideLoader();
     syncOfflineData('branches').then((res) => {});
   })
 </script>

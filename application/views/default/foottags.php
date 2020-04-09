@@ -110,19 +110,62 @@
 <script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.extension.js"></script>
 <?php } ?>
+<script src="<?= $baseUrl ?>assets/vendor/moment/min/moment.min.js"></script>
+<?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>
+<script src="<?= $baseUrl ?>assets/vendor/jquery-steps/jquery.steps.min.js"></script>
+<?php } ?>
+<script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js?v=1.1.0"></script>
+<script src="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
+<script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
+<script src="<?= $baseUrl ?>assets/js/_js.v1.js"></script>
 <script>
 <?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>
   Cookies.set("sidenav-state", "unpinned");
 <?php } else { ?>
   Cookies.set("sidenav-state", "pinned");
 <?php } ?>
+// live clock
+var clock_tick = function clock_tick() {
+  setInterval('update_clock();', 1000);
+}
+clock_tick();
+var update_clock = function update_clock() {
+  $(`div[class~="liveclock"] span`).html(moment().format("LL HH:mm:ss"));
+}
+$(async function() {
+    var offline = true;
+    hL();
+    await dOC().then((itResp) => {
+        if(itResp == 1) {
+            offline = false;
+            $(`div[class~="offline-placeholder"]`).css('display','none');
+        } else {
+            offline = true;
+            $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
+        }
+    }).catch((err) => {
+        offline = true;
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
+        $(`div[class="connection"]`).css('display','none');
+    });
+    <?php if(confirm_url_id(1, 'inventory-details')) { ?>
+      var identifyCurrentBranch = () => {
+          var site2 = branchID;
+          fetchAllProducts(site2);
+      }
+      identifyCurrentBranch();
+    <?php } ?>
+    <?php if(confirm_url_id(0, 'dashboard')) { ?>
+    if(!noInternet) {
+      syncOfflineData('sales').then((resp) => {
+          dPv('sales').then((res) => {
+              preloadData('sales').then((res) => {
+                  preloadData('reports');
+              });
+          });
+      });
+    }
+    <?php } ?>
+});
 </script>
-<!-- Argon JS -->
-<script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js?v=1.1.0"></script>
-<script src="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
-<script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
-<script src="<?= $baseUrl ?>assets/js/indexdb.js"></script>
-<script src="<?= $baseUrl ?>assets/js/script.js"></script>
-<?php if(!in_array($SITEURL[0], ["point-of-sale", "requests", "customers", "branches", "users", "inventory"])) { ?>
-<script src="<?= $baseUrl ?>assets/js/reports.js"></script>
-<?php } ?>

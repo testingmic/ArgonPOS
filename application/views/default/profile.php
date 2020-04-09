@@ -43,7 +43,7 @@ $userData = $stmt->fetch(PDO::FETCH_OBJ);
       <div class="col-lg-12 col-sm-12">
           <div class="card">
           	<div class="card-body">
-              	<form autocomplete="Off" class="needs-validation submitThisForm" novalidate="" method="post" action="<?= $config->base_url('ajax/userManagement/quickUpdate'); ?>">
+              	<form autocomplete="Off" class="needs-validation submitThisForm" novalidate="" method="post" action="<?= $config->base_url('aj/userManagement/quickUpdate'); ?>">
 					<div class="form-row">
 						<div class="col-md-4 mb-3">
 							<label for="fullName">Full Name *</label>
@@ -121,10 +121,5 @@ $userData = $stmt->fetch(PDO::FETCH_OBJ);
 
 
 <?php require_once 'foottags.php'; ?>
-<script>
-  $(function() {
-    hideLoader();
-  })
-</script>
 </body>
 </html>

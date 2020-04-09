@@ -92,7 +92,7 @@ $expiryRange = [
                       <?= connectionLost(); ?>
                       <?= form_loader(); ?>
                       <div class="card-body">
-                        <form autocomplete="Off" autocomplete="Off" data-form="company-details" class="company_settings" action="<?= $config->base_url('ajax/branchManagment/updateCompanyDetail'); ?>" method="post" enctype="multipart/form-data">
+                        <form autocomplete="Off" autocomplete="Off" data-form="company-details" class="company_settings" action="<?= $config->base_url('aj/branchManagment/updateCompanyDetail'); ?>" method="post" enctype="multipart/form-data">
                           <div class="row">
                             <div class="col-md-4">
                               <div class="form-group">
@@ -279,7 +279,7 @@ $expiryRange = [
                       <?= form_loader(); ?>
                       <?= connectionLost(); ?>
                       <div class="card-body">
-                        <form autocomplete="Off" data-form="sales-details" class="company_settings" action="<?= $config->base_url('ajax/branchManagment/updateSalesDetails'); ?>" method="post" enctype="multipart/form-data">
+                        <form autocomplete="Off" data-form="sales-details" class="company_settings" action="<?= $config->base_url('aj/branchManagment/updateSalesDetails'); ?>" method="post" enctype="multipart/form-data">
                           <div class="row">
                             <div class="col-md-6 col-lg-6">
                               <div class="form-group">
@@ -378,7 +378,7 @@ $expiryRange = [
                       <?= form_loader(); ?>
                       <?= connectionLost(); ?>
                       <div class="card-body">
-                        <form autocomplete="Off" data-form="reports-details" class="company_settings" action="<?= $config->base_url('ajax/branchManagment/updateReportsDetails'); ?>" method="post" enctype="multipart/form-data">
+                        <form autocomplete="Off" data-form="reports-details" class="company_settings" action="<?= $config->base_url('aj/branchManagment/updateReportsDetails'); ?>" method="post" enctype="multipart/form-data">
                           <div class="row">
 
                             <div class="col-lg-12">
@@ -523,7 +523,7 @@ $expiryRange = [
       let Value = $(this).attr('data-value');
 
       $.ajax({
-        url: `${baseUrl}ajax/branchManagment/updatePaymentOptions`,
+        url: `${baseUrl}aj/branchManagment/updatePaymentOptions`,
         data: { updatePaymentOptions: true, Option: Option, Value: Value },
         type: "POST",
         dataType: "JSON",
@@ -536,7 +536,7 @@ $expiryRange = [
 
   function loadPaymentOptions() {       
     $.ajax({
-      url: `${baseUrl}ajax/branchManagment/loadPaymentOptions`,
+      url: `${baseUrl}aj/branchManagment/loadPaymentOptions`,
       data: { loadPaymentOptions: true },
       type: "POST",
       dataType: "JSON",
@@ -578,25 +578,6 @@ $expiryRange = [
   });
 
   loadPaymentOptions();
-
-  $(async function() {
-    hideLoader();
-    var offline = true;
-    await doOnlineCheck().then((itResp) => {
-      if(itResp == 1) {
-        offline = false;
-        $(`div[class~="offline-placeholder"]`).css('display','none');
-      } else {
-        offline = true;
-        $(`div[class="connection"]`).css('display','none');
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
-      }
-    }).catch((err) => {
-      offline = true;
-      $(`div[class~="offline-placeholder"]`).css('display','flex');
-      $(`div[class="connection"]`).css('display','none');
-    });
-  });
 </script>
 </body>
 </html>

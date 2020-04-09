@@ -371,33 +371,5 @@ global $posClass, $baseUrl, $clientData;
 
   </div>
 <?php require_once 'foottags.php'; ?>
-<script type="text/javascript">
-$(async function() {
-    hideLoader();    
-    await doOnlineCheck().then((itResp) => {
-        if(itResp == 1) {
-            noInternet = false;
-            $(`div[class="connection"]`).css('display','none');
-        } else {
-            noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-        }
-    }).catch((err) => {
-        noInternet = true;
-        $(`div[class="connection"]`).css('display','block');
-    });
-
-    if(!noInternet) {
-        syncOfflineData('sales').then((resp) => {
-            delPrevs('sales').then((res) => {
-                preloadData('sales').then((res) => {
-                    preloadData('reports');
-                });
-            });
-        });
-    }
-
-});
-</script>
 </body>
 </html>

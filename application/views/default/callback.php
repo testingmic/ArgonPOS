@@ -61,7 +61,7 @@ if (isset($_GET['status'], $_GET['code'], $_GET['transaction_id'])) {
 
 if ($payment_successful == false) {
 
-    $button = '<a href="'.$session->tellerUrl.'" class="btn btn-sm btn-primary">Try Again</a>';
+    $button = '<a href="'.$session->tellerUrl.'" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Try Again Payment</a>';
 
     show_error("Payment Unsuccessful", $message, $template = 'error_general', 500, $button);
 

@@ -126,7 +126,7 @@ global $accessObject;
           
           <div class="card-body">
             <?php if($valid && !empty($session->curBranchId)) { ?>
-            <form method="post" action="<?= $config->base_url('ajax/importManager/loadCSV'); ?>" class="csvDataImportForm" enctype="multipart/form-data">
+            <form method="post" action="<?= $config->base_url('aj/importManager/loadCSV'); ?>" class="csvDataImportForm" enctype="multipart/form-data">
                 <div class="row">
                     <div id="dropify-space" class="col-md-8  mt-5 pb-4 text-center m-auto border bg-white pt-4 border-white">
                         <?= form_loader(); ?>
@@ -172,6 +172,7 @@ global $accessObject;
                       <h2>Upload <strong><?= ucfirst($currentData); ?>s</strong>, to the <strong><?= $posClass->quickData("branch_name", "branches", "id='{$session->curBranchId}'") ?></strong> <small><a href="javascript:void(0)" data-branch-id="<?= $session->curBranchId ?>" data-href="<?= $baseUrl ?>import/<?= $currentData ?>" class="change-branch text-success">Change Branch?</a></small> or <small class="text-success"><a class="read-instructions" href="javascript:void(0);">Read Instructions?</a></small>
                           <hr>
                       </h2>
+                      <div class="csv-rows-counter text-success font-16"></div>
                   </div>
                   <div class="col-lg-8 bg-white file-checker"></div>
               </div>                
@@ -284,7 +285,6 @@ global $accessObject;
     </div>
 </div>
 <?php } ?>
-<?php require_once 'foottags.php'; ?>
 <script>
 <?php if(empty($session->curBranchId) && $valid) { ?> 
 $(`div[class~="importModal"]`).modal('show');
@@ -293,31 +293,7 @@ $(`div[class~="importModal"]`).modal('show');
 var currentData = "<?= $currentData ?>";
 var acceptedArray = <?= json_encode($acpCols["data"]); ?>;
 <?php } ?>
-$(async function() {
-    hideLoader();
-    var offline = true;
-    await doOnlineCheck().then((itResp) => {
-        if(itResp == 1) {
-            offline = false;
-            $(`div[class~="offline-placeholder"]`).css('display','none');
-        } else {
-            offline = true;
-            $(`div[class="connection"]`).css('display','none');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-        }
-    }).catch((err) => {
-        offline = true;
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
-        $(`div[class="connection"]`).css('display','none');
-    });
-});
 </script>
-<?php if($accessObject->hasAccess('view', 'settings')) { ?>
-  <?php if($valid) { ?>
-    <?php if(!empty($session->curBranchId)) { ?> 
-      <script type="text/javascript" src="<?= $baseUrl ?>assets/js/import.js"></script>
-    <?php } ?>
-  <?php } ?>
-<?php } ?>
+<?php require_once 'foottags.php'; ?>
 </body>
 </html>

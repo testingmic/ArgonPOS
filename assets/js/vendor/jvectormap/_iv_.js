@@ -38,7 +38,7 @@ var transferProduct = (productId) => {
     let transfer_from = currentBranchId;
 
     $.ajax({
-        url: baseUrl + "ajax/inventoryManagement",
+        url: baseUrl + "aj/inventoryManagement",
         type: "POST",
         dataType: "json",
         data: { getWarehouseProduct: true, productId: productId, transferFrom: transfer_from },
@@ -80,7 +80,7 @@ var submitTransferProduct = () => {
         else if (confirm("Do you want to transfer product now?")) {
 
             $.ajax({
-                url: baseUrl + "ajax/inventoryManagement/submitTransferProduct",
+                url: baseUrl + "aj/inventoryManagement/submitTransferProduct",
                 type: "POST",
                 dataType: "json",
                 data: $(this).serialize() + "&request=submitTransferProduct",
@@ -139,7 +139,7 @@ submitTransferProduct();
 var fetchAllProducts = (branchID = null, location = branch_type) => {
     
     $.ajax({
-        url: baseUrl + "ajax/inventoryManagement/getAllProducts",
+        url: baseUrl + "aj/inventoryManagement/getAllProducts",
         type: "POST",
         dataType: "json",
         data: { request: true, getAllProducts: true, branchID: branchID, location: location },
@@ -243,7 +243,7 @@ $(`form[id="updateWareHouseStock"]`).on('submit', function(e) {
         var stockQuantities = productsList.join(",");
 
         $.ajax({
-            url: `${baseUrl}ajax/inventoryManagement/updateWareHouseStock`,
+            url: `${baseUrl}aj/inventoryManagement/updateWareHouseStock`,
             data: {updateWareHouseStock: true, stockQuantities: stockQuantities},
             type: "POST",
             dataType: "json",
@@ -476,7 +476,7 @@ $("form[class~='submit-bulk-transfer-product']").on("submit", function(e) {
         if (confirm("Do you want to transfer these products?")) {
 
             $.ajax({
-                url: baseUrl + "ajax/inventoryManagement/bulkTransferProducts",
+                url: baseUrl + "aj/inventoryManagement/bulkTransferProducts",
                 type: "POST",
                 dataType: "json",
                 data: $(this).serialize() + "&request=true&bulkTransferProducts=true&productIds="+productIds,

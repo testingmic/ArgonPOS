@@ -23,7 +23,7 @@ $password_ErrorMessage = "<div class='alert alert-danger' style='width:100%'>Sor
 
 //: If the user needs to login
 // confirm that the user has submitted the login form
-if(isset($_POST["username"], $_POST["password"]) && confirm_url_id(1, "doLogin")) {
+if(isset($_POST["username"], $_POST["password"]) && confirm_url_id(1, "dL")) {
 
 	// assign variables and clean them
 	$username = xss_clean($_POST["username"]);
@@ -52,7 +52,7 @@ if(isset($_POST["username"], $_POST["password"]) && confirm_url_id(1, "doLogin")
 }
 
 // confirm that the user wants to logout of the system
-elseif(confirm_url_id(1, "doLogout")) {
+elseif(confirm_url_id(1, "dLg")) {
 	// check what to perform
 	if(isset($_POST["toPerform"])) {
 		// log the user out

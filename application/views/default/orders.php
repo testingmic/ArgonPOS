@@ -77,29 +77,9 @@ require_once "headtags.php";
   </div><!--end row-->
 <?php require_once 'foottags.php'; ?>
 <script type="text/javascript">
-    var sessionName = '<?= $sessionName ?>';
-
-    $('#<?= $tableClass ?>').DataTable();
-
-    listRequests('<?= substr($PAGETITLE, 0, -1) ?>', '<?= $tableClass ?>');
-
-    $(async function() {
-        var offline = true;
-        await doOnlineCheck().then((itResp) => {
-            if(itResp == 1) {
-                offline = false;
-                $(`div[class~="offline-placeholder"]`).css('display','none');
-            } else {
-                offline = true;
-                $(`div[class="connection"]`).css('display','none');
-                $(`div[class~="offline-placeholder"]`).css('display','flex');
-            }
-        }).catch((err) => {
-            offline = true;
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-            $(`div[class="connection"]`).css('display','none');
-        });
-    });
+  var sessionName = '<?= $sessionName ?>';
+  $('#<?= $tableClass ?>').DataTable();
+  listRequests('<?= substr($PAGETITLE, 0, -1) ?>', '<?= $tableClass ?>');
 </script>
 </body>
 </html>

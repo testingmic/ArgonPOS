@@ -214,7 +214,7 @@ if(!empty($product)) {
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
               </div>
               <div class="modal-body">
-                  <form id="updateProductForm" autocomplete="Off" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('ajax/inventoryManagement/editProduct'); ?>">
+                  <form id="updateProductForm" autocomplete="Off" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('aj/inventoryManagement/editProduct'); ?>">
                       <div class="row">
                           <div class="col-md-4">
                               <div class="form-group">
@@ -302,29 +302,6 @@ if(!empty($product)) {
   </div><!-- /.modal -->
   <?php } ?>
 <?php require_once 'foottags.php'; ?>
-
-<script>
-  $(async function() {
-      hideLoader();
-      var offline = true;
-      await doOnlineCheck().then((itResp) => {
-          if(itResp == 1) {
-              offline = false;
-              $(`div[class~="offline-placeholder"]`).css('display','none');
-          } else {
-              offline = true;
-              $(`div[class="connection"]`).css('display','none');
-              $(`div[class~="offline-placeholder"]`).css('display','flex');
-          }
-      }).catch((err) => {
-          offline = true;
-          $(`script[data-content="transfer"]`).html(``);
-          $(`div[class~="offline-placeholder"]`).css('display','flex');
-          $(`div[class="connection"]`).css('display','none');
-      });
-  });
-</script>
-
 </body>
 </html>
 <?php } else { ?>

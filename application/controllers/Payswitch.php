@@ -50,7 +50,7 @@ class Payswitch extends Pos
                 "desc"          => "Payment for items on Argon POS.",
                 "amount"        => $amount,
                 "redirect_url"  => $this->config->base_url('callback'), 
-                "email"         => $isEmail
+                "email"         => (empty($isEmail)) ? "emmallob14@gmail.com" : $isEmail
             ]
         );
 

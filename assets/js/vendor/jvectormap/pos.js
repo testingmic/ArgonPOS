@@ -15,7 +15,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		transitionEffect: "slide",
 		enablePagination: false,
 		onFinished(e){
-			resetRegisterForm();
+			rtRegForm();
 			$(".content-loader.register-form-loader").css({display: "none"});
 		},
 		onInit(event, newIndex){
@@ -118,7 +118,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 
   			if(newIndex == completeIndex){
   				
-  				doOnlineCheck().then((itResp) => {
+  				dOC().then((itResp) => {
 		            if(itResp == 1) {
 		                noInternet = false;
 		                $(`div[class="connection"]`).css('display','none');
@@ -133,7 +133,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 
 		        if(noInternet) {
 
-		        	saveRegisterIntoIndexDB().then((resp) => {
+		        	sPIDB().then((resp) => {
 		        		
 		        		if(resp.status == 'error') {
 		        			Toast.fire({
@@ -158,7 +158,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		        	});
 
 		        } else {
-	  				saveRegister().then((res) => {
+	  				svReg().then((res) => {
 	  					$("[data-bind-html='orderId']").html(res.data._oid);
 	  					$(`span[class="generated_order"]`).html(res.data._oid);
 	  					Toast.fire({
@@ -190,13 +190,13 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 	}, 1500);
 	});
 
-	function saveRegister() {
+	function svReg() {
 		let formData = $("#pos-form-horizontal.register-form").serialize();
 		let totalToPay = $("[data-order-total]").data("orderTotal");
 		let discountType = $(`input[name="discount_type"]:checked`).val();
 		let discountAmount = $(`input[name="discount_amount"]`).val();
 		formData += `&total_to_pay=${totalToPay}&discountType=${discountType}&discountAmount=${discountAmount}`;
-		return $.post(baseUrl+"ajax/pointOfSaleProcessor/saveRegister", formData)
+		return $.post(baseUrl+"aj/pointOfSaleProcessor/saveRegister", formData)
 	}
 
 	let productPrices = [];
@@ -213,23 +213,23 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 			$(`table[id="products-table"] thead tr`).show();
 			$(`td.product-title-cell`).parent().hide();
 			$(`td.product-title-cell:Contains(${input})`).parent().show();
-			checkForEmptyTable($("#products-table"));
+			ckEmpTb($("#products-table"));
 		}
 		else{
 			$(`table[id="products-table"] thead tr`).show();
 			$(`td.product-title-cell`).parent().hide();
 			$(`td.product-title-cell:Contains(${input})`).parents(`tr[data-category='${selectedCat}']`).show();
-			checkForEmptyTable($("#products-table"));
+			ckEmpTb($("#products-table"));
 		}
 	});
 
 	var initialiteProductSelect = () => {
   	$(".product-select").on("change", async function(){
   		if($(this).is(":checked")) {
-  			await addProductRow($(this).data())
+  			await adProR($(this).data())
   			.then((row) => {
-  				recalculateTotalToPay();
-  				amountPaying();
+  				rcalTot();
+  				amtPay();
   				let subTotalBox = $(".row-subtotal", $(`tr.products-row[data-row-id='${row.productId}']`));
   				let receipt_subTotal = $(".receipt-row-subtotal", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
   				let receipt_qty = $(".receipt-row-quantity", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
@@ -247,8 +247,8 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
   					subTotalBox.text(subtotal);
   					receipt_qty.text(selectedQty);
   					receipt_subTotal.text(formatCurrency(subtotal));
-  					recalculateTotalToPay();
-  					amountPaying();
+  					rcalTot();
+  					amtPay();
   					
   					if(selectedQty > maximumQty) {
   						currentInput.val(maximumQty);
@@ -259,13 +259,13 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
   					}
   				})
   				$(`.remove-row[data-row='${row.productId}']`).on("click", function(){
-  					removeProductRow(row.productId);
+  					rvPtRow(row.productId);
   					$(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
   				})
   				$(".print-receipt").on("click", printReceipt)
   			})
   		}
-  		else removeProductRow($(this).data("productId"))
+  		else rvPtRow($(this).data("productId"))
   	});
 }
 
@@ -278,23 +278,23 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 			if(searchInput.length){
 				$(`td.product-title-cell`).parent().hide();
 				$(`td.product-title-cell:Contains(${searchInput})`).parent().show();			
-				checkForEmptyTable($("#products-table"));		
+				ckEmpTb($("#products-table"));		
 			}
 			else {
 				$("tr", $("#products-table")).show();
-				checkForEmptyTable($("#products-table"));
+				ckEmpTb($("#products-table"));
 			}
 		}
 		else{
 			if(searchInput.length){
 				$(`td.product-title-cell`).parents(`tr:not([data-category='${selectedCat}'])`).hide();
 				$(`td.product-title-cell:Contains(${searchInput})`).parents(`tr[data-category='${selectedCat}']`).show();	
-				checkForEmptyTable($("#products-table"));
+				ckEmpTb($("#products-table"));
 			}
 			else{
 				$(`tr[data-category='${selectedCat}']`, $("#products-table")).show();
 				$(`tr:not([data-category='${selectedCat}'])`, $("#products-table")).hide();
-				checkForEmptyTable($("#products-table"));
+				ckEmpTb($("#products-table"));
 			}
 		}
 		$(`table[id="products-table"] thead tr`).show();
@@ -344,7 +344,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		else {
 			$(".selected-payment-type").html(`<h5 class='text-success'>${$(this).children("option:selected").text()}</h5>`);
 		}
-		recalculateTotalToPay();
+		rcalTot();
 		// Show Payment Button For Teller Payment
 		if (["MoMo", "card", "cash"].includes(selectedPaymentType)) {
 
@@ -370,7 +370,7 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 	}
 	});
 
-	function resetRegisterForm() {
+	function rtRegForm() {
 		let regForm = $(".register-form");
 		let firstTab = $(".register-form ul[role='tablist'] li.first");
 		regForm.trigger("reset");
@@ -385,12 +385,12 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		$(`input[name="amount_to_pay"]`).attr({"max": 0, "value": ""});
 		$(`span[class="total-to-pay-amount"]`).attr("data-order-total", "0.00");
 		$(`div[class~="order_discounting"] input`).prop('disabled', false);
-		recalculateRowNumber();
+		rcalRowNum();
 		$(".payment-type-select").trigger("change")
-		recalculateTotalToPay();
+		rcalTot();
 	}
 
-	function addProductRow(rowData) {
+	function adProR(rowData) {
 
 		return new Promise((resolve, reject) => {
 
@@ -424,18 +424,18 @@ const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
 		})
 	}
 
-	function removeProductRow(rowId){
+	function rvPtRow(rowId){
 		let tbody = $(".products-table-body");
 		let receipt_tbody = $(".receipt-table-body");
 		$(`tr.receipt-product-row[data-row-id="${rowId}"]`, receipt_tbody).remove();
 		$(`tr.products-row[data-row-id="${rowId}"]`, tbody).remove();
-		recalculateRowNumber();
-		recalculateTotalToPay();
+		rcalRowNum();
+		rcalTot();
 	}
 
 var overallSubTotal = 0, totalDiscountDeducted = 0;
 
-	function recalculateTotalToPay(){
+	function rcalTot(){
 		let totalToPay = 0;
 
 		if($("tr.products-row .row-subtotal").length){
@@ -476,7 +476,7 @@ var overallSubTotal = 0, totalDiscountDeducted = 0;
 		$(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": formatCurrency(totalToPay)});
 	}
 
-	var amountPaying = () => {
+	var amtPay = () => {
 		let max = parseFloat($(`input[name="amount_paying"]`).attr('max'));
 		let value = parseFloat($(`input[name="amount_paying"]`).val());
 		let paymentType = $(".payment-type-select").val();
@@ -504,21 +504,21 @@ var overallSubTotal = 0, totalDiscountDeducted = 0;
 }
 
 $(`input[name="amount_paying"]`).on('keyup', function() {
-	amountPaying();
+	amtPay();
 });
 
 $(`input[name="discount_amount"]`).on('keyup', function() {
-		recalculateTotalToPay();
-		amountPaying();
+		rcalTot();
+		amtPay();
 	});
 
 	$(`input[name="discount_type"]`).on('change', function() {
 	$(`input[name="discount_amount"]`).trigger('focus');
-		recalculateTotalToPay();
-		amountPaying();
+		rcalTot();
+		amtPay();
 	});
 
-	function recalculateRowNumber(){
+	function rcalRowNum(){
 		if(!$("tr.products-row").length) $(".empty-message-row").show();
 		$("tr.products-row").each(function(index, el){
 			let rowNumber = index +1;
@@ -537,7 +537,7 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 			thisEmail.prop('disabled', true);
 
 			$.ajax({
-				url: `${baseUrl}ajax/pointOfSaleProcessor/sendMail`,
+				url: `${baseUrl}aj/pointOfSaleProcessor/sendMail`,
 				type: `POST`,
 				data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname},
 				dataType: "json",
@@ -568,7 +568,7 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
   	}
 	});
 
-	function checkForEmptyTable(table){
+	function ckEmpTb(table){
 		let tableCols = table.find("thead tr th").length;
 		let tableRows = table.find("tbody tr:visible").length;
 		if(!tableRows) table.find("tbody").append(`<tr class='temp-row'><td colspan='4' class='text-center'>No Item Found</td></tr>`);
@@ -589,12 +589,12 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 
 	$(".make-online-payment").on("click", async function(e) {
 		e.preventDefault();
-		await saveRegister().then(function(res) {
+		await svReg().then(function(res) {
   		if (res.status == "success") {
   			$(`span[class="generated_order"]`).html(res.data._oid);
   			var userEmail = $("input[id='receipt-email']").val();
 	  		$.ajax({
-	  			url: baseUrl + "ajax/pointOfSaleProcessor/processMyPayment",
+	  			url: baseUrl + "aj/pointOfSaleProcessor/processMyPayment",
 	  			data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
 	  			dataType: "json",
 	  			type: "POST",
@@ -613,7 +613,7 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 	  						$(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(res.data.orderTotal)}`);
 	  						paymentWindow = window.open(data.message.msg, "_blank");
 	  						paymentCheck = setInterval(function() {
-	  							checkPaymentStatus();
+	  							ckPayState();
 	  						}, 3000);
 	  					} else {
 	  						$(".payment-processing-span").html(data.message.msg);
@@ -651,10 +651,10 @@ $(`input[name="discount_amount"]`).on('keyup', function() {
 		});
 });
 
-function checkPaymentStatus() {
+function ckPayState() {
 	
 	$.ajax({
-		url: `${baseUrl}ajax/pointOfSaleProcessor/checkPaymentStatus`,
+		url: `${baseUrl}aj/pointOfSaleProcessor/checkPaymentStatus`,
 		type: "POST",
 		data: { checkPaymentStatus: true },
 		dataType: "json",
@@ -702,7 +702,7 @@ function checkPaymentStatus() {
 
 $(".cancel-online-payment").on("click", function() {
 
-	$.post(`${baseUrl}ajax/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
+	$.post(`${baseUrl}aj/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
 		data = $.parseJSON( data );
 		let toastType = "error";
 		let toastMsg  = "Failed To Cancel";

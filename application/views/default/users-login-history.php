@@ -90,15 +90,7 @@ $accessChecker = $accessObject->hasAccess('inventory_branches', 'products');
 				</div>
           </div>
       </div>
-      
-
   </div><!--end row-->
-
 <?php require_once 'foottags.php'; ?>
-<script>
-  $(function() {
-    hideLoader();
-  })
-</script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 <?php
 $acceptedRequests = ["quote", "order"];
 
-global $admin_user;
+global $admin_user, $accessObject;
+
+$accessObject->userId = $session->userId;
 
 // ensure that the user is logged in
 if(!$admin_user->logged_InControlled()) {
@@ -249,33 +251,7 @@ $categories = $productsClass->getCategories();
         </div>
     </div>
 </div>
+<script type="text/javascript">var sessionName = '<?= $sessionName ?>';</script>
 <?php require_once 'foottags.php'; ?>
-<script type="text/javascript">
-    var sessionName = '<?= $sessionName ?>';
-</script>
-<script src="<?= $config->base_url('assets/js/requests.js'); ?>" type="text/javascript"></script>
-<script type="text/javascript">
-    $(`select[class~="selectpicker"]`).select2({ width: '100%' });
-
-    $(async function() {
-        hideLoader();
-        
-        var offline = true;
-        await doOnlineCheck().then((itResp) => {
-            if(itResp == 1) {
-                offline = false;
-                $(`div[class~="offline-placeholder"]`).css('display','none');
-            } else {
-                offline = true;
-                $(`div[class="connection"]`).css('display','none');
-                $(`div[class~="offline-placeholder"]`).css('display','flex');
-            }
-        }).catch((err) => {
-            offline = true;
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-            $(`div[class="connection"]`).css('display','none');
-        });
-    });
-</script>
 </body>
 </html>

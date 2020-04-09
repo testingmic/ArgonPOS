@@ -71,27 +71,6 @@ require_once "headtags.php";
     <?php } } ?>
       
   </div><!--end row-->
-
 <?php require_once 'foottags.php'; ?>
-<script>
-  $(async function() {
-      hideLoader();
-      var offline = true;
-      await doOnlineCheck().then((itResp) => {
-          if(itResp == 1) {
-              offline = false;
-              $(`div[class~="offline-placeholder"]`).css('display','none');
-          } else {
-              offline = true;
-              $(`div[class="connection"]`).css('display','none');
-              $(`div[class~="offline-placeholder"]`).css('display','flex');
-          }
-      }).catch((err) => {
-          offline = true;
-          $(`div[class~="offline-placeholder"]`).css('display','flex');
-          $(`div[class="connection"]`).css('display','none');
-      });
-  });
-</script>
 </body>
 </html>

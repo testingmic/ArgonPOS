@@ -3,6 +3,8 @@ $PAGETITLE = "Analytics";
 
 // include the important files
 require_once "headtags.php";
+
+$session->reportingCustomerId = null;
 ?>
 <!-- Page Content-->
 <!-- Header -->
@@ -544,30 +546,6 @@ require_once "headtags.php";
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
-
 <?php require_once 'foottags.php'; ?>
-
-<script>
-  $(async function() {
-    $(`table[class~="salesLists"]`).dataTable();
-    $(`table[class~="inventoryLists"]`).dataTable();
-    $(`table[class~="thresholdLists"]`).dataTable();
-    await doOnlineCheck().then((itResp) => {
-        if(itResp == 1) {
-            noInternet = false;
-            $(`div[class="connection"]`).css('display','none');
-        } else {
-            noInternet = true;
-            $(`div[class~="offline"] div[class="card"]`).css('min-height','200px');
-            $(`div[class="connection"]`).css('display','block');
-        }
-    }).catch((err) => {
-        noInternet = true;
-        $(`div[class~="offline"] div[class="card"]`).css('min-height','200px');
-        $(`div[class="connection"]`).css('display','block');
-    });
-  });
-</script>
-
 </body>
 </html>

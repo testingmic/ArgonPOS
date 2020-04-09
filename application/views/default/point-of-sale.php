@@ -49,7 +49,7 @@ a[href="#finish"] {
 <div class="container-fluid mt--6">
   
   <div class="row">
-      <div class="col-lg-7">
+      <div class="col-lg-6">
         <div class="card">
           <?= (!$validDate) ? nonWorkingDay() : null; ?>
           <div class="card-body" style="padding-top: 10px; padding-bottom: 0px">
@@ -241,7 +241,7 @@ a[href="#finish"] {
           </div><!--end card-body-->
         </div><!--end card-->
       </div><!--end col-->
-      <div class="col-lg-5">
+      <div class="col-lg-6">
         <div class="card">
           <?= (!$validDate) ? nonWorkingDay() : null; ?>
           <div class="card-body register-build">
@@ -376,68 +376,5 @@ a[href="#finish"] {
 <?php } ?>
 <div class="payment_check" data-value="1"></div>
 <?php require_once 'foottags.php'; ?>
-<script src="<?= $baseUrl ?>assets/vendor/jquery-steps/jquery.steps.min.js"></script>
-<script>
-  $(function() {
-    hideLoader();
-  });
-</script>
-<?php if($validDate) { ?>
-<script src="<?= $config->base_url('assets/js/pos.js'); ?>" type="text/javascript"></script>
-<?php } else { ?>
-<script type="text/javascript">
-$("#pos-form-horizontal").steps({
-  headerTag: "h3",
-    bodyTag: "fieldset",
-    transitionEffect: "slide",
-    enablePagination: false
-});
-var initialiteProductSelect = () => {
-    $(".product-select").on("change", async function(){
-      if($(this).is(":checked")) {
-        await addProductRow($(this).data())
-        .then((row) => {
-          recalculateTotalToPay();
-          amountPaying();
-          let subTotalBox = $(".row-subtotal", $(`tr.products-row[data-row-id='${row.productId}']`));
-          let receipt_subTotal = $(".receipt-row-subtotal", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
-          let receipt_qty = $(".receipt-row-quantity", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
-          $(`.product-quantity[data-row='${row.productId}']`).on("input", function(){
-            let currentInput = $(this);
-            let selectedQty = currentInput.val().length ? parseInt(currentInput.val()) : 0;
-            let maximumQty = parseInt(currentInput.attr('data-max'));
-            let productName = currentInput.attr('data-name');
-
-            if(selectedQty < 1) { 
-              selectedQty = 1;
-              currentInput.val(1); 
-            }
-            let subtotal = (productPrices[row.productId]*selectedQty).toFixed(2);
-            subTotalBox.text(subtotal);
-            receipt_qty.text(selectedQty);
-            receipt_subTotal.text(formatCurrency(subtotal));
-            recalculateTotalToPay();
-            amountPaying();
-            
-            if(selectedQty > maximumQty) {
-              currentInput.val(maximumQty);
-              Toast.fire({
-                type: 'error',
-                title: `Sorry. Maximum number of available ${productName} is ${maximumQty}`
-              });
-            }
-          })
-          $(`.remove-row[data-row='${row.productId}']`).on("click", function(){
-            removeProductRow(row.productId);
-            $(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
-          })
-          $(".print-receipt").on("click", printReceipt)
-        })
-      }
-      else removeProductRow($(this).data("productId"))
-    });
-}
-</script>
-<?php } ?>
 </body>
 </html>

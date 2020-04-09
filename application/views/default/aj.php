@@ -47,7 +47,7 @@ if($admin_user->logged_InControlled()) {
 	// dashboard inights
 	if(confirm_url_id(1, 'dashboardAnalytics')) {
 		
-		if (isset($_POST['getUserAllSalesRecords']) && confirm_url_id(2, "getUserAllSalesRecords")) {
+		if (isset($_POST['getSales']) && confirm_url_id(2, "getSales")) {
 
 			$period = (isset($_POST['salesPeriod'])) ? xss_clean($_POST['salesPeriod']) : "today";
 
@@ -979,7 +979,7 @@ if($admin_user->logged_InControlled()) {
 						'row_id' => $iv,
 						'product_id' => $product_result->id,
 						'category_id' => $product_result->category_id,
-						'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/product-details/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
+						'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
 						'orders_count' => $product_result->orders_count,
 						'quantity_sold' => $product_result->totalQuantitySold,
 						'total_selling_cost' => $clientData->default_currency.number_format($product_result->totalProductsSoldCost, 2),
@@ -1763,6 +1763,7 @@ if($admin_user->logged_InControlled()) {
 			//: initializing
 			$postData = (Object) array_map("xss_clean", $_POST);
 			$theTeller = load_class('Payswitch', 'controllers');
+			$status = false;
 
 			// Check If Order Is Saved In Database
 			$check = $posClass->getAllRows(
@@ -1924,7 +1925,7 @@ if($admin_user->logged_InControlled()) {
 	        // check if the user has access to delete this item
 	        if($accessObject->hasAccess('delete', strtolower($eachRequest->request_type.'s'))) {
 	        	// print the delete button
-	        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('ajax/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
+	        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('aj/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
 	        }
 
 	        $eachRequest->action .= "</div>";
@@ -2043,7 +2044,7 @@ if($admin_user->logged_InControlled()) {
 						}
 
 						if($accessObject->hasAccess('delete', 'branches')) {
-							$action .= "<button class=\"btn btn-sm ".(($data->status == 1) ? "btn-outline-danger" : "btn-outline-primary")." delete-item\" data-url=\"".$config->base_url('ajax/branchManagment/updateStatus')."\" data-state=\"{$data->status}\" data-msg=\"".(($data->status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")."\" data-request=\"branch-status\" data-id=\"{$data->id}\">
+							$action .= "<button class=\"btn btn-sm ".(($data->status == 1) ? "btn-outline-danger" : "btn-outline-primary")." delete-item\" data-url=\"".$config->base_url('aj/branchManagment/updateStatus')."\" data-state=\"{$data->status}\" data-msg=\"".(($data->status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")."\" data-request=\"branch-status\" data-id=\"{$data->id}\">
 								<i class=\"fa ".(($data->status == 1) ? "fa-stop" : "fa-play")."\"></i>
 							</button> ";
 						}
@@ -3445,7 +3446,7 @@ if($admin_user->logged_InControlled()) {
 		        $eachCustomer->action .= "&nbsp;<a href=\"{$config->base_url('reports/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
 
 		        if($accessObject->hasAccess('delete', 'customers')) {
-                    $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('ajax/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";
+                    $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('aj/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";
                 }
 		        $eachCustomer->action .= "</div>";
 
@@ -3561,7 +3562,7 @@ if($admin_user->logged_InControlled()) {
             	}
             	
             	if($accessObject->hasAccess('category_delete', 'products')) {
-            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('ajax/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
+            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('aj/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
             	}
 
             	if(empty($eachCategory->action)) {
@@ -3818,6 +3819,7 @@ if($admin_user->logged_InControlled()) {
 	                            }
 	                        }
 
+	                        $newCSVArray = [];
 	                        foreach($session->csvSessionData as $key => $eachCsvValue) {
 	                            $newCSVArray[$key] = $eachCsvValue;
 	                        }

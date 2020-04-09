@@ -21,13 +21,13 @@ const Toast = Swal.mixin({
     }
 });
 
-var showLoader = () => {
+var sL = () => {
     menuItems.show();
     menuItemsPlaceholder.hide();
     $(".main-content-loader.main-body-loader").css({display: "flex"});
 }
 
-var hideLoader = () => {
+var hL = () => {
     $(".main-content-loader.main-body-loader").css({display: "none"}); 
     menuItemsPlaceholder.hide();
     menuItems.show();
@@ -46,7 +46,7 @@ function isNumber(evt) {
     return true;
 }
 
-async function doOnlineCheck() {
+async function dOC() {
     return $.ajax({
         url : `${baseUrl}users/onlineCheck`,
         type : "POST",
@@ -59,7 +59,7 @@ $(`table[class~="simple-table"]`).dataTable({
     iDisplayLength: 5,
 });
 
-doOnlineCheck().then((itResp) => {
+dOC().then((itResp) => {
     if(itResp == 1) {
         noInternet = false;
         $(`div[class="connection"]`).css('display','none');
@@ -74,9 +74,6 @@ doOnlineCheck().then((itResp) => {
 
 var recon;
 
-function disConnect() {
-    
-}
 function reConnect() {
 
     $(`div[class~="offline-placeholder"] button[type="button"]`).on('click', async function() {
@@ -85,7 +82,7 @@ function reConnect() {
         $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', true);
         $(`div[class~="offline-placeholder"] button[type="reset"]`).removeClass('hidden');
         recon = setInterval(function() {
-            doOnlineCheck().then((itResp) => {
+            dOC().then((itResp) => {
                 if(itResp == 1) {
                     clearInterval(recon);
                     noInternet = false;
@@ -122,7 +119,7 @@ function reConnect() {
 reConnect();
 
 var syncOfflineData = async (dataToSync) => {
-    await listIndexDBRecords(dataToSync).then((resp) => {
+    await listIDB(dataToSync).then((resp) => {
         if(resp.length > 0) {
             $.post(baseUrl + `doprocess_db/sync/${dataToSync}`, {syncData: resp}, function(data) {
                 if(data.status == 200) {}
@@ -142,10 +139,10 @@ var preloadData = async (dataset) => {
                 if(resp.request == "reports")  {
                     var queryResult = resp.result;
                     $.each(queryResult, function(i, e) {
-                        updateIndexDBData("reports", e);
+                        upIDB("reports", e);
                     });
                 } else {
-                    updateIndexDBData(dataset, resp.result);
+                    upIDB(dataset, resp.result);
                 }
             }
         }
@@ -165,7 +162,7 @@ $(function() {
     $(`select[class~="selectpicker2"]`).select2({ width: '100%' });
 });
 
-function deleteItem() {
+function delI() {
     $(`div[class="form-result"]`).html(``);
     $(`div[class="main-content"]`).on('click', `button[class~="delete-item"], a[class~="delete-item"]`, function(e) {
         let itemId = $(this).attr('data-id');
@@ -182,7 +179,7 @@ function deleteItem() {
     });
 }
 
-deleteItem();
+delI();
 
 function inputController() {
     $(`input[class~="input_ctrl"]`).on('input', function(e) {
@@ -242,8 +239,8 @@ var populateRequestsList = (requestsData, tableName) => {
         ]
     });
 
-    deleteItem();
-    hideLoader();
+    delI();
+    hL();
 }
 
 var discountCalculator = () => {
@@ -302,7 +299,7 @@ if($(`table[class~="productsList"]`).length) {
 
         $(`div[class="form-content-loader"]`).css("display","none");
 
-        $.post(baseUrl+"ajax/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
+        $.post(baseUrl+"aj/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
             if(res.status == 200){
                 $(`div[class~="categoryModal"]`).modal('hide');
                 Toast.fire({
@@ -329,7 +326,7 @@ if($(`table[class~="productsList"]`).length) {
     });
 
     var populateCategoryList = (productsCategoryData) => {
-        hideLoader();
+        hL();
         $(`table[class~="productsList"]`).dataTable().fnDestroy();
         $(`table[class~="productsList"]`).dataTable({
             "aaData": productsCategoryData,
@@ -345,7 +342,7 @@ if($(`table[class~="productsList"]`).length) {
             ]
         });
 
-        deleteItem();
+        delI();
 
         $(`div[class="main-content"]`).on('click', `a[class~="edit-category"]`, function(e) {
             let categoryId = $(this).data('id');
@@ -360,15 +357,15 @@ if($(`table[class~="productsList"]`).length) {
     function listProductCategories() {
         $.ajax({
             method: "POST",
-            url: `${baseUrl}ajax/categoryManagement/listProductCategories`,
+            url: `${baseUrl}aj/categoryManagement/listProductCategories`,
             data: { listProductCategories: true},
             dataType: "JSON",
             success: function(resp) {
                 populateCategoryList(resp.result);
             }, complete: function(data) {
-                hideLoader();
+                hL();
             }, error: function(err) {
-                hideLoader();
+                hL();
             }
         });
     }
@@ -378,9 +375,9 @@ if($(`table[class~="productsList"]`).length) {
 
 async function listRequests(requestType, tableName) {
 
-    showLoader();
+    sL();
 
-    await doOnlineCheck().then((itResp) => {
+    await dOC().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
@@ -395,7 +392,7 @@ async function listRequests(requestType, tableName) {
 
     if(noInternet) {
 
-        await listIndexDBRecords(`${requestType.toString().toLowerCase()}s`).then((res) => {
+        await listIDB(`${requestType.toString().toLowerCase()}s`).then((res) => {
             populateRequestsList(res, `${tableName}`);
         });
 
@@ -404,18 +401,18 @@ async function listRequests(requestType, tableName) {
 
     $.ajax({
         method: "POST",
-        url: `${baseUrl}ajax/listRequests`,
+        url: `${baseUrl}aj/listRequests`,
         data: { listRequests: "true", requestType: requestType },
         dataType: "JSON",
         beforeSend: function() {},
         success: function(resp) {
             populateRequestsList(resp.result, `${tableName}`);
-            updateIndexDBData(`${requestType.toString().toLowerCase()}s`, resp.result);
+            upIDB(`${requestType.toString().toLowerCase()}s`, resp.result);
         }, complete: function(data) {
             inputController();
-            hideLoader();
+            hL();
         }, error: function(err) {
-            hideLoader();
+            hL();
         }
     });
 }
@@ -519,7 +516,7 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
     var toPerform = $(this).attr('data-value');
     var href = $(this).attr('href');
 
-    await doOnlineCheck().then((itResp) => {
+    await dOC().then((itResp) => {
         if(itResp == 1) {
             offline = false;
             $(`div[class="connection"]`).css('display','none');
@@ -544,7 +541,7 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}ajax_login/doLogout`,
+        url: `${baseUrl}al/dLg`,
         data: {doLogout: true, toPerform: toPerform},
         dataType: "json",
         success: function(e) {
@@ -573,7 +570,7 @@ var populateCustOptionsList = (data) => {
 
 var fetchPOSCustomersList = async () => {
 
-    await doOnlineCheck().then((itResp) => {
+    await dOC().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
@@ -587,7 +584,7 @@ var fetchPOSCustomersList = async () => {
     });
 
     if(noInternet) {
-        var info = await listIndexDBRecords('customers').then((resp) => {
+        var info = await listIDB('customers').then((resp) => {
             var row_id = 0, newResults = [];
             $.each(resp, function(i, e) {
                 if(e.deleted != 1) {
@@ -602,10 +599,10 @@ var fetchPOSCustomersList = async () => {
     }
 
     await syncOfflineData('customers').then((resp) => {
-        $.post(baseUrl + "ajax/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
+        $.post(baseUrl + "aj/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
             await clearDBStore('customers').then((resp) => {
                 populateCustOptionsList(data.result);
-                updateIndexDBData('customers', data.result);
+                upIDB('customers', data.result);
             });
         }, 'json');
     });
@@ -663,7 +660,7 @@ var populatePOSProductsList = (data) => {
 
 var fetchPOSProductsList = async () => {
 
-    await doOnlineCheck().then((itResp) => {
+    await dOC().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
@@ -677,7 +674,7 @@ var fetchPOSProductsList = async () => {
     });
 
     if(noInternet) {
-        var info = await listIndexDBRecords('request_products').then((resp) => {
+        var info = await listIDB('request_products').then((resp) => {
             var row_id = 0, newResults = [];
             $.each(resp, function(i, e) {
                 if(e.deleted != 1) {
@@ -691,9 +688,9 @@ var fetchPOSProductsList = async () => {
         return false;
     }
 
-    $.post(baseUrl + "ajax/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
+    $.post(baseUrl + "aj/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
         await clearDBStore('request_products').then((resp) => {
-            updateIndexDBData('request_products', data.result).then((resp) => {
+            upIDB('request_products', data.result).then((resp) => {
                 populatePOSProductsList(data.result);
             });
         });
@@ -729,16 +726,16 @@ var populateUsersList = (usersObject) => {
     editUserDetails();
     editUserAccessLevel();
     deleteUserDetails();
-    hideLoader();
+    hL();
 }
 
 var fetchUsersLists = async () => {
     
     if ($("table[class~='usersAccounts']").length) {
         
-        showLoader();
+        sL();
 
-        await doOnlineCheck().then((itResp) => {
+        await dOC().then((itResp) => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
@@ -753,7 +750,7 @@ var fetchUsersLists = async () => {
 
         if(noInternet) {
 
-            var info = await listIndexDBRecords('users').then((resp) => {
+            var info = await listIDB('users').then((resp) => {
                 var row_id = 0, newResults = [];
                 $.each(resp, function(i, e) {
                     if(e.deleted != 1) {
@@ -768,23 +765,23 @@ var fetchUsersLists = async () => {
 
             });
 
-            hideLoader();
+            hL();
 
             return false;
         }
 
         $.ajax({
-            url: baseUrl + "ajax/userManagement/fetchUsersLists",
+            url: baseUrl + "aj/userManagement/fetchUsersLists",
             type: "POST",
             data: { fetchUsersLists: true },
             dataType: "json",
             cache: false,
             beforeSend: function() {
-                showLoader();
+                sL();
             },
             success: function(data) {
                 populateUsersList(data.message);
-                addDataToIndexDB('users', data.message);
+                aIDB('users', data.message);
             },
             error: function() {
                 
@@ -805,7 +802,7 @@ async function deleteMyItem(delete_id, page, callBack = "") {
 
     if (delete_id != "" && page != "") {
 
-        await doOnlineCheck().then((itResp) => {
+        await dOC().then((itResp) => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
@@ -884,7 +881,7 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
 
         $(`div[class="form-content-loader"]`).css("display","flex");
 
-        await doOnlineCheck().then((itResp) => {
+        await dOC().then((itResp) => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
@@ -917,7 +914,7 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                     <button class="btn btn-sm btn-outline-success edit-branch" data-branch-id="${uniqueId}\">
                             <i class="mdi mdi-pencil-outline"></i>
                         </button>
-                    <button class="btn btn-sm "${((branch_status == 1) ? "btn-outline-danger" : "btn-outline-primary")}" delete-item" data-url="${baseUrl}ajax/branchManagment/updateStatus" data-state="${branch_status}" data-msg="${((branch_status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")}" data-request="branch-status" data-id="${uniqueId}">
+                    <button class="btn btn-sm "${((branch_status == 1) ? "btn-outline-danger" : "btn-outline-primary")}" delete-item" data-url="${baseUrl}aj/branchManagment/updateStatus" data-state="${branch_status}" data-msg="${((branch_status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")}" data-request="branch-status" data-id="${uniqueId}">
                             <i class="fa ${((branch_status == 1) ? "fa-stop" : "fa-play")}"></i>
                         </button> </div>`;
                 
@@ -940,7 +937,7 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                         action: actionBtn
                     }];
 
-                    await updateIndexDBData('branches', formDetails).then((resp) => {
+                    await upIDB('branches', formDetails).then((resp) => {
                         if(resp == 200) {
                             $(".form-result").html(`
                                 <p class="alert alert-success text-white">Branch Have Been Successfully Registered.</p>
@@ -996,7 +993,7 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                 }];
 
                 if($(`input[name="record_type"]`).val() != 'update-record') {
-                    await addDataToIndexDB('users', formDetails).then((resp) => {
+                    await aIDB('users', formDetails).then((resp) => {
                         if(resp == 200) {
                             $("form[class~='submitThisForm']")[0].reset();
                             $(".form-result").html(`
@@ -1107,11 +1104,11 @@ var editUserDetails = () => {
     $(`div[class="main-content"]`).on("click", ".edit-user", async function(e) {
 
         e.preventDefault();
-        showLoader();
+        sL();
 
         var userId = $(this).data("user-id");
 
-        await doOnlineCheck().then((itResp) => {
+        await dOC().then((itResp) => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
@@ -1126,19 +1123,19 @@ var editUserDetails = () => {
 
         if(noInternet) {
 
-            var info = await getIndexRecord('users', userId).then((resp) => {
+            var info = await gIDBR('users', userId).then((resp) => {
                 populateUserDetails(resp);
                 return false;
             });
 
-            hideLoader();
+            hL();
 
             return false;
         }
 
         if (userId != "") {
             $.ajax({
-                url: baseUrl + "ajax/userManagement/getUserDetails",
+                url: baseUrl + "aj/userManagement/getUserDetails",
                 data: { getUserDetails: true, userId: userId },
                 dataType: "json",
                 type: "POST",
@@ -1155,7 +1152,7 @@ var editUserDetails = () => {
                 },
                 error: function(err) {
                 }, complete: function(data) {
-                    hideLoader();
+                    hL();
                 }
             })
         }
@@ -1172,7 +1169,7 @@ var editUserAccessLevel = () => {
 
         if (user_id != "") {
             $.ajax({
-                url: baseUrl + "ajax/userManagement/permissionManagement",
+                url: baseUrl + "aj/userManagement/permissionManagement",
                 data: { getUserAccessLevels: true, user_id: user_id },
                 dataType: "json",
                 type: "POST",
@@ -1280,7 +1277,7 @@ $(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e)
     var access_level = $(`[name="access_level"]`).val();
 
     $.ajax({
-        url: baseUrl + "ajax/userManagement",
+        url: baseUrl + "aj/userManagement",
         type: "POST",
         data: { request: "fetchAccessLevelPermissions", access_level: access_level },
         dataType: "json",
@@ -1401,7 +1398,7 @@ var saveAccessLevelSettings = () => {
 
             $.ajax({
 
-                url: baseUrl + "ajax/userManagement/saveAccessLevelSettings",
+                url: baseUrl + "aj/userManagement/saveAccessLevelSettings",
                 type: "POST",
                 data: { saveAccessLevelSettings: true, aclSettings: items_array, acl: acl, accessUser: aclUser },
                 dataType: "json",
@@ -1485,7 +1482,7 @@ var populateBranchesDetails = (data) => {
 
     $("#newModalWindow").modal("show");
 
-    hideLoader();
+    hL();
     $(`div[class="form-content-loader"]`).css("display","none");
 }
 
@@ -1498,9 +1495,9 @@ var editBranchDetails = () => {
 
         var branchId = $(this).data("branch-id");
 
-        showLoader();
+        sL();
 
-        await doOnlineCheck().then((itResp) => {
+        await dOC().then((itResp) => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
@@ -1514,16 +1511,16 @@ var editBranchDetails = () => {
         });
 
         if(noInternet) {
-            await getIndexRecord('branches', branchId).then((res) => {
+            await gIDBR('branches', branchId).then((res) => {
                 populateBranchesDetails(res);
-                hideLoader();
+                hL();
                 return false;
             });
         }
 
         if (branchId != "") {
             $.ajax({
-                url: baseUrl + "ajax/branchManagment/getBranchDetails",
+                url: baseUrl + "aj/branchManagment/getBranchDetails",
                 data: { getBranchDetails: true, branchId: branchId },
                 dataType: "json",
                 type: "POST",
@@ -1563,8 +1560,8 @@ var populateBranchesList = (data) => {
 
     $(`div[class="form-content-loader"]`).css("display","none");
     editBranchDetails();
-    hideLoader();
-    deleteItem();
+    hL();
+    delI();
 }
 
 async function fetchBranchLists() {
@@ -1574,12 +1571,12 @@ async function fetchBranchLists() {
         var selector = "list-all-branches";
         let colspan = "6";
 
-        showLoader();
+        sL();
         $(`div[class="form-content-loader"]`).css("display","flex");
 
         $(`div[class~="delete-modal"]`).modal('hide');
 
-        await doOnlineCheck().then((itResp) => {
+        await dOC().then((itResp) => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
@@ -1593,7 +1590,7 @@ async function fetchBranchLists() {
         });
 
         if(noInternet) {
-            var info = await listIndexDBRecords('branches').then((resp) => {
+            var info = await listIDB('branches').then((resp) => {
                 var row_id = 0, newResults = [];
                 $.each(resp, function(i, e) {
                     if(e.deleted != 1) {
@@ -1608,20 +1605,20 @@ async function fetchBranchLists() {
 
             });
             
-            hideLoader();
+            hL();
 
             return false;
         }
             
         $.ajax({
-            url: baseUrl + "ajax/branchManagment/fetchBranchesLists",
+            url: baseUrl + "aj/branchManagment/fetchBranchesLists",
             type: "POST",
             data: { request: "fetchBranchesLists" },
             dataType: "json",
             cache: false,
             success: function(data) {
                 populateBranchesList(data.message);
-                updateIndexDBData('branches', data.message);
+                upIDB('branches', data.message);
             },
             error: function(err) {
                 $(`div[class="form-content-loader"]`).css("display","none");
@@ -1634,7 +1631,7 @@ async function fetchBranchLists() {
 }
 fetchBranchLists();
 
-function customerPurchaseHistory() {
+function cusPurHis() {
                     
     let userId = $(`a[class="view-user-sales"]`).attr('data-value');
     let fullname = $(`a[class="view-user-sales"]`).attr('data-name');
@@ -1642,7 +1639,7 @@ function customerPurchaseHistory() {
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}ajax/reportsAnalytics/generateReport`,
+        url: `${baseUrl}aj/reportsAnalytics/generateReport`,
         data: {generateReport: true, salesAttendantHistory: true, queryMetric:"salesAttendantPerformance", userId: userId, recordType: recordType},
         dataType: "JSON",
         beforeSend: function() {
@@ -1695,9 +1692,7 @@ function customerPurchaseHistory() {
                 "dom": "Bfrtip",
             });
 
-        }, complete: function(data) {
-            getSalesDetails();
-        }, error: function(err) {
+        }, complete: function(data) {}, error: function(err) {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                 <p align="center">No records found.</p>
             `);
@@ -1751,7 +1746,7 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
         thisEmail.prop('disabled', true);
 
         $.ajax({
-            url: `${baseUrl}ajax/pointOfSaleProcessor/sendMail`,
+            url: `${baseUrl}aj/pointOfSaleProcessor/sendMail`,
             type: `POST`,
             data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname, thisRequest: thisRequest},
             dataType: "json",
@@ -1792,7 +1787,7 @@ if($(`table[class~="customersList"]`).length) {
         event.preventDefault();
         let formData = $(this).serialize();
 
-        $.post(baseUrl+"ajax/customerManagement/updateCustomerDetails", formData, (res) => {
+        $.post(baseUrl+"aj/customerManagement/updateCustomerDetails", formData, (res) => {
             if(res.status == 200){
                 Toast.fire({
                     type: 'success',
@@ -1844,7 +1839,7 @@ if($(`table[class~="customersList"]`).length) {
     });
 
     var populateCustomersList = (customerData) => {
-        hideLoader();
+        hL();
         $(`table[class~="customersList"]`).dataTable().fnDestroy();
         $(`table[class~="customersList"]`).dataTable({
             "aaData": customerData,
@@ -1862,22 +1857,22 @@ if($(`table[class~="customersList"]`).length) {
             ]
         });
 
-        deleteItem();
+        delI();
 
     }
 
     function listCustomers() {
         $.ajax({
             method: "POST",
-            url: `${baseUrl}ajax/customerManagement/listCustomers`,
+            url: `${baseUrl}aj/customerManagement/listCustomers`,
             data: { listCustomers: true},
             dataType: "JSON",
             success: function(resp) {
                 populateCustomersList(resp.result);
             }, complete: function(data) {
-                hideLoader();
+                hL();
             }, error: function(err) {
-                hideLoader();
+                hL();
             }
         });
     }
@@ -1890,7 +1885,7 @@ $("#newCustomer_form").on("submit", async function(event) {
     let formData = $(this).serialize();
     $(".content-loader", $("#newCustomerModal")).css({display: "flex"});
     
-    await doOnlineCheck().then((itResp) => {
+    await dOC().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
@@ -1936,7 +1931,7 @@ $("#newCustomer_form").on("submit", async function(event) {
 
             return false;
         } else {
-            var details = await addDataToIndexDB('customers', formDetails).then((resp) => {
+            var details = await aIDB('customers', formDetails).then((resp) => {
 
                 $("#newCustomer_form").parents(".modal").modal("hide");
                 $(".content-loader", $("#newCustomerModal")).css({display: "none"});
@@ -1955,7 +1950,7 @@ $("#newCustomer_form").on("submit", async function(event) {
         }
     }
 
-    $.post(baseUrl+"ajax/pointOfSaleProcessor/quick-add-customer", formData, (res) => {
+    $.post(baseUrl+"aj/pointOfSaleProcessor/quick-add-customer", formData, (res) => {
         if(res.status == "success"){
             $(".customer-select").children("option:first").after(`<option selected data-email='${res.data[3]}' data-contact='${res.data[4]}' value=${res.data[0]}>${res.data[1]} ${res.data[2]}</option>`)
             if(res.data[3]){
@@ -2001,7 +1996,7 @@ $(`div[class~="complete-branch-selection"]`).on('click', function() {
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}ajax/importManager/setBranchId`,
+        url: `${baseUrl}aj/importManager/setBranchId`,
         data: {setBranchId: true, curBranchId: branchId},
         success: function(resp) {
             window.location.href = $(`div[class="redirection-href"]`).attr('data-href');

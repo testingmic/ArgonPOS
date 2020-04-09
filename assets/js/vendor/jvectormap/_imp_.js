@@ -41,7 +41,7 @@ $(() => {
             $(".main-content-loader.main-body-loader").css({display: "flex"});
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}ajax/importManager/uploadCSVData/${currentData}`,
+                url: `${baseUrl}aj/importManager/uploadCSVData/${currentData}`,
                 data: {csvKey: Object.keys(csvContent), csvValues: Object.values(csvContent), uploadCSVData: true},
                 dataType: "json",
                 success: function(resp) {
@@ -225,7 +225,7 @@ $(() => {
 
         $.ajax({
             type: 'POST',
-            url: `${baseUrl}ajax/importManager/loadCSV`,
+            url: `${baseUrl}aj/importManager/loadCSV`,
             data: formdata,
             dataType: 'JSON',
             contentType: false,
@@ -233,6 +233,7 @@ $(() => {
             processData:false,
             success: function(resp){
                 populateSelect(resp.column, resp.csvData);
+                $(`div[class~="csv-rows-counter"]`).html(`A total of <strong>${resp.data_count} items</strong> will be imported.`);
             }, error: function(err) {
                 Toast.fire({
                     type: "error",

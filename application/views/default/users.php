@@ -91,7 +91,7 @@ require_once "headtags.php";
 				</div>
 				<div class="modal-body">
 					<div class="form-result"></div>
-					<form autocomplete="Off" class="needs-validation submitThisForm" novalidate="" method="post" action="<?= $config->base_url('ajax/userManagement/addUserRecord'); ?>">
+					<form autocomplete="Off" class="needs-validation submitThisForm" novalidate="" method="post" action="<?= $config->base_url('aj/userManagement/addUserRecord'); ?>">
 						<div class="form-row">
 							<div class="col-md-4 mb-3">
 								<label for="fullName">Full Name *</label>
@@ -192,15 +192,8 @@ require_once "headtags.php";
 		</div>
 	</div>
 	<?php } ?>
-  
-
-
+ 
 <?php require_once 'foottags.php'; ?>
-<script>
-  $(function() {
-    hideLoader();
-  })
-</script>
 </body>
 </html>
 <?php 

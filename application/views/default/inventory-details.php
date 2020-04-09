@@ -419,47 +419,13 @@ if(isset($branch->branch_name)) {
       </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
   <?php } ?>
-
-<?php require_once 'foottags.php'; ?>
+<div class="currentBranchId" data-value="<?= $session->currentBranchId ?>"></div>
 <script type="text/javascript">
-  // $(`table[id="allProducts"]`).DataTable({
-  //     "iDisplayLength": 10
-  // });
-
-  var currentBranchId = '<?= $session->currentBranchId ?>',
-      branchID = '<?= $branchID; ?>',
-      branch_type = "<?= $branch->branch_type; ?>";
+var currentBranchId = '<?= $session->currentBranchId ?>',
+  branchID = '<?= $branchID; ?>',
+  branch_type = "<?= $branch->branch_type; ?>";
 </script>
-<script src="<?= $config->base_url('assets/js/inventory.js'); ?>" type="text/javascript"></script>
-<script type="text/javascript">
-  $(async function() {
-      hideLoader();
-      var offline = true;
-      await doOnlineCheck().then((itResp) => {
-          if(itResp == 1) {
-              offline = false;
-              $(`div[class~="offline-placeholder"]`).css('display','none');
-          } else {
-              offline = true;
-              $(`div[class="connection"]`).css('display','none');
-              $(`div[class~="offline-placeholder"]`).css('display','flex');
-          }
-      }).catch((err) => {
-          offline = true;
-          $(`script[data-content="transfer"]`).html(``);
-          $(`div[class~="offline-placeholder"]`).css('display','flex');
-          $(`div[class="connection"]`).css('display','none');
-      });
-
-      if(!offline) {
-          var identifyCurrentBranch = () => {
-              var site2 = branchID;
-              fetchAllProducts(site2);
-          }
-          identifyCurrentBranch();
-      }
-  });
-  </script>
+<?php require_once 'foottags.php'; ?>
 </body>
 </html>
 <?php } else { ?>
