@@ -8,6 +8,9 @@ global $accessObject, $config, $posClass;
 // create a new object for the access level
 $accessObject->userId = $session->userId;
 
+// run this page if the user has the required permissions
+if($accessObject->hasAccess('update', 'settings')) {
+
 // data initializing
 $baseUrl = $config->base_url();
 $currentData = null;
@@ -87,8 +90,6 @@ if($valid) {
 
 // include the important files
 require_once "headtags.php";
-
-global $accessObject;
 ?>
 <!-- Page Content-->
 <?= connectionLost(); ?>
@@ -260,40 +261,44 @@ global $accessObject;
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
 <?php if($valid) { ?>
-<div class="modal fade instructionsModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title mt-0 show-modal-title" id="myLargeModalLabel">Upload Instructions</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body pt-0">
-                <div class="form-group mt-2 text-center">
-                    <?php
-                    // loop through the instructions and print here
-                    for($i = 0; $i < count($acpCols["instructions"]); $i++) {
-                        print ($i+1).". {$acpCols["instructions"][$i]}<br>";
-                    }
-                    ?>
-                    <hr>
-                    Dont worry, we will guide you through as you upload the data set.
+  <div class="modal fade instructionsModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title mt-0 show-modal-title" id="myLargeModalLabel">Upload Instructions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="form-group mt-2 text-center">
+                        <?php
+                        // loop through the instructions and print here
+                        for($i = 0; $i < count($acpCols["instructions"]); $i++) {
+                            print ($i+1).". {$acpCols["instructions"][$i]}<br>";
+                        }
+                        ?>
+                        <hr>
+                        Dont worry, we will guide you through as you upload the data set.
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 <?php } ?>
+<?php require_once 'foottags.php'; ?>
 <script>
 <?php if(empty($session->curBranchId) && $valid) { ?> 
-$(`div[class~="importModal"]`).modal('show');
+  $(`div[class~="importModal"]`).modal('show');
 <?php } ?>
 <?php if(!empty($session->curBranchId) && $valid) { ?>
 var currentData = "<?= $currentData ?>";
 var acceptedArray = <?= json_encode($acpCols["data"]); ?>;
 <?php } ?>
 </script>
-<?php require_once 'foottags.php'; ?>
 </body>
 </html>
+<?php 
+} else {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+}
+?>

@@ -8,6 +8,8 @@ class Setup extends Pos {
 
 	public function initialSetup(StdClass $postData) {
 		
+		$this->pos->beginTransaction();
+
 		try {
 			// generate
 			$clientId = random_string('alnum', 12);
@@ -43,7 +45,7 @@ class Setup extends Pos {
 			$verifyToken = random_string('alnum', mt_rand(40, 60));
 			$userData->user_id = random_string('alnum', 15);
 			$userData->clientId = $clientId;
-			$userData->branchId = $this->lastRowId('branches');
+			$userData->branchId = $this->lastRowId('branches', $clientId);
 			$userData->name = $postData->fullname;
 			$userData->email = $postData->store_email;
 			$userData->contact = $postData->contact;
@@ -64,9 +66,13 @@ class Setup extends Pos {
 			// log the user activity
 			$this->userLogs("setup", $userData->clientId, "This is the initial setup process that has been carried out by {$postData->store_name}.", $userData->clientId, $userData->branchId, $userData->user_id);
 
+			// commit the transaction
+			$this->pos->commit();
+
 			// return true
 			return true;
 		} catch(PDOException $e) {
+			$this->pos->rollBack();
 			return $e->getMessage();
 		}
 	}
@@ -114,9 +120,9 @@ class Setup extends Pos {
 		$emailMessage = "Hello $fullname,\n";
 		$emailMessage .= "Thank you for registering your store <strong>{$storeName}</strong> with ".config_item('site_name').". We are pleased to have you join and experiment with our platform.\n\n";
 		$emailMessage .= "One of our personnel will get in touch shortly to assist you with additional setup processes that is required to aid you quick start the usage of the application.\n\n";
-		$emailAddress .= "In the mean time please use the following credentials to login into the system.\n\n";
-		$emailAddress .= "<strong>Username:</strong> {$emailAddress}\n";
-		$emailAddress .= "<a href='".$this->config->base_url('verify/act?tk='.$verifyToken)."'><strong>Click Here</strong></a> to verify your Email Address\n\n";
+		$emailMessage .= "In the mean time please use the following credentials to login into the system.\n\n";
+		$emailMessage .= "<strong>Username:</strong> {$emailAddress}\n";
+		$emailMessage .= "<a href='".$this->config->base_url('verify/act?tk='.$verifyToken)."'><strong>Click Here</strong></a> to verify your Email Address\n\n";
 		
 		$userEmail = [
             "recipients_list" => [
@@ -138,7 +144,7 @@ class Setup extends Pos {
 		");
 		return $stmt->execute([
 			$clientId, $branchId, 'general', 
-			$clientId, json_encode($userEmail), $userId, $emailAddress, $emailSubject
+			$clientId, json_encode($userEmail), $userId, $emailMessage, $emailSubject
 		]);
 	}
 }

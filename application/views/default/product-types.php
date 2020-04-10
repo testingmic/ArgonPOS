@@ -43,6 +43,7 @@ global $accessObject;
                       <thead class="thead-light">
                           <tr>
                               <th width="7%">#</th>
+                              <th>Category ID</th>
                               <th>Name</th>
                               <th>Products Count</th>
                               <th width="10%">Action</th>

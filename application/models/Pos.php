@@ -170,12 +170,16 @@ class Pos {
 	 * @param $tableName The user needs to specify the table name for the query
 	 * @return $rowId
 	 **/
-	public function lastRowId($tableName) {
+	public function lastRowId($tableName, $clientId = null) {
 
+		// client id
+		$clientId = empty($clientId) ? $this->clientId : $clientId;
+
+		// process the request
 		$stmt = $this->pos->prepare("
 				SELECT id AS rowId FROM {$tableName} WHERE clientId = ? ORDER BY id DESC LIMIT 1
 		");
-		$stmt->execute([$this->clientId]);
+		$stmt->execute([$clientId]);
 
 		return ($stmt->rowCount() > 0) ? $stmt->fetch(PDO::FETCH_OBJ)->rowId : 0;
 	}

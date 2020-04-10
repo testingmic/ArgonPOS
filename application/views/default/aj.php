@@ -32,11 +32,13 @@ if($admin_user->logged_InControlled()) {
 	$customerLimit = '';
 	$customerLimitInner = '';
 	$accessLimitInner2 = '';
+	$branchAccess2 = '';
 	$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
 	$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
 
 	// use the access level for limit contents that is displayed
 	if(!$accessObject->hasAccess('monitoring', 'branches')) {
+		$branchAccess2 = " AND a.branch_id = '{$session->branchId}'";
 		$branchAccess = " AND a.branchId = '{$session->branchId}'";
 		$branchAccessInner = " AND b.branchId = '{$session->branchId}'";
 		$accessLimit = " AND a.recorded_by = '{$session->userId}'";
@@ -1353,7 +1355,7 @@ if($admin_user->logged_InControlled()) {
 							$salesTarget = ($eachPersonnel->monthly_target * 12);
 						}
 
-						$salesTargetPercentage = ($eachPersonnel->amnt > 0) ? (($eachPersonnel->amnt / $salesTarget) * 100) : 0; 
+						$salesTargetPercentage = ($eachPersonnel->amnt > 0 && $salesTarget > 0) ? (($eachPersonnel->amnt / $salesTarget) * 100) : 0; 
 
 						$attendantSales[] = [
 							'fullname' => $uName,
@@ -1506,7 +1508,7 @@ if($admin_user->logged_InControlled()) {
 								{$accessLimitInner} {$clientAccessInner}
 						) AS average_sales
 					FROM branches a
-					WHERE 1 {$branchAccess} {$clientAccess}
+					WHERE 1 {$branchAccess2} {$clientAccess}
 						ORDER BY total_sales ASC
 				");
 				$stmt->execute();
@@ -1532,6 +1534,7 @@ if($admin_user->logged_InControlled()) {
 				// set some array functions
 				$Labeling = array();
 				$amount = array();
+				$summary = [];
 				$lowestSalesValue = 0;
 				$highestSalesValue = 0;
 
@@ -2684,6 +2687,11 @@ if($admin_user->logged_InControlled()) {
 							$product->branchId = $postData->branchId;
 							$product->transferQuantity = $postData->transferProductQuantity;
 							$product->userId = $session->userId;
+							// generate a new stock auto id
+							$stockAutoId = random_string('alnum', 12);
+							
+							// set the stock id 
+							$product->stockAutoId = $stockAutoId;
 
 							// Add Quantity To Product Table Stock
 							$query = $productsClass->addStockToBranch($product);
@@ -3230,7 +3238,7 @@ if($admin_user->logged_InControlled()) {
 
 							$response = $posClass->addData(
 								"users" ,
-								"clientId='{$session->clientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', montly_target='{$userData->montly_target}'
+								"clientId='{$session->clientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}'
 								"
 							);
 

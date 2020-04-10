@@ -134,7 +134,7 @@ if(isset($branch->branch_name)) {
   <?php if($accessChecker) { ?>
   <!-- Add Product Modal -->
   <?php if ($branch->branch_type == "Warehouse") { ?>
-  <form id="addProductForm" autocomplete="Off" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('doprocess_product/addProduct'); ?>">
+  <form id="addProductForm" autocomplete="Off" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('aj/inventoryManagement/addProduct'); ?>">
       <div class="modal fade" id="addProductModal">
           <div class="modal-dialog modal-lg">
               <div class="modal-content">
@@ -232,7 +232,7 @@ if(isset($branch->branch_name)) {
           </div>
       </div>
   </form> 
-  <form id="updateWareHouseStock" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('doprocess_product/updateWareHouseStock'); ?>">
+  <form id="updateWareHouseStock" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('aj/inventoryManagement/updateWareHouseStock'); ?>">
       <div class="modal fade" id="updateProductModal">
           <div class="modal-dialog modal-lg">
               <div class="modal-content">

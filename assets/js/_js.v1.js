@@ -704,6 +704,7 @@ if($(`table[class~="productsList"]`).length) {
             "dom": "Bfrtip",
             "columns": [
                {"data": 'row'},
+               {"data": 'category_id'},
                {"data": 'category'},
                {"data": 'products_count'},
                {"data": 'action'}
