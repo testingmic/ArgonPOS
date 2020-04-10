@@ -92,7 +92,7 @@
 <script src="<?= $baseUrl ?>assets/vendor/jquery.scrollbar/jquery.scrollbar.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/select2/dist/js/select2.min.js"></script>
-<!-- Optional JS -->
+<?php if(!in_array($SITEURL[0], ["import", "products"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net/js/jquery.dataTables.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
@@ -101,6 +101,7 @@
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+<?php } ?>
 <?php if(in_array($SITEURL[0], ["reports-customers", "analytics", "dashboard", "index"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/apexcharts/apexcharts.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
@@ -119,16 +120,12 @@
 <?php if(in_array($SITEURL[0], ["settings"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.min.js"></script>
 <?php } ?>
+<script type="text/javascript"><?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>Cookies.set("sidenav-state", "unpinned");<?php } else { ?>Cookies.set("sidenav-state", "pinned");<?php } ?></script>
 <script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js?v=1.1.0"></script>
 <script src="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
 <script src="<?= $baseUrl ?>assets/js/_js.v1.js"></script>
 <script>
-<?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>
-  Cookies.set("sidenav-state", "unpinned");
-<?php } else { ?>
-  Cookies.set("sidenav-state", "pinned");
-<?php } ?>
 <?php if($clientData->display_clock) { ?>
 // live clock
 var clock_tick = function clock_tick() {

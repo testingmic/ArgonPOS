@@ -109,7 +109,7 @@ $userData = $stmt->fetch(PDO::FETCH_OBJ);
 					<div class="modal-footer">
 						<input type="hidden" name="this-form" value="users">
 						<input type="hidden" name="userId" value="<?= $userData->user_id ?>" class="userId">
-						<button class="btn btn-primary submit-form" type="submit"><i class="fa fa-save"></i> Save Record</button>
+						<button class="btn <?= $clientData->btn_outline ?> submit-form" type="submit"><i class="fa fa-save"></i> Save Record</button>
 					</div>
 				</form>
 			</div>

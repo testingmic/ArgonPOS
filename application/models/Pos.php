@@ -259,7 +259,7 @@ class Pos {
 	 * @return null
 	 *
 	 **/
-	public function userLogs($page, $itemId = null, $description) {
+	public function userLogs($page, $itemId = null, $description, $clientId = null, $branchId = null, $userId = null) {
 		
 		try {
 
@@ -273,8 +273,10 @@ class Pos {
 					description = ?, userId = ?, user_agent = ?
 			");
 			$stmt->execute([
-				$this->clientId, $this->session->branchId, $page, $itemId, 
-				$description, $this->session->userId, $ur_agent
+				(empty($clientId) ? $this->clientId : $clientId), 
+				(empty($branchId) ? $this->session->branchId : $branchId),
+				$page, $itemId, 
+				$description, (empty($userId) ? $this->session->userId : $userId), $ur_agent
 			]);
 
 		} catch(PDOException $e) {

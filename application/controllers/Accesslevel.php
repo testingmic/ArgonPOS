@@ -28,7 +28,7 @@ class Accesslevel {
     {
         $this->_message = false;
 
-        $condition = ($accessLevel == false) ? "1" : " id = '{$accessLevel}'";
+        $condition = ($accessLevel == false) ? "1" : " (id = '{$accessLevel}' OR access_name = '{$accessLevel}')";
 
         $stmt = $this->db->prepare(
             "SELECT * FROM access_levels WHERE {$condition}"

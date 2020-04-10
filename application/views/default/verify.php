@@ -1,6 +1,6 @@
 <?php
 #FETCH SOME GLOBAL FUNCTIONS
-global $config;
+global $config, $posClass;
 
 #Define Root Directory
 $rootDir = $config->base_url();
@@ -50,9 +50,6 @@ $rootDir = $config->base_url();
         <div class="col-lg-5 col-md-7">
           <div class="card bg-secondary border-0 mb-0">
             <div class="card-body px-lg-5 py-lg-5">
-              <div class="text-center text-muted mb-4">
-                <small>Reset your user password.</small>
-              </div>
               <?php
               global $session;
 
@@ -60,7 +57,7 @@ $rootDir = $config->base_url();
               $session->set_userdata("access_token", $access_token);
 
 
-              if(isset($_GET["pwd"])) {
+              if(isset($_GET["pwd"]) and !confirm_url_id(1)) {
 
                 if(isset($_GET["tk"])) {
 
@@ -72,9 +69,7 @@ $rootDir = $config->base_url();
 
                     if($stmt->rowCount()) {
 
-
                       foreach($stmt as $results) {
-
 
                         $expiry_time = $results["expiry_time"];
                         $username = $results["username"];
@@ -82,9 +77,11 @@ $rootDir = $config->base_url();
                         $session->set_userdata("resetAccess_Token", $code);
                         $session->set_userdata("resetUserId", $user_id);
 
-
                         if($expiry_time > time()) {
                           ?>
+                          <div class="text-center text-muted mb-4">
+                            <small>Reset your user password.</small>
+                          </div>
                           <form autocomplete="Off" method="post" class="submitForm form-horizontal auth-form my-4" action="<?= $config->base_url('ajax_login/doResetPassword') ?>">
 
                             <div class="form-group form-group-default">
@@ -158,14 +155,51 @@ $rootDir = $config->base_url();
                       print_msg("danger", "Sorry! An invalid password reset token was submitted.");
                     }
                   } else {
-
                     print_msg("danger", "Sorry! An invalid password reset token was submitted.");
                   }
                 } else {
                   print_msg("danger", "Sorry! An invalid password reset token was submitted.");
                 }
+              } elseif(isset($_GET["tk"]) and confirm_url_id(1, 'act')) {
+                $code = xss_clean($_GET["tk"]);
+                ?>
+                <h3 class="text-center">Account Verification</h3>
+                <?php
+                if(strlen($code) >= 40) {
+                  $stmt = $pos->query("
+                    SELECT 
+                      a.clientId, a.branchId, a.name, a.email, a.verify_token,
+                      b.setup_info, a.id, a.user_id
+                    FROM users a
+                    LEFT JOIN settings b ON b.clientId = a.clientId
+                    WHERE a.verify_token='$code'
+                  ");
+                  if($stmt->rowCount()) {
+                    while($results = $stmt->fetch(PDO::FETCH_OBJ)) {
+                      // update the user information
+                      $setupInfo = json_decode($results->setup_info);
+                      $setupInfo->verified = 1;
+
+                      // unset the access token
+                      $pos->query("UPDATE settings SET setup_info='".json_encode($setupInfo)."' WHERE clientId = '{$results->clientId}'");
+
+                      // update the user status
+                      $pos->query("UPDATE users SET status='1', verify_token=NULL WHERE id = '{$results->id}'");
+
+                      // log the user activity
+                      $posClass->userLogs("setup-verify", $results->clientId, "Has verified the Store Details submitted and activated the Admin User Account for the Store.", $results->clientId, $results->branchId, $results->user_id);
+
+                      print_msg("success", "Congrats! Your account has successfully been verified. You can now proceed to <a href='".$config->base_url('login')."'>Login</a>");
+
+                    }
+                  } else {
+                    print_msg("danger", "Sorry! An invalid authorization token was submitted.");
+                  }
+                } else {
+                  print_msg("danger", "Sorry! An invalid authorization token was submitted.");
+                }
               } else {
-                print_msg("danger", "Sorry! An invalid password reset token was submitted.");
+                print_msg("danger", "Sorry! An invalid authorization token was submitted.");
               }
               ?>
 

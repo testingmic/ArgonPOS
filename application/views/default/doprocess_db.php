@@ -492,7 +492,7 @@ if($admin_user->logged_InControlled()) {
 					$attendantSales[] = [
 						'fullname' => $uName,
 						'orders' => $eachPersonnel->orders,
-						'amnt' => "GH&cent; ".number_format($eachPersonnel->amnt, 2)
+						'amnt' => $clientData->default_currency.number_format($eachPersonnel->amnt, 2)
 					];
 				}
 
@@ -506,11 +506,11 @@ if($admin_user->logged_InControlled()) {
 				$branch = ["reports_id" => "branch_performance"];
 				//: branch summaries
 				while($result = $branches->fetch(PDO::FETCH_OBJ)) {
-					$result->square_feet_sales = 'GH&cent;'.number_format(($result->total_sales / $result->square_feet_area), 2);
-					$result->lowest_sales = 'GH&cent;'.number_format($result->lowest_sales, 2);
-					$result->highest_sales = 'GH&cent;'.number_format($result->highest_sales, 2);
-					$result->average_sales = 'GH&cent;'.number_format($result->average_sales, 2);
-					$result->total_sales = 'GH&cent;'.number_format($result->total_sales, 2);
+					$result->square_feet_sales = ($result->total_sales > 0 && $result->square_feet_area > 0) ? $clientData->default_currency.number_format(($result->total_sales / $result->square_feet_area), 2) : $clientData->default_currency."0.00";
+					$result->lowest_sales = $clientData->default_currency.number_format($result->lowest_sales, 2);
+					$result->highest_sales = $clientData->default_currency.number_format($result->highest_sales, 2);
+					$result->average_sales = $clientData->default_currency.number_format($result->average_sales, 2);
+					$result->total_sales = $clientData->default_currency.number_format($result->total_sales, 2);
 					$branch[] = $result;
 				}
 

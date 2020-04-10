@@ -611,7 +611,7 @@ if($admin_user->logged_InControlled()) {
 					$fixedCost = $branchData->fixed_expenses;
 				}
 
-				$salesPerSquareFeet = $totalSales / $squareFeetArea;
+				$salesPerSquareFeet = ($totalSales > 0 && $squareFeetArea > 0) ? $totalSales / $squareFeetArea : 0;
 
 				if($period == "today") {
 					$fixedCost = ($fixedCost / date("t"));
@@ -661,7 +661,7 @@ if($admin_user->logged_InControlled()) {
 				$customersBeforePeriod = $posClass->countRows("customers a","a.status='1' AND (DATE(a.date_log) < '{$dateFrom}') {$branchAccess} {$clientAccess}");
 
 				// crr calculation
-				$customersRetentionRate = ((($totalCustomersCount-$customersDuringPeriod)/$customersBeforePeriod) * 100);
+				$customersRetentionRate = ($customersBeforePeriod > 0) ? ((($totalCustomersCount-$customersDuringPeriod)/$customersBeforePeriod) * 100) : 0;
 
 				// previous records
 				$prevSales = $posClass->getAllRows(
@@ -800,7 +800,7 @@ if($admin_user->logged_InControlled()) {
 				];
 				$resultData[] = [
 					"column" => "sales-per-category",
-					"total" => $clientData->default_currency . number_format(($totalSales/$inventoryCount), 2),
+					"total" => ($inventoryCount > 0) ? $clientData->default_currency . number_format(($totalSales/$inventoryCount), 2) : 0,
 					"trend" => "Sales Per Category"
 				];
 				$resultData[] = [
@@ -1551,7 +1551,7 @@ if($admin_user->logged_InControlled()) {
 
 				//: branch summaries
 				while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-					$result->square_feet_sales = $clientData->default_currency.number_format(($result->total_sales / $result->square_feet_area), 2);
+					$result->square_feet_sales = ($result->square_feet_area > 0) ? $clientData->default_currency.number_format(($result->total_sales / $result->square_feet_area), 2) : 0;
 					$result->lowest_sales = $clientData->default_currency.number_format($result->lowest_sales, 2);
 					$result->highest_sales = $clientData->default_currency.number_format($result->highest_sales, 2);
 					$result->average_sales = $clientData->default_currency.number_format($result->average_sales, 2);
