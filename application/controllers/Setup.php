@@ -16,7 +16,7 @@ class Setup extends Pos {
 
 			// outlet types
 			if($postData->subscribeTo == 'trial') {
-				$outlets = 5;
+				$outlets = 2;
 			} elseif($postData->subscribeTo == 'basic') {
 				$outlets = 1;
 			} elseif($postData->subscribeTo == 'alpha') {
