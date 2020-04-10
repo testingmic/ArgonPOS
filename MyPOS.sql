@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 09, 2020 at 01:03 AM
+-- Generation Time: Apr 10, 2020 at 12:29 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.10
 
@@ -79,7 +79,7 @@ INSERT INTO `branches` (`id`, `branch_id`, `clientId`, `branch_type`, `branch_na
 (3, '6uSXCt4QYm30', '54345231', 'Store', 'Madina Branch', 'badge-success', 'Accra', '0498989093', 'thisemail@mail.com', 'assets/images/company/jYT5ipPBfwIRhg4Ono0drK8My.png', '83.09', 1908.00, 2000.00, '1', '0'),
 (4, 'ITnZeCdjy5bh', '54345231', 'Store', 'Adjiringanor Branch', 'badge-primary text-white', 'lastedit@mail.com', '090839983', 'thisisit@mail.com', 'assets/images/company/jYT5ipPBfwIRhg4Ono0drK8My.png', '98.43', 1990.00, 254.00, '1', '0'),
 (5, 'xC8M4JAfDhdq', '54345231', 'Warehouse', 'Another Branch', 'badge-info', 'another location', '090989808', 'thisisthemail@mail.com', 'assets/images/company/jYT5ipPBfwIRhg4Ono0drK8My.png', '12.39', 1720.00, 1730.00, '1', '0'),
-(6, 'p6VZwojXMRq9', '54345231', 'Store', 'New branch information', 'badge-dark text-white', 'new branch location', '0987657636', 'newbranch@lamc.com', 'assets/images/company/jYT5ipPBfwIRhg4Ono0drK8My.png', '12', 100.00, 100.00, '0', '0');
+(6, 'p6VZwojXMRq9', '54345231', 'Store', 'New branch information There', 'badge-dark text-white', 'new branch location', '0987657636', 'newbranch@lamc.com', 'assets/images/company/jYT5ipPBfwIRhg4Ono0drK8My.png', '12', 100.00, 100.00, '0', '0');
 
 -- --------------------------------------------------------
 
@@ -1149,7 +1149,7 @@ INSERT INTO `customers` (`id`, `clientId`, `branchId`, `customer_id`, `source`, 
 (801, '54345231', 4, 'tGeE7wlQOxiyTof', 'Evelyn', 'Honorable', 'Gilbertine', 'Messruther', NULL, NULL, NULL, 'gmessrutherjv@craigslist.org', '2/13/2000', 'assets/images/users/user-4.jpg', NULL, 'China', NULL, NULL, NULL, 'Female', 'Hongqi', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
 (802, '54345231', 4, 'oS1VmrpwIUuiLzl', 'Evelyn', 'Mr', 'Feliza', 'Brett', NULL, NULL, NULL, 'fbrettjw@hp.com', '7/4/1997', 'assets/images/users/user-4.jpg', NULL, 'New Zealand', NULL, NULL, NULL, 'Female', 'Maungatapere', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
 (803, '54345231', 4, 'B5vcdSAIqGHlVjO', 'Evelyn', 'Dr', 'Dan', 'Curnock', NULL, NULL, NULL, 'dcurnockjx@sphinn.com', '10/2/1991', 'assets/images/users/user-4.jpg', NULL, 'Japan', NULL, NULL, NULL, 'Male', 'Tsuma', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
-(804, '54345231', 4, 'ONrzBFZIjLlPMs2', 'Evelyn', 'Honorable', 'Hamel', 'MacPeake', NULL, NULL, NULL, 'hmacpeakejy@cdc.gov', '9/16/1993', 'assets/images/users/user-4.jpg', NULL, 'South Africa', NULL, NULL, NULL, 'Male', 'East London', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
+(804, '54345231', 4, 'ONrzBFZIjLlPMs2', 'Evelyn', 'Dr', 'Hamel', 'MacPeake', NULL, '', NULL, 'hmacpeakejy@cdc.gov', '9/16/1993', 'assets/images/users/user-4.jpg', NULL, 'South Africa', NULL, NULL, NULL, 'Male', 'East London', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
 (805, '54345231', 4, 'yMvkpIJnVmOYoL2', 'Evelyn', 'Honorable', 'Lorraine', 'Casale', NULL, NULL, NULL, 'lcasalejz@ovh.net', '4/29/1996', 'assets/images/users/user-4.jpg', NULL, 'Poland', NULL, NULL, NULL, 'Female', 'Dobre Miasto', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
 (806, '54345231', 4, 'dGXjKi7Qb2FeaJR', 'Evelyn', 'Mrs', 'Jamima', 'Cottem', NULL, NULL, NULL, 'jcottemk0@ftc.gov', '12/13/1997', 'assets/images/users/user-4.jpg', NULL, 'Pakistan', NULL, NULL, NULL, 'Female', 'Mithi', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
 (807, '54345231', 4, 'lG643AKCtiFjsdI', 'Evelyn', 'Rev', 'Gale', 'Roxbrough', NULL, NULL, NULL, 'groxbroughk1@illinois.edu', '4/22/1993', 'assets/images/users/user-4.jpg', NULL, 'China', NULL, NULL, NULL, 'Female', 'Hengli', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-07 22:49:24', NULL, NULL, '1'),
@@ -1496,22 +1496,22 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `clientId`, `branchId`, `source`, `product_id`, `category_id`, `product_title`, `product_type_id`, `product_description`, `product_image`, `product_price`, `cost_price`, `performance_rating`, `date_added`, `expiry_date`, `added_by`, `status`, `threshold`, `quantity`) VALUES
-(1, '54345231', 1, 'Evelyn', 'PDT8b4OgIfa7QKV', 'PCAT00001', 'Lenovo Thinkpad i7 Laptop', NULL, 'This is the lenovo thinkpad laptop useable at all levels of computing', 'assets/images/products/kX19AHu5FtGjdEeQPaJ7hMrvq.png', 1900.00, '1500.00', NULL, '2020-03-14 10:45:41', '2020-05-01', '2019DevAI', '1', 5, 11),
-(2, '54345231', 1, 'Evelyn', 'PDT0Roc2HhYBleu', 'PCAT00001', 'HP Pavilion i5 Laptop', NULL, 'This is the HP Pavilion Laptop that i love that much.', 'assets/images/products/hvgNJEKlOMYxcVuXZ5AeB27to.png', 3200.00, '2000.00', NULL, '2020-03-14 10:48:06', '2020-04-21', '2019DevAI', '1', 5, 0),
-(3, '54345231', 1, 'Evelyn', 'PDTqODR15MfeBtu', 'PCAT00003', 'Samsung Fridge U87', NULL, 'This is the samsung fridge', 'assets/images/products/7BGE3gmH02bM5SpwWxF8ol9fT.png', 850.00, '600.00', NULL, '2020-03-14 10:49:18', '2020-05-01', '2019DevAI', '1', 5, 0),
-(4, '54345231', 1, 'Evelyn', 'PDTKCB0UmoOnEZW', 'PCAT00001', 'Binatone Rice cooker A3456', NULL, '', 'assets/images/products/default.png', 200.00, '70.00', NULL, '2020-03-14 10:50:00', '2020-04-10', '2019DevAI', '1', 5, 0),
+(1, '54345231', 1, 'Evelyn', 'PDT8b4OgIfa7QKV', 'PCAT00001', 'Lenovo Thinkpad i7 Laptop', NULL, 'This is the lenovo thinkpad laptop useable at all levels of computing', 'assets/images/products/kX19AHu5FtGjdEeQPaJ7hMrvq.png', 1900.00, '1500.00', NULL, '2020-03-14 10:45:41', '2020-05-01', '2019DevAI', '1', 5, 6),
+(2, '54345231', 1, 'Evelyn', 'PDT0Roc2HhYBleu', 'PCAT00001', 'HP Pavilion i5 Laptop', NULL, 'This is the HP Pavilion Laptop that i love that much.', 'assets/images/products/hvgNJEKlOMYxcVuXZ5AeB27to.png', 3200.00, '2000.00', NULL, '2020-03-14 10:48:06', '2020-04-21', '2019DevAI', '1', 5, 96),
+(3, '54345231', 1, 'Evelyn', 'PDTqODR15MfeBtu', 'PCAT00003', 'Samsung Fridge U87', NULL, 'This is the samsung fridge', 'assets/images/products/7BGE3gmH02bM5SpwWxF8ol9fT.png', 850.00, '600.00', NULL, '2020-03-14 10:49:18', '2020-05-01', '2019DevAI', '1', 5, 96),
+(4, '54345231', 1, 'Evelyn', 'PDTKCB0UmoOnEZW', 'PCAT00001', 'Binatone Rice cooker A3456', NULL, '', 'assets/images/products/Iz54wfHoKAtrG3YQOUqidgcjp.jpeg', 200.00, '70.00', NULL, '2020-03-14 10:50:00', '2020-04-10', '2019DevAI', '1', 5, 47),
 (24, '54345231', 2, 'Evelyn', 'PDT8b4OgIfa7QKV', 'PCAT00001', 'Lenovo Thinkpad i7 Laptop', NULL, 'This is the lenovo thinkpad laptop useable at all levels of computing', 'assets/images/products/kX19AHu5FtGjdEeQPaJ7hMrvq.png', 1900.00, '1500.00', NULL, '2020-03-18 07:43:05', '2020-04-20', '2019DevAI', '1', 5, 5),
 (25, '54345231', 2, 'Evelyn', 'PDT0Roc2HhYBleu', 'PCAT00001', 'HP Pavilion i5 Laptop', NULL, 'This is the HP Pavilion Laptop that i love that much.', 'assets/images/products/hvgNJEKlOMYxcVuXZ5AeB27to.png', 3200.00, '2000.00', NULL, '2020-03-18 07:43:05', '2020-04-23', '2019DevAI', '1', 5, 3),
 (26, '54345231', 2, 'Evelyn', 'PDTqODR15MfeBtu', 'PCAT00001', 'Samsung Fridge U87', NULL, 'This is the samsung fridge', 'assets/images/products/7BGE3gmH02bM5SpwWxF8ol9fT.png', 850.00, '600.00', NULL, '2020-03-18 07:43:06', '2020-05-01', '2019DevAI', '1', 5, 10),
 (27, '54345231', 2, 'Evelyn', 'PDTKCB0UmoOnEZW', 'PCAT00001', 'Binatone Rice cooker A3456', NULL, '', 'assets/images/products/default.png', 200.00, '70.00', NULL, '2020-03-18 07:43:06', '2020-05-14', '2019DevAI', '1', 5, 0),
-(28, '54345231', 1, 'Evelyn', 'PDTYSeqaZbnTijz', 'PCAT00002', 'Rice Cooker', NULL, '', 'assets/images/products/s5EjTIoMRr9dLmDe4SCPXpkf8.png', 200.00, '120.00', NULL, '2020-03-17 07:52:56', '2020-05-01', 'oDGirP31jNnXYK6dza20m', '1', 5, 0),
-(29, '54345231', 1, 'Evelyn', 'PDTreKIGODg5JPX', 'PCAT00002', 'Test Low Price', NULL, '', 'assets/images/products/default.png', 4.00, '2.00', NULL, '2020-03-24 05:49:49', '2020-05-18', '2019DevAI', '1', 10, 29),
+(28, '54345231', 1, 'Evelyn', 'PDTYSeqaZbnTijz', 'PCAT00002', 'Rice Cooker', NULL, '', 'assets/images/products/s5EjTIoMRr9dLmDe4SCPXpkf8.png', 200.00, '120.00', NULL, '2020-03-17 07:52:56', '2020-05-01', 'oDGirP31jNnXYK6dza20m', '1', 5, 50),
+(29, '54345231', 1, 'Evelyn', 'PDTreKIGODg5JPX', 'PCAT00002', 'Test Low Price', NULL, '', 'assets/images/products/default.png', 4.00, '2.00', NULL, '2020-03-24 05:49:49', '2020-05-18', '2019DevAI', '1', 10, 27),
 (30, '54345231', 5, 'Evelyn', 'PDT2faJrtN1j8Gp', 'PCAT00003', 'Note Book', NULL, '', 'assets/images/products/default.png', 20.00, '15.00', NULL, '2020-03-25 16:18:26', '2020-05-01', '2019DevAI', '1', 10, 10),
 (31, '54345231', 5, 'Evelyn', 'PDT3V8oiamnrlQc', 'PCAT00003', 'Pencil', NULL, '', 'assets/images/products/default.png', 6.00, '2.00', NULL, '2020-03-25 16:20:17', '2020-06-18', '2019DevAI', '1', 5, 255),
 (34, '54345231', 5, 'Evelyn', 'PDTMAbXIYQsHlai', 'PCAT00003', 'Pen', NULL, '', 'assets/images/products/default.png', 4.00, '1.00', NULL, '2020-03-25 16:34:20', '2020-05-28', '2019DevAI', '1', 30, 205),
-(35, '54345231', 1, 'Evelyn', 'PDT2faJrtN1j8Gp', 'PCAT00003', 'Note Book', NULL, '', 'assets/images/products/default.png', 20.00, '15.00', NULL, '2020-03-25 16:58:14', '2020-06-10', '2019DevAI', '1', 10, 150),
-(36, '54345231', 1, 'Evelyn', 'PDT3V8oiamnrlQc', 'PCAT00003', 'Pencil', NULL, '', 'assets/images/products/default.png', 6.00, '2.00', NULL, '2020-03-25 16:58:15', '2020-05-31', '2019DevAI', '1', 5, 23),
-(37, '54345231', 1, 'Evelyn', 'PDTMAbXIYQsHlai', 'PCAT00003', 'Pen', NULL, '', 'assets/images/products/default.png', 4.00, '1.00', NULL, '2020-03-25 16:58:15', '2020-06-24', '2019DevAI', '1', 30, 24);
+(35, '54345231', 1, 'Evelyn', 'PDT2faJrtN1j8Gp', 'PCAT00003', 'Note Book', NULL, '', 'assets/images/products/default.png', 20.00, '15.00', NULL, '2020-03-25 16:58:14', '2020-06-10', '2019DevAI', '1', 10, 123),
+(36, '54345231', 1, 'Evelyn', 'PDT3V8oiamnrlQc', 'PCAT00003', 'Pencil', NULL, '', 'assets/images/products/default.png', 6.00, '2.00', NULL, '2020-03-25 16:58:15', '2020-05-31', '2019DevAI', '1', 5, 15),
+(37, '54345231', 1, 'Evelyn', 'PDTMAbXIYQsHlai', 'PCAT00003', 'Pen', NULL, '', 'assets/images/products/default.png', 4.00, '1.00', NULL, '2020-03-25 16:58:15', '2020-06-24', '2019DevAI', '1', 30, 11);
 
 -- --------------------------------------------------------
 
@@ -1533,7 +1533,8 @@ CREATE TABLE `products_categories` (
 INSERT INTO `products_categories` (`id`, `clientId`, `category_id`, `category`) VALUES
 (1, '54345231', 'PCAT00001', ' Electronics & Appliances'),
 (2, '54345231', 'PCAT00002', 'Food Category'),
-(3, '54345231', 'PCAT00003', 'Furniture');
+(3, '54345231', 'PCAT00003', 'Furniture'),
+(5, '54345231', 'PCAT81327', 'Books');
 
 -- --------------------------------------------------------
 
@@ -1576,7 +1577,11 @@ INSERT INTO `products_stocks` (`id`, `clientId`, `branchId`, `auto_id`, `product
 (13, '54345231', '1', 'CH7LWdTkBqOpPgQczyVmn6RMi', 4, '70.00', '200.00', 0, 20, 20, 5, '2019DevAI', '2020-03-31 07:33:27'),
 (14, '54345231', '1', 'CH7LWdTkBqOpPgQczyVmn6RMi', 35, '15.00', '20.00', 0, 200, 200, 10, '2019DevAI', '2020-03-31 07:33:27'),
 (15, '54345231', '1', 'lNV2a6tugJI4yYemcGMqoQzPE', 2, '2000.00', '3200.00', 5, 20, 25, 5, '2019DevAI', '2020-04-02 19:22:14'),
-(16, '54345231', '1', 'lNV2a6tugJI4yYemcGMqoQzPE', 3, '600.00', '850.00', 6, 30, 36, 5, '2019DevAI', '2020-04-02 19:22:14');
+(16, '54345231', '1', 'lNV2a6tugJI4yYemcGMqoQzPE', 3, '600.00', '850.00', 6, 30, 36, 5, '2019DevAI', '2020-04-02 19:22:14'),
+(17, '54345231', '1', 'tjC0r4Q9mwanzxHgOSRJu3B1T', 2, '2000.00', '3200.00', 0, 100, 100, 5, '2019DevAI', '2020-04-09 23:13:51'),
+(18, '54345231', '1', 'tjC0r4Q9mwanzxHgOSRJu3B1T', 3, '600.00', '850.00', 0, 100, 100, 5, '2019DevAI', '2020-04-09 23:13:51'),
+(19, '54345231', '1', 'tjC0r4Q9mwanzxHgOSRJu3B1T', 4, '70.00', '200.00', 0, 50, 50, 5, '2019DevAI', '2020-04-09 23:13:51'),
+(20, '54345231', '1', 'tjC0r4Q9mwanzxHgOSRJu3B1T', 28, '120.00', '200.00', 0, 50, 50, 5, '2019DevAI', '2020-04-09 23:13:51');
 
 -- --------------------------------------------------------
 
@@ -1622,7 +1627,12 @@ INSERT INTO `requests` (`id`, `clientId`, `branchId`, `request_id`, `customer_id
 (15, '54345231', 1, 'QT20200300016', 'EVC218799756628', 'Quote', 'GH¢', 5512.00, 200.00, 5312.00, '2020-03-26 10:49:13', 'pending', '2019DevAI', '0'),
 (16, '54345231', 1, 'ORD20200300017', 'EVC951937465721', 'Order', 'GH¢', 1380.00, 0.00, 1380.00, '2020-03-26 10:52:11', 'pending', '2019DevAI', '0'),
 (17, '54345231', 1, 'ORD20200300018', 'EVC532694487286', 'Order', 'GH¢', 5110.00, 0.00, 5110.00, '2020-03-30 19:59:07', 'pending', '2019DevAI', '0'),
-(18, '54345231', 1, 'ORD20200300019', 'EVC218799756628', 'Order', 'GH¢', 5106.00, 0.00, 5106.00, '2020-03-30 20:00:53', 'pending', '2019DevAI', '0');
+(18, '54345231', 1, 'ORD20200300019', 'EVC218799756628', 'Order', 'GH¢', 5106.00, 0.00, 5106.00, '2020-03-30 20:00:53', 'pending', '2019DevAI', '0'),
+(19, '54345231', 1, 'QT20200400020', 'ONrzBFZIjLlPMs2', 'Quote', 'GH¢', 1934.00, 0.00, 1934.00, '2020-04-09 23:00:01', 'pending', '2019DevAI', '0'),
+(20, '54345231', 1, 'QT20200400021', 'C3kSzuthv1BlDrP', 'Quote', 'GH¢', 34.00, 0.00, 34.00, '2020-04-09 23:00:42', 'pending', '2019DevAI', '0'),
+(21, '54345231', 1, 'QT20200400022', 'B5vcdSAIqGHlVjO', 'Quote', 'GH¢', 1930.00, 0.00, 1930.00, '2020-04-09 23:03:01', 'pending', '2019DevAI', '1'),
+(22, '54345231', 1, 'QT20200400023', 'B5vcdSAIqGHlVjO', 'Quote', 'GH¢', 1930.00, 0.00, 1930.00, '2020-04-09 23:03:01', 'pending', '2019DevAI', '0'),
+(23, '54345231', 1, 'QT20200400024', 'e8rdZM0ogjX7G9n', 'Quote', 'GH¢', 1934.00, 0.00, 1934.00, '2020-04-09 23:04:02', 'pending', '2019DevAI', '0');
 
 -- --------------------------------------------------------
 
@@ -1715,7 +1725,29 @@ INSERT INTO `requests_details` (`id`, `auto_id`, `request_id`, `product_id`, `pr
 (73, NULL, 'ORD20200300018', 36, 1, 6.00, 6.00, '2020-03-30 19:59:07'),
 (74, NULL, 'ORD20200300019', 1, 1, 1900.00, 1900.00, '2020-03-30 20:00:53'),
 (75, NULL, 'ORD20200300019', 2, 1, 3200.00, 3200.00, '2020-03-30 20:00:53'),
-(76, NULL, 'ORD20200300019', 36, 1, 6.00, 6.00, '2020-03-30 20:00:53');
+(76, NULL, 'ORD20200300019', 36, 1, 6.00, 6.00, '2020-03-30 20:00:53'),
+(77, NULL, 'QT20200400020', 29, 1, 4.00, 4.00, '2020-04-09 23:00:01'),
+(78, NULL, 'QT20200400020', 35, 1, 20.00, 20.00, '2020-04-09 23:00:01'),
+(79, NULL, 'QT20200400020', 36, 1, 6.00, 6.00, '2020-04-09 23:00:01'),
+(80, NULL, 'QT20200400020', 37, 1, 4.00, 4.00, '2020-04-09 23:00:01'),
+(81, NULL, 'QT20200400020', 1, 1, 1900.00, 1900.00, '2020-04-09 23:00:01'),
+(82, NULL, 'QT20200400021', 29, 1, 4.00, 4.00, '2020-04-09 23:00:42'),
+(83, NULL, 'QT20200400021', 35, 1, 20.00, 20.00, '2020-04-09 23:00:42'),
+(84, NULL, 'QT20200400021', 36, 1, 6.00, 6.00, '2020-04-09 23:00:42'),
+(85, NULL, 'QT20200400021', 37, 1, 4.00, 4.00, '2020-04-09 23:00:42'),
+(86, NULL, 'QT20200400022', 1, 1, 1900.00, 1900.00, '2020-04-09 23:03:01'),
+(87, NULL, 'QT20200400022', 35, 1, 20.00, 20.00, '2020-04-09 23:03:01'),
+(88, NULL, 'QT20200400022', 36, 1, 6.00, 6.00, '2020-04-09 23:03:01'),
+(89, NULL, 'QT20200400022', 37, 1, 4.00, 4.00, '2020-04-09 23:03:01'),
+(90, NULL, 'QT20200400023', 1, 1, 1900.00, 1900.00, '2020-04-09 23:03:01'),
+(91, NULL, 'QT20200400023', 35, 1, 20.00, 20.00, '2020-04-09 23:03:01'),
+(92, NULL, 'QT20200400023', 36, 1, 6.00, 6.00, '2020-04-09 23:03:01'),
+(93, NULL, 'QT20200400023', 37, 1, 4.00, 4.00, '2020-04-09 23:03:01'),
+(94, NULL, 'QT20200400024', 1, 1, 1900.00, 1900.00, '2020-04-09 23:04:02'),
+(95, NULL, 'QT20200400024', 35, 1, 20.00, 20.00, '2020-04-09 23:04:02'),
+(96, NULL, 'QT20200400024', 36, 1, 6.00, 6.00, '2020-04-09 23:04:02'),
+(97, NULL, 'QT20200400024', 37, 1, 4.00, 4.00, '2020-04-09 23:04:02'),
+(98, NULL, 'QT20200400024', 29, 1, 4.00, 4.00, '2020-04-09 23:04:02');
 
 -- --------------------------------------------------------
 
@@ -1933,7 +1965,24 @@ INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `branchId`, `order_id`,
 (176, '54345231', 'Argon', 'online', 2, 'POS2020040200177', 'mqusM7aTtkEp0W9', NULL, 'customer', NULL, 'oDGirP31jNnXYK6dza20mw', 'GH¢', '0', 0.00, 0.00, 4250.00, 4250.00, NULL, '2020-04-07 22:25:28', 'confirmed', '2020-04-07 22:25:28', '0', NULL, 'cash', '557648233619'),
 (177, '54345231', 'Argon', 'online', 2, 'POS2020040200178', 'POS489135675124', NULL, 'customer', NULL, 'oDGirP31jNnXYK6dza20mw', 'GH¢', '0', 0.00, 0.00, 5100.00, 5100.00, NULL, '2020-04-07 22:25:50', 'confirmed', '2020-04-07 22:25:50', '0', NULL, 'cash', '495238152483'),
 (178, '54345231', 'Argon', 'online', 1, 'POS2020040100179', 'ifKwt1uA9np3qFv', NULL, 'customer', NULL, 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'GH¢', '0', 1.00, -699.00, 30200.00, 30199.00, NULL, '2020-04-07 22:26:38', 'confirmed', '2020-04-07 22:26:38', '0', NULL, 'cash', '376821284193'),
-(179, '54345231', 'Argon', 'online', 1, 'POS2020040100180', 'EVC941374268936', NULL, 'customer', NULL, 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'GH¢', '0', 892.96, 18.96, 22324.00, 21431.04, NULL, '2020-04-07 22:28:00', 'confirmed', '2020-04-07 22:28:00', '0', NULL, 'cash', '253993161844');
+(179, '54345231', 'Argon', 'online', 1, 'POS2020040100180', 'EVC941374268936', NULL, 'customer', NULL, 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'GH¢', '0', 892.96, 18.96, 22324.00, 21431.04, NULL, '2020-04-07 22:28:00', 'confirmed', '2020-04-07 22:28:00', '0', NULL, 'cash', '253993161844'),
+(180, '54345231', 'Argon', 'online', 1, 'POS2020040100181', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -26.00, 26.00, 26.00, NULL, '2020-04-09 19:24:25', 'pending', '2020-04-09 19:24:25', '0', NULL, 'MoMo', '697451168829'),
+(181, '54345231', 'Argon', 'online', 1, 'POS2020040100182', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -26.00, 26.00, 26.00, NULL, '2020-04-09 19:24:45', 'pending', '2020-04-09 19:24:45', '0', NULL, 'MoMo', '967945223135'),
+(182, '54345231', 'Argon', 'online', 1, 'POS2020040100183', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -26.00, 26.00, 26.00, NULL, '2020-04-09 19:26:02', 'pending', '2020-04-09 19:26:02', '0', NULL, 'MoMo', '368123158294'),
+(183, '54345231', 'Argon', 'online', 1, 'POS2020040100184', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -26.00, 26.00, 26.00, NULL, '2020-04-09 19:26:32', 'pending', '2020-04-09 19:26:32', '0', NULL, 'MoMo', '169789234184'),
+(184, '54345231', 'Argon', 'online', 1, 'POS2020040100185', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -26.00, 26.00, 26.00, NULL, '2020-04-09 19:28:05', 'cancelled', '2020-04-09 19:28:05', '0', '2020-04-09 19:35:21', 'MoMo', '985639176732'),
+(185, '54345231', 'Argon', 'online', 1, 'POS2020040100186', 'oS1VmrpwIUuiLzl', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, -4.00, 4.00, 4.00, NULL, '2020-04-09 19:35:43', 'confirmed', '2020-04-09 19:35:43', '0', '2020-04-09 19:36:00', 'MoMo', '293621554798'),
+(186, '54345231', 'Argon', 'online', 1, 'POS2020040100187', 'fXEywgBdn1FOiaV', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 1900.00, 1900.00, NULL, '2020-04-09 22:47:10', 'confirmed', '2020-04-09 22:47:10', '0', NULL, 'cash', '435896743291'),
+(187, '54345231', 'Argon', 'online', 1, 'POS2020040100188', '9oms4hckLyj1bAg', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 20.00, 0.00, 1934.00, 1914.00, NULL, '2020-04-09 22:47:37', 'confirmed', '2020-04-09 22:47:37', '0', NULL, 'cash', '532746318492'),
+(188, '54345231', 'Argon', 'online', 1, 'POS2020040100189', 'hbWG3i4BO5lQRoz', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 1926.00, 1926.00, NULL, '2020-04-09 22:49:50', 'confirmed', '2020-04-09 22:49:50', '0', NULL, 'cash', '248712134358'),
+(189, '54345231', 'Argon', 'online', 1, 'POS2020040100190', 'xXvPtKZBeQFTh5L', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 42.28, 0.00, 2114.00, 2071.72, NULL, '2020-04-09 22:51:24', 'confirmed', '2020-04-09 22:51:24', '0', NULL, 'cash', '649273151879'),
+(190, '54345231', 'Argon', 'online', 1, 'POS2020040100191', 'oS1VmrpwIUuiLzl', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 2140.00, 2140.00, NULL, '2020-04-09 22:53:00', 'confirmed', '2020-04-09 22:53:00', '0', NULL, 'cash', '946128836552'),
+(191, '54345231', 'Argon', 'online', 1, 'POS2020040100192', 'k7mqnTR95hQjvOw', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 4250.00, 4250.00, NULL, '2020-04-09 23:30:48', 'confirmed', '2020-04-09 23:30:48', '0', NULL, 'cash', '457792816923');
+INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `branchId`, `order_id`, `customer_id`, `ordered_by_id`, `customer_type`, `sale_lead_id`, `recorded_by`, `currency`, `credit_sales`, `order_discount`, `order_amount_balance`, `overall_order_amount`, `order_amount_paid`, `order_comments`, `order_date`, `order_status`, `log_date`, `deleted`, `payment_date`, `payment_type`, `transaction_id`) VALUES
+(192, '54345231', 'Argon', 'online', 1, 'POS2020040100193', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 4050.00, 4050.00, NULL, '2020-04-10 09:36:30', 'confirmed', '2020-04-10 09:36:30', '0', NULL, 'cash', '268145929786'),
+(193, '54345231', 'Argon', 'online', 1, 'POS2020040100194', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 200.00, 200.00, NULL, '2020-04-10 09:36:47', 'confirmed', '2020-04-10 09:36:47', '0', NULL, 'cash', '946197325678'),
+(194, '54345231', 'Argon', 'online', 1, 'POS2020040100195', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '1', 0.00, 4250.00, 4250.00, 4250.00, NULL, '2020-04-10 10:31:52', 'confirmed', '2020-04-10 10:31:52', '0', NULL, 'credit', '548872612376'),
+(195, '54345231', 'Argon', 'online', 1, 'POS2020040100196', 'WalkIn', NULL, 'customer', NULL, '2019DevAI', 'GH¢', '0', 0.00, 0.00, 4050.00, 4050.00, NULL, '2020-04-10 11:26:46', 'confirmed', '2020-04-10 11:26:46', '0', NULL, 'cash', '584692737193');
 
 -- --------------------------------------------------------
 
@@ -2398,7 +2447,46 @@ INSERT INTO `sales_details` (`id`, `auto_id`, `clientId`, `branchId`, `order_id`
 (437, 'XUQhvZNTHlWtKdjb7LG2i0umI', '54345231', 1, 'POS2020040100180', '1', 5, '1500.00', 1900.00, 9500.00, '2020-04-07 22:28:00'),
 (438, 'dhlLTrf7YSDAq4NpmBnIgX8GP', '54345231', 1, 'POS2020040100180', '2', 4, '2000.00', 3200.00, 12800.00, '2020-04-07 22:28:00'),
 (439, 'wBbZQNJIP2LyDFGlfqUYR1d37', '54345231', 1, 'POS2020040100180', '29', 1, '2.00', 4.00, 4.00, '2020-04-07 22:28:00'),
-(440, 'kBiLSq6h9E3ywNT8bgeCzprXD', '54345231', 1, 'POS2020040100180', '35', 1, '15.00', 20.00, 20.00, '2020-04-07 22:28:00');
+(440, 'kBiLSq6h9E3ywNT8bgeCzprXD', '54345231', 1, 'POS2020040100180', '35', 1, '15.00', 20.00, 20.00, '2020-04-07 22:28:00'),
+(441, 'QdsYZhyxULFwPmuN1rBvzq7IE', '54345231', 1, 'POS2020040100181', '35', 1, '15.00', 20.00, 20.00, '2020-04-09 19:24:25'),
+(442, 'yh06HF3p7mG9TB8Lc4NWDeb2X', '54345231', 1, 'POS2020040100181', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 19:24:25'),
+(443, 'ZfwCioaIA0VhNeslHd45mOLtE', '54345231', 1, 'POS2020040100182', '35', 1, '15.00', 20.00, 20.00, '2020-04-09 19:24:45'),
+(444, 'PcLkO4Qg9xuNR0hJIz7XytepM', '54345231', 1, 'POS2020040100182', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 19:24:45'),
+(445, 'kjgN7fQo2Bmish9aMPXp05Ty3', '54345231', 1, 'POS2020040100183', '35', 1, '15.00', 20.00, 20.00, '2020-04-09 19:26:02'),
+(446, 'eWwqsYMay439A0IDUNobOC7Tr', '54345231', 1, 'POS2020040100183', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 19:26:02'),
+(447, '1IsPS3hNB2Za0uXE7O9vUprQo', '54345231', 1, 'POS2020040100184', '35', 1, '15.00', 20.00, 20.00, '2020-04-09 19:26:32'),
+(448, 'fdCF6B0RHSZ39QE47KeUqruNX', '54345231', 1, 'POS2020040100184', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 19:26:32'),
+(449, 'MXGlRtJ5b6rkhyTmj8cuFv0oO', '54345231', 1, 'POS2020040100185', '35', 1, '15.00', 20.00, 20.00, '2020-04-09 19:28:05'),
+(450, 'n6APwglrhKxucCF23QDiM58To', '54345231', 1, 'POS2020040100185', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 19:28:05'),
+(451, 'LrBKE2l809z5DPQbSGaFmJqwV', '54345231', 1, 'POS2020040100186', '37', 1, '1.00', 4.00, 4.00, '2020-04-09 19:35:43'),
+(452, 'rXBZmhye74KD1zAo08kMRvWUJ', '54345231', 1, 'POS2020040100187', '1', 1, '1500.00', 1900.00, 1900.00, '2020-04-09 22:47:10'),
+(453, 'uv3kgCoAr4OwHZceUBl8i71QT', '54345231', 1, 'POS2020040100188', '1', 1, '1500.00', 1900.00, 1900.00, '2020-04-09 22:47:37'),
+(454, '2zsvGow3MbjxOtHf7mXlSIugy', '54345231', 1, 'POS2020040100188', '29', 1, '2.00', 4.00, 4.00, '2020-04-09 22:47:37'),
+(455, '2hfxcEzK0618IO9wntMDeR73J', '54345231', 1, 'POS2020040100188', '35', 1, '15.00', 20.00, 20.00, '2020-04-09 22:47:37'),
+(456, '2L4qzVoi1xSQfIDG5hFPu0j86', '54345231', 1, 'POS2020040100188', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 22:47:37'),
+(457, 'f3mxVh90zRKypeMBnWPZcY6HA', '54345231', 1, 'POS2020040100188', '37', 1, '1.00', 4.00, 4.00, '2020-04-09 22:47:37'),
+(458, 'UXZaRktK0IemMVJxLyvTC6HFs', '54345231', 1, 'POS2020040100189', '1', 1, '1500.00', 1900.00, 1900.00, '2020-04-09 22:49:50'),
+(459, 'V9uchSGL5I48OxN3apmXZQ01z', '54345231', 1, 'POS2020040100189', '35', 1, '15.00', 20.00, 20.00, '2020-04-09 22:49:50'),
+(460, 'pQIf9gHXhiUOlGKNtJ7Lry1Db', '54345231', 1, 'POS2020040100189', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 22:49:50'),
+(461, '1AdBSJ6Hk4QnbeWfXzip7MtTo', '54345231', 1, 'POS2020040100190', '1', 1, '1500.00', 1900.00, 1900.00, '2020-04-09 22:51:24'),
+(462, 'ZV1AWqkDSY32r8P7ocUIveyHX', '54345231', 1, 'POS2020040100190', '29', 1, '2.00', 4.00, 4.00, '2020-04-09 22:51:24'),
+(463, '8k5TYNXyGu4Ip3ort7ghi1HvC', '54345231', 1, 'POS2020040100190', '35', 10, '15.00', 20.00, 200.00, '2020-04-09 22:51:24'),
+(464, '7KhNCRA4aQkDw8W1d6Yt2BHeJ', '54345231', 1, 'POS2020040100190', '36', 1, '2.00', 6.00, 6.00, '2020-04-09 22:51:24'),
+(465, 'bjrcVZue9o2IzC1EkPnvJMy8B', '54345231', 1, 'POS2020040100190', '37', 1, '1.00', 4.00, 4.00, '2020-04-09 22:51:24'),
+(466, 'Lw7TryI2htHBg1AbcGxMiEuJ4', '54345231', 1, 'POS2020040100191', '1', 1, '1500.00', 1900.00, 1900.00, '2020-04-09 22:53:00'),
+(467, 'ly3S54K6dQYTJtU8cR2uhpCrn', '54345231', 1, 'POS2020040100191', '35', 10, '15.00', 20.00, 200.00, '2020-04-09 22:53:00'),
+(468, 'oPF29JLDIxOUu8HGCE5Z4vsgp', '54345231', 1, 'POS2020040100191', '37', 10, '1.00', 4.00, 40.00, '2020-04-09 22:53:00'),
+(469, 'CR8Nev1wc4TuVOZqIFynoji2x', '54345231', 1, 'POS2020040100192', '2', 1, '2000.00', 3200.00, 3200.00, '2020-04-09 23:30:48'),
+(470, 'k567xb3pmacRjdgVE9lBhYKWF', '54345231', 1, 'POS2020040100192', '3', 1, '600.00', 850.00, 850.00, '2020-04-09 23:30:48'),
+(471, 'J7ZFSOBh0r1pRjoW4GC56L8VE', '54345231', 1, 'POS2020040100192', '4', 1, '70.00', 200.00, 200.00, '2020-04-09 23:30:48'),
+(472, 'YXv2nmTWrPUZVkC0aSxwlQt1d', '54345231', 1, 'POS2020040100193', '2', 1, '2000.00', 3200.00, 3200.00, '2020-04-10 09:36:30'),
+(473, 'zdvm75oB0F6j934eZWswpVlxE', '54345231', 1, 'POS2020040100193', '3', 1, '600.00', 850.00, 850.00, '2020-04-10 09:36:30'),
+(474, 'm3fzr7UpOYqQPEeagWDA4ni8M', '54345231', 1, 'POS2020040100194', '4', 1, '70.00', 200.00, 200.00, '2020-04-10 09:36:47'),
+(475, 'sG6S8k5rpnU1TeMaAyRQzuOIF', '54345231', 1, 'POS2020040100195', '2', 1, '2000.00', 3200.00, 3200.00, '2020-04-10 10:31:52'),
+(476, 'dP2AIHgSX5zi9Gs4UrlYfWmnM', '54345231', 1, 'POS2020040100195', '3', 1, '600.00', 850.00, 850.00, '2020-04-10 10:31:52'),
+(477, 'abCl6MSHeAwrg3UDOKdYQixjc', '54345231', 1, 'POS2020040100195', '4', 1, '70.00', 200.00, 200.00, '2020-04-10 10:31:52'),
+(478, 'HtqnQi3yLWoIX5uNJ8Z4ecShC', '54345231', 1, 'POS2020040100196', '2', 1, '2000.00', 3200.00, 3200.00, '2020-04-10 11:26:46'),
+(479, 'hwsGWiV8kyRUJmF93aNC6xndO', '54345231', 1, 'POS2020040100196', '3', 1, '600.00', 850.00, 850.00, '2020-04-10 11:26:46');
 
 -- --------------------------------------------------------
 
@@ -2429,15 +2517,20 @@ CREATE TABLE `settings` (
   `default_currency` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
   `print_receipt` varchar(12) COLLATE utf8_unicode_ci NOT NULL,
   `expiry_notification_days` varchar(32) COLLATE utf8_unicode_ci DEFAULT '1 MONTH',
-  `allow_product_return` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '1'
+  `allow_product_return` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '1',
+  `default_discount` double(2,2) NOT NULL DEFAULT 0.00,
+  `fiscal_year_start` date DEFAULT '2020-01-01',
+  `display_clock` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '1',
+  `theme_color` varchar(255) COLLATE utf8_unicode_ci DEFAULT '{"bg_colors":"bg-purple text-white no-border","bg_color_code":"#8965e0", "bg_color_light":"#97a5f1"}',
+  `theme_color_code` varchar(10) COLLATE utf8_unicode_ci DEFAULT 'purple'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `clientId`, `client_name`, `client_email`, `client_website`, `client_logo`, `primary_contact`, `secondary_contact`, `payment_options`, `shop_opening_days`, `address_1`, `address_2`, `receipt_message`, `terms_and_conditions`, `manager_signature`, `reports_sales_attendant`, `reports_period`, `total_expenditure`, `space_per_square_foot`, `default_currency`, `print_receipt`, `expiry_notification_days`, `allow_product_return`) VALUES
-(1, '54345231', 'E-Inventory Ltd', 'info@einventory.com', 'www.einventory.com', 'assets/images/company/jYT5ipPBfwIRhg4Ono0drK8My.png', '+123123456789', '+123123456789', 'cash,MoMo,credit,card', 'Monday,Tuesday,Wednesday,Thursday,Friday', '2821 Kensington Road,', NULL, 'Thank you for trading with us.', '&lt;ul class=&quot;pl-3&quot;&gt;&lt;li&gt;&lt;small&gt;All accounts are to be paid within 7 days from receipt of invoice.&lt;/small&gt;&lt;/li&gt;&lt;li&gt;&lt;small&gt;To be paid by cheque or credit card or direct payment online.&lt;/small&gt;&lt;/li&gt;&lt;li&gt;&lt;small&gt;If account is not paid within 7 days the credits details supplied as confirmation&lt;br&gt;of work undertaken will be charged the agreed quoted fee noted above.&lt;/small&gt;&lt;/li&gt;&lt;/ul&gt;', 'assets/images/company/YeEZaxpd6DOuvFlXwK8s9IgfC.png', 'sales-attendant-performance', 'this-week', 18602.00, 262.71, 'GHS', 'yes', '1 MONTH', '1');
+INSERT INTO `settings` (`id`, `clientId`, `client_name`, `client_email`, `client_website`, `client_logo`, `primary_contact`, `secondary_contact`, `payment_options`, `shop_opening_days`, `address_1`, `address_2`, `receipt_message`, `terms_and_conditions`, `manager_signature`, `reports_sales_attendant`, `reports_period`, `total_expenditure`, `space_per_square_foot`, `default_currency`, `print_receipt`, `expiry_notification_days`, `allow_product_return`, `default_discount`, `fiscal_year_start`, `display_clock`, `theme_color`, `theme_color_code`) VALUES
+(1, '54345231', 'Visaminet Solutions', 'info@visaminetsolutions.com', 'www.visaminetsolutions.com', 'assets/images/company/jYT5ipPBfwIRhg4Ono0drK8My.png', '+123123456789', '+123123456789', 'cash,MoMo,credit,card', 'Monday,Tuesday,Wednesday,Thursday,Friday', '2821 Kensington Road,', NULL, 'Thank you for trading with us.', '&lt;ul class=&quot;pl-3&quot;&gt;&lt;li&gt;&lt;small&gt;All accounts are to be paid within 7 days from receipt of invoice.&lt;/small&gt;&lt;/li&gt;&lt;li&gt;&lt;small&gt;To be paid by cheque or credit card or direct payment online.&lt;/small&gt;&lt;/li&gt;&lt;li&gt;&lt;small&gt;If account is not paid within 7 days the credits details supplied as confirmation&lt;br&gt;of work undertaken will be charged the agreed quoted fee noted above.&lt;/small&gt;&lt;/li&gt;&lt;/ul&gt;', 'assets/images/company/YeEZaxpd6DOuvFlXwK8s9IgfC.png', 'sales-attendant-performance', 'this-week', 18602.00, 262.71, 'GHS', 'yes', '1 MONTH', '1', 0.00, '2020-01-01', '1', '{\"bg_colors\":\"bg-purple text-white no-border\",\"bg_color_code\":\"#8965e0\",\"bg_color_light\":\"#97a5f1\",\"btn_outline\":\"btn-outline-primary\"}', 'purple');
 
 -- --------------------------------------------------------
 
@@ -2504,7 +2597,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `clientId`, `branchId`, `user_id`, `name`, `gender`, `email`, `phone`, `login`, `password`, `access_level`, `theme`, `font_style`, `font_size`, `status`, `online`, `last_login`, `daily_target`, `weekly_target`, `monthly_target`, `last_login_attempts`, `last_login_attempts_time`, `login_session`, `country_id`, `city_id`, `city`, `created_on`, `created_by`, `image`) VALUES
-(1, '54345231', 1, '2019DevAI', 'Visaminet User', 'Male', 'admin@mail.com', '0576641131', 'VisamineUser', '$2y$10$gHcSrrsHfvMTedpSeMJbNu6a4fmscHbh3KrZwUsJZEsrZifhkBizi', 1, '1', NULL, NULL, 1, 1, '2020-04-08 21:46:32', 8000.00, 32000.00, 125000.00, 1, '2020-01-23 14:52:33', NULL, 84, NULL, NULL, '2020-01-25 10:17:35', NULL, 'avatar.png'),
+(1, '54345231', 1, '2019DevAI', 'Visaminet User', 'Male', 'admin@mail.com', '0576641131', 'VisamineUser', '$2y$10$gHcSrrsHfvMTedpSeMJbNu6a4fmscHbh3KrZwUsJZEsrZifhkBizi', 1, '1', NULL, NULL, 1, 1, '2020-04-10 07:59:38', 8000.00, 32000.00, 125000.00, 1, '2020-01-23 14:52:33', NULL, 84, NULL, NULL, '2020-01-25 10:17:35', NULL, 'avatar.png'),
 (2, '54345231', 1, 'eqLTHf9MW7x0NBGP5Vs83vp', 'Branch Manger', 'Male', 'manager@mail.com', '0244022044', 'BranchManger', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 3, '1', NULL, NULL, 1, 1, '2020-04-07 21:22:02', 8000.00, 32000.00, 125000.00, 0, '2020-02-04 12:29:16', NULL, 84, NULL, NULL, '2020-02-04 12:29:16', NULL, 'avatar.png'),
 (3, '54345231', 1, 'oDGirP31jNnXYK6dza20m', 'Company Owner', 'Male', 'owner@mail.com', '0201202052', 'CompaneyOwner', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 2, '1', NULL, NULL, 1, 1, '2020-03-13 23:41:09', 8000.00, 32000.00, 125000.00, 0, '2020-02-05 12:53:03', NULL, 84, NULL, NULL, '2020-02-05 12:53:03', NULL, 'avatar.png'),
 (4, '54345231', 1, 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'Sales Officer', 'Male', 'sales@mail.com', '0550001110', 'SalesOfficer', '$2y$10$CAg0..AR3iojlzqlG5yS0Oqf//s49AlsEVykfk3sy0m8E8h8VSHte', 4, '1', NULL, NULL, 1, 1, '2020-04-07 22:26:04', 8000.00, 32000.00, 125000.00, 0, '2020-02-05 12:54:24', NULL, 84, NULL, NULL, '2020-02-05 12:54:24', NULL, 'avatar.png'),
@@ -2628,7 +2721,52 @@ INSERT INTO `users_activity_logs` (`id`, `clientId`, `branchId`, `page`, `itemId
 (94, NULL, '2', 'pos', 'POS2020040200177', 'oDGirP31jNnXYK6dza20mw', 'Recorded a new Sale at the POS', ' |  | 127.0.0.1', '2020-04-07 22:25:28'),
 (95, NULL, '2', 'pos', 'POS2020040200178', 'oDGirP31jNnXYK6dza20mw', 'Recorded a new Sale at the POS', ' |  | 127.0.0.1', '2020-04-07 22:25:50'),
 (96, NULL, '1', 'pos', 'POS2020040100179', 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'Recorded a new Sale at the POS', ' |  | 127.0.0.1', '2020-04-07 22:26:38'),
-(97, NULL, '1', 'pos', 'POS2020040100180', 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'Recorded a new Sale at the POS', ' |  | 127.0.0.1', '2020-04-07 22:28:00');
+(97, NULL, '1', 'pos', 'POS2020040100180', 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'Recorded a new Sale at the POS', ' |  | 127.0.0.1', '2020-04-07 22:28:00'),
+(98, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 16:35:11'),
+(99, '54345231', '1', 'pos', 'POS2020040100181', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 19:24:25'),
+(100, '54345231', '1', 'pos', 'POS2020040100182', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 19:24:45'),
+(101, '54345231', '1', 'pos', 'POS2020040100183', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 19:26:02'),
+(102, '54345231', '1', 'pos', 'POS2020040100184', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 19:26:32'),
+(103, '54345231', '1', 'pos', 'POS2020040100185', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 19:28:05'),
+(104, '54345231', '1', 'pos', 'POS2020040100186', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 19:35:43'),
+(105, '54345231', '1', 'pos', 'POS2020040100187', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 22:47:10'),
+(106, '54345231', '1', 'pos', 'POS2020040100188', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 22:47:38'),
+(107, '54345231', '1', 'pos', 'POS2020040100189', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 22:49:50'),
+(108, '54345231', '1', 'pos', 'POS2020040100190', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 22:51:24'),
+(109, '54345231', '1', 'pos', 'POS2020040100191', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 22:53:00'),
+(110, '54345231', '1', 'customer', 'ONrzBFZIjLlPMs2', '2019DevAI', 'Updated the customer details', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 23:05:52'),
+(111, '54345231', '1', 'branches', 'p6VZwojXMRq9', '2019DevAI', 'Updated the details of the Store Outlet.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 23:18:28'),
+(112, '54345231', '1', 'branches', 'p6VZwojXMRq9', '2019DevAI', 'Updated the details of the Store Outlet.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 23:18:36'),
+(113, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 23:19:24'),
+(114, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the sales details tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 23:19:27'),
+(115, '54345231', '1', 'pos', 'POS2020040100192', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-09 23:30:48'),
+(116, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 08:57:21'),
+(117, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 08:58:08'),
+(118, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 08:58:33'),
+(119, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the sales details tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 08:58:37'),
+(120, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the reports details tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 08:58:43'),
+(121, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the sales details tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 08:58:55'),
+(122, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:00:24'),
+(123, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:00:28'),
+(124, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:01:17'),
+(125, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:03:25'),
+(126, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:08:20'),
+(127, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:08:38'),
+(128, '54345231', '1', 'pos', 'POS2020040100193', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:36:30'),
+(129, '54345231', '1', 'pos', 'POS2020040100194', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 09:36:47'),
+(130, '54345231', '1', 'pos', 'POS2020040100195', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:31:52'),
+(131, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:52:49'),
+(132, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:53:05'),
+(133, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:53:35'),
+(134, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the payment options of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:55:07'),
+(135, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the payment options of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:55:09'),
+(136, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the payment options of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:55:14'),
+(137, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the payment options of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 10:55:25'),
+(138, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 11:09:52'),
+(139, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 11:13:12'),
+(140, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 11:25:05'),
+(141, '54345231', '1', 'pos', 'POS2020040100196', '2019DevAI', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 11:26:46'),
+(142, '54345231', '1', 'settings', '54345231', '2019DevAI', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 11:27:13');
 
 -- --------------------------------------------------------
 
@@ -2691,7 +2829,13 @@ INSERT INTO `users_login_history` (`id`, `clientId`, `branchId`, `username`, `lo
 (36, '54345231', '2', 'branch2@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'oDGirP31jNnXYK6dza20mw', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-07 22:25:08'),
 (37, '54345231', '1', 'sales@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'mjbpdYvK3zwC7lns4QeyIkV90WBFHM', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-07 22:26:04'),
 (38, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-07 22:28:20'),
-(39, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-08 21:46:32');
+(39, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-08 21:46:32'),
+(40, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-09 01:30:52'),
+(41, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-09 09:53:51'),
+(42, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-09 16:11:09'),
+(43, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-09 18:42:44'),
+(44, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-09 22:32:55'),
+(45, '54345231', '1', 'admin@mail.com', '127.0.0.1', 'Chrome|Windows 10', '2019DevAI', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-10 07:59:39');
 
 -- --------------------------------------------------------
 
@@ -2997,37 +3141,37 @@ ALTER TABLE `products`
 -- AUTO_INCREMENT for table `products_categories`
 --
 ALTER TABLE `products_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `products_stocks`
 --
 ALTER TABLE `products_stocks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `requests`
 --
 ALTER TABLE `requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `requests_details`
 --
 ALTER TABLE `requests_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
 
 --
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=180;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
 
 --
 -- AUTO_INCREMENT for table `sales_details`
 --
 ALTER TABLE `sales_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=441;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=480;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -3051,13 +3195,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users_activity_logs`
 --
 ALTER TABLE `users_activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=143;
 
 --
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `users_reset_request`

@@ -8,7 +8,7 @@ global $accessObject;
 ?>
 <!-- Page Content-->
 <?= connectionLost(); ?>
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -75,7 +75,7 @@ global $accessObject;
               </div>
               <div class="form-group col-lg-12">
                 <div class="text-right">
-                  <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                  <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save</button>
                 </div>
               </div>
             </div>

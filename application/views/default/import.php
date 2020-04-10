@@ -92,7 +92,7 @@ global $accessObject;
 ?>
 <!-- Page Content-->
 <?= connectionLost(); ?>
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -136,7 +136,7 @@ global $accessObject;
                         <div class="form-controls col-md-4 m-auto">
                             <hr>
                             <div class="form-group text-center">
-                                <input style="height: 50px; line-height: 25px" accept=".csv" type="file" name="csv_file" id="csv_file" class="form-control btn btn-primary text-white cursor">
+                                <input style="height: 50px; line-height: 25px" accept=".csv" type="file" name="csv_file" id="csv_file" class="form-control btn <?= $clientData->bg_color; ?> text-white cursor">
                             </div>
                         </div>
                     </div>
@@ -232,7 +232,7 @@ global $accessObject;
                             ?>
                             <div data-branch-id="<?= $data->id ?>" data-toggle="tooltip" class="col-lg-6 col-md-6 complete-branch-selection" title="Choose to import data to the <?= $data->branch_name ?>">
                                 <div class="card">
-                                    <div <?= ($session->curBranchId == $data->id) ? "style='border: solid 1px blue'" : null; ?> class="card text-center branch-select">
+                                    <div <?= ($session->curBranchId == $data->id) ? "style='border: solid 1px {$clientData->bg_color_code}'" : null; ?> class="card text-center branch-select">
                                         <h3><?= $data->branch_name ?></h3>
                                         <?= $branch_type ?>
                                     </div>

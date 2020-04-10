@@ -57,7 +57,7 @@ if(!empty($product)) {
 ?>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -102,7 +102,7 @@ if(!empty($product)) {
                             <div><strong>Product Expiry Date:</strong> <span class="<?= $expiry_color ?>"><?= date("jS F, Y", strtotime($product->expiry_date)) ?></span></div>
                             <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>
                             <div class="quantity mt-3 ">
-                                <button type="button" class="btn btn-success waves-effect waves-light" data-toggle="modal" data-animation="bounce" data-target=".bs-example-modal-lg">
+                                <button type="button" class="btn <?= $clientData->bg_color; ?> waves-effect waves-light" data-toggle="modal" data-animation="bounce" data-target=".bs-example-modal-lg">
                                 <i class="mdi mdi-pencil mr-2"></i> Edit product
                             </button>
                             </div>
@@ -291,8 +291,9 @@ if(!empty($product)) {
                       <div class="row">
                           <div class="col-lg-12 text-right">
                               <input type="hidden" name="productId" value="<?= $productId ?>" class="productId">
-                              <button type="submit" class="btn btn-primary">Save</button>  
                               <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn <?= $clientData->bg_color; ?>"><i class="fa fa-save"></i> Save</button>  
+                              
                           </div>
                       </div>
                   </form>  

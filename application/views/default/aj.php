@@ -2293,10 +2293,41 @@ if($admin_user->logged_InControlled()) {
 		                $uploadStatus = 0;
 		            }
 
+		            // clock display
+		            $display_clock = isset($postData->display_clock) ? (int)$postData->display_clock : 0;
+		            // available colors
+		            $themeColors = [
+		            	"danger" => ["bg_colors"=>"bg-danger text-white no-border","bg_color_code"=>"#f5365c", "bg_color_light"=>"#f3adbb",
+		            		"btn_outline" => "btn-outline-danger"
+		            	],
+		            	"indigo" => ["bg_colors"=>"bg-indigo text-white no-border","bg_color_code"=>"#5603ad", "bg_color_light"=>"#5e72e4",
+		            		"btn_outline" => "btn-outline-primary"
+		            	],
+						"orange" => ["bg_colors"=>"bg-orange text-white no-border","bg_color_code"=>"#fb6340", "bg_color_light"=>"#e6987a",
+							"btn_outline" => "btn-outline-warning"
+						],
+						"blue" => ["bg_colors"=>"bg-blue text-white no-border","bg_color_code"=>"#324cdd", "bg_color_light"=>"#97a5f1",
+							"btn_outline" => "btn-outline-info"
+						],
+						"purple" => ["bg_colors"=>"bg-purple text-white no-border","bg_color_code"=>"#8965e0", "bg_color_light"=>"#97a5f1",
+							"btn_outline" => "btn-outline-primary"
+						],
+						"green" => ["bg_colors"=>"bg-green text-white no-border","bg_color_code"=>"#24a46d", "bg_color_light"=>"#2dce89",
+							"btn_outline" => "btn-outline-success"
+						],
+						"teal" => ["bg_colors"=>"bg-teal text-white no-border","bg_color_code"=>"#0da5c0", "bg_color_light"=>"#11cdef",
+							"btn_outline" => "btn-outline-secondary"
+						]
+					];
+		            
+		            // theme color
+		            $theme_color = (in_array($postData->theme_color, array_keys($themeColors))) ? $themeColors[$postData->theme_color] : $themeColors['purple'];
+
 		            // update user data
 					$response = $posClass->updateData(
 						"settings",
-						"client_name='{$postData->company_name}', client_email='{$postData->email}', client_website='{$postData->website}', primary_contact='{$postData->primary_contact}', secondary_contact='{$postData->secondary_contact}', address_1='{$postData->address}'",
+						"client_name='{$postData->company_name}', client_email='{$postData->email}', client_website='{$postData->website}', primary_contact='{$postData->primary_contact}', secondary_contact='{$postData->secondary_contact}', address_1='{$postData->address}', display_clock='{$display_clock}', theme_color_code='{$postData->theme_color}', theme_color='".json_encode($theme_color)."'
+						",
 						"clientId='{$posClass->clientId}'"
 					);
 
@@ -2346,12 +2377,14 @@ if($admin_user->logged_InControlled()) {
 			// update user data
 			$response = $posClass->updateData(
 				"settings",
-				"	print_receipt='{$print_receipt}',
-					expiry_notification_days='".xss_clean($postData->exp_notifi_days)."',
-					shop_opening_days='".xss_clean($workingDays)."',
-					default_currency='".xss_clean($postData->default_currency)."',
-					receipt_message='".xss_clean($postData->receipt_message)."',
-					terms_and_conditions='".htmlentities($postData->terms_and_conditions)."'
+				"print_receipt='{$print_receipt}',
+				expiry_notification_days='".xss_clean($postData->exp_notifi_days)."', 
+				allow_product_return='".xss_clean($postData->allow_product_return)."',
+				fiscal_year_start='".xss_clean($postData->fiscal_year_start)."',
+				shop_opening_days='".xss_clean($workingDays)."',
+				default_currency='".xss_clean($postData->default_currency)."',
+				receipt_message='".xss_clean($postData->receipt_message)."',
+				terms_and_conditions='".htmlentities($postData->terms_and_conditions)."'
 				",
 				"clientId='{$posClass->clientId}'"
 			);

@@ -1,4 +1,4 @@
-<?php $baseUrl = $config->base_url(); global $SITEURL; ?>
+<?php $baseUrl = $config->base_url(); global $SITEURL, $clientData; ?>
 <!-- Footer -->
   <?php if(!confirm_url_id(0, 'point-of-sale')) { ?>
   <footer class="footer pt-0">
@@ -110,9 +110,14 @@
 <script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/chart.js/dist/Chart.extension.js"></script>
 <?php } ?>
+<?php if($clientData->display_clock) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/moment/min/moment.min.js"></script>
+<?php } ?>
 <?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/jquery-steps/jquery.steps.min.js"></script>
+<?php } ?>
+<?php if(in_array($SITEURL[0], ["settings"])) { ?>
+<script src="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.min.js"></script>
 <?php } ?>
 <script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js?v=1.1.0"></script>
 <script src="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
@@ -124,6 +129,7 @@
 <?php } else { ?>
   Cookies.set("sidenav-state", "pinned");
 <?php } ?>
+<?php if($clientData->display_clock) { ?>
 // live clock
 var clock_tick = function clock_tick() {
   setInterval('update_clock();', 1000);
@@ -132,6 +138,7 @@ clock_tick();
 var update_clock = function update_clock() {
   $(`div[class~="liveclock"] span`).html(moment().format("LL HH:mm:ss"));
 }
+<?php } ?>
 $(async function() {
     var offline = true;
     hL();
@@ -166,6 +173,15 @@ $(async function() {
           });
       });
     }
+    <?php } ?>
+    <?php if(confirm_url_id(0, 'settings')) { ?>
+    $('textarea[name="terms_and_conditions"]').summernote({
+      width: 600,
+      height: 150,
+      minHeight: 120,
+      maxHeight: 200,
+      focus: false
+    });
     <?php } ?>
 });
 </script>

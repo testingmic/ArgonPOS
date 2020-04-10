@@ -30,7 +30,7 @@ a[href="#finish"] {
 </style>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-3">
@@ -219,7 +219,7 @@ a[href="#finish"] {
                     <div class="input-group">
                       <input type="email" name="email" id="receipt-email" placeholder="Email Address" class="form-control">
                       <div class="input-group-addon">
-                        <button type="button" class="btn send-email btn-primary">Send</button>
+                        <button type="button" class="btn send-email <?= $clientData->bg_color ?>">Send</button>
                       </div>
                     </div>
                   </div>
@@ -228,14 +228,14 @@ a[href="#finish"] {
             </form><!--end form-->
             <div class="custom-steps-actions py-3 row justify-content-<?= ($validDate) ? "between" : "end" ?>">
               <?php if($validDate) { ?>
-              <button type="button" data-toggle="modal" data-target="#newCustomerModal" class="btn mb-2 btn-sm btn-primary newCustomer_trigger"><i class="fa fa-user"></i> New Customer</button>
-              <button type="button" data-toggle="modal" data-target="#discardModal" class="btn mb-2 btn-danger discardSale_trigger">Discard</button>
-              <button class="btn btn-primary print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
+              <button type="button" data-toggle="modal" data-target="#newCustomerModal" class="btn mb-2 btn-sm <?=  $clientData->btn_outline; ?> newCustomer_trigger"><i class="fa fa-user"></i> New Customer</button>
+              <button type="button" data-toggle="modal" data-target="#discardModal" class="btn mb-2 btn-outline-danger discardSale_trigger"><i class="fa fa-trash"></i> Discard</button>
+              <button class="btn <?= $clientData->bg_color ?> print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
               <?php } ?>
               <div class="float-right">
-                <button type="button" class="btn mb-2 btn-primary" data-step-action="previous">Previous</button>
-                <button type="button" class="btn mb-2 btn-primary" data-step-action="next">Next</button>
-                <button type="button" class="btn mb-2 btn-primary" data-step-action="finish">Finish</button>
+                <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="previous">Previous</button>
+                <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="next">Next</button>
+                <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="finish">Finish</button>
               </div>
             </div>
           </div><!--end card-body-->
@@ -290,7 +290,7 @@ a[href="#finish"] {
             </div>
 
             <h6 class="font-weight-bold text-center mt-3">Total To Pay</h6>
-            <button class="btn-primary btn-block btn"><h3 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h3></button>
+            <button class="<?= $clientData->bg_color ?> btn-block btn"><h2 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h2></button>
           </div>
         </div>
       </div>
@@ -344,8 +344,8 @@ a[href="#finish"] {
               </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" form="newCustomer_form" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" form="newCustomer_form" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save</button>
             </div>
         </div>
     </div>

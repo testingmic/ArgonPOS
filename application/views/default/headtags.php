@@ -17,6 +17,13 @@ $branchData = $posClass->getAllRows("branches", "*", "id='{$session->branchId}'"
 $clientData = $clientData[0];
 $branchData = $branchData[0];
 
+$storeTheme = (Object) json_decode($clientData->theme_color);
+
+$clientData->bg_color = $storeTheme->bg_colors;
+$clientData->bg_color_code = $storeTheme->bg_color_code;
+$clientData->bg_color_light = $storeTheme->bg_color_light;
+$clientData->btn_outline = $storeTheme->btn_outline;
+
 // create a new object for the access level
 $accessObject->userId = $session->userId;
 
@@ -94,9 +101,43 @@ function form_loader() {
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/select2/dist/css/select2.min.css" type="text/css">
   <link href="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.css" rel="stylesheet" />
-  <link rel="params" _cl='{"_un":"Emmallen Networks","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>","cur":"<?= $clientData->default_currency ?>","prt":"<?= $clientData->print_receipt ?>"}'>
+  <link rel="params" _cl='{"_un":"Emmallen Networks","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>","cur":"<?= $clientData->default_currency ?>","prt":"<?= $clientData->print_receipt ?>","tbr_col":"<?= $clientData->bg_color_code ?>"}'>
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/argon.min9f1e.css?v=1.1.0" type="text/css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/custom.css" type="text/css">
+  <style>
+    <?php if(confirm_url_id(0, 'point-of-sale')) { ?>
+    .wizard > .steps .current a,
+    .wizard > .steps .current a:hover,
+    .wizard > .steps .current a:active
+    {
+        background: <?= $clientData->bg_color_code; ?>;
+        color: #fff;
+        cursor: default;
+    }
+    .wizard > .steps .done a,
+    .wizard > .steps .done a:hover,
+    .wizard > .steps .done a:active
+    {
+        background: <?= $clientData->bg_color_light; ?>;
+        color: #fff;
+    }
+    <?php } ?>
+    .nav-pills .nav-link.active,
+    .nav-pills .show>.nav-link {
+        color: #fff;
+        background-color: <?= $clientData->bg_color_code; ?>
+    }
+    .nav-pills .nav-link, .btn-neutral {
+      color: <?= $clientData->bg_color_code; ?>;
+    }
+    [data-toggle=buttons]:not(.btn-group-colors)>.btn.active, 
+    .slim-scroll::-webkit-scrollbar-thumb, 
+    .page-item.active .page-link, 
+    .custom-control-input:checked~.custom-control-label::before {
+      background-color: <?= $clientData->bg_color_code; ?>;
+      border: solid 1px #fff;
+    }
+  </style>
 </head>
 <body>
   <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
@@ -241,23 +282,16 @@ function form_loader() {
   <!-- Main content -->
   <div class="main-content" id="panel">
     <!-- Topnav -->
-    <nav class="navbar navbar-top navbar-expand navbar-dark bg-primary border-bottom">
+    <nav class="navbar navbar-top navbar-expand navbar-dark <?= $clientData->bg_color ?> border-bottom">
       <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <!-- Search form -->
           <form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main">
             <div class="form-group mb-0">
-              <!-- <div class="input-group input-group-alternative input-group-merge">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fas fa-search"></i></span>
-                </div>
-                <input class="form-control" placeholder="Search" type="text">
-              </div> -->
+              <?php if($clientData->display_clock) { ?>
               <div class="liveclock text-white"><i class="fa fa-clock"></i> <span><?= date("F d Y, H:i:s"); ?></span></div>
+              <?php } ?>
             </div>
-            <button type="button" class="close" data-action="search-close" data-target="#navbar-search-main" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
           </form>
           <!-- Navbar links -->
           <ul class="navbar-nav align-items-center ml-md-auto">

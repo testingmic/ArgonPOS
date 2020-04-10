@@ -6,7 +6,7 @@ require_once "headtags.php";
 ?>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -108,8 +108,8 @@ require_once "headtags.php";
                 </form>
               </div>
               <div class="modal-footer">
-                  <button type="submit" form="updateCustomerForm" class="btn btn-primary">Save</button>
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" form="updateCustomerForm" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save</button>
               </div>
           </div>
       </div>

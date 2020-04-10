@@ -6,7 +6,7 @@ require_once "headtags.php";
 ?>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -97,13 +97,13 @@ require_once "headtags.php";
                 <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="">
               </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer p-0">
               <input type="hidden" name="record_type" value="new-record">
               <input type="hidden" name="branchId" value="null" class="branchId">
               <input type="hidden" name="status" value="1">
               <input type="hidden" name="this-form" value="branches">
               <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-              <button class="btn btn-primary submit-form" type="submit">
+              <button class="btn <?= $clientData->btn_outline; ?> submit-form" type="submit">
                 <i class="fa fa-save"></i> Save Record
               </button>
             </div>

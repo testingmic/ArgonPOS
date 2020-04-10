@@ -28,10 +28,12 @@ $expiryRange = [
   '3 MONTH' => 'Three Months (Quarterly)',
   '6 MONTH' => 'Six Months (Semi Annually)'
 ];
+
+$themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal"];
 ?>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -61,13 +63,13 @@ $expiryRange = [
               <div class="card-body">
                 <ul class="nav nav-pills mb-0" id="pills-tab" role="tablist">
                   <li class="nav-item">
-                    <a class="nav-link active" id="general_detail_tab" data-toggle="pill" href="#general_detail">General</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link" id="payment_options_tab" data-toggle="pill" href="#payment_options">Payment Options</a>
+                    <a class="nav-link active" id="general_detail_tab" data-toggle="pill" href="#general_detail">Information</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" id="sales_options_tab" data-toggle="pill" href="#sales_options">Sales, Invoices & Stock Notifications</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="payment_options_tab" data-toggle="pill" href="#payment_options">Payment Options</a>
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" id="reports_options_tab" data-toggle="pill" href="#reports_options">Reports</a>
@@ -107,6 +109,13 @@ $expiryRange = [
                                 <label for="setPassword">Website</label>
                                 <input value="<?= $clientData->client_website ?>" type="text" class="form-control" name="website" id="website" placeholder="Website">
                               </div><!--end form-group-->
+                              <div class="form-group">
+                                <label for="display_clock">Display clock on header</label>
+                                <div style="padding-left: 3.5rem;" class="custom-control custom-switch switch-primary">
+                                  <input type="checkbox" <?= ($clientData->display_clock == "1") ? "checked" : null; ?> name="display_clock" value="1" class="custom-control-input" id="display_clock">
+                                  <label class="custom-control-label" for="display_clock">Show Clock</label>
+                                </div>
+                              </div>
                             </div>
                             <div class="col-md-4">
                               <div class="form-group">
@@ -121,19 +130,30 @@ $expiryRange = [
                                 <label for="address">Address</label>
                                 <input value="<?= $clientData->address_1 ?>" placeholder="Address" type="text" class="form-control" name="address" id="address">
                               </div>
+                              <div class="form-group">
+                                <label for="theme_color">Theme Color</label>
+                                <select name="theme_color" id="theme_color" class="form-control selectpicker">
+                                <?php
+                                foreach($themeColors as $value) {
+                                  // print the period range
+                                  print "<option ".(($clientData->theme_color_code == $value) ? "selected" : null)." value='{$value}'>".ucfirst($value)."</option>";
+                                }
+                                ?>
+                              </select>
+                              </div>
                             </div>
                             <div class="col-md-4">
                               <div class="form-group">
-                                <label for="client_logo">Company Logo</label><br>
+                                <label for="client_logo">Store Logo</label><br>
                                 <input type="file" name="company_logo" id="company_logo" class="form-control">
                                 <img data-name="company_logo" width="100px" src="<?= $config->base_url($clientData->client_logo) ?>" alt="">
                               </div>
                             </div>
                             <?php if($accessObject->hasAccess('update', 'settings')) { ?>
-                              <div class="col-lg-10"><div class="form-result"></div></div>
+                              <div class="col-lg-10"></div>
                               <div class="col-lg-2 text-right">
                                 <input type="hidden" name="updateCompanyDetail" value="updateCompanyDetail">
-                                <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Save Changes</button>
+                                <button type="submit" class="btn <?= $clientData->btn_outline ?>"><i class="fa fa-save"></i> Save Changes</button>
                               </div>
                             <?php } ?>
                           </div> 
@@ -169,7 +189,7 @@ $expiryRange = [
                               </div> 
                               <div class="mt-2">
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                  <label class="btn btn-outline-success btn-sm">
+                                  <label class="btn <?= $clientData->btn_outline ?> btn-sm">
                                     <input style="cursor: pointer;" data-module="cash" data-value="checked" type="radio" name="options"> Enable
                                   </label>                                            
                                   <label class="btn btn-outline-danger btn-sm">
@@ -197,7 +217,7 @@ $expiryRange = [
                               </div> 
                               <div class="mt-2">
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                  <label class="btn btn-outline-success btn-sm">
+                                  <label class="btn <?= $clientData->btn_outline ?> btn-sm">
                                     <input style="cursor: pointer;" data-module="card" data-value="checked" type="radio" name="options"> Enable
                                   </label>                                            
                                   <label class="btn btn-outline-danger btn-sm">
@@ -225,7 +245,7 @@ $expiryRange = [
                               </div> 
                               <div class="mt-2">
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                  <label class="btn btn-outline-success btn-sm">
+                                  <label class="btn <?= $clientData->btn_outline ?> btn-sm">
                                     <input style="cursor: pointer;" data-module="MoMo" data-value="checked" type="radio" name="options"> Enable
                                   </label>                                            
                                   <label class="btn btn-outline-danger btn-sm">
@@ -253,7 +273,7 @@ $expiryRange = [
                               </div> 
                               <div class="mt-2">
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                  <label class="btn btn-outline-success btn-sm">
+                                  <label class="btn <?= $clientData->btn_outline ?> btn-sm">
                                     <input style="cursor: pointer;" data-module="credit" data-value="checked" type="radio" name="options"> Enable
                                   </label>                                            
                                   <label class="btn btn-outline-danger btn-sm">
@@ -342,8 +362,8 @@ $expiryRange = [
                                 </div>
                             </div>
                             <div class="col-lg-12"><hr></div>
-                            <div class="col-md-4">
-                              <label for="exp_notifi_days">Dashboard Product Expiry Notification Period</label>
+                            <div class="col-md-3">
+                              <label for="exp_notifi_days">Product Expiry Notification Period</label>
                               <select name="exp_notifi_days" id="exp_notifi_days" class="form-control selectpicker">
 
                                 <?php
@@ -354,12 +374,36 @@ $expiryRange = [
                                 ?>
                               </select>
                             </div>
+                            <div class="col-md-3">
+                              <label for="allow_product_return">Product Return</label>
+                              <select name="allow_product_return" id="allow_product_return" class="form-control selectpicker">
+                                <?php
+                                print "<option ".(($clientData->allow_product_return == "0") ? "selected" : null)." value='0'>Dont Allow Product Return</option>";
+                                print "<option ".(($clientData->allow_product_return == "1") ? "selected" : null)." value='1'>Allow Product Return</option>";
+                                ?>
+                              </select>
+                            </div>
+                            <div class="col-md-3">
+                              <label for="fiscal_year_start">Fiscal Year Start</label>
+                              <select name="fiscal_year_start" id="fiscal_year_start" class="form-control selectpicker">
+                                <?php
+                                // loop through from 1 to 12
+                                for($i=0; $i < 12; $i++) {
+                                  // set the month 
+                                  $month = date("Y-m-01", strtotime("January +$i month"));
+                                  $label = date("F, Y", strtotime("January +$i month"));
+                                  // print the period range
+                                  print "<option ".(($clientData->fiscal_year_start == $month) ? "selected" : null)." value='{$month}'>1st {$label}</option>";
+                                }
+                                ?>
+                              </select>
+                            </div>
 
                             <?php if($accessObject->hasAccess('update', 'settings')) { ?>
-                              <div class="col-lg-10 mt-4"><div class="form-result"></div></div>
+                              <div class="col-lg-10 mt-4"></div>
                               <div class="col-lg-2 text-right">
                                 <input type="hidden" name="updateSalesDetails" value="updateSalesDetails">
-                                <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Save Changes</button>
+                                <button type="submit" class="btn <?= $clientData->btn_outline ?>"><i class="fa fa-save"></i> Save Changes</button>
                               </div>
                             <?php } ?>
 
@@ -428,10 +472,10 @@ $expiryRange = [
 
 
                             <?php if($accessObject->hasAccess('update', 'settings')) { ?>
-                              <div class="col-lg-10"><div class="form-result"></div></div>
+                              <div class="col-lg-10"></div>
                               <div class="col-lg-2 text-right">
                                 <input type="hidden" name="updateReportDetails" value="updateReportDetails">
-                                <button type="submit" class="btn btn-outline-success"><i class="fa fa-save"></i> Save Changes</button>
+                                <button type="submit" class="btn <?= $clientData->btn_outline ?>"><i class="fa fa-save"></i> Save Changes</button>
                               </div>
                             <?php } ?>
 
@@ -458,7 +502,7 @@ $expiryRange = [
   
 
 <?php require_once "foottags.php" ?>
-<script src="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.min.js"></script>
+
 <script>
   <?php if($accessObject->hasAccess('update', 'settings')) { ?>
     $(`input[name="company_logo"]`).change(function() {
@@ -477,9 +521,7 @@ $expiryRange = [
         return false;
       }
     });
-
     $(`form[class="company_settings"]`).on('submit', async function(e){
-
       let curForm = $(this).attr('data-form');
       let clkButton = $(`form[data-form="${curForm}"] button[type="submit"]`);
       let subResult = $(`form[data-form="${curForm}"] div[class="form-result"]`);
@@ -502,14 +544,24 @@ $expiryRange = [
         success: function(resp){
           subResult.html(resp.message);
           if(resp.status == 200){
-            subResult.html('<div class="alert alert-success" align="center">Company details successfully updated.</div>');
+            Toast.fire({
+              type: "success",
+              title: "Store details successfully updated."
+            });
             $(`form[data-form="${curForm}"] input[name="company_logo"]`).val('');
           } else if(resp.status == 201){
-            subResult.html('<div class="alert alert-success" align="center">Company details successfully updated.</div>');
+            Toast.fire({
+              type: "success",
+              title: "Store details successfully updated."
+            })
             $(`form[data-form="${curForm}"] img[data-name="company_logo"]`).attr('src', resp.message);
           }
           clkButton.removeAttr("disabled");
         }, error: function(err) {
+          Toast.fire({
+            type: "error",
+            title: "Sorry! An error was encountered while processing the request."
+          })
           clkButton.removeAttr("disabled");
           $(`div[class="form-content-loader"]`).css("display","none");
         }, complete: function(data) {
@@ -533,51 +585,6 @@ $expiryRange = [
       });
     });
   <?php } ?>
-
-  function loadPaymentOptions() {       
-    $.ajax({
-      url: `${baseUrl}aj/branchManagment/loadPaymentOptions`,
-      data: { loadPaymentOptions: true },
-      type: "POST",
-      dataType: "JSON",
-      success: function(resp) {
-        if(resp.status == 200) {
-          var paymentOptions = resp.message;
-
-          $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
-            if(($.inArray($(this).attr(`data-module`), paymentOptions) !== -1) && ($(this).attr('data-value') == 'checked')) {
-              $(this).attr('checked', true);
-              $(this).parent('label').addClass('active');
-            } else if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
-              $(this).attr('checked', true);
-              $(this).parent('label').addClass('active');
-            }
-          });
-        } else {
-          $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
-            if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
-              $(this).attr('checked', true);
-              $(this).parent('label').addClass('active');
-            }
-          });
-        }
-      }, complete: function(data) {
-        $(`div[class="form-content-loader"]`).css("display","none");
-      }, error: function(err) {
-        $(`div[class="form-content-loader"]`).css("display","none");
-      }
-    })
-  }
-
-  $('textarea[name="terms_and_conditions"]').summernote({
-    width: 600,
-    height: 150,
-    minHeight: 120,
-    maxHeight: 200,
-    focus: false
-  });
-
-  loadPaymentOptions();
 </script>
 </body>
 </html>

@@ -11,7 +11,7 @@ global $posClass, $baseUrl, $clientData;
 ?>	
 <!-- Header -->
 <div class="sales-overview-data"></div>
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -221,7 +221,7 @@ global $posClass, $baseUrl, $clientData;
               <h3 class="mb-0">Sales History</h3>
             </div>
             <div class="col text-right">
-              <a href="<?= $baseUrl ?>sales" class="btn btn-sm btn-primary">See all</a>
+              <a href="<?= $baseUrl ?>sales" class="btn btn-sm <?= $clientData->bg_color; ?>">View all</a>
             </div>
           </div>
         </div>

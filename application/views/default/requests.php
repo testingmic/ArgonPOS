@@ -46,7 +46,7 @@ $categories = $productsClass->getCategories();
 ?>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -83,7 +83,7 @@ $categories = $productsClass->getCategories();
                         </div>
                         <div class="col-lg-3 col-md-2">
                             <label for="quick-add-customer">&nbsp;</label><br>
-                            <button data-toggle="modal" data-target="#newCustomerModal" class="btn btn-primary btn-block quick-add-customer"><i class="fa fa-plus"></i> New</button>
+                            <button data-toggle="modal" data-target="#newCustomerModal" class="btn <?=  $clientData->btn_outline; ?> btn-block quick-add-customer"><i class="fa fa-plus"></i> New</button>
                         </div>                                      
                     </div>                                               
                 </div><!--end card-body-->
@@ -140,7 +140,7 @@ $categories = $productsClass->getCategories();
                                             <h4 class="header-title mt-0 mb-3"><strong><?= $PAGETITLE; ?> Product Details</strong></h4>
                                         </div>
                                         <div class="save-div hidden">
-                                            <button data-request="save-reload" type="button" class="btn save-request btn-outline-success"><i class="fa fa-save"></i> Save Record</button>
+                                            <button data-request="save-reload" type="button" class="btn save-request <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save Record</button>
 
                                             <button data-request="save-invoice" type="button" class="btn save-request btn-outline-danger"><i class="fa fa-file-pdf"></i> Save & Download</button>
                                         </div>
@@ -190,7 +190,7 @@ $categories = $productsClass->getCategories();
                                     </div>
 
                                     <h6 class="font-weight-bold text-center mt-3"><?= strtoupper($SITEURL[1]) ?> TOTAL</h6>
-                                    <button class="btn-primary btn-block btn"><h3 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h3></button>
+                                    <button class="<?= $clientData->bg_color; ?> btn-block btn"><h3 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='0'>0.00</span></h3></button>
                                   </div>
                             </div><!--end row-->                                             
                         </div><!--end general detail-->                        
@@ -245,8 +245,8 @@ $categories = $productsClass->getCategories();
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" form="newCustomer_form" class="btn btn-primary">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" form="newCustomer_form" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save</button>
             </div>
         </div>
     </div>

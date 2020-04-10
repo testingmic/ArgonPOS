@@ -476,3 +476,7 @@ table#product-select-table thead tr th {
 .branch-select h3 {
   font-size: 20px;
 }
+
+.no-border {
+  border: solid 1px #fff;
+}

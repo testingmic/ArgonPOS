@@ -27,7 +27,7 @@ require_once "headtags.php";
 ?>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -177,12 +177,12 @@ require_once "headtags.php";
                               	</div>
 							</div>
 						</div>
-						<div class="modal-footer">
+						<div class="modal-footer pr-0">
 							<input type="hidden" name="this-form" value="users">
 							<input type="hidden" name="record_type" value="new-record">
 							<input type="hidden" name="userId" value="<?= random_string('alnum', 15) ?>" class="userId">
 							<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-							<button class="btn btn-primary submit-form" type="submit">
+							<button class="btn <?= $clientData->btn_outline; ?> submit-form" type="submit">
 								<i class="fa fa-save"></i> Save Record
 							</button>
 						</div>
@@ -192,7 +192,6 @@ require_once "headtags.php";
 		</div>
 	</div>
 	<?php } ?>
- 
 <?php require_once 'foottags.php'; ?>
 </body>
 </html>

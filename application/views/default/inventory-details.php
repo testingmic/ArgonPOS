@@ -65,7 +65,7 @@ if(isset($branch->branch_name)) {
 <?= connectionLost(); ?>
 <!-- Page Content-->
 <!-- Header -->
-<div class="header bg-primary pb-6">
+<div class="header <?= $clientData->bg_color ?> pb-6">
   <div class="container-fluid">
     <div class="header-body">
       <div class="row align-items-center py-4">
@@ -93,18 +93,18 @@ if(isset($branch->branch_name)) {
                     All available products in <?= strtolower($PAGETITLE) ?>.
                 </p>
                 <p>
-                    <a href="<?= $config->base_url('inventory') ?>" class="btn btn-primary waves-light">
+                    <a href="<?= $config->base_url('inventory') ?>" class="btn btn-neutral waves-light">
                         <i class="fa fa-arrow-left"></i> Back
                     </a>
                     <?php if($accessChecker) { ?>
-                        <button type="button" class="btn btn-primary waves-effect waves-light transfer-selected-products">
+                        <button type="button" class="btn <?= $clientData->btn_outline; ?> waves-effect waves-light transfer-selected-products">
                             <i class="fa fa-share"></i> Transfer
                         </button>
                         <?php if ($branch->branch_type == "Warehouse") { ?>
-                        <button type="button" class="btn btn-success waves-effect waves-light float-right ml-2" data-toggle="modal" data-animation="bounce" data-target="#updateProductModal">
+                        <button type="button" class="btn btn-outline-success waves-effect waves-light float-right ml-2" data-toggle="modal" data-animation="bounce" data-target="#updateProductModal">
                             <i class="fa fa-upload"></i> Update Stock
                         </button>
-                        <button type="button" class="btn btn-primary waves-effect waves-light float-right ml-2 pop-new-modal" data-toggle="modal" data-animation="bounce" data-target="#addProductModal">
+                        <button type="button" class="btn btn-outline-primary waves-effect waves-light float-right ml-2 pop-new-modal" data-toggle="modal" data-animation="bounce" data-target="#addProductModal">
                             + Add New
                         </button>
                         <?php } ?>
@@ -224,7 +224,7 @@ if(isset($branch->branch_name)) {
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Add Product</button>
+                      <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Add Product</button>
                   </div>
                   <div class="form-results text-center"></div>
               </div>
@@ -289,7 +289,7 @@ if(isset($branch->branch_name)) {
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Update Stock</button>
+                      <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Update Stock</button>
                   </div>
                   <div class="form-results text-center"></div>
               </div>
@@ -340,7 +340,7 @@ if(isset($branch->branch_name)) {
                       </div>
                       <input type="hidden" name="transferProductID" value="null">
                       <input type="hidden" name="transferFrom" value="<?= $transferFrom ?>">
-                      <button type="submit" class="btn btn-sm btn-primary float-right">Transfer</button>  
+                      <button type="submit" class="btn <?=  $clientData->btn_outline; ?> float-right"><i class="fa fa-share"></i> Transfer</button>  
                   </form>  
               </div>
           </div><!-- /.modal-content -->
@@ -379,7 +379,7 @@ if(isset($branch->branch_name)) {
                           <div class="col-lg-2">
                               <div class="form-group">
                                   <label for="button">&nbsp;</label><br>  
-                                  <button type="button" class="btn btn-primary topup-products">+ Add More</button>
+                                  <button type="button" class="btn btn-gray topup-products">+ Add More</button>
                               </div>
                           </div>
                       </div>
@@ -412,7 +412,7 @@ if(isset($branch->branch_name)) {
                       <br>
                       <input type="hidden" name="transferProductID" value="null">
                       <input type="hidden" name="transferFrom" value="<?= $transferFrom ?>">
-                      <button type="submit" class="btn btn-sm btn-primary float-right">Transfer</button>  
+                      <button type="submit" class="btn <?=  $clientData->btn_outline; ?> float-right"><i class="fa fa-share"></i> Transfer</button>  
                   </form>  
               </div>
           </div><!-- /.modal-content -->
