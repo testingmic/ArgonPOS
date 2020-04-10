@@ -184,7 +184,7 @@ $categories = $productsClass->getCategories();
                                                 <label class="btn btn-outline-light">
                                                     <input title="Apply Percentage Discount" value="percentage" type="radio" name="discount_type" id="discount_type_2"> %
                                                 </label>
-                                                <input title="Discount Amount / Percentage" data-toggle="tooltip" style="border-radius: 0px;width:90px" type="text" name="discount_amount" id="discount_amount" onkeypress="return isNumber(event);" maxlength="12" class="form-control">
+                                                <input title="Discount Amount / Percentage" data-toggle="tooltip" style="border-radius: 0px;width:90px" type="text" name="discount_amount" id="discount_amount" onkeypress="return isNumber(event);" maxlength="12" class="form-control text-center">
                                             </div>                                
                                         </div>
                                     </div>

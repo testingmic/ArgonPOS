@@ -145,7 +145,7 @@ if(confirm_url_id(1)) {
                                 </div>
                                 <hr class="mt-3">
                                 <h3 class="font-weight-bold text-center">Total Amount Paid</h3>
-                                <button class="btn-primary btn-block btn"><h2 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='<?= number_format($orderData->order_amount_paid,2) ?>'><?= number_format($orderData->order_amount_paid,2) ?></span></h2></button>
+                                <button class="<?=  $clientData->bg_color; ?> btn-block btn"><h2 class="text-white"><span class="font-16"><?= $clientData->default_currency ?></span> <span class="total-to-pay-amount" data-order-total='<?= number_format($orderData->order_amount_paid,2) ?>'><?= number_format($orderData->order_amount_paid,2) ?></span></h2></button>
 
                               </div>
 
