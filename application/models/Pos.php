@@ -177,7 +177,7 @@ class Pos {
 		");
 		$stmt->execute([$this->clientId]);
 
-		return $stmt->fetch(PDO::FETCH_OBJ)->rowId;
+		return ($stmt->rowCount() > 0) ? $stmt->fetch(PDO::FETCH_OBJ)->rowId : 0;
 	}
 
 	/**

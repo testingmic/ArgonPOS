@@ -223,7 +223,7 @@ require "header.php"
                     </div>
                   </div>
                   <div>
-                    <span class="pl-2">1 Sale Outlet</span>
+                    <span class="pl-2">2 Sale Outlets</span>
                   </div>
                 </div>
               </li>

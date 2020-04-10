@@ -8,17 +8,15 @@ class Setup extends Pos {
 
 	public function initialSetup(StdClass $postData) {
 		
-		$this->pos->beginTransaction();
-
 		try {
 			// generate
 			$clientId = random_string('alnum', 12);
 
 			// outlet types
 			if($postData->subscribeTo == 'trial') {
-				$outlets = 2;
+				$outlets = 5;
 			} elseif($postData->subscribeTo == 'basic') {
-				$outlets = 1;
+				$outlets = 2;
 			} elseif($postData->subscribeTo == 'alpha') {
 				$outlets = 2000;
 			}
@@ -66,13 +64,9 @@ class Setup extends Pos {
 			// log the user activity
 			$this->userLogs("setup", $userData->clientId, "This is the initial setup process that has been carried out by {$postData->store_name}.", $userData->clientId, $userData->branchId, $userData->user_id);
 
-			// commit the transaction for processing
-			$this->pos->commit();
-
 			// return true
 			return true;
 		} catch(PDOException $e) {
-			$this->pos->rollBack();
 			return $e->getMessage();
 		}
 	}
