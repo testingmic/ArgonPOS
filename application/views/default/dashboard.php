@@ -121,6 +121,7 @@ global $posClass, $baseUrl, $clientData;
   <div class="row">
     <div class="col-xl-8">
       <div class="card">
+        <?= connectionLost(); ?>
         <div class="card-header">
           <div class="row align-items-center">
             <div class="col">
@@ -247,6 +248,7 @@ global $posClass, $baseUrl, $clientData;
     
     <div class="col-xl-6 col-md-6">
       <div class="card">
+        <?= connectionLost(); ?>
         <div class="card-header border-0">
           <div class="row align-items-center">
             <div class="col">
@@ -306,6 +308,7 @@ global $posClass, $baseUrl, $clientData;
 
     <div class="col-xl-6 col-md-6">
       <div class="card">
+        <?= connectionLost(); ?>
         <div class="card-header border-0">
           <div class="row align-items-center">
             <div class="col">

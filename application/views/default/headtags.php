@@ -14,8 +14,10 @@ if(!$admin_user->logged_InControlled()) {
 // client data
 $clientData = $posClass->getAllRows("settings", "*", "clientId='{$posClass->clientId}'");
 $branchData = $posClass->getAllRows("branches", "*", "id='{$session->branchId}'");
+$userData = $posClass->getAllRows("users", "*", "user_id='{$session->userId}'");
 $clientData = $clientData[0];
 $branchData = $branchData[0];
+$userData = $userData[0];
 
 $storeTheme = (Object) json_decode($clientData->theme_color);
 
@@ -69,8 +71,7 @@ function form_loader() {
   <!-- Canonical SEO -->
   <link rel="canonical" href="<?= $baseUrl ?>" />
   <!--  Social tags      -->
-  <meta name="keywords" content="dashboard, bootstrap 4 dashboard, bootstrap 4 design, bootstrap 4 system, bootstrap 4, bootstrap 4 uit kit, bootstrap 4 kit, argon, argon ui kit, <?= config_item('site_name'); ?>, html kit, html css template, web template, bootstrap, bootstrap 4, css3 template, frontend, responsive bootstrap template, bootstrap ui kit, responsive ui kit, argon dashboard">
-  <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
+  <meta name="keywords" content="">
   <!-- Schema.org markup for Google+ -->
   <meta itemprop="name" content="<?= $PAGETITLE; ?> :: <?= config_item('site_name'); ?>">
   <meta itemprop="description" content="Start your development with a Dashboard for Bootstrap 4.">
@@ -93,7 +94,7 @@ function form_loader() {
   <!-- Fonts -->
   <!-- Icons -->
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/nucleo/css/nucleo.css" type="text/css">
-  <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/%40fortawesome/fontawesome-free/css/all.min.css" type="text/css">
+  <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/fortawesome/fontawesome-free/css/all.min.css" type="text/css">
   <link href="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
@@ -369,7 +370,7 @@ function form_loader() {
                     <i class="fa fa-user"></i>
                   </span>
                   <div class="media-body ml-2 d-none d-lg-block">
-                    <span class="mb-0 text-sm  font-weight-bold"><?= $session->userName; ?></span>
+                    <span class="mb-0 text-sm  font-weight-bold"><?= $userData->name; ?></span>
                   </div>
                 </div>
               </a>

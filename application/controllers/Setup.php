@@ -24,7 +24,7 @@ class Setup extends Pos {
 			}
 
 			// setup string information
-			$setupType = '{"type":"'.$postData->subscribeTo.'","verified":"0","setup_date":"'.date('Y-m-d').'","outlets":"'.$outlets.'"}';
+			$setupType = '{"type":"'.$postData->subscribeTo.'","verified":0,"setup_date":"'.date('Y-m-d').'","expiry_date":"'.date("Y-m-d", strtotime("today +14 day")).'","outlets":"'.$outlets.'","initializing":"1"}';
 
 			// setup the store
 			$stmt = $this->pos->prepare("
@@ -37,17 +37,8 @@ class Setup extends Pos {
 				$postData->contact, $setupType
 			]);
 
-			// setup the 1st point of sale outlet
-			$branch_stmt = $this->pos->prepare("
-				INSERT INTO branches
-				SET branch_id = ?, clientId = ?, branch_type = ?, branch_name = ?, 
-				branch_color = ?, branch_contact = ?, branch_email = ?, status = ?
-			");
-			$branch_stmt->execute([
-				random_string('alnum', 12), $clientId, 'Warehouse',
-				$postData->store_name, 'badge-purple', $postData->contact, 
-				$postData->store_email, 1
-			]);		
+			// set up the first branch
+			$this->addBranchData($postData->store_name, $postData->store_email, $postData->contact, $clientId);
 
 			// set up the user
 			$userData = (Object) [];
@@ -83,6 +74,23 @@ class Setup extends Pos {
 		} catch(PDOException $e) {
 			$this->pos->rollBack();
 			return $e->getMessage();
+		}
+	}
+
+	private function addBranchData($storeName, $storeEmail, $storeContact, $clientId) {
+		try {
+			// setup the 1st point of sale outlet
+			$branch_stmt = $this->pos->prepare("
+				INSERT INTO branches
+				SET branch_id = ?, clientId = ?, branch_type = ?, branch_name = ?, 
+				branch_color = ?, branch_contact = ?, branch_email = ?, status = ?
+			");
+			return $branch_stmt->execute([
+				random_string('alnum', 12), $clientId, 'Warehouse',
+				$storeName, 'badge-purple', $storeContact, $storeEmail, 1
+			]);
+		} catch(PDOException $e) {
+			return false;
 		}
 	}
 

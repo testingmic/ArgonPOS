@@ -400,7 +400,7 @@ if($admin_user->logged_InControlled()) {
 
 				$data = [];
 				while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-					$result->saleItems = $posClass->getAllRows("sales_details", "*", "order_id='{$result->order_id}'");
+					$result->saleItems = $posClass->getAllRows("sales_details a LEFT JOIN products b ON b.id=a.product_id", "a.*, b.product_title", "a.order_id='{$result->order_id}'");
 					$data[] = $result;
 				}
 			} elseif($dataType == "reports") {

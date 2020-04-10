@@ -7,6 +7,12 @@ $branchData = $posClass->getAllRows("branches", "*", "id='{$session->branchId}'"
 
 // set the data set
 $clientData = (!empty($clientData)) ? $clientData[0] : null;
+$storeTheme = (Object) json_decode($clientData->theme_color);
+
+$clientData->bg_color = $storeTheme->bg_colors;
+$clientData->bg_color_code = $storeTheme->bg_color_code;
+$clientData->bg_color_light = $storeTheme->bg_color_light;
+$clientData->btn_outline = $storeTheme->btn_outline;
 
 // initializing
 $request_type = 'Order';
@@ -100,7 +106,7 @@ if(confirm_url_id(1)) {
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
                 <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc; background: #f4f4f4;\"><b>Order Total</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} {$overall}</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; background-color:{$clientData->bg_color_code}; color:#fff; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} {$overall}</b></td>
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
@@ -110,7 +116,7 @@ if(confirm_url_id(1)) {
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
                 <td colspan=\"2\" style=\"padding-top: 10px; background: #f4f4f4; padding-bottom:10px; font-family: Calibri Light\"><b>Balance</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; background-color:#5e2572; color:#fff; \"><b>{$clientData->default_currency} {$order_balance}</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; background-color:{$clientData->bg_color_code}; color:#fff; \"><b>{$clientData->default_currency} {$order_balance}</b></td>
             </tr>
         ";
     }
@@ -151,10 +157,10 @@ if(!$found) {
 				</td>
 			</tr>
 			<tr>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff;"><strong>Product</strong></td>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff"><strong>Quantity</strong></td>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff"><strong>Unit Price</strong></td>
-				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: #5e2572; color: #fff"><strong>Subtotal</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff;"><strong>Product</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff"><strong>Quantity</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff"><strong>Unit Price</strong></td>
+				<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff"><strong>Subtotal</strong></td>
 			</tr>
 			<?= $rows ?>
 			<?= $subTotalRow ?>
@@ -172,11 +178,11 @@ if(!$found) {
 	</div>
 	<script>
 		window.onload = (evt) => {
-			window.print();
+			// window.print();
 		}
 
 		window.onafterprint = (evt) => {
-			window.close();
+			// window.close();
 		}
 	</script>
 </body>

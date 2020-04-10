@@ -27,7 +27,7 @@ class Authenticate {
                 while($results = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
                     // verify the password
-                    if($password) {
+                    if(password_verify($password, $results["password"])) {
 
                         // set the status variable to true
                         $this->status = true;
@@ -48,9 +48,6 @@ class Authenticate {
                         #update the table
                         $ip = ip_address();
                         $br = $user_agent->browser."|".$user_agent->platform;
-
-                        $stmt = $pos->prepare("UPDATE users SET last_login=now(), online='1' where id='{$results["id"]}'");
-                        $stmt->execute();
 
                         $stmt = $pos->prepare("INSERT INTO users_login_history SET branchId='{$results["branchId"]}', clientId='{$results["clientId"]}', username='$username', log_ipaddress='$ip', log_browser='$br', user_id='".$session->userId."', log_platform='".$user_agent->agent."'");
                         $stmt->execute();
