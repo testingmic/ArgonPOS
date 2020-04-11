@@ -24,7 +24,7 @@ class Setup extends Pos {
 			}
 
 			// setup string information
-			$setupType = '{"type":"'.$postData->subscribeTo.'","verified":0,"setup_date":"'.date('Y-m-d').'","expiry_date":"'.date("Y-m-d", strtotime("today +14 day")).'","outlets":"'.$outlets.'","initializing":"1"}';
+			$setupInfo = '{"type":"'.$postData->subscribeTo.'","verified":0,"setup_date":"'.date('Y-m-d').'","expiry_date":"'.date("Y-m-d", strtotime("today +14 day")).'","outlets":"'.$outlets.'","initializing":"1"}';
 
 			// setup the store
 			$stmt = $this->pos->prepare("
@@ -34,7 +34,7 @@ class Setup extends Pos {
 			");
 			$stmt->execute([
 				$clientId, $postData->store_name, $postData->store_email, 
-				$postData->contact, $setupType
+				$postData->contact, $setupInfo
 			]);
 
 			// set up the first branch
@@ -55,6 +55,9 @@ class Setup extends Pos {
 
 			// add user account data
 			$this->addUserAccounts($userData, $verifyToken);
+
+			// add the default walk in customer details
+			$this->addWalkInCustomer($clientId, $userData->branchId, $userData->user_id);
 
 			// assign user roles
 			$accessObject = load_class('Accesslevel', 'controllers');
@@ -113,6 +116,26 @@ class Setup extends Pos {
 		}
 	}
 
+	private function addWalkInCustomer($clientId, $branchId, $userId) {
+
+		try {
+
+			$stmt = $this->pos->prepare("
+				INSERT INTO `customers` 
+				SET `clientId` = ?, `branchId` = ?, 
+					`customer_id` = ?, `firstname` = ?, `lastname` = ?, 
+					`gender` = ?, `owner_id` = ?, `preferred_payment_type` = ?
+			");
+
+			return $stmt->execute([
+				$clientId, $branchId, 'WalkIn', 'WalkIn', 'Customer', 
+				'Female', $userId, 'cash'
+			]);
+
+		} catch(PDOException $e) {
+			return false;
+		}
+	}
 	private function triggerEmail($clientId, $branchId, $storeName, $emailAddress, $verifyToken, $userId, $fullname) {
 
 		// form the email message
@@ -135,17 +158,23 @@ class Setup extends Pos {
             ]
         ];
 
-		// record the email sending to be processed by the cron job
-		$stmt = $this->pos->prepare("
-			INSERT INTO email_list 
-			SET clientId = ?, branchId = ?,
-				template_type = ?, itemId = ?, recipients_list = ?,
-				request_performed_by = ?, message = ?, subject = ?
-		");
-		return $stmt->execute([
-			$clientId, $branchId, 'general', 
-			$clientId, json_encode($userEmail), $userId, $emailMessage, $emailSubject
-		]);
+        try {
+			
+			// record the email sending to be processed by the cron job
+			$stmt = $this->pos->prepare("
+				INSERT INTO email_list 
+				SET clientId = ?, branchId = ?,
+					template_type = ?, itemId = ?, recipients_list = ?,
+					request_performed_by = ?, message = ?, subject = ?
+			");
+			return $stmt->execute([
+				$clientId, $branchId, 'general', 
+				$clientId, json_encode($userEmail), $userId, $emailMessage, $emailSubject
+			]);
+
+		} catch(PDOException $e) {
+			return false;
+		}
 	}
 }
 ?>

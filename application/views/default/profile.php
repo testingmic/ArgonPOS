@@ -88,7 +88,7 @@ $userData = $stmt->fetch(PDO::FETCH_OBJ);
 						</div>
 						<div class="col-md-4 mb-3">
 							<label for="email">Email *</label>
-							<input type="email" value="<?= $userData->email ?>" class="form-control" name="email" id="email" placeholder="Email" value="">
+							<input type="email" value="<?= $userData->email ?>" class="form-control" name="email" disabled id="email" placeholder="Email" value="">
 						</div>
 						<div class="col-md-4 mb-3">
 							<label for="branchId">User Branch</label>

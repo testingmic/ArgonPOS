@@ -103,8 +103,8 @@ require_once "headtags.php";
 									<option value="null">Please select</option>
 									<?php
 									// filters
-									if($accessObject->hasAccess('accesslevel', 'users')) {
-										$notIn = "1";
+									if($accessObject->hasAccess('update', 'users')) {
+										$notIn = "id NOT IN (1)";
 									} else {
 										$notIn = "id NOT IN (1, 2)";
 									}

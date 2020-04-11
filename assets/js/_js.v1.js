@@ -423,9 +423,9 @@ async function dOC() {
     });
 }
 
-$(`table[class~="simple-table"]`).dataTable({
-    iDisplayLength: 5,
-});
+if($(`table[class~="simple-table"]`).length) {
+    $(`table[class~="simple-table"]`).dataTable({iDisplayLength: 5});
+}
 
 dOC().then((itResp) => {
     if(itResp == 1) {
@@ -1157,9 +1157,9 @@ var fetchUsersLists = async () => {
 fetchUsersLists();
 
 
-async function deleteMyItem(delete_id, page, callBack = "") {
+async function deleteMyItem(itemId, page, callBack = "") {
 
-    if (delete_id != "" && page != "") {
+    if (itemId != "") {
 
         await dOC().then((itResp) => {
             if(itResp == 1) {
@@ -1175,27 +1175,17 @@ async function deleteMyItem(delete_id, page, callBack = "") {
         });
 
         if(noInternet) {
-
-            if(page == "evUser") {
-                var deleteResp = await deleteUserFromIndexDb(delete_id).then((resp) => {
-                    $(".show-delete-msg").html(`<p class="alert alert-success text-white">
-                        User Have Been Successfully Deleted.
-                    </p>`);
-                    setTimeout(function() {
-                        $(".show-delete-msg").empty();
-                        $(`div[class~="deleteModal"]`).modal('hide');
-                    }, 1500);
-                    fetchUsersLists();
-                });
-
-                return false;
-            }
+            Toast.fire({
+                type: 'error',
+                title: 'Error Processing Request'
+            });
+            return false;
         }
 
         $.ajax({
-            url: baseUrl + "doprocess_deletedata",
+            url: baseUrl + "aj/userManagement/deleteUser",
             type: "POST",
-            data: { request: "deleteMyData", delete_id: delete_id, page, page },
+            data: { deleteUser: true, itemId: itemId },
             dataType: "json",
             cache: false,
             beforeSend: function() {
@@ -1205,22 +1195,21 @@ async function deleteMyItem(delete_id, page, callBack = "") {
                 $(".confirm-delete-btn").hide();
             },
             success: function(data) {
-                if (data.status == true) {
-                    $(".show-delete-msg").html(`<p class="alert alert-success text-white">${data.message}</p>`);
-                } else {
-                    $(".show-delete-msg").html(`<p class="alert alert-danger text-white">${data.message}</p>`);
-                    $(".confirm-delete-btn").fadeIn(1000);
-                }
+                Toast.fire({
+                    type: data.status,
+                    title: data.message
+                });
+                $(`div[class~="deleteModal"]`).modal('hide');
+                $(".confirm-delete-btn").fadeIn(1000);
             },
             error: function() {
-
-                $(".show-delete-msg").html(`<p class="alert alert-success">Error Processing Request</p>`);
-
-                $(".confirm-delete-btn").fadeIn(1000);
+                Toast.fire({
+                    type: 'error',
+                    title: 'Error Processing Request'
+                });
             },
             complete: function() {
                 callBack;
-
                 setTimeout(function() {
                     $(".show-delete-msg").empty();
                 }, 3000);
@@ -4569,15 +4558,16 @@ if($(`div[class~="request-form"]`).length) {
             } else {
                 discountAmount = 0;
             }
-            
+
             totalDiscountDeducted = 0;
             overallSubTotal = 0;
 
-            $("tr.products-row .row-subtotal div").each(function(){
-                let subtotalVal = parseFloat($(this).text());
+            $("tr.products-row .row-subtotal").each(function(){
+                let subtotalVal = parseFloat($(this).html());
                 totalToPay += subtotalVal;
                 overallSubTotal += subtotalVal;
             });
+
             if(discountType == "cash") {
                 totalToPay = totalToPay - discountAmount;
                 totalDiscountDeducted = discountAmount;
@@ -4691,13 +4681,13 @@ if($(`div[class~="request-form"]`).length) {
 
             let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
             
-            <td class='products-row-number'>${rowCount}</td>
-            <td>${rowData.productName}</td>
+            <td class='products-row-number' style='padding-top: 30px;
+            <td style="padding-top: 30px;">${rowData.productName}</td>
             <td><input type="number" min="1" onkeypress="return isNumber(event)" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" class="form-control product-price" style="width:110px" value="${rowData.productPrice}"></td>
             <td>
             <input type='number' onkeypress="return isNumber(event)" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
             </td>
-            <td class='row-subtotal'><div class="mt-2">${subTotal}</div></td>
+            <td class='row-subtotal' style="padding-top: 30px;">${subTotal}</td>
             <td class='p-0'><button class='btn mt-4 btn-sm btn-outline-danger mb-1 remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
             </tr>`;
             let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
@@ -4853,7 +4843,7 @@ if($(`div[class~="request-form"]`).length) {
 
                         if(buttonClicked == "save-invoice") {
                             setTimeout(function() {
-                                window.location.href = `${baseUrl}invoice/${resp.result.invoiceNumber}`;
+                                window.location.href = `${baseUrl}export/${resp.result.invoiceNumber}`;
                             }, 500);
                         } else {
                             setTimeout(function() {

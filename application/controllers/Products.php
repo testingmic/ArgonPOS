@@ -167,7 +167,8 @@ class Products extends Pos {
 			$product->image,
 			$this->session->userId,
 			(isset($product->threshold)) ? $product->threshold : null,
-			$product->quantity
+			$product->quantity,
+			$product->expiry_date
 		];
 		$sql = "
 		INSERT INTO products (
@@ -176,8 +177,8 @@ class Products extends Pos {
 			category_id, 
 			product_title, product_description, 
 			product_price, cost_price, product_image, added_by, threshold,
-			quantity
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			quantity, expiry_date
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		$this->db->prepare($sql)->execute($params);
 
@@ -198,20 +199,26 @@ class Products extends Pos {
 
 	public function updateProduct(stdClass $product){
 		$params = [
+			$product->expiry_date,
 			$product->category,
 			$product->title,
 			$product->description,
 			$product->price,
 			$product->cost,
 			$product->threshold
+			
 		];
 
 		if(!empty($product->image)) array_push($params, $product->image);
 		array_push($params, $product->productId);
 
 		$sql = "UPDATE products SET
-			category_id = ?, product_title = ?, product_description = ?, 
-			product_price = ?, cost_price = ?, threshold = ? ".(empty($product->image) ? '' : ', product_image = ?')." WHERE id = ? LIMIT 1";
+			expiry_date = ?,
+			category_id = ?, product_title = ?, 
+			product_description = ?, 
+			product_price = ?, cost_price = ?, 
+			threshold = ? ".(empty($product->image) ? '' : ', product_image = ?')." 
+			WHERE id = ? LIMIT 1";
 		return $this->db->prepare($sql)->execute($params);
 	}
 
@@ -240,6 +247,7 @@ class Products extends Pos {
 	public function addStockToBranch(stdClass $product){
 
 		$params = [
+			$product->expiry_date,
 			$product->product_id,
 			$product->category_id,
 			$product->product_title,
@@ -254,11 +262,11 @@ class Products extends Pos {
 			isset($product->userId) ? $product->userId : null
 		];
 		$sql = "INSERT INTO products (
-			product_id, category_id, 
+			expiry_date, product_id, category_id, 
 			product_title, product_description, 
 			product_price, cost_price, product_image, threshold, quantity,
 			branchId, clientId, added_by
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$this->db->prepare($sql)->execute($params);
 
 		// get the product id
@@ -269,9 +277,12 @@ class Products extends Pos {
 			INSERT INTO products_stocks 
 			SET clientId = '{$this->clientId}', 
 				branchId='{$product->branchId}', 
-				auto_id='{$product->stockAutoId}', product_id='{$productId}', 
-				cost_price='{$product->cost_price}', retail_price='{$product->product_price}', 
-				quantity='{$product->transferQuantity}', total_quantity='{$product->transferQuantity}',
+				auto_id='{$product->stockAutoId}', 
+				product_id='{$productId}', 
+				cost_price='{$product->cost_price}', 
+				retail_price='{$product->product_price}', 
+				quantity='{$product->transferQuantity}', 
+				total_quantity='{$product->transferQuantity}',
 				threshold='{$product->threshold}', recorded_by='{$this->session->userId}'
 		");
 		return $stockInput->execute();

@@ -215,6 +215,17 @@ if(isset($branch->branch_name)) {
                                   <input type="file" name="product_image" id="product_image" class="form-control">
                                   <input type="hidden" name="addProduct" value="addProduct">
                               </div>
+                              <div class="col-md-12">
+                                  <div class="form-group">
+                                      <label for="NewOppEmail">Product Expiry</label>
+                                      <div class="input-group">
+                                          <div class="input-group-prepend">
+                                              <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                          </div>
+                                          <input type="date" name="expiry_date" class="form-control" value="">
+                                      </div>
+                                  </div>
+                              </div>
                               <div class="col-md-12 mb-3 existing-image hidden">
                                   <img  src="<?= $config->base_url('assets/images/products/default.png') ?>" alt="" class=" mx-auto  d-block">
                               </div>

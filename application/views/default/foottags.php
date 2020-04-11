@@ -31,7 +31,7 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
-  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'branches', 'product-types','customers'])) { ?>
+  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'outlets', 'product-types','customers'])) { ?>
   <div class="modal fade delete-modal" tabindex="-1" id="deleteData" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">
@@ -48,8 +48,8 @@
                         <div class="form-group mb-3 text-right">
                           <input type="hidden" name="itemToDelete" class="itemToDelete">
                           <input type="hidden" name="itemId" class="itemId">
-                          <button data-dismiss="modal" aria-label="Close" class="btn btn-danger">Cancel</button>
-                          <button type="submit" class="btn btn-success">Yes Confirm</button>
+                          <button data-dismiss="modal" aria-label="Close" class="btn btn-outline-default">Cancel</button>
+                          <button type="submit" class="btn <?= $clientData->btn_outline ?>">Yes Confirm</button>
                         </div>
                     </form>
                 </div>
@@ -73,8 +73,8 @@
                     <p class="show-delete-msg"></p>
                     <p class="show-delete-body">Are You Sure You Want To Delete This?</p>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                        <button class="btn btn-success confirm-delete-btn" type="button">
+                        <button type="button" class="btn btn-outline-default" data-dismiss="modal">Cancel</button>
+                        <button class="btn <?= $clientData->btn_outline ?> confirm-delete-btn" type="button">
                             <i class="fa fa-check"></i> Yes Confirm
                         </button>
                     </div>

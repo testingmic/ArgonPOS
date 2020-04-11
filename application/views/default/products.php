@@ -276,7 +276,7 @@ if(!empty($product)) {
                                   <label class="mr-2">Description</label>
                                   <textarea class="form-control" name="description"><?= strip_tags($product->product_description) ?></textarea>
                               </div>
-                          </div>                                     
+                          </div>                                   
                       </div> 
                       <div class="row">
                           <div class="col-md-4 mb-3">
@@ -286,7 +286,18 @@ if(!empty($product)) {
                               <label for="product_image">Product Image</label>
                               <input type="file" name="product_image" id="product_image" class="form-control">
                               <input type="hidden" name="editProduct" value="editProduct">
-                          </div>                                  
+                          </div>                                
+                          <div class="col-md-4">
+                              <div class="form-group">
+                                  <label for="NewOppEmail">Product Expiry</label>
+                                  <div class="input-group">
+                                      <div class="input-group-prepend">
+                                          <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                      </div>
+                                      <input type="date" name="expiry_date" class="form-control" value="<?= $product->expiry_date?>">
+                                  </div>
+                              </div>
+                          </div>
                       </div>
                       <div class="row">
                           <div class="col-lg-12 text-right">

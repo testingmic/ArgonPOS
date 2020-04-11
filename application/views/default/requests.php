@@ -139,10 +139,10 @@ $categories = $productsClass->getCategories();
                                         <div>
                                             <h4 class="header-title mt-0 mb-3"><strong><?= $PAGETITLE; ?> Product Details</strong></h4>
                                         </div>
-                                        <div class="save-div hidden">
+                                        <div class="save-div ">
                                             <button data-request="save-reload" type="button" class="btn save-request <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save Record</button>
 
-                                            <button data-request="save-invoice" type="button" class="btn save-request btn-outline-danger"><i class="fa fa-file-pdf"></i> Save & Download</button>
+                                            <button data-request="save-invoice" type="button" class="btn save-request btn-outline-primary"><i class="fa fa-file-pdf"></i> Save & Download</button>
                                         </div>
                                     </div>
                                     <div class="slim-scroll" style="max-height: 275px;min-height: 275px;overflow-x:hidden;overflow-y: auto">

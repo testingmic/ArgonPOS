@@ -158,7 +158,7 @@ if($admin_user->logged_InControlled()) {
 					$results[] = [
 						'row' => "$i.",
 						'order_id' => "<a onclick=\"return getSalesDetails('{$data->order_id}')\" data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$data->order_id}\">#$data->order_id</a> <br> ".ucfirst($data->payment_type),
-						'fullname' => "<a onclick=\"return getSalesDetails('{$data->order_id}')\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$data->order_id}\">{$data->title} {$data->firstname} {$data->lastname}</a>",
+						'fullname' => "{$data->title} {$data->firstname} {$data->lastname}",
 						'phone' => $data->phone_1,
 						'date' => $orderDate,
 						'amount' => "{$clientData->default_currency} {$totalOrder}",
@@ -312,15 +312,17 @@ if($admin_user->logged_InControlled()) {
 				$postData = (OBJECT) array_map("xss_clean", $_POST);
 
 				$query = $posClass->getAllRows(
-					"sales_details b 
+					"sales_details b
+						LEFT JOIN sales a ON a.order_id = b.order_id
 						LEFT JOIN products c ON b.product_id = c.id 
-						INNER JOIN sales a ON a.order_id = b.order_id
 						LEFT JOIN customers d ON a.customer_id = d.customer_id
+						LEFT JOIN branches e ON e.id = a.branchId
+						LEFT JOIN users f ON f.user_id = a.recorded_by
 					", 
 					"c.product_title, b.*, a.order_discount,
 					CONCAT(d.firstname ,' ', d.lastname) AS fullname,
 					a.order_date, a.order_id, d.phone_1 AS contact,
-					a.payment_type
+					a.payment_type, e.branch_name, f.name AS sales_person
 					", 
 					"a.clientId = '{$posClass->clientId}' && b.order_id = '{$postData->salesID}' ORDER BY b.id"
 				);
@@ -332,6 +334,12 @@ if($admin_user->logged_InControlled()) {
 					$message = "
 					<div class=\"row table-responsive\">
 						<table class=\"table table-bordered\">
+							<tr>
+								<td colspan='2' class='text-center'>
+									<strong>Served By: </strong> {$query[0]->sales_person}<br>
+									<strong>Point of Sale: </strong> {$query[0]->branch_name}
+								</td>
+							</tr>
 							<tr>
 								<td><strong>Customer Name</strong>: {$query[0]->fullname}</td>
 								<td align='left'><strong>Transaction ID:</strong>: {$postData->salesID}</td>
@@ -385,11 +393,7 @@ if($admin_user->logged_InControlled()) {
 
 					$message .= "</tbody>
 						</table>
-					</div>
-					<a href=\"{$config->base_url('invoice/'.$postData->salesID)}\" class=\"btn btn-danger btn-sm px-3 float-right\">
-			        	<i class=\"fa fa-file-pdf\"></i> 
-			        	Print Receipt
-			       	</a>";
+					</div>";
 					$status = true;
 				}
 
@@ -2173,6 +2177,12 @@ if($admin_user->logged_InControlled()) {
 
 							// check if the user has permissions to perform this action
 							if($accessObject->hasAccess('update', 'branches')) {
+								// save the previous data set
+								$prevData = $posClass->getAllRows("branches", "*", "clientId='{$session->clientId}' AND branch_id='{$branchData->branchId}'")[0];
+
+								/* Record the initial data before updating the record */
+								$posClass->dataMonitoring('branches', $branchData->branchId, json_encode($prevData));
+
 								// update user data
 								$response = $posClass->updateData(
 									"branches",
@@ -2216,8 +2226,10 @@ if($admin_user->logged_InControlled()) {
 
 			// confirm the user permission to perform this action
 			if($accessObject->hasAccess('update', 'branches')) {
+
 				// get the branch status using the id parsed
 				$query = $pos->prepare("SELECT status FROM branches WHERE id = ? && deleted = ? && clientId = ?");
+				
 				// execute and fetch the record
 				if ($query->execute([$branchData->itemId, '0', $posClass->clientId])) {
 					// get the data
@@ -2245,248 +2257,260 @@ if($admin_user->logged_InControlled()) {
 			}
 		}
 
-		// update the company settings
-		elseif(isset($_POST['updateCompanyDetail']) && confirm_url_id(2, "updateCompanyDetail")) {
-			// assign variables to the data that have been parsed
-			$postData = (Object) array_map('xss_clean', $_POST);
+		// update the store settings
+		elseif(confirm_url_id(2, 'settingsManager')) {
 
-			$status = 500;
+			// save the previous data set
+			$prevData = $posClass->getAllRows("settings", "*", "clientId='{$session->clientId}'")[0];
 
-			// start configuring the dataset
-			if(!isset($postData->company_name) || (empty($postData->company_name))) {
-				// print the error message
-				$message = '<div class="alert alert-danger">Sorry! Company name cannot be empty.</div>';
-			} elseif(!empty($postData->email) && !filter_var($postData->email, FILTER_VALIDATE_EMAIL)) {
-				$message = '<div class="alert alert-danger">Please enter a valid email address</div>';
-			} elseif(!empty($postData->primary_contact) && !preg_match('/^[0-9+]+$/', $postData->primary_contact)) {
-				$message = '<div class="alert alert-danger">Please enter a valid primary contact</div>';
-			} elseif(!empty($postData->secondary_contact) && !preg_match('/^[0-9+]+$/', $postData->secondary_contact)) {
-				$message = '<div class="alert alert-danger">Please enter a valid secondary contact</div>';
-			} else {
-				
-				$uploadDir = 'assets/images/company/';
+			/* Record the initial data before updating the record */
+			$posClass->dataMonitoring('settings', $session->clientId, json_encode($prevData));
 
-				// check if the user has permissions to perform this action
-				if($accessObject->hasAccess('update', 'settings')) {
+			// update the store settings
+			if(isset($_POST['updateCompanyDetail']) && confirm_url_id(3, "updateCompanyDetail")) {
+				// assign variables to the data that have been parsed
+				$postData = (Object) array_map('xss_clean', $_POST);
+
+				$status = 500;
+
+				// start configuring the dataset
+				if(!isset($postData->company_name) || (empty($postData->company_name))) {
+					// print the error message
+					$message = '<div class="alert alert-danger">Sorry! Company name cannot be empty.</div>';
+				} elseif(!empty($postData->email) && !filter_var($postData->email, FILTER_VALIDATE_EMAIL)) {
+					$message = '<div class="alert alert-danger">Please enter a valid email address</div>';
+				} elseif(!empty($postData->primary_contact) && !preg_match('/^[0-9+]+$/', $postData->primary_contact)) {
+					$message = '<div class="alert alert-danger">Please enter a valid primary contact</div>';
+				} elseif(!empty($postData->secondary_contact) && !preg_match('/^[0-9+]+$/', $postData->secondary_contact)) {
+					$message = '<div class="alert alert-danger">Please enter a valid secondary contact</div>';
+				} else {
 					
-					// File path config 
-		            $fileName = basename($_FILES["company_logo"]["name"]); 
-		            $targetFilePath = $uploadDir . $fileName; 
-		            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+					$uploadDir = 'assets/images/company/';
 
-		            // Allow certain file formats 
-		            $allowTypes = array('jpg', 'png', 'jpeg'); 
-		            
-		            // check if its a valid image
-		            if(!empty($fileName) && in_array($fileType, $allowTypes)){
-		            	
-		               	// set a new filename
-		               	$fileName = $uploadDir . random_string('alnum', 25).'.'.$fileType;
+					// check if the user has permissions to perform this action
+					if($accessObject->hasAccess('update', 'settings')) {
+						
+						// File path config 
+			            $fileName = basename($_FILES["company_logo"]["name"]); 
+			            $targetFilePath = $uploadDir . $fileName; 
+			            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
-		                // Upload file to the server 
-		                if(move_uploaded_file($_FILES["company_logo"]["tmp_name"], $fileName)){ 
-		                    $uploadedFile = $fileName;
-		                    $uploadStatus = 1; 
-		                } else { 
-		                    $uploadStatus = 0; 
-		                    $message = '<div class="alert alert-danger">Sorry, only PDF, DOC, JPG, JPEG, & PNG files are allowed to upload.</div>';
-		                }
+			            // Allow certain file formats 
+			            $allowTypes = array('jpg', 'png', 'jpeg'); 
+			            
+			            // check if its a valid image
+			            if(!empty($fileName) && in_array($fileType, $allowTypes)){
+			            	
+			               	// set a new filename
+			               	$fileName = $uploadDir . random_string('alnum', 25).'.'.$fileType;
 
-		            } else { 
-		                $uploadStatus = 0;
-		            }
+			                // Upload file to the server 
+			                if(move_uploaded_file($_FILES["company_logo"]["tmp_name"], $fileName)){ 
+			                    $uploadedFile = $fileName;
+			                    $uploadStatus = 1; 
+			                } else { 
+			                    $uploadStatus = 0; 
+			                    $message = '<div class="alert alert-danger">Sorry, only PDF, DOC, JPG, JPEG, & PNG files are allowed to upload.</div>';
+			                }
 
-		            // clock display
-		            $display_clock = isset($postData->display_clock) ? (int)$postData->display_clock : 0;
-		            // available colors
-		            $themeColors = [
-		            	"danger" => ["bg_colors"=>"bg-danger text-white no-border","bg_color_code"=>"#f5365c", "bg_color_light"=>"#f3adbb",
-		            		"btn_outline" => "btn-outline-danger"
-		            	],
-		            	"indigo" => ["bg_colors"=>"bg-indigo text-white no-border","bg_color_code"=>"#5603ad", "bg_color_light"=>"#5e72e4",
-		            		"btn_outline" => "btn-outline-primary"
-		            	],
-						"orange" => ["bg_colors"=>"bg-orange text-white no-border","bg_color_code"=>"#fb6340", "bg_color_light"=>"#e6987a",
-							"btn_outline" => "btn-outline-warning"
-						],
-						"blue" => ["bg_colors"=>"bg-blue text-white no-border","bg_color_code"=>"#324cdd", "bg_color_light"=>"#97a5f1",
-							"btn_outline" => "btn-outline-info"
-						],
-						"purple" => ["bg_colors"=>"bg-purple text-white no-border","bg_color_code"=>"#8965e0", "bg_color_light"=>"#97a5f1",
-							"btn_outline" => "btn-outline-primary"
-						],
-						"green" => ["bg_colors"=>"bg-green text-white no-border","bg_color_code"=>"#24a46d", "bg_color_light"=>"#2dce89",
-							"btn_outline" => "btn-outline-success"
-						],
-						"teal" => ["bg_colors"=>"bg-teal text-white no-border","bg_color_code"=>"#0da5c0", "bg_color_light"=>"#11cdef",
-							"btn_outline" => "btn-outline-secondary"
-						]
-					];
-		            
-		            // theme color
-		            $theme_color = (in_array($postData->theme_color, array_keys($themeColors))) ? $themeColors[$postData->theme_color] : $themeColors['purple'];
+			            } else { 
+			                $uploadStatus = 0;
+			            }
 
-		            // update user data
-					$response = $posClass->updateData(
-						"settings",
-						"client_name='{$postData->company_name}', client_email='{$postData->email}', client_website='{$postData->website}', primary_contact='{$postData->primary_contact}', secondary_contact='{$postData->secondary_contact}', address_1='{$postData->address}', display_clock='{$display_clock}', theme_color_code='{$postData->theme_color}', theme_color='".json_encode($theme_color)."'
-						",
-						"clientId='{$posClass->clientId}'"
-					);
+			            // clock display
+			            $display_clock = isset($postData->display_clock) ? (int)$postData->display_clock : 0;
+			            // available colors
+			            $themeColors = [
+			            	"danger" => ["bg_colors"=>"bg-danger text-white no-border","bg_color_code"=>"#f5365c", "bg_color_light"=>"#f3adbb",
+			            		"btn_outline" => "btn-outline-danger"
+			            	],
+			            	"indigo" => ["bg_colors"=>"bg-indigo text-white no-border","bg_color_code"=>"#5603ad", "bg_color_light"=>"#5e72e4",
+			            		"btn_outline" => "btn-outline-primary"
+			            	],
+							"orange" => ["bg_colors"=>"bg-orange text-white no-border","bg_color_code"=>"#fb6340", "bg_color_light"=>"#e6987a",
+								"btn_outline" => "btn-outline-warning"
+							],
+							"blue" => ["bg_colors"=>"bg-blue text-white no-border","bg_color_code"=>"#324cdd", "bg_color_light"=>"#97a5f1",
+								"btn_outline" => "btn-outline-info"
+							],
+							"purple" => ["bg_colors"=>"bg-purple text-white no-border","bg_color_code"=>"#8965e0", "bg_color_light"=>"#97a5f1",
+								"btn_outline" => "btn-outline-primary"
+							],
+							"green" => ["bg_colors"=>"bg-green text-white no-border","bg_color_code"=>"#24a46d", "bg_color_light"=>"#2dce89",
+								"btn_outline" => "btn-outline-success"
+							],
+							"teal" => ["bg_colors"=>"bg-teal text-white no-border","bg_color_code"=>"#0da5c0", "bg_color_light"=>"#11cdef",
+								"btn_outline" => "btn-outline-secondary"
+							]
+						];
+			            
+			            // theme color
+			            $theme_color = (in_array($postData->theme_color, array_keys($themeColors))) ? $themeColors[$postData->theme_color] : $themeColors['purple'];
 
-					// Record user activity
-					$posClass->userLogs('settings', $session->clientId, 'Updated the general settings tab of the Company.');
-
-					// continue
-		            $status = 200;
-
-		            $message = "Settings updated";
-
-					// update the client logo
-					if($uploadStatus == 1) {
-						$posClass->updateData(
+			            // update user data
+						$response = $posClass->updateData(
 							"settings",
-							"client_logo='{$uploadedFile}'",
+							"client_name='{$postData->company_name}', client_email='{$postData->email}', client_website='{$postData->website}', primary_contact='{$postData->primary_contact}', secondary_contact='{$postData->secondary_contact}', address_1='{$postData->address}', display_clock='{$display_clock}', theme_color_code='{$postData->theme_color}', theme_color='".json_encode($theme_color)."'
+							",
 							"clientId='{$posClass->clientId}'"
 						);
 
-						$status = 201;
-						$message = $config->base_url($uploadedFile);
+						// Record user activity
+						$posClass->userLogs('settings', $session->clientId, 'Updated the general settings tab of the Company.');
+
+						// continue
+			            $status = 200;
+
+			            $message = "Settings updated";
+
+						// update the client logo
+						if($uploadStatus == 1) {
+							$posClass->updateData(
+								"settings",
+								"client_logo='{$uploadedFile}'",
+								"clientId='{$posClass->clientId}'"
+							);
+
+							$status = 201;
+							$message = $config->base_url($uploadedFile);
+						}
+
+					} else {
+						$message = '<div class="alert alert-danger">Sorry! You do not have the required permissions to perform this action.</div>';
 					}
 
-				} else {
-					$message = '<div class="alert alert-danger">Sorry! You do not have the required permissions to perform this action.</div>';
 				}
 
 			}
 
-		}
+			// update the sales section
+			elseif(isset($_POST["updateSalesDetails"], $_POST["receipt_message"]) && confirm_url_id(3, "updateSalesDetails")) {
+				// assign variables to the data that have been parsed
+				$postData = (Object) $_POST;
 
-		// update the sales section
-		elseif(isset($_POST["updateSalesDetails"], $_POST["receipt_message"]) && confirm_url_id(2, "updateSalesDetails")) {
-			// assign variables to the data that have been parsed
-			$postData = (Object) $_POST;
+				// preset the state
+				$status = 500;
+				$uploadStatus = 0;
+				$workingDays = null;
 
-			// preset the state
-			$status = 500;
-			$uploadStatus = 0;
-			$workingDays = null;
-
-			// working days processing
-			if(isset($postData->opening_days) && !empty($postData->opening_days)) {
-				$workingDays = implode(",", $postData->opening_days);
-			}
-			$print_receipt = isset($postData->print_receipt) ? xss_clean($postData->print_receipt) : null;
-			// update user data
-			$response = $posClass->updateData(
-				"settings",
-				"print_receipt='{$print_receipt}',
-				expiry_notification_days='".xss_clean($postData->exp_notifi_days)."', 
-				allow_product_return='".xss_clean($postData->allow_product_return)."',
-				fiscal_year_start='".xss_clean($postData->fiscal_year_start)."',
-				shop_opening_days='".xss_clean($workingDays)."',
-				default_currency='".xss_clean($postData->default_currency)."',
-				receipt_message='".xss_clean($postData->receipt_message)."',
-				terms_and_conditions='".htmlentities($postData->terms_and_conditions)."'
-				",
-				"clientId='{$posClass->clientId}'"
-			);
-
-			// Record user activity
-			$posClass->userLogs('settings', $session->clientId, 'Updated the sales details tab of the Company.');
-
-			$uploadDir = 'assets/images/company/';
-
-			// File path config 
-	        $fileName = basename($_FILES["company_logo"]["name"]); 
-	        $targetFilePath = $uploadDir . $fileName; 
-	        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-
-	        // Allow certain file formats 
-	        $allowTypes = array('jpg', 'png', 'jpeg'); 
-	        
-	        // check if its a valid image
-	        if(!empty($fileName) && in_array($fileType, $allowTypes)){
-	        	
-	           	// set a new filename
-	           	$fileName = $uploadDir . random_string('alnum', 25).'.'.$fileType;
-
-	            // Upload file to the server 
-	            if(move_uploaded_file($_FILES["company_logo"]["tmp_name"], $fileName)){ 
-	                $uploadedFile = $fileName;
-	                $uploadStatus = 1; 
-	            }
-	        }
-
-	        $status = 201;
-	        $message = "Settings updated";
-	        
-	        if($uploadStatus) {
-		        $posClass->updateData(
-					"settings",
-					"manager_signature='{$uploadedFile}'",
-					"clientId='{$posClass->clientId}'"
-				);
-				$message = $config->base_url($uploadedFile);
-		    }		
-		}
-
-		// save reports information
-		elseif(isset($_POST["saveReportsRecord"]) && confirm_url_id(2, "saveReportsRecord")) {
-			// assign variables to the data that have been parsed
-			$postData = (Object) $_POST;
-
-			// saving the information
-			if(isset($postData->attendantPerformance)) {
-				$posClass->updateData(
-					"settings",
-					"reports_sales_attendant='".xss_clean($postData->attendantPerformance)."'",
-					"clientId='{$posClass->clientId}'"
-				);
-			}
-		}
-
-		// save the reports data
-		elseif(isset($_POST["updateReportDetails"]) && confirm_url_id(2, "updateReportsDetails")) {
-			// assign variables to the data that have been parsed
-			$postData = (Object) $_POST;
-
-			if(isset($postData->squareFeetArea)) {
-
-				// initializing
-				$squareArea = $postData->squareFeetArea;
-				$totalExpenses = 0;
-				$totalSquareFoot = 0;
-
-				// loop through the list of records parsed
-				foreach ($squareArea as $key => $value) {
-					// sum up the total expenses
-					$totalExpenses += ($postData->recurringExpense[$key] + $postData->fixedExpense[$key]);
-					$totalSquareFoot += $value;
-
-					// update the branch information
-					$posClass->updateData(
-						"branches",
-						"square_feet_area='".xss_clean($value)."', 
-						recurring_expenses='".$postData->recurringExpense[$key]."',
-						fixed_expenses='".$postData->fixedExpense[$key]."'",
-						"clientId='{$posClass->clientId}' AND id='{$key}'"
-					);
-
+				// working days processing
+				if(isset($postData->opening_days) && !empty($postData->opening_days)) {
+					$workingDays = implode(",", $postData->opening_days);
 				}
+				$print_receipt = isset($postData->print_receipt) ? xss_clean($postData->print_receipt) : null;
 
-				$posClass->updateData(
+				// update user data
+				$response = $posClass->updateData(
 					"settings",
-					"total_expenditure='".xss_clean($totalExpenses)."',
-					space_per_square_foot='".xss_clean($totalSquareFoot)."'",
+					"print_receipt='{$print_receipt}',
+					expiry_notification_days='".xss_clean($postData->exp_notifi_days)."', 
+					allow_product_return='".xss_clean($postData->allow_product_return)."',
+					fiscal_year_start='".xss_clean($postData->fiscal_year_start)."',
+					shop_opening_days='".xss_clean($workingDays)."',
+					default_currency='".xss_clean($postData->default_currency)."',
+					receipt_message='".xss_clean($postData->receipt_message)."',
+					terms_and_conditions='".htmlentities($postData->terms_and_conditions)."'
+					",
 					"clientId='{$posClass->clientId}'"
 				);
 
 				// Record user activity
-				$posClass->userLogs('settings', $session->clientId, 'Updated the reports details tab of the Company.');
+				$posClass->userLogs('settings', $session->clientId, 'Updated the sales details tab of the Company.');
 
-				$status = 201;
+				$uploadDir = 'assets/images/company/';
+
+				// File path config 
+		        $fileName = basename($_FILES["company_logo"]["name"]); 
+		        $targetFilePath = $uploadDir . $fileName; 
+		        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+
+		        // Allow certain file formats 
+		        $allowTypes = array('jpg', 'png', 'jpeg'); 
+		        
+		        // check if its a valid image
+		        if(!empty($fileName) && in_array($fileType, $allowTypes)){
+		        	
+		           	// set a new filename
+		           	$fileName = $uploadDir . random_string('alnum', 25).'.'.$fileType;
+
+		            // Upload file to the server 
+		            if(move_uploaded_file($_FILES["company_logo"]["tmp_name"], $fileName)){ 
+		                $uploadedFile = $fileName;
+		                $uploadStatus = 1; 
+		            }
+		        }
+
+		        $status = 201;
+		        $message = "Settings updated";
+		        
+		        if($uploadStatus) {
+			        $posClass->updateData(
+						"settings",
+						"manager_signature='{$uploadedFile}'",
+						"clientId='{$posClass->clientId}'"
+					);
+					$message = $config->base_url($uploadedFile);
+			    }		
 			}
+
+			// save reports information
+			elseif(isset($_POST["saveReportsRecord"]) && confirm_url_id(3, "saveReportsRecord")) {
+				// assign variables to the data that have been parsed
+				$postData = (Object) $_POST;
+
+				// saving the information
+				if(isset($postData->attendantPerformance)) {
+					$posClass->updateData(
+						"settings",
+						"reports_sales_attendant='".xss_clean($postData->attendantPerformance)."'",
+						"clientId='{$posClass->clientId}'"
+					);
+				}
+			}
+
+			// save the reports data
+			elseif(isset($_POST["updateReportDetails"]) && confirm_url_id(3, "updateReportsDetails")) {
+				// assign variables to the data that have been parsed
+				$postData = (Object) $_POST;
+
+				if(isset($postData->squareFeetArea)) {
+
+					// initializing
+					$squareArea = $postData->squareFeetArea;
+					$totalExpenses = 0;
+					$totalSquareFoot = 0;
+
+					// loop through the list of records parsed
+					foreach ($squareArea as $key => $value) {
+						// sum up the total expenses
+						$totalExpenses += ($postData->recurringExpense[$key] + $postData->fixedExpense[$key]);
+						$totalSquareFoot += $value;
+
+						// update the branch information
+						$posClass->updateData(
+							"branches",
+							"square_feet_area='".xss_clean($value)."', 
+							recurring_expenses='".$postData->recurringExpense[$key]."',
+							fixed_expenses='".$postData->fixedExpense[$key]."'",
+							"clientId='{$posClass->clientId}' AND id='{$key}'"
+						);
+
+					}
+
+					$posClass->updateData(
+						"settings",
+						"total_expenditure='".xss_clean($totalExpenses)."',
+						space_per_square_foot='".xss_clean($totalSquareFoot)."'",
+						"clientId='{$posClass->clientId}'"
+					);
+
+					// Record user activity
+					$posClass->userLogs('settings', $session->clientId, 'Updated the reports details tab of the Company.');
+
+					$status = 201;
+				}
+			}
+
 		}
 
 		// load payment options of this client
@@ -3037,7 +3061,15 @@ if($admin_user->logged_InControlled()) {
 		            $postData->threshold = (isset($postData->threshold)) ? (int) $postData->threshold : 10;
 		            $postData->image = $uploadedFile;
 
+		            // save the previous data set
+					$prevData = $posClass->getAllRows("products", "*", "clientId='{$session->clientId}' AND id='{$postData->productId}'")[0];
+
+					/* Record the initial data before updating the record */
+					$posClass->dataMonitoring('products', $postData->productId, json_encode($prevData));
+
+		            // update the product information
 		            if($productsClass->updateProduct($postData)){
+		            	// print success message
 						$res->status = "success";
 						$res->message = [
 							"result" => "Product Successfully Updated",
@@ -3429,18 +3461,15 @@ if($admin_user->logged_InControlled()) {
 			$postData = (Object) array_map('xss_clean', $_POST);
 
 			//: validate the user information
-			if(!empty($postData->email) && !filter_var($postData->email, FILTER_VALIDATE_EMAIL)) {
-					$message = "Please enter a valid email address";
-			} elseif(!empty($postData->phone) && !preg_match('/^[0-9+]+$/', $postData->phone)) {
+			if(!empty($postData->phone) && !preg_match('/^[0-9+]+$/', $postData->phone)) {
 				$message = "Please enter a valid contact number";
 			} elseif($postData->userId != $session->userId) {
 				$message = "You are not permitted to update this account.";
 			} else {
 				//: update the user information
-				$stmt = $pos->prepare("UPDATE users SET name=?, phone=?, email=?, gender=? WHERE user_id =?");
+				$stmt = $pos->prepare("UPDATE users SET name=?, phone=?, gender=? WHERE user_id =?");
 				$stmt->execute([
-					$postData->fullName, $postData->phone, 
-					$postData->email, $postData->gender, $postData->userId
+					$postData->fullName, $postData->phone, $postData->gender, $postData->userId
 				]);
 
 				//: update the password column of the user
@@ -3452,6 +3481,53 @@ if($admin_user->logged_InControlled()) {
 			}
 
 		}
+
+		//: delete a user record
+		elseif (isset($_POST['deleteUser'], $_POST['itemId']) && confirm_url_id(2, 'deleteUser')) {
+
+			$status = 'error';
+
+			$itemId = xss_clean($_POST['itemId']);
+
+			// Check User ID Exists
+			$checkData = $posClass->getAllRows("users", "COUNT(*) AS proceed", "user_id='{$itemId}' AND clientId = '{$session->clientId}'");
+			// confirm that the user has the needed permissions
+			if($accessObject->hasAccess('delete', 'users')) {
+
+				// proceed if the user was found
+				if ($checkData != false && $checkData[0]->proceed == '1') {
+					
+					// delete the user from the system
+					$response = $posClass->updateData("users", "status='0'", "user_id='{$itemId}' AND clientId = '{$session->clientId}'");
+
+					if ($response == true) {
+						
+						// check the user who has been deleted
+						if($itemId == $session->userId) {
+							$status = 'success';
+							$message = "You have successfully deleted your account. Your session will end now. Contact Support if you need help restoring it.";
+							
+							// log user activity
+							$posClass->userLogs('user', $itemId, 'You have successfully deleted your account. Your session will end now. Contact Support if you need help restoring it.');
+
+							$session->userId = null;
+							session_destroy();
+						} else {
+							$message = "User Have Been Successfully Deleted.";
+							
+							// log user activity
+							$posClass->userLogs('user', $itemId, 'Deleted the User details.');
+						}
+					} else {
+						$message = "Sorry! User Failed To Delete.";
+					}
+				} else {
+					$message = "Sorry! User Does Not Exists.";
+				}
+			}
+			
+		}
+
 		//: set the response to return
 		$response = [
 			"message"	=> $message,
@@ -3464,6 +3540,7 @@ if($admin_user->logged_InControlled()) {
 		
 		//: begin the queries
 		if(isset($_POST["listCustomers"]) && confirm_url_id(2, "listCustomers")) {
+			
 			//: query for the list of all customers
 			$customersClass = load_class("Customers", "controllers");
 			$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, b.branch_name", "AND a.customer_id != 'WalkIn' {$branchAccess}",
@@ -3521,7 +3598,17 @@ if($admin_user->logged_InControlled()) {
 			else{
 				// update the customer information
                 if($postData->request == "update-record") {
+
+                	// save the previous data set
+					$prevData = $posClass->getAllRows("customers", "*", "clientId='{$session->clientId}' AND customer_id='{$postData->customer_id}'")[0];
+
+					/* Record the initial data before updating the record */
+					$posClass->dataMonitoring('customers', $postData->customer_id, json_encode($prevData));
+
+                	// update the customer details
                     $updateCustomer = $customersObj->quickUpdate($postData);
+
+                    // print success message
                     if(!empty($updateCustomer)){
                         $response->status = 200;
                         $response->message = "Customer data successfully updated";
@@ -3529,6 +3616,8 @@ if($admin_user->logged_InControlled()) {
                 } else {
                     // add the customer information
                     $addCustomer = $customersObj->quickAdd($postData);
+
+                    // print success message
                     if(!empty($addCustomer)){
                         $response->status = 200;
                         $response->message = "Customer data successfully inserted";
@@ -3543,9 +3632,14 @@ if($admin_user->logged_InControlled()) {
 			if(empty($postData->itemId)) {
 				$response->message = "Error processing request";
 			} else {
+
+				// update the customr status
 				$query = $pos->prepare("UPDATE customers SET status='0' WHERE id='{$postData->itemId}' AND clientId='{$session->clientId}'");
+				
 				if($query->execute()) {
+					
 					$posClass->userLogs('customer', $postData->itemId, 'Deleted the customer details.');
+
 					$response->status = true;
 					$response->href = $config->base_url('customers');
 					$response->message = "Customer successfully deleted";
@@ -3560,6 +3654,9 @@ if($admin_user->logged_InControlled()) {
 		// confirm if an id was parsed
 		$itemId = (isset($_POST['itemId'])) ? xss_clean($_POST["itemId"]) : null;
 		
+		// Record user activity
+		$posClass->userLogs('requests', $itemId, 'Deleted the user request from the System.');
+
 		$process = $pos->prepare("UPDATE requests SET deleted = ? WHERE request_id = ?");
 		$process->execute([1, $itemId]);
 
