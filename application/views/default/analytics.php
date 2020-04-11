@@ -1,8 +1,31 @@
 <?php
 $PAGETITLE = "Analytics";
-
+// print " :::: ";
+// print "<br>";
+// print $dateFrom = date("Y-m-01", strtotime("-1 month"));
+// print " :::: ";
+// print $dateTo = date("Y-m-t", strtotime("-1 month"));
+// print "<br>";
+// print " :::: ";
+// print "<br>";
+// print $dateFrom = date("Y-m-01", strtotime("$dateFrom -1 month"));
+// print " :::: ";
+// print $dateTo = date("Y-m-t", strtotime("$dateFrom -1 month"));
+// print "<br>";
+// print " :::: ";
+// exit;
 // include the important files
 require_once "headtags.php";
+
+$filterPeriod = [
+    'today' => 'Today',
+    "this-week" => "This Week",
+    "last-30-days" => "Last 30 Days",
+    "this-month" => "This Month (".date("F").")",
+    "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
+    "same-month-last-year" => "Same Month Last Year",
+    "this-year" => "This Year (January - December ".date("Y").")"
+];
 
 $session->reportingCustomerId = null;
 ?>
@@ -28,14 +51,12 @@ $session->reportingCustomerId = null;
 <div class="container-fluid mt--6">
   
   <div class="row mb-2 pos-reporting">
-      
       <div class="col-lg-9 col-mb-8"></div>
       <div class="col-lg-3 col-mb-4 mb-2">
           <select class="form-control selectpicker" name="periodSelect">
-              <option <?= ($session->reportPeriod == "today") ? "selected" : null ?> value="today">Today</option>
-              <option <?= ($session->reportPeriod == "this-week") ? "selected" : null ?> value="this-week">This Week</option>
-              <option <?= ($session->reportPeriod == "this-month") ? "selected" : null ?> value="this-month">This Month</option>
-              <option <?= ($session->reportPeriod == "this-year") ? "selected" : null ?> value="this-year">This Year</option>
+            <?php foreach($filterPeriod as $key => $value) { ?>
+            <option <?= ($session->reportPeriod == $key) ? "selected" : null ?> value="<?= $key ?>"><?= $value ?></option>
+            <?php } ?>
           </select>
       </div> <!--end col-->
       <div class="col-lg-1 mb-2 hidden">

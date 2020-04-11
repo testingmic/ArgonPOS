@@ -487,6 +487,42 @@ if($admin_user->logged_InControlled()) {
 					$current = "This Month";
 					$display = "Compared to Last Month";
 					break;
+				case 'same-month-last-year':
+					$groupBy = "DATE";
+					$format = "jS M Y";
+					$groupByClause = "GROUP BY DATE(a.order_date)";
+					$groupByInnerClause = "GROUP BY DATE(b.order_date)";
+					$dateFrom = date("Y-m-01", strtotime("this month last year"));
+					$dateTo = date("Y-m-t", strtotime("this month last year"));
+					$datePrevFrom = date("Y-m-01", strtotime("$dateFrom -1 month"));
+					$datePrevTo = date("Y-m-t", strtotime("$dateTo -1 month"));
+					$current = "This Month Last Year";
+					$display = "Compared to ".date("F", strtotime($datePrevFrom))." Last Year";
+					break;
+				case 'last-30-days':
+					$groupBy = "DATE";
+					$format = "jS M Y";
+					$groupByClause = "GROUP BY DATE(a.order_date)";
+					$groupByInnerClause = "GROUP BY DATE(b.order_date)";
+					$dateFrom = date("Y-m-d", strtotime("-30 days"));
+					$dateTo = date("Y-m-d");
+					$datePrevFrom = date("Y-m-d", strtotime("$dateFrom -30 days"));
+					$datePrevTo = date("Y-m-d", strtotime("$datePrevFrom +30 days"));
+					$current = "Last 30 Days";
+					$display = "Compared to Previous 30 days";
+					break;
+				case 'last-month':
+					$groupBy = "DATE";
+					$format = "jS M Y";
+					$groupByClause = "GROUP BY DATE(a.order_date)";
+					$groupByInnerClause = "GROUP BY DATE(b.order_date)";
+					$dateFrom = date("Y-m-01", strtotime("-1 month"));
+					$dateTo = date("Y-m-t", strtotime("-1 month"));
+					$datePrevFrom = date("Y-m-01", strtotime("$dateFrom -1 month"));
+					$datePrevTo = date("Y-m-t", strtotime("$dateFrom -1 month"));
+					$current = "Last Month";
+					$display = "Compared to ".date("F", strtotime($datePrevFrom));
+					break;
 				case 'this-year':
 					$groupBy = "MONTH";
 					$format = "F";
@@ -1353,7 +1389,7 @@ if($admin_user->logged_InControlled()) {
 							$salesTarget = $eachPersonnel->daily_target;
 						} elseif($period == "this-week") {
 							$salesTarget = $eachPersonnel->weekly_target;
-						} elseif($period == "this-month") {
+						} elseif($period == "this-month" || $period == "same-month-last-year") {
 							$salesTarget = $eachPersonnel->monthly_target;
 						} elseif($period == "this-year") {
 							$salesTarget = ($eachPersonnel->monthly_target * 12);
@@ -2229,7 +2265,7 @@ if($admin_user->logged_InControlled()) {
 
 				// get the branch status using the id parsed
 				$query = $pos->prepare("SELECT status FROM branches WHERE id = ? && deleted = ? && clientId = ?");
-				
+
 				// execute and fetch the record
 				if ($query->execute([$branchData->itemId, '0', $posClass->clientId])) {
 					// get the data

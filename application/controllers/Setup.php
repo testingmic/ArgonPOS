@@ -30,11 +30,11 @@ class Setup extends Pos {
 			$stmt = $this->pos->prepare("
 				INSERT INTO settings
 				SET clientId = ?, client_name = ?, client_email = ?, 
-					primary_contact = ?, setup_info = ?
+					primary_contact = ?, setup_info = ?, fiscal_year_start = ?
 			");
 			$stmt->execute([
 				$clientId, $postData->store_name, $postData->store_email, 
-				$postData->contact, $setupInfo
+				$postData->contact, $setupInfo, date("Y-m-d")
 			]);
 
 			// set up the first branch

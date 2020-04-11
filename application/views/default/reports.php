@@ -1,5 +1,5 @@
 <?php
-$PAGETITLE = "Customer Purchases Report";
+$PAGETITLE = "Customer Report";
 
 global $accessObject;
 
@@ -41,6 +41,16 @@ if(confirm_url_id(1)) {
 if(isset($customerDetails->fullname)) {
     // include the important files
     require_once "headtags.php";
+
+    $filterPeriod = [
+      'today' => 'Today',
+      "this-week" => "This Week",
+      "last-30-days" => "Last 30 Days",
+      "this-month" => "This Month (".date("F").")",
+      "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
+      "same-month-last-year" => "Same Month Last Year",
+      "this-year" => "This Year (January - December ".date("Y").")"
+    ];
 ?>
 <!-- Header -->
 <div class="header <?= $clientData->bg_color ?> pb-6">
@@ -60,6 +70,30 @@ if(isset($customerDetails->fullname)) {
     </div>
   </div>
 </div>
+<!-- Page content -->
+<div class="container-fluid mt--6">
+  
+  <div class="row mb-2 pos-reporting">
+    <div class="col-lg-9 col-mb-8"></div>
+    <div class="col-lg-3 col-mb-4 mb-2">
+        <select class="form-control selectpicker" name="periodSelect">
+          <?php foreach($filterPeriod as $key => $value) { ?>
+          <option <?= ($session->reportPeriod == $key) ? "selected" : null ?> value="<?= $key ?>"><?= $value ?></option>
+          <?php } ?>
+        </select>
+    </div> <!--end col-->
+    <div class="col-lg-1 mb-2 hidden">
+        <button class="btn btn-block btn-primary"><i class="fa fa-filter"></i></button>
+    </div>
+
+
+    <div class="col-lg-12 col-sm-12">
+
+
+    </div>
+  </div>
+
+
 
 <?php require_once "foottags.php" ?>
 <script>
