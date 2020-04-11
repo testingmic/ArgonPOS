@@ -2,8 +2,6 @@
 
 class Pos {
 
-	// c1vEi9xGL6
-
 	/* A globl variable to set for the table to query */
 	public $tableName;
 

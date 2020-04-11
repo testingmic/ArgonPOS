@@ -988,7 +988,7 @@ var populatePOSProductsList = (data) => {
 
         var trClass,
         checkbox = `<div class="checkbox checkbox-primary checkbox-single">
-                <input type="checkbox" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-price="${e.price}" data-product-img="${e.image}">
+                <input type="checkbox" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-code="${e.product_code}" data-product-price="${e.price}" data-product-img="${e.image}">
                 <label for="productCheck-${e.product_id}">
                 </label>
             </div>`;
@@ -1000,8 +1000,8 @@ var populatePOSProductsList = (data) => {
             trClass = `title="${e.product_quantity} Stock Quantity Left"`;
         }
 
-        htmlData += `<tr ${trClass} data-toggle="tooltip" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-price="${e.price}" data-product-img="${e.image}" style="transition: all 0.8s ease" data-category="${e.category_id}" data-product_max="${e.product_quantity}">
-            <td>
+        htmlData += `<tr ${trClass} data-toggle="tooltip" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-code="${e.product_code}" data-product-name="${e.product_title}" data-product-price="${e.price}" data-product-img="${e.image}" style="transition: all 0.8s ease" data-category="${e.category_id}" data-product_max="${e.product_quantity}">
+            <td data-product-code="${e.product_code}">
                 ${checkbox}
             </td>
             <td><img class="product-title-cell" src="${e.image}" width="24px"></td>
@@ -2240,8 +2240,11 @@ if($(".make-online-payment").length) {
             $(`select[class~="custom-select2"]`).select2({ width: '280px' });
         },
         onStepChanged(event, currentIndex, newIndex){
-            $(".register-form ul[role='tablist'] li").addClass("disabled")
-            $(".register-form ul[role='tablist'] li.current").removeClass("disabled")
+            $(".register-form ul[role='tablist'] li").addClass("disabled");
+            $(".register-form ul[role='tablist'] li.current").removeClass("disabled");
+            if(currentIndex == productsIndex) {
+                document.getElementById("products-search-input").focus();
+            }
         },
         onStepChanging(event, currentIndex, newIndex){
 
@@ -2420,7 +2423,7 @@ if($(".make-online-payment").length) {
         if(selectedCat == "all" || selectedCat == ""){
             $(`table[id="products-table"] thead tr`).show();
             $(`td.product-title-cell`).parent().hide();
-            $(`td.product-title-cell:Contains(${input})`).parent().show();
+            $(`td.product-title-cell:Contains(${input}), td[data-product-code~="${input}"]`).parent().show();
             ckEmpTb($("#products-table"));
         }
         else{
@@ -3267,111 +3270,115 @@ $(function() {
 
                 populateProductsPerformance(resp.result.sales.products_performance);
 
-                var thisOpts = {
-                    chart: {
-                        height: 374,
-                        type: 'line',
-                        shadow: {
-                            enabled: false,
-                            color: '#bbb',
-                            top: 3,
-                            left: 2,
-                            blur: 3,
-                            opacity: 1
+                if ($("#sales-overview-chart").length) {
+                    
+                    var thisOpts = {
+                        chart: {
+                            height: 374,
+                            type: 'line',
+                            shadow: {
+                                enabled: false,
+                                color: '#bbb',
+                                top: 3,
+                                left: 2,
+                                blur: 3,
+                                opacity: 1
+                            },
+                            zoom: false
                         },
-                        zoom: false
-                    },
-                   
-                    plotOptions: {
-                        bar: {
-                            columnWidth: '30%'
-                        }
-                    },
-                    stroke: {
-                        width: [4, 0],
-                        curve: 'smooth'
-                    },
-                    series: [{
-                        type: 'line',
-                        name: 'Total Sales With Discount',
-                        data: resp.result.sales.discount_effect.with_discount
-                    }, {
-                        type: 'area',
-                        name: 'Total Sales Without Discount',
-                        data: resp.result.sales.discount_effect.without_discount
-                    }],
-                    xaxis: {
-                        type: 'datetime',
-                        categories: resp.result.labeling,
-                        axisBorder: {
-                            show: true,
-                            color: '#bec7e0',
-                        },
-                        axisTicks: {
-                            show: true,
-                            color: '#f1646c',
-                        },
-                    },   
-                    colors: ["#1ecab8", "#f7cda0"],                 
-                    markers: {
-                        size: 4,
-                        opacity: 0.9,
-                        colors: ["#ffbc00"],
-                        strokeColor: "#fff",
-                        strokeWidth: 2,
-                        style: 'hollow',
-                        hover: {
-                            size: 7,
-                        }
-                    },
-                    yaxis: {
-                        title: {
-                            text: 'Sales Values',
-                        },
-                    },
-                    fill: {
-                      type: 'gradient',
-                      gradient: {
-                        gradientToColors: ['#f1646c'],
-                        shadeIntensity: 0.1,
-                        type: 'horizontal',
-                        opacityFrom: 0.7,
-                        opacityTo: 1,
-                        stops: [0, 100, 100, 100]
-                      },
-                    },
-                    tooltip: {
-                        shared: true,
-                        intersect: false,
-                        y: {
-                            formatter: function(y) {
-                                if (typeof y !== "undefined") {
-                                    return companyVariables.cur + formatCurrency(y);
-                                }
-                                return y;
-
+                       
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '30%'
                             }
+                        },
+                        stroke: {
+                            width: [4, 0],
+                            curve: 'smooth'
+                        },
+                        series: [{
+                            type: 'line',
+                            name: 'Total Sales With Discount',
+                            data: resp.result.sales.discount_effect.with_discount
+                        }, {
+                            type: 'area',
+                            name: 'Total Sales Without Discount',
+                            data: resp.result.sales.discount_effect.without_discount
+                        }],
+                        xaxis: {
+                            type: 'datetime',
+                            categories: resp.result.labeling,
+                            axisBorder: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                            axisTicks: {
+                                show: true,
+                                color: '#f1646c',
+                            },
+                        },   
+                        colors: ["#1ecab8", "#f7cda0"],                 
+                        markers: {
+                            size: 4,
+                            opacity: 0.9,
+                            colors: ["#ffbc00"],
+                            strokeColor: "#fff",
+                            strokeWidth: 2,
+                            style: 'hollow',
+                            hover: {
+                                size: 7,
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Sales Values',
+                            },
+                        },
+                        fill: {
+                          type: 'gradient',
+                          gradient: {
+                            gradientToColors: ['#f1646c'],
+                            shadeIntensity: 0.1,
+                            type: 'horizontal',
+                            opacityFrom: 0.7,
+                            opacityTo: 1,
+                            stops: [0, 100, 100, 100]
+                          },
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function(y) {
+                                    if (typeof y !== "undefined") {
+                                        return companyVariables.cur + formatCurrency(y);
+                                    }
+                                    return y;
+
+                                }
+                            }
+                        },
+                        grid: {
+                          row: {
+                            colors: ['transparent', 'transparent'], 
+                            opacity: 0.2
+                          },
+                          borderColor: '#185a9d'
                         }
-                    },
-                    grid: {
-                      row: {
-                        colors: ['transparent', 'transparent'], 
-                        opacity: 0.2
-                      },
-                      borderColor: '#185a9d'
                     }
+
+                    if (periodSelected == 'today') {
+                        delete thisOpts.xaxis.type;
+                    }
+
+                    var chart = new ApexCharts(
+                        document.querySelector("#sales-overview-chart"),
+                        thisOpts
+                    );
+
+                    chart.render();
+
                 }
-
-                if (periodSelected == 'today') {
-                    delete thisOpts.xaxis.type;
-                }
-
-                var chart = new ApexCharts(
-                    document.querySelector("#sales-overview-chart"),
-                    thisOpts
-                );
-
-                chart.render();
 
 
                 if($(`div[class="chart-comparison"]`).length){

@@ -20,6 +20,7 @@ $branchData = $branchData[0];
 $userData = $userData[0];
 
 $storeTheme = (Object) json_decode($clientData->theme_color);
+$setupInfo = (Object) json_decode($clientData->setup_info);
 
 $clientData->bg_color = $storeTheme->bg_colors;
 $clientData->bg_color_code = $storeTheme->bg_color_code;
@@ -43,7 +44,7 @@ function nonWorkingDay($message = "Please note that the Point of Sale is Closed 
   global $clientData, $posClass;
   $openingDays = $clientData->shop_opening_days;
 
-  return '<div class="offline-placeholder main-body-loader" style="display: true">
+  return '<div class="offline-placeholder main-body-loader" style="display: none;">
           <div class="offline-content text-center">
               <p class="alert alert-warning text-white" style="border-radius:0px">'.$message.' Come back on <strong>'.$posClass->stringToArray($openingDays)[0].'</strong></p>
           </div>
@@ -56,6 +57,28 @@ function form_loader() {
             <p><i class="fa fa-spin fa-spinner fa-3x"></i></p>
         </div>
     </div>';
+}
+
+// filters available
+if($setupInfo->type == "alpha") {
+    // alpha account filters
+    $filterPeriod = [
+        "today" => 'Today',
+        "this-week" => "This Week",
+        "last-30-days" => "Last 30 Days",
+        "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
+        "this-month" => "This Month (".date("F").")",
+        "same-month-last-year" => "Same Month Last Year",
+        "this-year" => "This Year (January - December ".date("Y").")",
+        "all-time" => "All Time (".date("jS M Y", strtotime($setupInfo->setup_date))." - till date)",
+    ];
+} else {
+    $filterPeriod = [
+        "today" => 'Today',
+        "this-week" => "This Week",
+        "this-month" => "This Month",
+        "this-year" => "This Year"
+    ];
 }
 ?>
 <!DOCTYPE html>

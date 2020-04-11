@@ -1,30 +1,32 @@
 <?php
-// call global variables
+//: call global variables
 global $session, $pos, $admin_user, $accessObject, $posClass;
-// set the page header type
+//: set the page header type
 header("Content-Type: application/json");
 
-// initializing
+//: initializing
 $response = (object) ["status" => "error", "message" => "Error Processing Request"];
 
-// confirm that the user is logged in
+//: confirm that the user is logged in
 if($admin_user->logged_InControlled()) {
 
-	// create a new object
+	//: create a new object
 	$dateClass = load_class('Dates', 'models');
 	
-	// client data
+	//: client data
 	$clientData = $posClass->getAllRows("settings", "*", "clientId='{$posClass->clientId}'");
 	$branchData = $posClass->getAllRows("branches", "*", "id='{$session->branchId}'");
 	
-	// set the data set
+	//: set the data set
 	$clientData = $clientData[0];
 	$branchData = $branchData[0];
 
-	// create new objects
+	$setupInfo = (Object) json_decode($clientData->setup_info);
+
+	//: create new objects
 	$accessObject->userId = $session->userId;
 	
-	// where clause for the user role
+	//: where clause for the user role
 	$branchAccess = '';
 	$branchAccessInner = '';
 	$accessLimit = '';
@@ -36,7 +38,7 @@ if($admin_user->logged_InControlled()) {
 	$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
 	$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
 
-	// use the access level for limit contents that is displayed
+	//: use the access level for limit contents that is displayed
 	if(!$accessObject->hasAccess('monitoring', 'branches')) {
 		$branchAccess2 = " AND a.branch_id = '{$session->branchId}'";
 		$branchAccess = " AND a.branchId = '{$session->branchId}'";
@@ -46,7 +48,7 @@ if($admin_user->logged_InControlled()) {
 		$accessLimitInner2 = " AND c.recorded_by = '{$session->userId}'";
 	}
 
-	// dashboard inights
+	//: dashboard inights
 	if(confirm_url_id(1, 'dashboardAnalytics')) {
 		
 		if (isset($_POST['getSales']) && confirm_url_id(2, "getSales")) {
@@ -438,7 +440,7 @@ if($admin_user->logged_InControlled()) {
 		exit;
 	}
 
-	// reporting
+	//: reporting
 	elseif(confirm_url_id(1, 'reportsAnalytics')) {
 	 
 		$status = false;
@@ -534,6 +536,18 @@ if($admin_user->logged_InControlled()) {
 					$datePrevTo = date('Y-12-31', strtotime("last day of last year"));
 					$current = "This Year";
 					$display = "Compared to Last Year";
+					break;
+				case 'all-time':
+					$groupBy = "MONTH";
+					$format = "F";
+					$groupByClause = "GROUP BY MONTH(a.order_date)";
+					$groupByInnerClause = "GROUP BY MONTH(b.order_date)";
+					$dateFrom = $setupInfo->setup_date;
+					$dateTo = date('Y-m-d');
+					$datePrevFrom = $setupInfo->setup_date;
+					$datePrevTo = date('Y-m-d');
+					$current = "All Time";
+					$display = "No Comparison";
 					break;
 				default:
 					$groupBy = "HOUR";
@@ -775,21 +789,81 @@ if($admin_user->logged_InControlled()) {
 					$salesPerSquareFeetTrend = ($prevSales->totalPrevSales > 0 && $salesPerSquareFeet > 0) ? $hrClass->percentDifference(floatval($salesPerSquareFeet), (floatval($prevSales->totalPrevSales)/($salesPerSquareFeet))) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
 				}
 
-				$resultData[] = [
-					"column" => "sell-through-percentage",
-					"total" => number_format($sellThroughPercentage, 2) . "%", 
-					"trend" => "Sell Through Percentage"
-				];
-				$resultData[] = [
-					"column" => "gross-margin-return-investment",
-					"total" => $clientData->default_currency . number_format($grossMarginInvestmentReturn, 2), 
-					"trend" => "Gross margin investment returns"
-				];
-				$resultData[] = [
-					"column" => "stock-turnover-rate",
-					"total" => $clientData->default_currency . number_format($stockTurnoverRate, 2), 
-					"trend" => "Total Stock Turnover Rate"
-				];
+				// show this section if the main analytics is been requested
+				if(!$session->reportingCustomerId) {
+					
+					$resultData[] = [
+						"column" => "sell-through-percentage",
+						"total" => number_format($sellThroughPercentage, 2) . "%", 
+						"trend" => "Sell Through Percentage"
+					];
+					$resultData[] = [
+						"column" => "gross-margin-return-investment",
+						"total" => $clientData->default_currency . number_format($grossMarginInvestmentReturn, 2), 
+						"trend" => "Gross margin investment returns"
+					];
+					$resultData[] = [
+						"column" => "stock-turnover-rate",
+						"total" => $clientData->default_currency . number_format($stockTurnoverRate, 2), 
+						"trend" => "Total Stock Turnover Rate"
+					];
+					$resultData[] = [
+						"column" => "average-unit-per-transaction",
+						"total" => number_format($averageUnitPerTransaction, 2),
+						"trend" => $averageUnitPerTransactionTrend . " ".$display
+					];
+					$resultData[] = [
+						"column" => "sales-per-employee",
+						"total" => $clientData->default_currency . number_format($salesPerEmployee, 2),
+						"trend" => $salesPerEmployeeTrend . " ".$display
+					];
+					$resultData[] = [
+						"column" => "gross-profit",
+						"total" => $clientData->default_currency . number_format($grossProfit, 2),
+						"trend" => $grossProfitTrend . " " .$display
+					];
+					$resultData[] = [
+						"column" => "gross-profit-margin",
+						"total" => number_format($grossProfitMargin, 2). "%",
+						"trend" => $grossProfitMarginTrend . " " .$display
+					];
+					$resultData[] = [
+						"column" => "break-even-point",
+						"total" => ($allExpenses > 0 && $grossProfit > 0) ? number_format(($allExpenses/$grossProfit), 2) : 0,
+						"trend" => "Sales Break even Point"
+					];
+					$resultData[] = [
+						"column" => "sales-per-category",
+						"total" => ($inventoryCount > 0) ? $clientData->default_currency . number_format(($totalSales/$inventoryCount), 2) : 0,
+						"trend" => "Sales Per Category"
+					];
+					$resultData[] = [
+						"column" => "net-profit",
+						"total" => $clientData->default_currency . number_format($netProfit, 2),
+						"trend" => $netProfitTrend . " " .$display
+					];
+					$resultData[] = [
+						"column" => "net-profit-margin",
+						"total" => number_format($netProfitMargin, 2). "%",
+						"trend" => $netProfitMarginTrend . " " .$display
+					];
+					$resultData[] = [
+						"column" => "sales-per-square-feet",
+						"total" => $clientData->default_currency . number_format($salesPerSquareFeet, 2),
+						"trend" => $salesPerSquareFeetTrend . " " .$display
+					];
+					$resultData[] = [
+						"column" => "customers-retention-rate",
+						"total" => $customersRetentionRate. "%",
+						"trend" => 'Customers Retention Rate'
+					];
+					$resultData[] = [
+						"column" => "year-over-year-growth",
+						"total" => number_format((($totalSales-$prevSales->totalPrevSales)/$prevSales->totalPrevSales)*100, 2),
+						"trend" => "Year over Year Growth Rate"
+					];
+				}
+
 				$resultData[] = [
 					"column" => "total-sales",
 					"total" => $clientData->default_currency . number_format($totalSales, 2), 
@@ -815,62 +889,7 @@ if($admin_user->logged_InControlled()) {
 					"total" => $clientData->default_currency . number_format($orderDiscount, 2),
 					"trend" => $orderDiscountTrend ." ". $display
 				];
-				$resultData[] = [
-					"column" => "average-unit-per-transaction",
-					"total" => number_format($averageUnitPerTransaction, 2),
-					"trend" => $averageUnitPerTransactionTrend . " ".$display
-				];
-				$resultData[] = [
-					"column" => "sales-per-employee",
-					"total" => $clientData->default_currency . number_format($salesPerEmployee, 2),
-					"trend" => $salesPerEmployeeTrend . " ".$display
-				];
-				$resultData[] = [
-					"column" => "gross-profit",
-					"total" => $clientData->default_currency . number_format($grossProfit, 2),
-					"trend" => $grossProfitTrend . " " .$display
-				];
-				$resultData[] = [
-					"column" => "gross-profit-margin",
-					"total" => number_format($grossProfitMargin, 2). "%",
-					"trend" => $grossProfitMarginTrend . " " .$display
-				];
-				$resultData[] = [
-					"column" => "break-even-point",
-					"total" => ($allExpenses > 0 && $grossProfit > 0) ? number_format(($allExpenses/$grossProfit), 2) : 0,
-					"trend" => "Sales Break even Point"
-				];
-				$resultData[] = [
-					"column" => "sales-per-category",
-					"total" => ($inventoryCount > 0) ? $clientData->default_currency . number_format(($totalSales/$inventoryCount), 2) : 0,
-					"trend" => "Sales Per Category"
-				];
-				$resultData[] = [
-					"column" => "net-profit",
-					"total" => $clientData->default_currency . number_format($netProfit, 2),
-					"trend" => $netProfitTrend . " " .$display
-				];
-				$resultData[] = [
-					"column" => "net-profit-margin",
-					"total" => number_format($netProfitMargin, 2). "%",
-					"trend" => $netProfitMarginTrend . " " .$display
-				];
-				$resultData[] = [
-					"column" => "sales-per-square-feet",
-					"total" => $clientData->default_currency . number_format($salesPerSquareFeet, 2),
-					"trend" => $salesPerSquareFeetTrend . " " .$display
-				];
-				$resultData[] = [
-					"column" => "customers-retention-rate",
-					"total" => $customersRetentionRate. "%",
-					"trend" => 'Customers Retention Rate'
-				];
-				$resultData[] = [
-					"column" => "year-over-year-growth",
-					"total" => number_format((($totalSales-$prevSales->totalPrevSales)/$prevSales->totalPrevSales)*100, 2),
-					"trend" => "Year over Year Growth Rate"
-				];
-
+				
 			}
 
 			// if the user is querying for the sales overview
@@ -1124,7 +1143,7 @@ if($admin_user->logged_InControlled()) {
 					// confirm which record to fetch
 					if($period == "today") {
 						$Labeling[] = $sales_result->hourOfDay;
-					} elseif($period == "this-year") {
+					} elseif(in_array($period, ["this-year", "all-time"])) {
 						$Labeling[] = $sales_result->monthOfSale;
 					} else {
 						$Labeling[] = date('Y-m-d', strtotime($sales_result->dates));
@@ -1181,7 +1200,7 @@ if($admin_user->logged_InControlled()) {
 				}
 
 				// if the period is a year
-				if(in_array($period, ["this-year"])) {
+				if(in_array($period, ["this-year", "all-time"])) {
 					$listing = "year-to-months";
 				}
 
@@ -1476,7 +1495,7 @@ if($admin_user->logged_InControlled()) {
 						FROM
 							customers a
 						WHERE
-							a.status = '1' {$branchAccess} {$clientAccess}
+							1 {$branchAccess} {$clientAccess}
 						ORDER BY total_amount DESC LIMIT 30
 					");
 					$contactsPerformance->execute();
@@ -1639,7 +1658,7 @@ if($admin_user->logged_InControlled()) {
 
 	}
 
-	// fetch customers list for json
+	//: fetch customers list for json
 	elseif(isset($_POST["fetchCustomersOptionsList"]) && confirm_url_id (1, "fetchCustomersOptionsList")) {
 		// fetch the data
 		$customersClass = load_class("Customers", "controllers");
@@ -1654,7 +1673,7 @@ if($admin_user->logged_InControlled()) {
 		];
 	}
 
-	// fetch customers list for json
+	//: fetch customers list for json
 	elseif(isset($_POST["fetchPOSProductsList"]) && confirm_url_id (1, "fetchPOSProductsList")) {
 		// query the database
 		$result = $posClass->getAllRows("products", 
@@ -1701,7 +1720,7 @@ if($admin_user->logged_InControlled()) {
 
 	}
 
-	// point of sale processing
+	//: point of sale processing
 	elseif(confirm_url_id(1, 'pointOfSaleProcessor')) {
 
 		// adding a new customer
@@ -1996,7 +2015,7 @@ if($admin_user->logged_InControlled()) {
 	}
 
 	//: Process requests
-	// Submit to cart for processing
+	//: Submit to cart for processing
 	elseif(isset($_POST['selectedProducts'], $_POST["request"], $_POST["customerId"], $_POST["discountType"], $_POST["discountAmt"]) && confirm_url_id(1, 'pushRequest')) {
 		// #initializing
 		$data = "";
@@ -2377,11 +2396,20 @@ if($admin_user->logged_InControlled()) {
 							],
 							"teal" => ["bg_colors"=>"bg-teal text-white no-border","bg_color_code"=>"#0da5c0", "bg_color_light"=>"#11cdef",
 								"btn_outline" => "btn-outline-secondary"
+							],
+							"darker" => ["bg_colors"=>"bg-gradient-darker text-white no-border","bg_color_code"=>"#000", "bg_color_light"=>"#3c3939",
+								"btn_outline" => "btn-outline-dark"
 							]
 						];
 			            
-			            // theme color
-			            $theme_color = (in_array($postData->theme_color, array_keys($themeColors))) ? $themeColors[$postData->theme_color] : $themeColors['purple'];
+			            // theme color can only be set for alpha accounts
+			            if($setupInfo->type == "alpha") {
+			           		$postData->theme_color = isset($postData->theme_color) ? $postData->theme_color : 'purple';
+			           	} else {
+			           		$postData->theme_color = 'purple';
+			           	}
+
+			            $theme_color = (in_array($postData->theme_color, array_keys($themeColors))) ? $themeColors[$postData->theme_color] : $themeColors[$postData->theme_color];
 
 			            // update user data
 						$response = $posClass->updateData(
@@ -3751,6 +3779,7 @@ if($admin_user->logged_InControlled()) {
            		'result' => $categories
            	];
 		}
+
 		elseif(isset($_POST["name"], $_POST["dataset"]) && confirm_url_id(2, 'saveCategory')) {
 			$postData = (Object) array_map("xss_clean", $_POST);
 
@@ -3785,6 +3814,7 @@ if($admin_user->logged_InControlled()) {
 			}
 
 		}
+
 		elseif(isset($_POST["itemId"], $_POST["itemToDelete"]) && confirm_url_id(2, 'deleteCategory')) {
 			$postData = (Object) array_map("xss_clean", $_POST);
 
@@ -3807,6 +3837,7 @@ if($admin_user->logged_InControlled()) {
 				}
 			}
 		}
+
 	}
 
 	//: Import manager
@@ -4057,8 +4088,10 @@ if($admin_user->logged_InControlled()) {
 
 	//: Return product
 	elseif(confirm_url_id(1, "returnOrderProcessor")) {
+		
 		//: search for product
 		if(confirm_url_id(2, 'searchOrder')) {
+			
 			//: order id
 			$orderId = xss_clean($_POST["orderId"]);
 
@@ -4073,7 +4106,27 @@ if($admin_user->logged_InControlled()) {
 				'orderDetails' => $data,
 				'count' => count($data)
 			];
+
 		}
+
+	}
+
+	//: Notification handler
+	elseif(confirm_url_id(1, "notificationHandler")) {
+
+		//: enter this yard
+		if(isset($_POST["confirmWelcomeNotice"]) && confirm_url_id(2, "seenWelcome")) {
+
+	        //: notification loaders
+			$notify = load_class('Notifications', 'controllers');
+			$notify->setUserSeen($session->clientId, 'welcomeNote');
+
+	        //: return a status of success
+	        $response->status = "success";
+	        $response->message = "Initializing Notification Seen.";
+
+		}
+
 	}
 
 }

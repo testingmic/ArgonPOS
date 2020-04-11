@@ -1,31 +1,11 @@
 <?php
+// header
 $PAGETITLE = "Analytics";
-// print " :::: ";
-// print "<br>";
-// print $dateFrom = date("Y-m-01", strtotime("-1 month"));
-// print " :::: ";
-// print $dateTo = date("Y-m-t", strtotime("-1 month"));
-// print "<br>";
-// print " :::: ";
-// print "<br>";
-// print $dateFrom = date("Y-m-01", strtotime("$dateFrom -1 month"));
-// print " :::: ";
-// print $dateTo = date("Y-m-t", strtotime("$dateFrom -1 month"));
-// print "<br>";
-// print " :::: ";
-// exit;
+
 // include the important files
 require_once "headtags.php";
 
-$filterPeriod = [
-    'today' => 'Today',
-    "this-week" => "This Week",
-    "last-30-days" => "Last 30 Days",
-    "this-month" => "This Month (".date("F").")",
-    "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
-    "same-month-last-year" => "Same Month Last Year",
-    "this-year" => "This Year (January - December ".date("Y").")"
-];
+global $setupInfo, $clientData, $filterPeriod;
 
 $session->reportingCustomerId = null;
 ?>

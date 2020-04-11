@@ -1,7 +1,13 @@
 <?php
 /**
- * Create a class for easily accessing the database and making modifications
- * in a object oriented manner
+ * Downloads 
+ *
+ * Manages all file downloads on the server
+ *
+ * @package		POS
+ * @subpackage	Downloads Super Class
+ * @category	File Downloads
+ * @author		VisamiNetSolutions Dev Team
  */
 
 class Downloads extends Pos {

@@ -85,8 +85,8 @@ a[href="#finish"] {
                       <?php endif ?>
                     </select>
                   </div>  
-                  <div class="col-4 ml-auto mb-2">
-                    <input type="text" id="products-search-input" class="form-control" placeholder="Search">
+                  <div class="col-lg-6 ml-auto mb-2">
+                    <input type="text" id="products-search-input" class="form-control" placeholder="Search / Scan Product">
                   </div>  
                   <div class="col-sm-12">
                     <dv class="card shadow-none products-table-card slim-scroll" style="max-height: 330px;overflow-y: auto">

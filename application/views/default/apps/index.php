@@ -329,6 +329,18 @@ require "header.php"
                 <div class="d-flex align-items-center">
                   <div>
                     <div class="icon icon-xs icon-shape bg-white shadow rounded-circle text-muted">
+                      <i class="fas fa-wrench"></i>
+                    </div>
+                  </div>
+                  <div>
+                    <span class="pl-2 text-white">Customized Theme Color</span>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <div class="icon icon-xs icon-shape bg-white shadow rounded-circle text-muted">
                       <i class="fas fa-money-check"></i>
                     </div>
                   </div>
@@ -345,7 +357,7 @@ require "header.php"
                     </div>
                   </div>
                   <div>
-                    <span class="pl-2 text-white">Advanced Analytics & Reports</span>
+                    <span class="pl-2 text-white">Advanced Analytics Filter</span>
                   </div>
                 </div>
               </li>

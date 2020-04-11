@@ -88,6 +88,7 @@ GLOBAL $SITEURL, $session;
 # Run some checks on the URL
 // set the dashboard main file
 $dashboard = config_item('default_view_path').strtolower(PREG_REPLACE('/[^\w_]-/','', "dashboard")).'.php';
+
 // set the main file to display
 $parent_file = config_item('default_view_path').strtolower(PREG_REPLACE('/[^\w_]-/','',$SITEURL[0])).'.php';
 

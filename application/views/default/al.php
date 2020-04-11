@@ -30,16 +30,13 @@ if(isset($_POST["username"], $_POST["password"]) && confirm_url_id(1, "dL")) {
 	$password = xss_clean($_POST["password"]);
 	$href = isset($_POST["href"]) ? xss_clean($_POST["href"]) : "";
 
-	if(strlen($username) < 4) {
-		
+	if(!filter_var($username, FILTER_VALIDATE_EMAIL)) {
 		$data = "<div class='alert alert-danger'>Sorry! Invalid username/password</div>";
-
 	} else if(strlen($username) < 8) {
 		
 		$data = "<div class='alert alert-danger'>Sorry! Invalid username/password</div>";
 
 	} else {
-		
 		// submit credentials to the users class to process
 		if ($auth->processLogin($username, $password, $href)->status) {
 			$status = 200;

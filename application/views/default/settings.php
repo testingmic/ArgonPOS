@@ -29,7 +29,7 @@ $expiryRange = [
   '6 MONTH' => 'Six Months (Semi Annually)'
 ];
 
-$themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal"];
+$themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal", "darker"];
 ?>
 <!-- Page Content-->
 <!-- Header -->
@@ -130,6 +130,9 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal"]
                                 <label for="address">Address</label>
                                 <input value="<?= $clientData->address_1 ?>" placeholder="Address" type="text" class="form-control" name="address" id="address">
                               </div>
+                              <?php
+                              // Theme colors available in alpha version
+                              if($setupInfo->type == "alpha") { ?>
                               <div class="form-group">
                                 <label for="theme_color">Theme Color</label>
                                 <select name="theme_color" id="theme_color" class="form-control selectpicker">
@@ -141,6 +144,7 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal"]
                                 ?>
                               </select>
                               </div>
+                              <?php } ?>
                             </div>
                             <div class="col-md-4">
                               <div class="form-group">

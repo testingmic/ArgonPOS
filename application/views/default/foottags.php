@@ -83,8 +83,14 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-    <?php } ?>
-  <!-- Argon Scripts -->
+  <?php } ?>
+<!-- Argon Scripts -->
+<?php 
+// notification loaders
+$notify = load_class('Notifications', 'controllers');
+$welcomeNote = $notify->welcomeNotice();
+?>
+<div class="notification-content"></div>
 <!-- Core -->
 <script src="<?= $baseUrl ?>assets/vendor/jquery/dist/jquery.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -102,7 +108,7 @@
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
 <?php } ?>
-<?php if(in_array($SITEURL[0], ["reports-customers", "analytics", "dashboard", "index"])) { ?>
+<?php if(in_array($SITEURL[0], ["reports", "analytics", "dashboard", "index"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/apexcharts/apexcharts.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
@@ -126,6 +132,16 @@
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
 <script src="<?= $baseUrl ?>assets/js/_js.v1.js"></script>
 <script>
+<?php
+// check the welcome notice
+if(!empty($welcomeNote)) {  
+  // print the welcome notice
+  $welcomeNote = (Object) $welcomeNote;
+  print "$(`div[class='notification-content']`).html(`{$welcomeNote->content}`);\n";
+  print "$(`div[class~='{$welcomeNote->modal}']`).modal({backdrop: 'static', keyboard: false});\n";
+  print "{$welcomeNote->function};\n";
+}
+?>
 <?php if($clientData->display_clock) { ?>
 // live clock
 var clock_tick = function clock_tick() {

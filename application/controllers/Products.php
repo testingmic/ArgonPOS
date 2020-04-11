@@ -223,7 +223,7 @@ class Products extends Pos {
 	}
 
 	private function generate_product_id(){
-		return self::PRODUCTID_PREFIX.random_string("alnum", 12);
+		return self::PRODUCTID_PREFIX.random_string("nozero", 8);
 	}
 
 

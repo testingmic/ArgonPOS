@@ -1,6 +1,6 @@
 <?php 
 global $page_header, $config;
-$baseUrl = $config->base_url('app');
+$baseUrl = $config->base_url('app/');
 ?>
 <!DOCTYPE html>
 <html>
@@ -65,7 +65,7 @@ $baseUrl = $config->base_url('app');
              </a>
            </li>
            <li class="nav-item">
-             <a href="<?= $baseUrl ?>/register" class="nav-link">
+             <a href="<?= $baseUrl ?>register" class="nav-link">
                <span class="nav-link-inner--text">Free Trial</span>
              </a>
            </li>
