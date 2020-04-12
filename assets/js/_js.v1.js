@@ -1755,6 +1755,17 @@ async function fetchBranchLists() {
 }
 fetchBranchLists();
 
+var triggerPrintReceipt = () => {
+    $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
+        let orderId = $(this).data('sales-id');
+        window.open(
+            `${baseUrl}receipt/${orderId}`,
+            `Sales Invoice - Receipt #${orderId}`,
+            `width=650,height=750,resizable,scrollbars=yes,status=1`
+        );
+    });
+}
+
 function cusPurHis() {
                     
     let userId = $(`a[class="view-user-sales"]`).attr('data-value');
@@ -1797,11 +1808,11 @@ function cusPurHis() {
 
                 trData += `<tr>`;
                 trData += `<td>${count}</td>`;
-                trData += `<td><a class="get-sales-details text-success" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a></td>`;
+                trData += `<td><a onclick="return getSalesDetails('${e.order_id}')" class="get-sales-details text-success" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a></td>`;
                 trData += `<td>${companyVariables.cur} ${e.order_amount_paid}</td>`;
                 trData += `<td>${e.order_date}</td>`;
                 trData += `<td>${creditBadge}</td>`;
-                trData += `<td><a href="${baseUrl}invoice/${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
+                trData += `<td><a href="javascript:void(0);" class="print-receipt" data-sales-id="${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
                 trData += `</tr>`;
             });
 
@@ -1816,7 +1827,9 @@ function cusPurHis() {
                 "dom": "Bfrtip",
             });
 
-        }, complete: function(data) {}, error: function(err) {
+        }, complete: function(data) {
+            triggerPrintReceipt();
+        }, error: function(err) {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                 <p align="center">No records found.</p>
             `);
@@ -3183,7 +3196,7 @@ $(function() {
             },
             success: function(resp) {
                 $.each(resp.result, function(i, e) {
-                    $(`div[data-report="${e.column}"] h3[class="my-3"]`).html(e.total);
+                    $(`div[data-report="${e.column}"] h3[class~="my-3"]`).html(e.total);
                     $(`div[data-report="${e.column}"] p[class~="text-truncate"]`).html(e.trend);
                 });
             },
@@ -3728,7 +3741,7 @@ $(function() {
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
                         trData += `<td>${companyVariables.cur}${e.order_amount_paid}</td>`;
                         trData += `<td>${e.order_date}</td>`;
-                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="${baseUrl}invoices/${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
+                        trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
                         trData += `</tr>`;
                     });
 
@@ -3739,7 +3752,9 @@ $(function() {
                     $(`table[class~="orderHistory"]`).DataTable();
 
                 },
-                complete: function(data) {},
+                complete: function(data) {
+                    triggerPrintReceipt();
+                },
                 error: function(err) {
                     $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                         <p align="center">No records found.</p>

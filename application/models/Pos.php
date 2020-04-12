@@ -392,7 +392,7 @@ class Pos {
 	public function getAllRows($table, $columns, $where_clause = 1) {
 		$response = false;
 		$stmt = $this->pos->prepare("SELECT {$columns} FROM {$table} WHERE {$where_clause}");
-		// print ("SELECT {$columns} FROM {$table} WHERE {$where_clause}");
+		//print ("SELECT {$columns} FROM {$table} WHERE {$where_clause}");
 		if ($stmt->execute()) {
 			$response = $stmt->fetchAll(PDO::FETCH_OBJ);
 		}

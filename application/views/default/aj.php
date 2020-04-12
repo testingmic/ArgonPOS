@@ -35,6 +35,7 @@ if($admin_user->logged_InControlled()) {
 	$customerLimitInner = '';
 	$accessLimitInner2 = '';
 	$branchAccess2 = '';
+	$customerLimitInner2 = '';
 	$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
 	$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
 
@@ -46,6 +47,13 @@ if($admin_user->logged_InControlled()) {
 		$accessLimit = " AND a.recorded_by = '{$session->userId}'";
 		$accessLimitInner = " AND b.recorded_by = '{$session->userId}'";
 		$accessLimitInner2 = " AND c.recorded_by = '{$session->userId}'";
+	}
+
+	//: if the customer id is set
+	if(!empty($session->reportingCustomerId)) {
+		$customerLimit = " AND a.customer_id = '{$session->reportingCustomerId}'";
+		$customerLimitInner = " AND b.customer_id = '{$session->reportingCustomerId}'";
+		$customerLimitInner2 = " AND c.customer_id = '{$session->reportingCustomerId}'";
 	}
 
 	//: dashboard inights
@@ -461,6 +469,14 @@ if($admin_user->logged_InControlled()) {
 			// set the range in a session
 			if(isset($postData->salesPeriod)) {
 				$session->set_userdata("reportPeriod", $period);
+			}
+
+			// alpha filters
+			$alphaFilters = ["last-month", "last-30-days", "same-month-last-year", "all-time"];
+
+			/* Check the filters that the user has submitted */
+			if(($setupInfo->type != "alpha") && in_array($period, $alphaFilters)) {
+				// $period = 'this-week';
 			}
 
 			// Check Sales Period
@@ -979,7 +995,7 @@ if($admin_user->logged_InControlled()) {
 							WHERE 
 								c.deleted='0' AND b.product_id = a.id AND
 								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
 						) AS orders_count,
 						(
 							SELECT 
@@ -989,7 +1005,7 @@ if($admin_user->logged_InControlled()) {
 							WHERE 
 								c.deleted='0' AND b.product_id = a.id AND
 								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
 						) AS totalQuantitySold,
 						(
 							SELECT 
@@ -999,7 +1015,7 @@ if($admin_user->logged_InControlled()) {
 							WHERE 
 								c.deleted='0' AND b.product_id = a.id AND
 								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
 						) AS totalProductsSoldCost,
 						(
 							SELECT 
@@ -1009,7 +1025,7 @@ if($admin_user->logged_InControlled()) {
 							WHERE 
 								c.deleted='0' AND b.product_id = a.id AND
 								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
 						) AS totalProductsRevenue,
 						(
 							SELECT 
@@ -1019,7 +1035,7 @@ if($admin_user->logged_InControlled()) {
 							WHERE 
 								c.deleted='0' AND b.product_id = a.id AND
 								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$clientAccessInner} {$accessLimitInner2}
+								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
 						) AS totalProductsProfit
 					FROM 
 						products a
@@ -1507,9 +1523,9 @@ if($admin_user->logged_InControlled()) {
 						if($result->total_amount > 0) {
 							$row++;
 							$result->row_id = $row;
-							$result->fullname = "<a href=\"{$config->base_url('reports/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$result->customer_id}\" class=\"customer-orders\" data-name=\"{$result->customer_name}\">{$result->customer_name}</a>";
+							$result->fullname = "<a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$result->customer_id}\" class=\"customer-orders\" data-name=\"{$result->customer_name}\">{$result->customer_name}</a>";
 
-							$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('reports/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
+							$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
 
 							$result->total_amount = "{$clientData->default_currency} ".number_format($result->total_amount, 2);
 							$resultData[] = $result;
@@ -3637,7 +3653,7 @@ if($admin_user->logged_InControlled()) {
 		        	$eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a>";
 		        } 
 
-		        $eachCustomer->action .= "&nbsp;<a href=\"{$config->base_url('reports/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
+		        $eachCustomer->action .= "&nbsp;<a href=\"{$config->base_url('customer-detail/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
 
 		        if($accessObject->hasAccess('delete', 'customers')) {
                     $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('aj/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";

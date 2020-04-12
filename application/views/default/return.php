@@ -158,12 +158,16 @@ if(confirm_url_id(1)) {
                         </div>
 
                         <div class="col-lg-5 col-md-12">
-                          
+                          <div class="">
+                            
+                          </div>
                           <div style="display: flex;flex-direction: row;width: 100%;justify-content: space-between;">
                             <div>
+
                               <?php if($productsQuantity == 1) { ?>
 
                                <?php } ?> 
+
                             </div>
                             <div>
                               <button data-order-id="<?= $orderId ?>" class="btn <?=  $clientData->btn_outline; ?> return-all">
