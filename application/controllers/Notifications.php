@@ -16,9 +16,14 @@ class Notifications extends Pos {
 
 	// This is the response general response to be returned
 	public $notice = null;
+	public $message = null;
 
 	// This is the global variable that checks if a notification is available for display
 	public $notificationAvailable = false;
+
+	const TRIAL = "trial";
+	const BASIC = "basic";
+	const ALPHA = "alpha";
 
 	public function __construct($curClientId = null) {
 		parent::__construct();
@@ -163,6 +168,13 @@ class Notifications extends Pos {
 		return (bool) (!in_array($this->curClientId, $seenList));
 	}
 
+	/**
+	 * Set the user as having seen the notification
+	 * @param string $clientId The id of the client
+	 * @param string $uniqueId This is the unique id of the notification
+	 * @param string $noteType This is the unique name of the notification 
+	 * @return bool
+	 **/
 	public function setUserSeen($clientId, $uniqueId, $noteType) {
 
 		try {
@@ -223,5 +235,24 @@ class Notifications extends Pos {
 
 	}
 
+	/**
+	 * Check the user type and print the notice to the user
+	 * @return bool
+	 **/
+	public function accountNotification() {
+
+		/* Confirm the user type */
+		if($this->setupInfo->type == self::TRIAL) {
+
+			/* Check the date span */
+			$daysRemaining = $this->daysDiff(date("Y-m-d"), $this->setupInfo->expiry_date);
+
+			/* Print the notice */
+			$this->message = "You have <strong>{$daysRemaining} days left</strong> 
+				to end your trial version.<br><a href=\"{$this->config->base_url('billing')}\" class=\"btn btn-success\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
+		}
+
+		return $this->message;
+	}
 }
 ?>

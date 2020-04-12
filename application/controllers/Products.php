@@ -153,10 +153,8 @@ class Products extends Pos {
 
 	public function addProduct(stdClass $product){
 
-		$productId = $this->generate_product_id();
-
 		$params = [
-			$productId,
+			$product->productId,
 			'db', $this->session->currentBranchId, 
 			$this->clientId,
 			$product->category,

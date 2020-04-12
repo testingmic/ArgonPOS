@@ -175,7 +175,10 @@ class Pos {
 
 		// process the request
 		$stmt = $this->pos->prepare("
-				SELECT id AS rowId FROM {$tableName} WHERE clientId = ? ORDER BY id DESC LIMIT 1
+			SELECT id AS rowId 
+			FROM {$tableName} 
+			WHERE clientId = ? 
+			ORDER BY id DESC LIMIT 1
 		");
 		$stmt->execute([$clientId]);
 
@@ -577,44 +580,54 @@ class Pos {
 	 **/
 	public function revertTransaction($clientId = null) {
 
-      try {
+	    try {
 
-      	// set the client id
-      	$clientId = (empty($clientId)) ? $this->clientId : $clientId;
+	      	// set the client id
+	      	$clientId = (empty($clientId)) ? $this->clientId : $clientId;
 
-        // fetch the sale item
-        $stmt = $this->pos->prepare("
-          SELECT * FROM sales WHERE revert = ? AND clientId = ?
-        ");
-        $stmt->execute([1, $clientId]);
+	        // fetch the sale item
+	        $stmt = $this->pos->prepare("
+	          SELECT * FROM sales WHERE revert = ? AND clientId = ?
+	        ");
+	        $stmt->execute([1, $clientId]);
 
-        // loop through each sale
-        while($eachSale = $stmt->fetch(PDO::FETCH_OBJ)) {
+	        // loop through each sale
+	        while($eachSale = $stmt->fetch(PDO::FETCH_OBJ)) {
 
-          // foreach sale record fetch the sales details
-          $stmt2 = $this->pos->prepare("
-            SELECT * FROM sales_details WHERE order_id = ?
-          ");
-          $stmt2->execute([$eachSale->order_id]);
+		        // foreach sale record fetch the sales details
+		        $stmt2 = $this->pos->prepare("
+		           SELECT * FROM sales_details WHERE order_id = ?
+		        ");
+		        $stmt2->execute([$eachSale->order_id]);
 
-          // loop through the list and update the table respectively
-          while($eachDetail = $stmt2->fetch(PDO::FETCH_OBJ)) {
-            
-            // update the equivalent product information
-            $this->pos->query("UPDATE products SET quantity = (quantity+{$eachDetail->product_quantity}) WHERE id = '{$eachDetail->product_id}'");
-          }
+		        // loop through the list and update the table respectively
+		        while($eachDetail = $stmt2->fetch(PDO::FETCH_OBJ)) {
+		            
+		            // update the equivalent product information
+		            $this->pos->query("UPDATE products SET quantity = (quantity+{$eachDetail->product_quantity}) WHERE id = '{$eachDetail->product_id}'");
+		        }
 
-          // record the activity
-          $this->userLogs('pos-revert', $eachSale->order_id, 'The Transaction recorded at the Point of Sale has been reverted. Reason: Unable to process payment.');
+	          	// record the activity
+	          	$this->userLogs('pos-revert', $eachSale->order_id, 'The Transaction recorded at the Point of Sale has been reverted. Reason: Unable to process payment.');
 
-          // update the sale record when the process is done
-          $this->pos->query("UPDATE sales SET revert = '0' WHERE id = '{$eachSale->id}'");
-        }
+	          	// update the sale record when the process is done
+	          	$this->pos->query("UPDATE sales SET revert = '0' WHERE id = '{$eachSale->id}'");
+	        }
 
-        return true;
-      } catch(PDOException $e) {
-        return false;
-      }
+	        return true;
+	    } catch(PDOException $e) {
+	        return false;
+	    }
+
+    }
+
+
+    public function daysDiff($startDate, $endDate) {
+
+    	$diff = strtotime($endDate) - strtotime($startDate);
+    	$diff = round($diff/(60*60*24));
+
+    	return $diff;
     }
 }
 ?>

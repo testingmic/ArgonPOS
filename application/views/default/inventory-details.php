@@ -153,45 +153,39 @@ if(isset($branch->branch_name)) {
                                       <option value="New">New Product</option>
                                   </select>
                               </div>
-                              
+                              <div class="col-md-12 mb-3">
+                                  <div class="new-product">
+                                      <label for="title" class="text-primary-light">Product Code</label>
+                                      <input type="text" placeholder="Enter product Code (Optional)" class="form-control" name="product_code" required="">
+                                  </div>
+                              </div>
                               <div class="col-md-12 mb-3">
                                   <div class="new-product">
                                       <label for="title" class="text-primary-light">Product Title</label>
                                       <input type="text" placeholder="Enter product title" class="form-control" name="title" required="">
-                                  </div>
-                                  <div class="existing-product hidden">
-                                      <label for="product_id" class="text-primary-light">Select Product</label>
-                                      <select name="product_id" id="product_id" class="form-control selectpicker">
-                                          <option value="null">Please Select</option>
-                                          <?php
-                                          foreach ($allProducts as $eachProduct) {
-                                              echo "<option data-cost-price=\"{$eachProduct->cost_price}\" data-retail-price=\"{$eachProduct->product_price}\" data-threshold=\"{$eachProduct->threshold}\" data-quantity=\"{$eachProduct->quantity}\" data-image=\"{$eachProduct->image}\" value=\"{$eachProduct->pid}\">{$eachProduct->product_title} ({$eachProduct->quantity} left)</option>";
-                                          }
-                                          ?>
-                                      </select>
                                   </div>
                               </div>
                               <div class="col-md-12 mb-3">
                                   <label for="cost" class="text-primary-light">Supply Cost</label>
                                   <div class="input-group">
                                       <div class="input-group-prepend"><span class="input-group-text"><?= $clientData->default_currency ?></span></div>
-                                      <input type="number" step="0.1" value="0.00" class="form-control" name="cost">
+                                      <input type="number" step="0.1" value="" class="form-control" name="cost">
                                   </div>
                               </div>
                               <div class="col-md-12 mb-3">
                                   <label for="price" class="text-primary-light">Retail Price</label>
                                   <div class="input-group">
                                       <div class="input-group-prepend"><span class="input-group-text"><?= $clientData->default_currency ?></span></div>
-                                      <input type="number" step="0.1" value="0.00" class="form-control" name="price">
+                                      <input type="number" step="0.1" value="" class="form-control" name="price">
                                   </div>
                               </div>
                               <div class="col-md-12 mb-3">
                                   <label for="quantity" class="text-primary-light">Quantity</label>
-                                  <input type="number" step="1" value="0" class="form-control" min="0" name="quantity">
+                                  <input type="number" step="1" value="" class="form-control" min="0" name="quantity">
                               </div>
                               <div class="col-md-12 mb-3">
                                   <label for="threshold" class="text-primary-light">Threshold</label>
-                                  <input type="number" step="1" value="0" class="form-control" min="0" name="threshold">
+                                  <input type="number" step="1" value="" class="form-control" min="0" name="threshold">
                               </div>
                           </div>
                           <div class="col-md-6">
@@ -235,7 +229,7 @@ if(isset($branch->branch_name)) {
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-                      <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Add Product</button>
+                      <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i  class="fa fa-save"></i> Add Product</button>
                   </div>
                   <div class="form-results text-center"></div>
               </div>

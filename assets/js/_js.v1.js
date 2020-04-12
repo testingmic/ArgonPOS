@@ -595,6 +595,7 @@ if($(`table[class~="productsList"]`).length) {
         $(`input[name="categoryId"]`).val('');
         $(`input[name="request"]`).val("add");
         $(`div[class~="categoryModal"]`).modal('show');
+        document.getElementById("categoryModal").focus();
     });
 
     $(`div[class~="categoryModal"] button[type="submit"]`).on('click', function() {

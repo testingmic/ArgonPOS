@@ -2725,13 +2725,10 @@ if($admin_user->logged_InControlled()) {
 
 						$message[] = [
 							'row_id' => $i,
-							'product_name' => "<img src=\"".(($product->source == 'Vend') ? $product->product_image : ((!empty($product->product_image) && file_exists("assets/images/products/".$product->product_image) ? $config->base_url("assets/images/products/{$product->product_image}") : (empty($product->product_image) ? $config->base_url("assets/images/products/default.png") : $config->base_url($product->product_image)))))."\" alt=\"\" height=\"52\">
-			                    <p class=\"d-inline-block align-middle mb-0\">
-			                        <a href=\"{$baseUrl}products/{$product->pid}\" class=\"d-inline-block align-middle mb-0 product-name\">
-			                        {$product->product_title}</a> 
-			                        <br>
-			                        ".(($product->source == 'Vend') ? "<span class='badge badge-success'> {$product->source}</span>" : null)."
-			                    </p>",
+							'product_name' => "
+							<a href=\"{$baseUrl}products/{$product->pid}\" class=\"b-0 product-name\">{$product->product_title}</a><br>
+							ID: <strong>{$product->product_id}</strong>
+							",
 			                'category' => $product->category,
 			                'price' => "{$clientData->default_currency} {$price}",
 			                'quantity' => "<div class='text-center'>{$product->quantity}</div>",
@@ -3017,9 +3014,15 @@ if($admin_user->logged_InControlled()) {
 			];
 			$imgDir = "assets/images/products";
 
+			// if the user wants to add a new product
 			if(isset($_POST['addProduct']) && confirm_url_id(2, 'addProduct')){
 
-				if(($_POST["product_type"] == "New") && (empty($_POST['category']) || ($_POST['category'] == "null"))) {
+				// check the product code 
+				if(!empty($_POST["product_code"]) && ($posClass->countRows("products", "product_id='".xss_clean($_POST["product_code"])."' AND branchId='{$session->branchId}'") > 0)) {
+					$res->message = "A duplicate product is been added to the same branch.";
+				}
+				// start the validation process
+				else if(($_POST["product_type"] == "New") && (empty($_POST['category']) || ($_POST['category'] == "null"))) {
 					$res->message = "Please select product's category";
 				}
 				elseif(empty($_POST['title'])) {
@@ -3066,12 +3069,16 @@ if($admin_user->logged_InControlled()) {
 		            } else { 
 		                $uploadStatus = 0;
 		            }
+
 		            $postData->threshold = (isset($postData->threshold)) ? (int) $postData->threshold : 10;
 		            $postData->image = $uploadDir .$fileName;
 
 		            // auto generated id for stock management
 		            $postData->autoId = random_string('alnum', 12);
+		            $postData->productId = (empty($postData->product_code)) ? "PD".$posClass->orderIdFormat($clientData->id.$posClass->lastRowId('products')) : $postData->product_code;
 
+
+		            // add the new product
 					if($productsClass->addProduct($postData)){
 						$res->status = "success";
 						$res->message = "Product Successfully Added";
@@ -3808,12 +3815,24 @@ if($admin_user->logged_InControlled()) {
 					}
 				}
 				elseif($postData->dataset == "add") {
-					$category_id = "PCAT".random_string('nozero', 5);
-					$query = $pos->prepare("INSERT INTO products_categories SET category = '{$postData->name}', category_id='{$category_id}', clientId='{$session->clientId}'");
+					
+					$itemId = "PC".$posClass->orderIdFormat($clientData->id.$posClass->lastRowId('products_categories'));
+
+					// execute the statement
+					$query = $pos->prepare("
+						INSERT INTO products_categories 
+						SET category = '{$postData->name}', 
+						category_id='{$itemId}', clientId='{$session->clientId}'
+					");
+
+					// if it was successfully executed
 					if($query->execute()) {
 						$response->status = 200;
 						$response->message = "Product category was inserted";
 						$response->href = $config->base_url('settings/prd');
+
+						// Record user activity
+						$posClass->userLogs('product-type', $itemId, 'Added a new product category into the system.');
 					}
 				}
 			}
@@ -3833,12 +3852,20 @@ if($admin_user->logged_InControlled()) {
 			if(empty($postData->itemId)) {
 				$response->message = "Error processing request";
 			} else {
+
+				// delete the product type from the system
 				$query = $pos->prepare("DELETE FROM products_categories WHERE id='{$postData->itemId}' AND clientId='{$session->clientId}'");
+				
+				// if it was successfully executed
 				if($query->execute()) {
+					// set the response data
 					$response->reload = true;
 					$response->status = true;
 					$response->href = $config->base_url('settings/prd');
 					$response->message = "Product category successfully deleted";
+					
+					// Record user activity
+					$posClass->userLogs('product-type', $postData->itemId, 'Deleted the Product Type from the system.');
 				}
 			}
 		}

@@ -92,12 +92,14 @@ if(!empty($product)) {
                             <p class="mb-1">In Stock</p>
                             <div class="custom-border mb-3"></div>
                             <h3 class="pro-title"><?= $product->product_title ?></h3>
+                            <h4><strong>Product ID</strong>: <?= $product->product_id ?> </h4>
+                            <hr class="mt-0 mb-2">
                             <p class="mb-0"><strong>Stock Quantity</strong>: <?= $product->quantity ?></p>
                             <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>
-                            <h6><strong>Cost Price</strong>: <span class="text-muted"><?= $clientData->default_currency ?> </span><?= number_format(floatval($product->cost_price), 2, '.', ',') ?> </h6>
+                            <h5><strong>Cost Price</strong>: <span class="text-muted"><?= $clientData->default_currency ?> </span><?= number_format(floatval($product->cost_price), 2, '.', ',') ?> </h5>
                             <?php } ?>
-                            <h6><strong>Retail Price</strong>: <span class="text-muted"><?= $clientData->default_currency ?> </span><?= number_format(floatval($product->product_price), 2, '.', ',') ?> </h6>
-                            <h6 class="text-muted font-13">Description :</h6> 
+                            <h5><strong>Retail Price</strong>: <span class="text-muted"><?= $clientData->default_currency ?> </span><?= number_format(floatval($product->product_price), 2, '.', ',') ?> </h5>
+                            <h5 class="text-muted font-13">Description :</h5> 
                             <p><?= !empty($product->product_description) ? $product->product_description : "<span class='text-muted'>No description for product</span>" ?></p>
                             <div><strong>Product Expiry Date:</strong> <span class="<?= $expiry_color ?>"><?= date("jS F, Y", strtotime($product->expiry_date)) ?></span></div>
                             <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>

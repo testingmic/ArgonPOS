@@ -1,4 +1,4 @@
-<?php $baseUrl = $config->base_url(); global $SITEURL, $clientData; ?>
+<?php $baseUrl = $config->base_url(); global $SITEURL, $clientData, $Notification; ?>
 <!-- Footer -->
   <?php if(!confirm_url_id(0, 'point-of-sale')) { ?>
   <footer class="footer pt-0">
@@ -84,12 +84,6 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
   <?php } ?>
-<!-- Argon Scripts -->
-<?php 
-// notification loaders
-$notify = load_class('Notifications', 'controllers', $clientData->id);
-$Notification = $notify->availableNotification();
-?>
 <div class="notification-content"></div>
 <div class="payment-backdrop hidden text-center">
   <div class="payment-buttons text-center">

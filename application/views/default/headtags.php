@@ -19,6 +19,11 @@ $clientData = $clientData[0];
 $branchData = $branchData[0];
 $userData = $userData[0];
 
+// notification loaders
+$notify = load_class('Notifications', 'controllers', $clientData->id);
+$Notification = $notify->availableNotification();
+$AccountNotice = $notify->accountNotification();
+
 $storeTheme = (Object) json_decode($clientData->theme_color);
 $setupInfo = (Object) json_decode($clientData->setup_info);
 
@@ -299,6 +304,9 @@ if($setupInfo->type == "alpha") {
           </ul>
           <!-- Divider -->
           <hr class="my-3">
+          <div class="text-center">
+            <?= $notify->message; ?>
+          </div>
         </div>
       </div>
     </div>
