@@ -81,8 +81,11 @@ if($admin_user->logged_InControlled()) {
             </div>
           </div>
           <div class="row mt-3">
-            <div class="col-6">
+            <div class="col-lg-6">
               <a href="<?= $config->base_url('forgotten') ?>" class="text-light"><small>Forgot password?</small></a>
+            </div>
+            <div class="col-lg-6 text-right">
+              <a href="<?= $config->base_url('app') ?>" class="text-light"><small>Visit Website</small></a>
             </div>
           </div>
         </div>

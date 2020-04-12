@@ -131,6 +131,60 @@ require "header.php"
  <section class="py-6">
    <div class="container">
      <div class="row row-grid align-items-center">
+       <div class="col-md-6">
+         <img height="400px" src="<?= $config->base_url('assets/img/theme/payment.jpg'); ?>" class="img-flui">
+       </div>
+       <div class="col-md-6">
+         <div class="pr-md-5">
+           <h1>Multiple Payment Options</h1>
+           <p>Almost half of today’s consumers prefer credit card payment over cash. So important is the issue of payment choice, that customers are known to halt their decision purchase unless you have their preferred payment method in your store. <br><br> With that in mind, we have made it possible for you to choose the payment options that applies to your store.
+           </p>
+           <ul class="list-unstyled mt-2">
+             <li class="py-2">
+               <div class="d-flex align-items-center">
+                 <div>
+                   <div class="badge badge-circle badge-success mr-3">
+                     <i class="ni ni-chart-bar-32"></i>
+                   </div>
+                 </div>
+                 <div>
+                   <h4 class="mb-0">Mobile Money (All Networks)</h4>
+                 </div>
+               </div>
+             </li>
+             <li class="py-2">
+               <div class="d-flex align-items-center">
+                 <div>
+                   <div class="badge badge-circle badge-success mr-3">
+                     <i class="fa fa-money-bill"></i>
+                   </div>
+                 </div>
+                 <div>
+                   <h4 class="mb-0">Visa Cards</h4>
+                 </div>
+               </div>
+             </li>
+             <li class="py-2">
+               <div class="d-flex align-items-center">
+                 <div>
+                   <div class="badge badge-circle badge-success mr-3">
+                     <i class="fa fa-money-bill-alt"></i>
+                   </div>
+                 </div>
+                 <div>
+                   <h4 class="mb-0">Master Card</h4>
+                 </div>
+               </div>
+             </li>
+           </ul>
+         </div>
+       </div>
+     </div>
+   </div>
+ </section>
+ <section class="py-6">
+   <div class="container">
+     <div class="row row-grid align-items-center">
        <div class="col-md-6 order-md-2">
          <img src="<?= $config->base_url('assets/img/theme/landing-1.png'); ?>" class="img-fluid">
        </div>
