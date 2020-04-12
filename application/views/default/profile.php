@@ -43,7 +43,11 @@ $userData = $stmt->fetch(PDO::FETCH_OBJ);
       <div class="col-lg-12 col-sm-12">
           <div class="card">
           	<div class="card-body">
+          		<?php if(!$session->accountExpired) { ?>
               	<form autocomplete="Off" class="needs-validation submitThisForm" novalidate="" method="post" action="<?= $config->base_url('aj/userManagement/quickUpdate'); ?>">
+              	<?php } else { ?>
+              	<form autocomplete="Off" class="needs-validation submitThisForm" method="post" action="javascript:void(0);">
+              	<?php } ?>
 					<div class="form-row">
 						<div class="col-md-4 mb-3">
 							<label for="fullName">Full Name *</label>
@@ -106,11 +110,13 @@ $userData = $stmt->fetch(PDO::FETCH_OBJ);
 							</select>
 						</div>
 					</div>
+					<?php if(!$session->accountExpired) { ?>
 					<div class="modal-footer">
 						<input type="hidden" name="this-form" value="users">
 						<input type="hidden" name="userId" value="<?= $userData->user_id ?>" class="userId">
 						<button class="btn <?= $clientData->btn_outline ?> submit-form" type="submit"><i class="fa fa-save"></i> Save Record</button>
 					</div>
+					<?php } ?>
 				</form>
 			</div>
           </div>

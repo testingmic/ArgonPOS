@@ -6,6 +6,12 @@ $accessObject->userId = $session->userId;
 
 $PAGETITLE = "Settings";
 
+// if expired then exit the page
+if($session->accountExpired) {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+    exit;
+}
+
 // ensure that the user is logged in
 if(!$admin_user->logged_InControlled()) {
   include_once "login.php";

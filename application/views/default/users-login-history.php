@@ -18,9 +18,11 @@ $accessChecker = $accessObject->hasAccess('inventory_branches', 'products');
           <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
             <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
               <li class="breadcrumb-item"><a href="<?= $baseUrl ?>"><i class="fas fa-home"></i> Dashboard</a></li>
-              <?php if($accessObject->hasAccess('view', 'users')) { ?>
-              <li class="breadcrumb-item"><a href="<?= $baseUrl ?>users"><i class="fas fa-users"></i> Users</a></li>
-          	  <?php } ?>
+              <?php if(!$session->accountExpired) { ?>
+	              <?php if($accessObject->hasAccess('view', 'users')) { ?>
+	              <li class="breadcrumb-item"><a href="<?= $baseUrl ?>users"><i class="fas fa-users"></i> Users</a></li>
+	          	  <?php } ?>
+          		<?php } ?>
               <li class="breadcrumb-item"><a href="javascript:void(0)"><?= $PAGETITLE ?></a></li>
             </ol>
           </nav>

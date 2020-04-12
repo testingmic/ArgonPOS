@@ -53,9 +53,11 @@ if(isset($customerDetails->fullname)) {
       <div class="row" style="width: 100%">
         <div class="col-lg-7 col-md-10">
           <h1 class="display-2 text-white"><?= $customerDetails->fullname ?></h1>
-          <?php if($accessObject->hasAccess('update', 'customers')) { ?>
-          <a href="javascript:void(0);" data-value="<?= $customerDetails->id ?>" class="edit-customer btn btn-neutral">Edit Customer</a>
-          <a href="" data-id="<?= $customerDetails->id ?>" data-info='<?= json_encode($customerDetails) ?>'></a>
+          <?php if(!$session->accountExpired) { ?>
+            <?php if($accessObject->hasAccess('update', 'customers')) { ?>
+              <a href="javascript:void(0);" data-value="<?= $customerDetails->id ?>" class="edit-customer btn btn-neutral">Edit Customer</a>
+              <a href="" data-id="<?= $customerDetails->id ?>" data-info='<?= json_encode($customerDetails) ?>'></a>
+            <?php } ?>
           <?php } ?>
         </div>
       </div>

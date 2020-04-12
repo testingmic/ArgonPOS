@@ -19,6 +19,13 @@ if(isset($_POST["onlineCheck"]) && confirm_url_id(1, 'onlineCheck')) {
     exit;
 }
 
+// if expired then exit the page
+if($session->accountExpired) {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+    exit;
+}
+
+
 // run this page if the user has the required permissions
 if($accessObject->hasAccess('view', 'users')) {
 

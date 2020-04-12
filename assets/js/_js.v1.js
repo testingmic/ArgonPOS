@@ -4660,7 +4660,7 @@ if($(`div[class~="request-form"]`).length) {
 
             let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
             
-            <td class='products-row-number' style='padding-top: 30px;
+            <td class='products-row-number' style='padding-top: 30px;'>
             <td style="padding-top: 30px;">${rowData.productName}</td>
             <td><input type="number" min="1" onkeypress="return isNumber(event)" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" class="form-control product-price" style="width:110px" value="${rowData.productPrice}"></td>
             <td>

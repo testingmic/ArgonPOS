@@ -118,7 +118,7 @@ a[href="#finish"] {
                     <div class="form-group row justify-content-center">
                       <div class="col-lg-12 text-center">Payment Type</div>
                       <div class="col-lg-8 text-center">
-                        <?php if($validDate) { ?>
+                        <?php if($validDate  && !$session->accountExpired) { ?>
                         <select name="payment_type" class="form-control custom-select2 payment-type-select">
                           <option value="0">--Please Select--</option>
                           <?php
@@ -150,7 +150,7 @@ a[href="#finish"] {
                       </div>
                       <div class="form-group cash-processing mt-5">
                         <hr>
-                        <?php if($validDate) { ?>
+                        <?php if($validDate  && !$session->accountExpired) { ?>
                         <div class="justify-content-center row">
                           <div class="cash-process-container text-center">
                             <label for="amount_to_pay"><strong>To Pay</strong></label>
@@ -173,7 +173,7 @@ a[href="#finish"] {
               </fieldset><!--end fieldset-->
               <h3>Complete</h3>
               <fieldset>
-                <?php if($validDate) { ?>
+                <?php if($validDate  && !$session->accountExpired) { ?>
                 <div class="p-3">
                   <div class="card-border border-success bg-soft-success card m-auto text-center" style="width: 100%">
                     <div class="card-body">
@@ -237,12 +237,12 @@ a[href="#finish"] {
               </fieldset><!--end fieldset-->
             </form><!--end form-->
             <div class="custom-steps-actions py-3 row justify-content-<?= ($validDate) ? "between" : "end" ?>">
-              <?php if($validDate) { ?>
+              <?php if($validDate  && !$session->accountExpired) { ?>
               <button type="button" data-toggle="modal" data-target="#newCustomerModal" class="btn mb-2 btn-sm <?=  $clientData->btn_outline; ?> newCustomer_trigger"><i class="fa fa-user"></i> New Customer</button>
               <button type="button" data-toggle="modal" data-target="#discardModal" class="btn mb-2 btn-outline-danger discardSale_trigger"><i class="fa fa-trash"></i> Discard</button>
               <button class="btn <?= $clientData->bg_color ?> print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
               <?php } ?>
-              <?php if($validDate) { ?>
+              <?php if($validDate  && !$session->accountExpired) { ?>
               <div class="float-right">
                 <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="previous">Previous</button>
                 <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="next">Next</button>
@@ -308,7 +308,7 @@ a[href="#finish"] {
       </div>
       <div class="row"></div>
   </div>
-<?php if($validDate) { ?>
+<?php if($validDate  && !$session->accountExpired) { ?>
 <!-- end page content -->
 <div class="modal fade" id="newCustomerModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

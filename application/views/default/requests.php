@@ -11,6 +11,12 @@ if(!$admin_user->logged_InControlled()) {
     exit;
 }
 
+// if expired then exit the page
+if($session->accountExpired) {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+    exit;
+}
+
 // confirm that the correct url has been used
 if(!confirm_url_id(1) || (isset($SITEURL[1]) && !in_array($SITEURL[1], $acceptedRequests))) {
     show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');

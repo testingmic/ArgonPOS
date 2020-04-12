@@ -198,6 +198,7 @@ if($setupInfo->type == "alpha") {
                 <span class="nav-link-text">Dashboard</span>
               </a>
             </li>
+            <?php if(!$session->accountExpired) { ?>
             <li class="nav-item">
               <a class="nav-link <?= (in_array($SITEURL[0], ['point-of-sale'])) ? "active" : null; ?>" href="<?= $baseUrl ?>point-of-sale">
                 <i class="ni ni-ui-04 text-success"></i>
@@ -260,6 +261,7 @@ if($setupInfo->type == "alpha") {
                 <span class="nav-link-text">Analytics</span>
               </a>
             </li>
+            <?php } ?>
             <?php if($accessObject->hasAccess('view', 'settings')) { ?>    
             <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'users', 'settings', 'import'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
@@ -268,35 +270,42 @@ if($setupInfo->type == "alpha") {
               </a>
               <div class="collapse <?= (in_array($SITEURL[0], ['users','outlets', 'settings', 'import'])) ? "show" : null; ?>" id="navbar-tables">
                 <ul class="nav nav-sm flex-column">
-                  <?php if($accessObject->hasAccess('view', 'users')) { ?>
-                  <li class="nav-item">
-                    <a href="<?= $baseUrl ?>users" class="nav-link">
-                      <i class="fa fa-users text-dark"></i>Users
-                    </a>
-                  </li>
+                  <?php if(!$session->accountExpired) { ?>
+                    <?php if($accessObject->hasAccess('view', 'users')) { ?>
+                    <li class="nav-item">
+                      <a href="<?= $baseUrl ?>users" class="nav-link">
+                        <i class="fa fa-users text-dark"></i>Users
+                      </a>
+                    </li>
+                    <?php } ?>
+                    <?php if($accessObject->hasAccess('view', 'branches')) { ?>
+                    <li class="nav-item">
+                      <a class="nav-link" href="<?= $baseUrl ?>outlets">
+                        <i class="ni ni-archive-2 text-green"></i>
+                        <span class="nav-link-text">Store Outlets</span>
+                      </a>
+                    </li>
+                    <?php } ?>
+                    <?php if($accessObject->hasAccess('update', 'settings')) { ?>
+                    <li class="nav-item">
+                      <a class="nav-link <?= (in_array($SITEURL[0], ['settings'])) ? "active" : null; ?>" href="<?= $baseUrl ?>settings">
+                        <i class="ni ni-align-left-2 text-default"></i>
+                        <span class="nav-link-text">Settings</span>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link <?= (in_array($SITEURL[0], ['import'])) ? "active" : null; ?>" href="<?= $baseUrl ?>import">
+                        <i class="fa fa-download text-purple"></i>
+                        <span class="nav-link-text">Import Data</span>
+                      </a>
+                    </li>
+                    <?php } ?>
                   <?php } ?>
-                  <?php if($accessObject->hasAccess('view', 'branches')) { ?>
                   <li class="nav-item">
-                    <a class="nav-link" href="<?= $baseUrl ?>outlets">
-                      <i class="ni ni-archive-2 text-green"></i>
-                      <span class="nav-link-text">Store Outlets</span>
+                    <a href="<?= $baseUrl ?>billing" class="nav-link">
+                      <i class="fa fa-shopping-basket text-orange"></i>Billing
                     </a>
                   </li>
-                  <?php } ?>
-                  <?php if($accessObject->hasAccess('update', 'settings')) { ?>
-                  <li class="nav-item">
-                    <a class="nav-link <?= (in_array($SITEURL[0], ['settings'])) ? "active" : null; ?>" href="<?= $baseUrl ?>settings">
-                      <i class="ni ni-align-left-2 text-default"></i>
-                      <span class="nav-link-text">Settings</span>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link <?= (in_array($SITEURL[0], ['import'])) ? "active" : null; ?>" href="<?= $baseUrl ?>import">
-                      <i class="fa fa-download text-purple"></i>
-                      <span class="nav-link-text">Import Data</span>
-                    </a>
-                  </li>
-                  <?php } ?>
                 </ul>
               </div>
             </li>
@@ -413,11 +422,13 @@ if($setupInfo->type == "alpha") {
                   <i class="ni ni-single-02"></i>
                   <span>My profile</span>
                 </a>
-                <?php if($accessObject->hasAccess('view', 'settings')) { ?>
-                <a href="<?= $baseUrl ?>settings" class="dropdown-item">
-                  <i class="ni ni-settings-gear-65"></i>
-                  <span>Settings</span>
-                </a>
+                <?php if(!$session->accountExpired) { ?>
+                  <?php if($accessObject->hasAccess('view', 'settings')) { ?>
+                  <a href="<?= $baseUrl ?>settings" class="dropdown-item">
+                    <i class="ni ni-settings-gear-65"></i>
+                    <span>Settings</span>
+                  </a>
+                  <?php } ?>
                 <?php } ?>
                 <a href="<?= $baseUrl ?>users-login-history" class="dropdown-item">
                   <i class="ni ni-calendar-grid-58"></i>

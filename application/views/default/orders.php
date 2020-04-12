@@ -11,6 +11,12 @@ if(!$admin_user->logged_InControlled()) {
     exit;
 }
 
+// if expired then exit the page
+if($session->accountExpired) {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+    exit;
+}
+
 global $accessObject;
 
 // create a new object for the access level
@@ -39,9 +45,11 @@ require_once "headtags.php";
             </ol>
           </nav>
         </div>
+        <?php if(!$session->accountExpired) { ?>
         <div class="col-lg-6 col-5 text-right">
           <a href="<?= $config->base_url("requests/".substr(strtolower($PAGETITLE), 0, -1)); ?>" class="btn btn-sm btn-neutral"><i class="fa fa-plus"></i>  New Order</a>
         </div>
+        <?php } ?>
       </div>
     </div>
   </div>
