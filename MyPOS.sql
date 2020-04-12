@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2020 at 01:31 AM
+-- Generation Time: Apr 12, 2020 at 01:36 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.10
 
@@ -75,7 +75,8 @@ CREATE TABLE `branches` (
 
 INSERT INTO `branches` (`id`, `branch_id`, `clientId`, `branch_type`, `branch_name`, `branch_color`, `location`, `branch_contact`, `branch_email`, `branch_logo`, `square_feet_area`, `recurring_expenses`, `fixed_expenses`, `status`, `deleted`) VALUES
 (1, 'w9KT0OBztNEy', '3OKokdt8wveI', 'Warehouse', 'Emmallen Networks Branch', 'badge-purple', '', '0550107770', 'emmallob14@gmail.com', NULL, NULL, 0.00, 0.00, '1', '0'),
-(2, 'rgMbqG4aUyvF', '3OKokdt8wveI', 'Store', 'Madina - Zongo Junction Branch', NULL, 'Madina', '0909885887', 'madinabranch@mail.com', 'assets/images/logo.png', NULL, 0.00, 0.00, '0', '0');
+(2, 'rgMbqG4aUyvF', '3OKokdt8wveI', 'Store', 'Madina - Zongo Junction Branch', NULL, 'Madina', '0909885887', 'madinabranch@mail.com', 'assets/images/logo.png', NULL, 0.00, 0.00, '0', '0'),
+(3, 'ojLs0gfAqimX', 'Y7CSuzFLDd6K', 'Warehouse', 'Helena Oduro&#39;s Fashion Shop', 'badge-purple', NULL, '0987654321', 'helenaoduro@mail.com', NULL, NULL, 0.00, 0.00, '1', '0');
 
 -- --------------------------------------------------------
 
@@ -491,7 +492,8 @@ CREATE TABLE `email_list` (
 --
 
 INSERT INTO `email_list` (`id`, `clientId`, `branchId`, `template_type`, `itemId`, `recipients_list`, `subject`, `message`, `date_requested`, `sent_status`, `request_performed_by`, `date_sent`, `deleted`) VALUES
-(1, '3OKokdt8wveI', '1', 'general', '3OKokdt8wveI', '{\"recipients_list\":[{\"fullname\":\"Emmanuel Obeng\",\"email\":\"emmallob14@gmail.com\",\"customer_id\":\"J7Sa5j8FYPGVXKp\",\"branchId\":\"1\"}]}', 'Setup - Emmallen Networks \\[Argon POS\\]', 'Hello Emmanuel Obeng,\nThank you for registering your store <strong>Emmallen Networks</strong> with Argon POS. We are pleased to have you join and experiment with our platform.\n\nOne of our personnel will get in touch shortly to assist you with additional setup processes that is required to aid you quick start the usage of the application.\n\nIn the mean time please use the following credentials to login into the system.\n\n<strong>Username:</strong> emmallob14@gmail.com\n<a href=\'https://dev.localhost.com/pos/verify/act?tk=RLdSZBDyMwl9aNniVz86t2kUjxOCTKWsFcEprf7eQohqPGJu\'><strong>Click Here</strong></a> to verify your Email Address\n\n', '2020-04-10 20:59:51', '0', 'J7Sa5j8FYPGVXKp', NULL, '0');
+(1, '3OKokdt8wveI', '1', 'general', '3OKokdt8wveI', '{\"recipients_list\":[{\"fullname\":\"Emmanuel Obeng\",\"email\":\"emmallob14@gmail.com\",\"customer_id\":\"J7Sa5j8FYPGVXKp\",\"branchId\":\"1\"}]}', 'Setup - Emmallen Networks \\[Argon POS\\]', 'Hello Emmanuel Obeng,\nThank you for registering your store <strong>Emmallen Networks</strong> with Argon POS. We are pleased to have you join and experiment with our platform.\n\nOne of our personnel will get in touch shortly to assist you with additional setup processes that is required to aid you quick start the usage of the application.\n\nIn the mean time please use the following credentials to login into the system.\n\n<strong>Username:</strong> emmallob14@gmail.com\n<a href=\'https://dev.localhost.com/pos/verify/act?tk=RLdSZBDyMwl9aNniVz86t2kUjxOCTKWsFcEprf7eQohqPGJu\'><strong>Click Here</strong></a> to verify your Email Address\n\n', '2020-04-10 20:59:51', '0', 'J7Sa5j8FYPGVXKp', NULL, '0'),
+(2, 'Y7CSuzFLDd6K', '3', 'general', 'Y7CSuzFLDd6K', '{\"recipients_list\":[{\"fullname\":\"Helena Oduro\",\"email\":\"helenaoduro@mail.com\",\"customer_id\":\"JmtzvChyWXs0ecj\",\"branchId\":\"3\"}]}', 'Setup - Helena Oduro&#39;s Fashion Shop \\[Argon POS\\]', 'Hello Helena Oduro,\nThank you for registering your store <strong>Helena Oduro&#39;s Fashion Shop</strong> with Argon POS. We are pleased to have you join and experiment with our platform.\n\nOne of our personnel will get in touch shortly to assist you with additional setup processes that is required to aid you quick start the usage of the application.\n\nIn the mean time please use the following credentials to login into the system.\n\n<strong>Username:</strong> helenaoduro@mail.com\n<a href=\'https://dev.localhost.com/pos/verify/act?tk=FCvt2emE1UuhqD8fRdxbwWp7YOi9gnzj6IJcAVMXTlBaZHksPLGS0y\'><strong>Click Here</strong></a> to verify your Email Address\n\n', '2020-04-12 00:58:11', '0', 'JmtzvChyWXs0ecj', NULL, '0');
 
 -- --------------------------------------------------------
 
@@ -728,6 +730,7 @@ CREATE TABLE `sales` (
   `order_status` varchar(255) COLLATE utf8_unicode_ci DEFAULT 'pending',
   `log_date` datetime DEFAULT current_timestamp(),
   `deleted` enum('0','1') COLLATE utf8_unicode_ci DEFAULT '0',
+  `revert` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
   `payment_date` datetime DEFAULT NULL,
   `payment_type` enum('cash','card','credit','MoMo') COLLATE utf8_unicode_ci DEFAULT 'cash',
   `transaction_id` varchar(12) COLLATE utf8_unicode_ci DEFAULT NULL
@@ -737,11 +740,23 @@ CREATE TABLE `sales` (
 -- Dumping data for table `sales`
 --
 
-INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `branchId`, `order_id`, `customer_id`, `ordered_by_id`, `customer_type`, `sale_lead_id`, `recorded_by`, `currency`, `credit_sales`, `order_discount`, `order_amount_balance`, `overall_order_amount`, `order_amount_paid`, `order_comments`, `order_date`, `order_status`, `log_date`, `deleted`, `payment_date`, `payment_type`, `transaction_id`) VALUES
-(1, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100002', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 1600.00, 1600.00, NULL, '2020-04-10 21:24:29', 'confirmed', '2020-04-10 21:24:29', '0', NULL, 'cash', '428152359978'),
-(2, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100003', 'POS732143158965', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 3200.00, 3200.00, NULL, '2020-04-10 21:25:40', 'confirmed', '2020-04-10 21:25:40', '0', NULL, 'cash', '732869344567'),
-(3, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100004', 'POS499688133725', NULL, 'customer', NULL, '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'GH¢', '0', 0.00, 20.00, 1600.00, 1600.00, NULL, '2020-04-10 21:31:25', 'confirmed', '2020-04-10 21:31:25', '0', NULL, 'cash', '927854862141'),
-(4, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100005', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 100.00, 0.00, 1600.00, 1500.00, NULL, '2020-04-11 17:59:12', 'confirmed', '2020-04-11 17:59:12', '0', NULL, 'cash', '256563784171');
+INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `branchId`, `order_id`, `customer_id`, `ordered_by_id`, `customer_type`, `sale_lead_id`, `recorded_by`, `currency`, `credit_sales`, `order_discount`, `order_amount_balance`, `overall_order_amount`, `order_amount_paid`, `order_comments`, `order_date`, `order_status`, `log_date`, `deleted`, `revert`, `payment_date`, `payment_type`, `transaction_id`) VALUES
+(1, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100002', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 1600.00, 1600.00, NULL, '2020-04-10 21:24:29', 'confirmed', '2020-04-10 21:24:29', '0', '0', NULL, 'cash', '428152359978'),
+(2, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100003', 'POS732143158965', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 3200.00, 3200.00, NULL, '2020-04-10 21:25:40', 'confirmed', '2020-04-10 21:25:40', '0', '0', NULL, 'cash', '732869344567'),
+(3, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100004', 'POS499688133725', NULL, 'customer', NULL, '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'GH¢', '0', 0.00, 20.00, 1600.00, 1600.00, NULL, '2020-04-10 21:31:25', 'confirmed', '2020-04-10 21:31:25', '0', '0', NULL, 'cash', '927854862141'),
+(4, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100005', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 100.00, 0.00, 1600.00, 1500.00, NULL, '2020-04-11 17:59:12', 'confirmed', '2020-04-11 17:59:12', '0', '0', NULL, 'cash', '256563784171'),
+(5, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100006', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 10:29:56', 'cancelled', '2020-04-12 10:29:56', '1', '0', '2020-04-12 10:35:19', 'MoMo', '811962648739'),
+(6, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100007', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 10:36:58', 'cancelled', '2020-04-12 10:36:58', '0', '0', '2020-04-12 10:37:08', 'MoMo', '645195628417'),
+(7, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100008', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 10:40:13', 'cancelled', '2020-04-12 10:40:13', '0', '0', '2020-04-12 10:41:05', 'MoMo', '944695526782'),
+(8, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100009', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:00:54', 'cancelled', '2020-04-12 11:00:54', '0', '0', '2020-04-12 11:01:56', 'MoMo', '256329891417'),
+(9, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100010', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:03:22', 'cancelled', '2020-04-12 11:03:22', '0', '0', '2020-04-12 11:03:41', 'MoMo', '924173539867'),
+(10, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100011', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:03:48', 'cancelled', '2020-04-12 11:03:48', '1', '0', NULL, 'MoMo', '714932958567'),
+(11, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100012', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:20:19', 'cancelled', '2020-04-12 11:20:19', '0', '0', '2020-04-12 11:20:43', 'MoMo', '767499831325'),
+(12, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100013', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:44:07', 'cancelled', '2020-04-12 11:44:07', '1', '0', NULL, 'MoMo', '599573678112'),
+(13, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100014', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:45:37', 'cancelled', '2020-04-12 11:45:37', '0', '0', '2020-04-12 11:46:26', 'MoMo', '612823579484'),
+(14, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100015', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -17600.00, 17600.00, 17600.00, NULL, '2020-04-12 11:49:21', 'cancelled', '2020-04-12 11:49:21', '0', '0', '2020-04-12 11:49:31', 'MoMo', '724635678298'),
+(15, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100016', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 12:22:22', 'pending', '2020-04-12 12:22:22', '0', '0', NULL, 'MoMo', '543127858629'),
+(16, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100017', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 12:23:12', 'cancelled', '2020-04-12 12:23:12', '0', '0', '2020-04-12 12:24:23', 'MoMo', '757254669839');
 
 -- --------------------------------------------------------
 
@@ -771,7 +786,19 @@ INSERT INTO `sales_details` (`id`, `auto_id`, `clientId`, `branchId`, `order_id`
 (1, '4T5ESahsZbOr3yWXeY78MUgcu', '3OKokdt8wveI', 1, 'POS2020040100002', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-10 21:24:29'),
 (2, 'FBH4yo2xklMifQ5phKLVawdAs', '3OKokdt8wveI', 1, 'POS2020040100003', '1', 2, '1200.00', 1600.00, 3200.00, '2020-04-10 21:25:40'),
 (3, '0aybnzKCLmiJBO4QEgxDwVGpt', '3OKokdt8wveI', 1, 'POS2020040100004', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-10 21:31:25'),
-(4, 'ouQAdV2JnWp0H6GPhrKZYL7ys', '3OKokdt8wveI', 1, 'POS2020040100005', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-11 17:59:12');
+(4, 'ouQAdV2JnWp0H6GPhrKZYL7ys', '3OKokdt8wveI', 1, 'POS2020040100005', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-11 17:59:12'),
+(5, 'cDqmwlKb2SfyBj8Frg3zJtOeY', '3OKokdt8wveI', 1, 'POS2020040100006', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 10:29:56'),
+(6, 'Y3Lasz210vip6JQqBFnIw7jOf', '3OKokdt8wveI', 1, 'POS2020040100007', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 10:36:58'),
+(7, 'jlJ14ByK9OmaSsXDzx5AvCGQn', '3OKokdt8wveI', 1, 'POS2020040100008', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 10:40:13'),
+(8, 'ukPgD4VoI1y7MAZGJ9mO8w2Tb', '3OKokdt8wveI', 1, 'POS2020040100009', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:00:54'),
+(9, 'iPNQxbc6DJuSHdUpmLWajq4Ot', '3OKokdt8wveI', 1, 'POS2020040100010', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:03:22'),
+(10, 'RZkKn5a1fxOsjDq2LbMrymPvT', '3OKokdt8wveI', 1, 'POS2020040100011', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:03:48'),
+(11, 'u84qRBahzF1fgciLj5Es29bNY', '3OKokdt8wveI', 1, 'POS2020040100012', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:20:19'),
+(12, 'esIPoNTjhZkfWBAtrDpdm2c0n', '3OKokdt8wveI', 1, 'POS2020040100013', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:44:07'),
+(13, '5LSwmtuQpFUGlaCXNsWEq7jDB', '3OKokdt8wveI', 1, 'POS2020040100014', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:45:37'),
+(14, 'L02wlIHMEFJBORkWrKu4vCfbY', '3OKokdt8wveI', 1, 'POS2020040100015', '1', 11, '1200.00', 1600.00, 17600.00, '2020-04-12 11:49:21'),
+(15, 'iS4ksDoVYv6Gbm98HgQMAXCI1', '3OKokdt8wveI', 1, 'POS2020040100016', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 12:22:22'),
+(16, 'c8RZFIGH4mvoQiwg9a6KsUOn0', '3OKokdt8wveI', 1, 'POS2020040100017', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 12:23:12');
 
 -- --------------------------------------------------------
 
@@ -808,15 +835,17 @@ CREATE TABLE `settings` (
   `display_clock` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '1',
   `theme_color` varchar(255) COLLATE utf8_unicode_ci DEFAULT '{"bg_colors":"bg-purple text-white no-border","bg_color_code":"#8965e0","bg_color_light":"#97a5f1","btn_outline":"btn-outline-primary"}',
   `theme_color_code` varchar(10) COLLATE utf8_unicode_ci DEFAULT 'purple',
-  `setup_info` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '{"type":"trial","verified":"1","setup_date":"","outlets":"10","initializing":"1"}'
+  `setup_info` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '{"type":"trial","verified":"1","setup_date":"","outlets":"10","initializing":"1"}',
+  `deleted` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `clientId`, `client_name`, `client_email`, `client_website`, `client_logo`, `primary_contact`, `secondary_contact`, `payment_options`, `shop_opening_days`, `address_1`, `address_2`, `receipt_message`, `terms_and_conditions`, `manager_signature`, `reports_sales_attendant`, `reports_period`, `total_expenditure`, `space_per_square_foot`, `default_currency`, `print_receipt`, `expiry_notification_days`, `allow_product_return`, `default_discount`, `fiscal_year_start`, `display_clock`, `theme_color`, `theme_color_code`, `setup_info`) VALUES
-(1, '3OKokdt8wveI', 'Emmallen Networks', 'emmallob14@gmail.com', '', 'assets/images/logo.png', '0550107770', '', 'cash,credit', 'Monday,Tuesday,Wednesday,Thursday,Friday', '', NULL, 'Thank you for trading with us.', '', NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', '', '1 MONTH', '1', 0.00, '2020-01-01', '1', '{\"bg_colors\":\"bg-green text-white no-border\",\"bg_color_code\":\"#24a46d\",\"bg_color_light\":\"#2dce89\",\"btn_outline\":\"btn-outline-success\"}', 'green', '{\"type\":\"alpha\",\"verified\":0,\"setup_date\":\"2020-03-10\",\"expiry_date\":\"2020-03-24\",\"outlets\":\"5\",\"initializing\":0}');
+INSERT INTO `settings` (`id`, `clientId`, `client_name`, `client_email`, `client_website`, `client_logo`, `primary_contact`, `secondary_contact`, `payment_options`, `shop_opening_days`, `address_1`, `address_2`, `receipt_message`, `terms_and_conditions`, `manager_signature`, `reports_sales_attendant`, `reports_period`, `total_expenditure`, `space_per_square_foot`, `default_currency`, `print_receipt`, `expiry_notification_days`, `allow_product_return`, `default_discount`, `fiscal_year_start`, `display_clock`, `theme_color`, `theme_color_code`, `setup_info`, `deleted`) VALUES
+(1, '3OKokdt8wveI', 'Emmallen Networks', 'emmallob14@gmail.com', '', 'assets/images/logo.png', '0550107770', '', 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', '', NULL, 'Thank you for trading with us.', '', NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', '', '1 MONTH', '1', 0.00, '2020-01-01', '1', '{\"bg_colors\":\"bg-green text-white no-border\",\"bg_color_code\":\"#24a46d\",\"bg_color_light\":\"#2dce89\",\"btn_outline\":\"btn-outline-success\"}', 'green', '{\"type\":\"alpha\",\"verified\":0,\"setup_date\":\"2020-03-10\",\"expiry_date\":\"2020-03-24\",\"outlets\":\"5\"}', '0'),
+(2, 'Y7CSuzFLDd6K', 'Helena Oduro&#39;s Fashion Shop', 'helenaoduro@mail.com', NULL, 'assets/images/logo.png', '0987654321', NULL, 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', NULL, NULL, 'Thank you for trading with us.', NULL, NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', 'no', '1 MONTH', '1', 0.00, '2020-04-11', '1', '{\"bg_colors\":\"bg-purple text-white no-border\",\"bg_color_code\":\"#8965e0\",\"bg_color_light\":\"#97a5f1\",\"btn_outline\":\"btn-outline-primary\"}', 'purple', '{\"type\":\"trial\",\"verified\":1,\"setup_date\":\"2020-04-11\",\"expiry_date\":\"2020-04-25\",\"outlets\":\"5\",\"initializing\":1,\"setup_initializing\":1}', '0');
 
 -- --------------------------------------------------------
 
@@ -848,10 +877,13 @@ INSERT INTO `settings_currency` (`id`, `currency`) VALUES
 
 CREATE TABLE `system_notices` (
   `id` int(11) NOT NULL,
+  `uniqueId` varchar(255) NOT NULL DEFAULT 'NULL',
+  `notice_type` varchar(55) DEFAULT NULL,
   `related_to` text NOT NULL DEFAULT 'general',
+  `modal` varchar(255) DEFAULT NULL,
+  `modal_function` varchar(25) DEFAULT 'generalNoticeHandler',
   `header` varchar(255) DEFAULT NULL,
   `content` text DEFAULT NULL,
-  `data_type` varchar(255) DEFAULT NULL,
   `seen_by` text DEFAULT NULL,
   `status` enum('0','1') NOT NULL DEFAULT '1',
   `date_log` datetime NOT NULL DEFAULT current_timestamp()
@@ -861,8 +893,9 @@ CREATE TABLE `system_notices` (
 -- Dumping data for table `system_notices`
 --
 
-INSERT INTO `system_notices` (`id`, `related_to`, `header`, `content`, `data_type`, `seen_by`, `status`, `date_log`) VALUES
-(1, 'general', 'You are warmly welcomed', '<div class=\"modal fade WelcomeModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myLargeModalLabel\" aria-hidden=\"true\">\r\n  <div class=\"modal-dialog\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-header\">\r\n        <h5 class=\"modal-title mt-0\" id=\"myLargeModalLabel\">\r\n          Welcome to join the family!\r\n        </h5>\r\n        <button type=\"button\" class=\"close\" aria-hidden=\"true\">×</button>\r\n      </div>\r\n      <div class=\"modal-body\" style=\"min-height: 200px; padding-top: 0px\">Hello {{clientName}},<br><br>\r\nThis is to welcome you as you join the numerous retailers using {{appName}} to manage their inventory and make informed decisions based on the insights provided on the Analytics Section of the App. <br><br>Please take time to <a href=\"{{appURL}}/explore\">explore</a> the various features. <br><p>It will guide you through a step by step procedure that will enable you to fully setup your store.</p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>', 'welcomeNote', '3OKokdt8wveI', '1', '2020-04-11 22:55:47');
+INSERT INTO `system_notices` (`id`, `uniqueId`, `notice_type`, `related_to`, `modal`, `modal_function`, `header`, `content`, `seen_by`, `status`, `date_log`) VALUES
+(1, '09oN3tYcj10KTedBdonjBGvfcDrefaOplKimJhnbYtfPld89J6XsiVqnkN94rFlL', 'setup_initializing', 'general', 'WelcomeModal', 'generalNoticeHandler', 'You are warmly welcomed', '<div class=\"modal fade WelcomeModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myLargeModalLabel\" aria-hidden=\"true\">\r\n  <div class=\"modal-dialog\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-header\">\r\n        <h5 class=\"modal-title mt-0\" id=\"myLargeModalLabel\">\r\n          Welcome to join the family!\r\n        </h5>\r\n        <button type=\"button\" class=\"close\" aria-hidden=\"true\">×</button>\r\n      </div>\r\n      <div class=\"modal-body\" style=\"min-height: 200px; padding-top: 0px\">Hello {{clientName}},<br><br>\r\nThis is to welcome you as you join the numerous retailers using {{appName}} to manage their inventory and make informed decisions based on the insights provided on the Analytics Section of the App. <br><br>Please take time to <a href=\"{{appURL}}/explore\">explore</a> the various features. <br><p>It will guide you through a step by step procedure that will enable you to fully setup your store.</p>\r\n<p class=\"text-right\"><a href=\"{{appURL}}/explore\" class=\"btn btn-outline-success\">Take Tour</a></p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>', '1', '1', '2020-04-11 22:55:47'),
+(2, '3tYjSdaWEkj761234VDLPOkN94rFlLhjsa22F3F3A4J3ddIkMkkh09P', 'promotional_message', 'general', 'discountModal', 'generalNoticeHandler', 'Awesome Discount Promotion', '<div class=\"modal discountModal fade\" id=\"discountModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\">\r\n  <div class=\"modal-dialog\" role=\"document\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-body text-center\"><button type=\"button\" class=\"close\" aria-hidden=\"true\">×</button>\r\n        <div class=\"icon text-danger\">\r\n          <i class=\"fas fa-gift\"></i>\r\n        </div>\r\n\r\n        <div class=\"notice\">\r\n          <h4>Get 50% Discount</h4>\r\n          <p>For the next 24 hours you can get any product at half-price.</p>\r\n          \r\n          <p>Use promo code <span class=\"badge badge-info\">50-OFF</span> at checkout.</p>\r\n        </div>\r\n        <div class=\"code\"></div>\r\n      </div>\r\n      <div class=\"modal-footer d-flex justify-content-between\">\r\n        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Nevermind</button>\r\n        <button type=\"button\" class=\"btn btn-danger\">Get Code</button>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>', '1', '1', '2020-04-11 22:55:47');
 
 -- --------------------------------------------------------
 
@@ -904,7 +937,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `clientId`, `branchId`, `user_id`, `name`, `gender`, `email`, `phone`, `login`, `password`, `access_level`, `status`, `last_login`, `verify_token`, `daily_target`, `weekly_target`, `monthly_target`, `last_login_attempts`, `last_login_attempts_time`, `login_session`, `country_id`, `city_id`, `created_on`, `created_by`, `image`) VALUES
 (1, '3OKokdt8wveI', 1, 'J7Sa5j8FYPGVXKp', 'Emmanuel Obeng', NULL, 'emmallob14@gmail.com', '0550107770', 'emmallob14@gmail.com', '$2y$10$CkSzxyvLAglcF/CTwqXFH.qg5Y9FZfh21m2HapS4JMCzfqIdqpi5q', 2, 1, '2020-04-10 20:59:51', NULL, 0.00, 0.00, 0.00, 0, '2020-04-10 20:59:51', NULL, NULL, NULL, '2020-04-10 20:59:51', NULL, 'avatar.png'),
-(2, '3OKokdt8wveI', 1, '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'Simon Kortey', 'Male', 'simonkortey@mail.com', '0987654321', NULL, '$2y$10$CkSzxyvLAglcF/CTwqXFH.qg5Y9FZfh21m2HapS4JMCzfqIdqpi5q', 4, 1, '2020-04-10 21:07:35', NULL, 2000.00, 6000.00, 10000.00, 0, '2020-04-10 21:07:35', NULL, NULL, NULL, '2020-04-10 21:07:35', NULL, 'avatar.png');
+(2, '3OKokdt8wveI', 1, '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'Simon Kortey', 'Male', 'simonkortey@mail.com', '0987654321', NULL, '$2y$10$CkSzxyvLAglcF/CTwqXFH.qg5Y9FZfh21m2HapS4JMCzfqIdqpi5q', 4, 1, '2020-04-10 21:07:35', NULL, 2000.00, 6000.00, 10000.00, 0, '2020-04-10 21:07:35', NULL, NULL, NULL, '2020-04-10 21:07:35', NULL, 'avatar.png'),
+(3, 'Y7CSuzFLDd6K', 3, 'JmtzvChyWXs0ecj', 'Helena Oduro', NULL, 'helenaoduro@mail.com', '0987654321', 'helenaoduro@mail.com', '$2y$10$m9AZWiAMqOf5uKdzBmo...H71Y3kqRT99ZpYavXrzUu4MGnW1WRUu', 2, 1, '2020-04-12 00:58:11', NULL, 0.00, 0.00, 0.00, 0, '2020-04-12 00:58:11', NULL, NULL, NULL, '2020-04-12 00:58:11', NULL, 'avatar.png');
 
 -- --------------------------------------------------------
 
@@ -929,44 +963,41 @@ CREATE TABLE `users_activity_logs` (
 --
 
 INSERT INTO `users_activity_logs` (`id`, `clientId`, `branchId`, `page`, `itemId`, `userId`, `description`, `user_agent`, `date_recorded`) VALUES
-(1, '3OKokdt8wveI', '1', 'setup', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'This is the initial setup process that has been carried out by Emmallen Networks.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 20:59:51'),
-(2, '3OKokdt8wveI', '1', 'setup-verify', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Has verified the Store Details submitted and activated the Admin User Account for the Store.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:00:36'),
-(3, '3OKokdt8wveI', '1', 'users', '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'J7Sa5j8FYPGVXKp', 'Added a new user.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:07:35'),
-(4, '3OKokdt8wveI', '1', 'branches', 'rgMbqG4aUyvF', 'J7Sa5j8FYPGVXKp', 'Added a new Store Outlet into the System.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:09:19'),
-(5, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:10:10'),
-(6, '3OKokdt8wveI', '1', 'customer', 'POS732143158965', 'J7Sa5j8FYPGVXKp', 'Added a new Customer', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:11:14'),
-(7, '3OKokdt8wveI', '1', 'customer', 'POS732143158965', 'J7Sa5j8FYPGVXKp', 'Updated the customer details', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:11:31'),
-(8, '3OKokdt8wveI', '1', 'pos', 'POS2020040100002', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:24:29'),
-(9, '3OKokdt8wveI', '1', 'pos', 'POS2020040100003', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:25:40'),
-(10, '3OKokdt8wveI', '1', 'customer', 'POS499688133725', '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'Added a new Customer', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:27:47'),
-(11, '3OKokdt8wveI', '1', 'pos', 'POS2020040100004', '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-10 21:31:25'),
-(12, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the sales details tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 08:24:07'),
-(13, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the sales details tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 08:25:02'),
-(14, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 08:30:47'),
-(15, '3OKokdt8wveI', '1', 'branches', 'w9KT0OBztNEy', 'J7Sa5j8FYPGVXKp', 'Updated the details of the Store Outlet.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 08:31:05'),
-(16, '3OKokdt8wveI', '1', 'branches', 'w9KT0OBztNEy', 'J7Sa5j8FYPGVXKp', 'Updated the details of the Store Outlet.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 08:33:34'),
-(17, '3OKokdt8wveI', '1', 'customer', 'POS499688133725', 'J7Sa5j8FYPGVXKp', 'Updated the customer details', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 08:38:33'),
-(18, '3OKokdt8wveI', '1', 'user', 'J7Sa5j8FYPGVXKp', 'J7Sa5j8FYPGVXKp', 'Deleted the User details.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 10:23:29'),
-(19, '3OKokdt8wveI', '1', 'branches', '2', 'J7Sa5j8FYPGVXKp', 'Updated the status of the branch and set it as Inactive', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 10:30:05'),
-(20, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:43:07'),
-(21, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:43:59'),
-(22, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:44:14'),
-(23, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:44:56'),
-(24, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:45:16'),
-(25, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:45:33'),
-(26, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:47:33'),
-(27, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 17:53:04'),
-(28, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 17:53:47'),
-(29, '3OKokdt8wveI', '1', 'pos', 'POS2020040100005', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 17:59:12'),
-(30, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the general settings tab of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 18:19:41'),
-(32, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:23:41'),
-(33, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:24:05'),
-(34, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:24:05'),
-(35, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:24:06'),
-(36, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:24:07'),
-(37, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:26:58'),
-(38, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:27:47'),
-(39, '3OKokdt8wveI', '1', 'setup-initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Set the initializing to false.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 00:28:48');
+(1, 'Y7CSuzFLDd6K', '3', 'initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 08:39:29'),
+(2, 'Y7CSuzFLDd6K', '3', 'initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 08:40:42'),
+(3, 'Y7CSuzFLDd6K', '3', 'initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 08:42:43'),
+(4, 'Y7CSuzFLDd6K', '3', 'initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 08:42:58'),
+(5, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 08:44:07'),
+(6, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:13:05'),
+(7, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:13:53'),
+(8, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:36:13'),
+(9, 'Y7CSuzFLDd6K', '3', 'promotional_message', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:38:22'),
+(10, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:44:40'),
+(11, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:45:26'),
+(12, 'Y7CSuzFLDd6K', '3', 'promotional_message', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:47:26'),
+(13, 'Y7CSuzFLDd6K', '3', 'promotional_message', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:54:36'),
+(14, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 09:55:57'),
+(15, 'Y7CSuzFLDd6K', '3', 'settings', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Updated the payment options of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:01:02'),
+(16, '3OKokdt8wveI', '1', 'setup_initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:01:27'),
+(17, '3OKokdt8wveI', '1', 'setup_initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:08:10'),
+(18, '3OKokdt8wveI', '1', 'promotional_message', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:08:14'),
+(19, '3OKokdt8wveI', '1', 'setup_initializing', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:29:05'),
+(20, '3OKokdt8wveI', '1', 'promotional_message', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:29:08'),
+(21, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the payment options of the Company.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:29:32'),
+(22, '3OKokdt8wveI', '1', 'pos', 'POS2020040100006', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:29:56'),
+(23, '3OKokdt8wveI', '1', 'pos', 'POS2020040100007', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:36:58'),
+(24, '3OKokdt8wveI', '1', 'pos', 'POS2020040100008', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 10:40:13'),
+(25, '3OKokdt8wveI', '1', 'pos', 'POS2020040100009', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 11:00:55'),
+(26, '3OKokdt8wveI', '1', 'pos', 'POS2020040100010', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 11:03:22'),
+(27, '3OKokdt8wveI', '1', 'pos', 'POS2020040100011', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 11:03:48'),
+(28, '3OKokdt8wveI', '1', 'pos', 'POS2020040100012', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 11:20:19'),
+(29, '3OKokdt8wveI', '1', 'pos', 'POS2020040100013', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 11:44:07'),
+(30, '3OKokdt8wveI', '1', 'pos', 'POS2020040100014', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 11:45:37'),
+(31, '3OKokdt8wveI', '1', 'pos', 'POS2020040100015', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 11:49:21'),
+(32, '3OKokdt8wveI', '1', 'pos', 'POS2020040100016', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:22:22'),
+(33, '3OKokdt8wveI', '1', 'pos', 'POS2020040100017', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:23:13'),
+(34, '3OKokdt8wveI', '1', 'pos-revert', 'POS2020040100016', 'J7Sa5j8FYPGVXKp', 'The Transaction recorded at the Point of Sale has been reverted. Reason: User cancelled payment.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:24:23'),
+(35, '3OKokdt8wveI', '1', 'pos-revert', 'POS2020040100017', 'J7Sa5j8FYPGVXKp', 'The Transaction recorded at the Point of Sale has been reverted. Reason: User cancelled payment.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:24:23');
 
 -- --------------------------------------------------------
 
@@ -1001,7 +1032,11 @@ INSERT INTO `users_login_history` (`id`, `clientId`, `branchId`, `username`, `lo
 (8, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-11 13:21:34'),
 (9, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-11 15:57:08'),
 (10, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-11 17:52:26'),
-(11, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-11 22:37:31');
+(11, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-11 22:37:31'),
+(12, 'Y7CSuzFLDd6K', '3', 'helenaoduro@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'JmtzvChyWXs0ecj', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 00:59:26'),
+(13, 'Y7CSuzFLDd6K', '3', 'helenaoduro@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'JmtzvChyWXs0ecj', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 06:56:36'),
+(14, 'Y7CSuzFLDd6K', '3', 'helenaoduro@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'JmtzvChyWXs0ecj', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 07:44:52'),
+(15, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 10:01:22');
 
 -- --------------------------------------------------------
 
@@ -1041,7 +1076,8 @@ CREATE TABLE `user_roles` (
 
 INSERT INTO `user_roles` (`id`, `user_id`, `permissions`, `date_logged`) VALUES
 (1, 'J7Sa5j8FYPGVXKp', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"customers\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\",\"category_add\":\"1\",\"category_edit\":\"1\",\"category_delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\",\"monitoring\":\"1\"},\"settings\":{\"view\":\"1\",\"update\":\"1\"},\"executive_dashboard\":{\"view\":\"1\"}}}', '2020-04-10 20:59:51'),
-(2, '3tYcj10KTedBJ6XsiVqnkN94rFlL', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\",\"inventory_branches\":\"0\"},\"quotes\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"orders\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"}}}', '2020-04-10 21:07:35');
+(2, '3tYcj10KTedBJ6XsiVqnkN94rFlL', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"0\",\"inventory_branches\":\"0\"},\"quotes\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"orders\":{\"view\":\"0\",\"update\":\"0\",\"add\":\"0\",\"delete\":\"0\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\"}}}', '2020-04-10 21:07:35'),
+(3, 'JmtzvChyWXs0ecj', '{\"permissions\":{\"contacts\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"customers\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"products\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"inventory_branches\":\"1\",\"category_add\":\"1\",\"category_edit\":\"1\",\"category_delete\":\"1\"},\"sales\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"users\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\",\"accesslevel\":\"1\"},\"reports\":{\"view\":\"1\",\"generate\":\"1\",\"sales-team-performance\":\"1\",\"branch-performance\":\"1\",\"sales-overview\":\"1\"},\"access_levels\":{\"view\":\"1\",\"update\":\"1\"},\"quotes\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"orders\":{\"view\":\"1\",\"update\":\"1\",\"add\":\"1\",\"delete\":\"1\"},\"branches\":{\"view\":\"1\",\"add\":\"1\",\"update\":\"1\",\"delete\":\"1\",\"monitoring\":\"1\"},\"settings\":{\"view\":\"1\",\"update\":\"1\"},\"executive_dashboard\":{\"view\":\"1\"}}}', '2020-04-12 00:58:11');
 
 --
 -- Indexes for dumped tables
@@ -1218,7 +1254,7 @@ ALTER TABLE `access_levels`
 -- AUTO_INCREMENT for table `branches`
 --
 ALTER TABLE `branches`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `countries`
@@ -1230,7 +1266,7 @@ ALTER TABLE `countries`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `data_monitoring`
@@ -1248,7 +1284,7 @@ ALTER TABLE `departments`
 -- AUTO_INCREMENT for table `email_list`
 --
 ALTER TABLE `email_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `email_settings`
@@ -1302,19 +1338,19 @@ ALTER TABLE `requests_details`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `sales_details`
 --
 ALTER TABLE `sales_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `settings_currency`
@@ -1326,25 +1362,25 @@ ALTER TABLE `settings_currency`
 -- AUTO_INCREMENT for table `system_notices`
 --
 ALTER TABLE `system_notices`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `users_activity_logs`
 --
 ALTER TABLE `users_activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `users_reset_request`
@@ -1356,7 +1392,7 @@ ALTER TABLE `users_reset_request`
 -- AUTO_INCREMENT for table `user_roles`
 --
 ALTER TABLE `user_roles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
