@@ -60,6 +60,9 @@ class Notifications extends Pos {
 					'header' => $eachNotice->header,
 					'content' => $this->placeholderReplacer($eachNotice->content)
 				];
+
+				/** Set the notification ID in a session **/
+				$this->session->notificationId = $eachNotice->uniqueId;
 			}
 		}
 
@@ -197,6 +200,9 @@ class Notifications extends Pos {
 
 				//: Log the user activity
 		        $this->userLogs($noteType, $this->session->clientId, 'Have acknowledged of having seen the notification shared across the Application.');
+
+		        //: Set the notification id in session to null
+		        $this->session->notificationId = null;
 
 		        //: commit the transaction
 		        $this->pos->commit();

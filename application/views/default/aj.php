@@ -4121,15 +4121,19 @@ if($admin_user->logged_InControlled()) {
 			$uniqueId = xss_clean($_POST["unqID"]);
 			$noteType = xss_clean($_POST["noteType"]);
 
-	        //: notification loaders
-			$notify = load_class('Notifications', 'controllers');
-			$request = $notify->setUserSeen($clientData->id, $uniqueId, $noteType);
+			//: validate the notification id
+			if($session->notificationId == $uniqueId) {
+		        
+		        //: notification loaders
+				$notify = load_class('Notifications', 'controllers');
+				$request = $notify->setUserSeen($clientData->id, $uniqueId, $noteType);
 
-	        //: return a status of success
-	        if($request) {
-		        $response->status = "success";
-		        $response->message = "Initializing Notification Seen.";
-		   	}
+		        //: return a status of success
+		        if($request) {
+			        $response->status = "success";
+			        $response->message = "Initializing Notification Seen.";
+			   	}
+			}
 		}
 
 	}
