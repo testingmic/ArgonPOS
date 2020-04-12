@@ -1917,7 +1917,7 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
     }
 });
 
-if($(`table[class~="customersList"]`).length) {
+if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
 
     $("#updateCustomerForm").on("submit", async function(event) {
     
@@ -1930,7 +1930,13 @@ if($(`table[class~="customersList"]`).length) {
                     type: 'success',
                     title: res.message
                 });
-                listCustomers();
+                if($(`span[class~="customersList"]`).length) {
+                    setTimeout(() => {
+                        window.location.href = '';
+                    }, 1200);
+                } else  {
+                    listCustomers();
+                }
                 $("#updateCustomerForm").parents(".modal").modal("hide");
                 $("#updateCustomerForm").trigger("reset");
             } else {
@@ -2014,7 +2020,9 @@ if($(`table[class~="customersList"]`).length) {
         });
     }
 
-    listCustomers();
+    if($(`table[class~="customersList"]`).length) {
+        listCustomers();
+    }
 }
 
 $("#newCustomer_form").on("submit", async function(event) {

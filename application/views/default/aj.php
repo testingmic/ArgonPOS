@@ -168,7 +168,7 @@ if($admin_user->logged_InControlled()) {
 					$results[] = [
 						'row' => "$i.",
 						'order_id' => "<a onclick=\"return getSalesDetails('{$data->order_id}')\" data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$data->order_id}\">#$data->order_id</a> <br> ".ucfirst($data->payment_type),
-						'fullname' => "{$data->title} {$data->firstname} {$data->lastname}",
+						'fullname' => "<a href=\"{$config->base_url('customer-detail/'.$data->customer_id)}\">{$data->title} {$data->firstname} {$data->lastname}</a>",
 						'phone' => $data->phone_1,
 						'date' => $orderDate,
 						'amount' => "{$clientData->default_currency} {$totalOrder}",

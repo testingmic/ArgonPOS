@@ -47,14 +47,14 @@ if(isset($customerDetails->fullname)) {
 
   <div class="header pb-6 d-flex align-items-center" style="min-height: 350px; background-image: url(<?= $baseUrl ?>assets/img/theme/bg.jpg); background-size: cover; background-position: center top;">
     <!-- Mask -->
-    <span class="mask bg-gradient-default opacity-8"></span>
+    <span class="mask bg-gradient-default customersList opacity-8"></span>
     <!-- Header container -->
     <div class="container-fluid d-flex align-items-center">
       <div class="row" style="width: 100%">
         <div class="col-lg-7 col-md-10">
           <h1 class="display-2 text-white"><?= $customerDetails->fullname ?></h1>
           <?php if($accessObject->hasAccess('update', 'customers')) { ?>
-          <a href="javascript:void(0);" data-value="<?= $customerDetails->id ?>" class="edit-customer btn btn-neutral">Edit profile</a>
+          <a href="javascript:void(0);" data-value="<?= $customerDetails->id ?>" class="edit-customer btn btn-neutral">Edit Customer</a>
           <a href="" data-id="<?= $customerDetails->id ?>" data-info='<?= json_encode($customerDetails) ?>'></a>
           <?php } ?>
         </div>
@@ -88,8 +88,8 @@ if(isset($customerDetails->fullname)) {
           </div>
           <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
             <div class="d-flex justify-content-between">
-              <a href="#" class="btn btn-sm btn-info mr-4">Connect</a>
-              <a href="#" class="btn btn-sm btn-default float-right">Message</a>
+              <a href="javascript:void(0)" class="btn btn-sm btn-info mr-4" data-toggle="tooltip" title="Coming Soon">Connect</a>
+              <a href="javascript:void(0)" class="btn btn-sm btn-default float-right" data-toggle="tooltip" title="Coming Soon">Message</a>
             </div>
           </div>
           <div class="card-body pt-0">
@@ -126,7 +126,7 @@ if(isset($customerDetails->fullname)) {
                     <i class="dripicons-wallet report-main-icon"></i>
                 </div> 
                 <span class="text-gray">Total Orders</span>
-                <h3 class="my-3">0</h3>
+                <h3 class="my-3 text-white">0</h3>
                 <p class="mb-0 text-muted text-truncate">
                   <span class="text-success"><i class="mdi mdi-trending-up"></i>0.00</span> Yesterday
                 </p>

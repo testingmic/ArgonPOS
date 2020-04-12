@@ -31,7 +31,7 @@
                   </button>
               </div>
               <div class="modal-body">
-                <form autocomplete="Off" class="form py-0" id="updateCustomerForm">
+                <form autocomplete="Off" method="POST" class="form py-0" id="updateCustomerForm">
                   <div class="form-row mb-2">
                     <div class="form-group col-md-2">
                       <label for="inputState">Title</label>
