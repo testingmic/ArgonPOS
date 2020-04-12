@@ -4206,7 +4206,7 @@ $(function() {
         $(`div[class~="${hide}"]`).addClass('hidden').fadeOut('slow');
 
         await $.ajax({
-            url: `${baseUrl}doprocess_branches/saveReportsRecord`,
+            url: `${baseUrl}aj/branchManagment/saveReportsRecord`,
             data: { saveReportsRecord: true, attendantPerformance: show },
             type: "POST",
             dataType: "JSON",

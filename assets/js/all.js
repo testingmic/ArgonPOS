@@ -792,29 +792,6 @@ async function listRequests(requestType, tableName) {
     });
 }
 
-function removeItem(sessionName) {
-    $(`div[class="main-content"]`).on('click', `span[class~="remove-item"]`, function(e) {
-
-        var productId = $(this).attr('data-value');
-        var thisSum = $(this).attr('data-sum');
-        $.ajax({
-            type: "POST",
-            url: `${baseUrl}doprocess_sales/removeItem`,
-            data: { removeItem: "true", sessionName: sessionName, productId:productId },
-            dataType: "JSON",
-            success: function(resp) {
-            }, complete: function(data) {
-                $(`tr[data-row="${productId}"]`).remove();
-                let overAll = $(`td[data-overall]`).attr('data-total');
-                let curTotal = (parseInt(overAll) - parseInt(thisSum));
-
-                $(`td[data-overall]`).attr('data-total', curTotal);
-                $(`span[class="overall-total"]`).html(formatCurrency(curTotal))
-
-            }
-        });
-    });
-}
 
 function serealizeSelects(select) {
     
@@ -1169,83 +1146,7 @@ var fetchUsersLists = async () => {
     }
 
 }
-
 fetchUsersLists();
-
-
-async function deleteMyItem(delete_id, page, callBack = "") {
-
-    if (delete_id != "" && page != "") {
-
-        await dOC().then((itResp) => {
-            if(itResp == 1) {
-                noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-            } else {
-                noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-            }
-        }).catch((err) => {
-            noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-        });
-
-        if(noInternet) {
-
-            if(page == "evUser") {
-                var deleteResp = await deleteUserFromIndexDb(delete_id).then((resp) => {
-                    $(".show-delete-msg").html(`<p class="alert alert-success text-white">
-                        User Have Been Successfully Deleted.
-                    </p>`);
-                    setTimeout(function() {
-                        $(".show-delete-msg").empty();
-                        $(`div[class~="deleteModal"]`).modal('hide');
-                    }, 1500);
-                    fetchUsersLists();
-                });
-
-                return false;
-            }
-        }
-
-        $.ajax({
-            url: baseUrl + "doprocess_deletedata",
-            type: "POST",
-            data: { request: "deleteMyData", delete_id: delete_id, page, page },
-            dataType: "json",
-            cache: false,
-            beforeSend: function() {
-                $(".show-delete-msg").html(`
-                    <p class="text-center"><span class="fa fa-spinner fa-spin"></span><br>Please Wait...</p>
-                `);
-                $(".confirm-delete-btn").hide();
-            },
-            success: function(data) {
-                if (data.status == true) {
-                    $(".show-delete-msg").html(`<p class="alert alert-success text-white">${data.message}</p>`);
-                } else {
-                    $(".show-delete-msg").html(`<p class="alert alert-danger text-white">${data.message}</p>`);
-                    $(".confirm-delete-btn").fadeIn(1000);
-                }
-            },
-            error: function() {
-
-                $(".show-delete-msg").html(`<p class="alert alert-success">Error Processing Request</p>`);
-
-                $(".confirm-delete-btn").fadeIn(1000);
-            },
-            complete: function() {
-                callBack;
-
-                setTimeout(function() {
-                    $(".show-delete-msg").empty();
-                }, 3000);
-            }
-        })
-
-    }
-
-}
 
 $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
 
@@ -4436,7 +4337,7 @@ $(function() {
         $(`div[class~="${hide}"]`).addClass('hidden').fadeOut('slow');
 
         await $.ajax({
-            url: `${baseUrl}doprocess_branches/saveReportsRecord`,
+            url: `${baseUrl}aj/branchManagment/saveReportsRecord`,
             data: { saveReportsRecord: true, attendantPerformance: show },
             type: "POST",
             dataType: "JSON",

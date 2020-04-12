@@ -1,9 +1,0 @@
-[12-Apr-2020 16:01:34 Africa/Accra] PHP Notice:  Undefined variable: config in C:\xampp\htdocs\pos\application\controllers\Notifications.php on line 252
-[12-Apr-2020 16:01:34 Africa/Accra] PHP Fatal error:  Uncaught Error: Call to a member function base_url() on null in C:\xampp\htdocs\pos\application\controllers\Notifications.php:252
-Stack trace:
-#0 C:\xampp\htdocs\pos\application\views\default\headtags.php(25): Notifications->accountNotification()
-#1 C:\xampp\htdocs\pos\application\views\default\dashboard.php(6): require_once('C:\\xampp\\htdocs...')
-#2 C:\xampp\htdocs\pos\index.php(115): include('C:\\xampp\\htdocs...')
-#3 {main}
-  thrown in C:\xampp\htdocs\pos\application\controllers\Notifications.php on line 252
-[12-Apr-2020 16:02:42 Africa/Accra] PHP Notice:  Trying to get property 'message' of non-object in C:\xampp\htdocs\pos\application\views\default\headtags.php on line 308

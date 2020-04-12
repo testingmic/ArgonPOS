@@ -4071,10 +4071,12 @@ if($admin_user->logged_InControlled()) {
 	                        	//: search if customer code was not parsed then set it
 	                            if(($currentData == "customer") && (!in_array("Customer Code", $_POST["csvKey"]))) {
 	                                // append the customer_id column and value
-	                                $unqData = "'".random_string('alnum', 15)."',";
+	                                $unqData = "'".random_string('nozero', 12)."',";
 	                            } elseif(($currentData == "product") && (!in_array("Product Code", $_POST["csvKey"]))) {
+	                            	// generate the product code
+	                            	$productId = $posClass->orderIdFormat($clientData->id.random_string('nozero', 4), 8);
 	                                // append the product_id column and value
-	                                $unqData = "'".random_string('alnum', 15)."',";
+	                                $unqData = "'".$productId."',";
 	                            } elseif(($currentData == "user") && (!in_array("User ID", $_POST["csvKey"]))) {
 	                                // append the user_id column and value
 	                                $unqData = "'".random_string('alnum', 15)."',";

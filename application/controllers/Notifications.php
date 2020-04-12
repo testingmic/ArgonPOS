@@ -32,6 +32,7 @@ class Notifications extends Pos {
 		$this->curClientId = (empty($curClientId)) ? $this->clientId : $curClientId;
 		$this->clientInfo = $this->clientData($this->curClientId);
 		$this->setupInfo = json_decode($this->clientInfo->setup_info);
+		$this->themeColors = json_decode($this->clientInfo->theme_color);
 	}
 
 	/**
@@ -249,7 +250,7 @@ class Notifications extends Pos {
 
 			/* Print the notice */
 			$this->message = "You have <strong>{$daysRemaining} days left</strong> 
-				to end your trial version.<br><a href=\"{$this->config->base_url('billing')}\" class=\"btn btn-success\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
+				to end your trial version.<br><a href=\"{$this->config->base_url('billing')}\" class=\"btn {$this->themeColors->bg_colors}\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
 		}
 
 		return $this->message;
