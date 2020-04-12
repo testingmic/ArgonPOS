@@ -159,7 +159,7 @@ if ( ! function_exists('load_class'))
 	 * @param	mixed	an optional argument to pass to the class constructor
 	 * @return	object
 	 */
-	function load_class($class, $directory = 'core')
+	function load_class($class, $directory = 'core', $param = null)
 	{
 		static $_classes = array();
 

@@ -79,12 +79,11 @@ class Notifications extends Pos {
 
 			$stmt = $this->pos->prepare("
 				SELECT * FROM system_notices 
-				WHERE 
-					status = ? AND 
-					(related_to = 'general' OR related_to LIKE '%{$clientId}%')
+				WHERE  
+					(status = '1' AND (related_to = 'general' AND seen_by NOT IN ({$clientId}))) OR (seen_by IS NULL AND status = '1' AND (related_to = 'general'))
 				ORDER BY id ASC LIMIT 1
 			");
-			$stmt->execute([1]);
+			$stmt->execute();
 
 			$result = $stmt->fetchAll(PDO::FETCH_OBJ);
 
@@ -131,7 +130,9 @@ class Notifications extends Pos {
 							});
 						} else {
 							$(`div[class~="{$modalName}"]`).modal('hide');
-							$(`div[class="notification-content"]`).html(``);
+							setTimeout(function(e) {
+								$(`div[class="notification-content"]`).html(``);
+							}, 2000)
 						}
 					}, 'json');
 				})
@@ -195,7 +196,7 @@ class Notifications extends Pos {
 				$stmt->execute([implode(",", $seenUsers), $result->id]);
 
 				//: Log the user activity
-		        $this->userLogs($noteType, $clientId, 'Have acknowledged of having seen the notification shared across the Application.');
+		        $this->userLogs($noteType, $this->session->clientId, 'Have acknowledged of having seen the notification shared across the Application.');
 
 		        //: commit the transaction
 		        $this->pos->commit();

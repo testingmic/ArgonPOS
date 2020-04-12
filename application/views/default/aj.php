@@ -4123,8 +4123,8 @@ if($admin_user->logged_InControlled()) {
 
 	        //: notification loaders
 			$notify = load_class('Notifications', 'controllers');
-			$request = $notify->setUserSeen($session->clientId, $uniqueId, $noteType);
-			
+			$request = $notify->setUserSeen($clientData->id, $uniqueId, $noteType);
+
 	        //: return a status of success
 	        if($request) {
 		        $response->status = "success";

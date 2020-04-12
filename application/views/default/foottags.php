@@ -87,7 +87,7 @@
 <!-- Argon Scripts -->
 <?php 
 // notification loaders
-$notify = load_class('Notifications', 'controllers');
+$notify = load_class('Notifications', 'controllers', $clientData->id);
 $Notification = $notify->availableNotification();
 ?>
 <div class="notification-content"></div>
