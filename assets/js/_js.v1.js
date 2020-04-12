@@ -45,7 +45,6 @@ function cOS() {
     var open = indexedDB.open(iName, iVer);
     open.onupgradeneeded = function(evt) {
         var obST = {
-            users: 'user_id',
             request_products: 'product_id',
             customers: 'customer_id',
             sales: 'order_id',
@@ -159,55 +158,6 @@ function clearDBStore(sN) {
             var req;
             try {
                 req = store.clear();
-            } catch (e) {
-                if (e.name == 'DataCloneError') {}
-                throw e;
-            }
-            req.onsuccess = function(evt) {
-                resolve(200);
-            };
-            req.onerror = function() {};
-        };
-    });
-}
-
-
-function updateUsersRecordIndexDb(obDet) {
-    return new Promise((resolve, reject) => {
-        var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
-        var open = indexedDB.open(iName, iVer);
-        open.onsuccess = function() {
-            var db = open.result;
-            var tx = db.transaction('users', 'readwrite');
-            var store = tx.objectStore('users');
-            var req;
-            try {
-                $.each(obDet, function(ie, value) {
-                    req = store.put(value);
-                });
-            } catch (e) {
-                if (e.name == 'DataCloneError') {}
-            }
-            req.onsuccess = function(evt) {
-                resolve(200);
-            };
-            req.onerror = function() {};
-        };
-    });
-}
-
-function deleteUserFromIndexDb(uniqueId) {
-    return new Promise((resolve, reject) => {
-        var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
-        var open = indexedDB.open(iName, iVer);
-        open.onsuccess = function() {
-            var db = open.result;
-            var tx = db.transaction('users', 'readwrite');
-            var store = tx.objectStore('users');
-            var req;
-            try {
-                var newInfo = { user_id: uniqueId, deleted: 1 };
-                req = store.put(newInfo);
             } catch (e) {
                 if (e.name == 'DataCloneError') {}
                 throw e;
@@ -426,19 +376,6 @@ async function dOC() {
 if($(`table[class~="simple-table"]`).length) {
     $(`table[class~="simple-table"]`).dataTable({iDisplayLength: 5});
 }
-
-dOC().then((itResp) => {
-    if(itResp == 1) {
-        noInternet = false;
-        $(`div[class="connection"]`).css('display','none');
-    } else {
-        noInternet = true;
-        $(`div[class="connection"]`).css('display','block');
-    }
-}).catch((err) => {
-    noInternet = true;
-    $(`div[class="connection"]`).css('display','block');
-});
 
 var recon;
 
@@ -750,12 +687,15 @@ async function listRequests(requestType, tableName) {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         noInternet = true;
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
         $(`div[class="connection"]`).css('display','block');
     });
 
@@ -879,13 +819,16 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
         if(itResp == 1) {
             offline = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             offline = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         offline = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if(offline) {
@@ -893,7 +836,7 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
 
         $(`button[class~="confirm-clear-cache"]`).on('click', function(e) {
             caches.delete('argonPOS-Static-v1').then((res) => {
-                window.location.href = baseUrl;
+                window.location.href = `${baseUrl}login`;
             });
         });
     }
@@ -933,13 +876,16 @@ var fetchPOSCustomersList = async () => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if(noInternet) {
@@ -961,7 +907,9 @@ var fetchPOSCustomersList = async () => {
         $.post(baseUrl + "aj/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
             await clearDBStore('customers').then((resp) => {
                 populateCustOptionsList(data.result);
-                upIDB('customers', data.result);
+                if(data.result.length) {
+                    upIDB('customers', data.result);
+                }
             });
         }, 'json');
     });
@@ -1023,13 +971,16 @@ var fetchPOSProductsList = async () => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if(noInternet) {
@@ -1049,9 +1000,10 @@ var fetchPOSProductsList = async () => {
 
     $.post(baseUrl + "aj/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
         await clearDBStore('request_products').then((resp) => {
-            upIDB('request_products', data.result).then((resp) => {
-                populatePOSProductsList(data.result);
-            });
+            populatePOSProductsList(data.result);
+            if(data.result.length) {
+                upIDB('request_products', data.result);
+            }
         });
     }, 'json');
 
@@ -1091,43 +1043,6 @@ var populateUsersList = (usersObject) => {
 var fetchUsersLists = async () => {
     
     if ($("table[class~='usersAccounts']").length) {
-        
-        sL();
-
-        await dOC().then((itResp) => {
-            if(itResp == 1) {
-                noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-            } else {
-                noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-            }
-        }).catch((err) => {
-            noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-        });
-
-        if(noInternet) {
-
-            var info = await listIDB('users').then((resp) => {
-                var row_id = 0, newResults = [];
-                $.each(resp, function(i, e) {
-                    if(e.deleted != 1) {
-                        row_id++;
-                        e.row_id = row_id;
-
-                        newResults.push(e);
-                    }
-                });
-
-                populateUsersList(newResults);
-
-            });
-
-            hL();
-
-            return false;
-        }
 
         $.ajax({
             url: baseUrl + "aj/userManagement/fetchUsersLists",
@@ -1140,7 +1055,6 @@ var fetchUsersLists = async () => {
             },
             success: function(data) {
                 populateUsersList(data.message);
-                aIDB('users', data.message);
             },
             error: function() {
                 
@@ -1165,13 +1079,16 @@ async function deleteMyItem(itemId, page, callBack = "") {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
             } else {
                 noInternet = true;
                 $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             }
         }).catch((err) => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         });
 
         if(noInternet) {
@@ -1309,13 +1226,16 @@ var editUserDetails = () => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
             } else {
                 noInternet = true;
                 $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             }
         }).catch((err) => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         });
 
         if(noInternet) {
@@ -1698,13 +1618,16 @@ var editBranchDetails = () => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
             } else {
                 noInternet = true;
                 $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             }
         }).catch((err) => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         });
 
         if(noInternet) {
@@ -1777,13 +1700,16 @@ async function fetchBranchLists() {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
             } else {
                 noInternet = true;
                 $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             }
         }).catch((err) => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         });
 
         if(noInternet) {
@@ -2086,13 +2012,16 @@ $("#newCustomer_form").on("submit", async function(event) {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if(noInternet) {
@@ -2957,13 +2886,16 @@ async function getSalesDetails(salesID) {
         if (itResp == 1) {
             offline = false;
             $(`div[class="connection"]`).css('display', 'none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             offline = true;
             $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         offline = true;
         $(`div[class="connection"]`).css('display', 'block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if (offline) {
@@ -4280,19 +4212,21 @@ $(function() {
                 if (itResp == 1) {
                     offline = false;
                     $(`div[class="connection"]`).css('display', 'none');
+                    $(`div[class~="offline-placeholder"]`).css('display','none');
                 } else {
                     offline = true;
                     $(`div[class="connection"]`).css('display', 'block');
+                    $(`div[class~="offline-placeholder"]`).css('display','flex');
                 }
             }).catch((err) => {
                 offline = true;
                 $(`div[class="connection"]`).css('display', 'block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             });
 
             if (offline) {
 
                 $(`select[name="periodSelected"], select[name="periodSelect"]`).prop('disabled', true);
-                $(`div[class~="offline-placeholder"]`).css({ 'display': 'flex' });
                 $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
 
                 dashboardAnalitics().then(async (dashboardInsights) => {

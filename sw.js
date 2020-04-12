@@ -6,6 +6,7 @@ var dc = [
   `${appUrl}dashboard`,
   `${appUrl}point-of-sale`,
   `${appUrl}sales`,
+  `${appUrl}analytics`,
   `${appUrl}assets/img/brand/favicon.png`,
   `${appUrl}assets/vendor/nucleo/css/nucleo.css`,
   `${appUrl}assets/vendor/fortawesome/fontawesome-free/css/all.min.css`,

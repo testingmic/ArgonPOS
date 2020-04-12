@@ -242,6 +242,13 @@ a.current .card {
   margin: auto !important;;
 }
 
+.offline-menu {
+  /*z-index: 9999;
+  position: relative;
+  left: 0;
+  background-color: #ccc;*/
+}
+
 .offline-placeholder {
   display: flex;
   align-items: center;
@@ -257,6 +264,26 @@ a.current .card {
   margin: auto !important;;
 }
 .offline-placeholder .offline-content {
+  width: 100%;
+  font-size: 17px;
+  font-weight: bolder;
+}
+
+.no-work-placeholder {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height:100%;
+  background: rgba(255, 255, 255, 0.85);
+  position: absolute;
+  z-index: 999;
+  top: 0;
+}
+.no-work-placeholder i.fa{
+  display: block !important;
+  margin: auto !important;;
+}
+.no-work-placeholder .no-work-content {
   width: 100%;
   font-size: 17px;
   font-weight: bolder;

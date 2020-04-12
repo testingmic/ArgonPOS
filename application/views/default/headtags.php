@@ -44,8 +44,8 @@ function nonWorkingDay($message = "Please note that the Point of Sale is Closed 
   global $clientData, $posClass;
   $openingDays = $clientData->shop_opening_days;
 
-  return '<div class="offline-placeholder main-body-loader" style="display: none;">
-          <div class="offline-content text-center">
+  return '<div class="no-work-placeholder main-body-loader" style="display: none;">
+          <div class="no-work-content text-center">
               <p class="alert alert-warning text-white" style="border-radius:0px">'.$message.' Come back on <strong>'.$posClass->stringToArray($openingDays)[0].'</strong></p>
           </div>
       </div>';
@@ -227,13 +227,13 @@ if($setupInfo->type == "alpha") {
                 </ul>
               </div>
             </li>
-            <li class="nav-item">
+            <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['customers'])) ? "active" : null; ?>" href="<?= $baseUrl ?>customers">
                 <i class="fa fa-users text-purple"></i>
                 <span class="nav-link-text">Customers</span>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'products', 'product-types', 'product-brands'])) ? "active" : null; ?>" href="#navbar-inventory" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-inventory">
                 <i class="ni ni-ungroup text-orange"></i>
                 <span class="nav-link-text">Inventory</span>
@@ -249,14 +249,14 @@ if($setupInfo->type == "alpha") {
                 </ul>
               </div>
             </li>
-            <li class="nav-item">
+            <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['analytics'])) ? "active" : null; ?>" href="<?= $baseUrl ?>analytics">
                 <i class="ni ni-chart-pie-35 text-info"></i>
                 <span class="nav-link-text">Analytics</span>
               </a>
             </li>
             <?php if($accessObject->hasAccess('view', 'settings')) { ?>    
-            <li class="nav-item">
+            <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'users', 'settings', 'import'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
                 <i class="ni ni-map-big text-primary"></i>
                 <span class="nav-link-text">Setup</span>

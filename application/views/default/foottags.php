@@ -88,7 +88,7 @@
 <?php 
 // notification loaders
 $notify = load_class('Notifications', 'controllers');
-$welcomeNote = $notify->welcomeNotice();
+$Notification = $notify->availableNotification();
 ?>
 <div class="notification-content"></div>
 <!-- Core -->
@@ -132,70 +132,54 @@ $welcomeNote = $notify->welcomeNotice();
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
 <script src="<?= $baseUrl ?>assets/js/_js.v1.js"></script>
 <script>
-$(async function() {
-<?php
-// check the welcome notice
-if(!empty($welcomeNote)) {  
-  // print the welcome notice
-  $welcomeNote = (Object) $welcomeNote;
-  print "$(`div[class='notification-content']`).html(`{$welcomeNote->content}`);\n";
-  print "$(`div[class~='{$welcomeNote->modal}']`).modal({backdrop: 'static', keyboard: false});\n";
-  print "{$welcomeNote->function};\n";
-}
-?>
 <?php if($clientData->display_clock) { ?>
-// live clock
+function update_clock() {
+  $(`div[class~="liveclock"] span`).html(moment().format("LL HH:mm:ss"));
+}
 var clock_tick = function clock_tick() {
   setInterval('update_clock();', 1000);
 }
 clock_tick();
-var update_clock = function update_clock() {
-  $(`div[class~="liveclock"] span`).html(moment().format("LL HH:mm:ss"));
+<?php } ?>
+$(async function() {
+<?php
+// check the welcome notice
+if(!empty($Notification)) {  
+  // print the welcome notice
+  $Notification = (Object) $Notification;
+  print "$(`div[class='notification-content']`).html(`{$Notification->content}`);\n";
+  print "$(`div[class~='{$Notification->modal}']`).modal({backdrop: 'static', keyboard: false});\n";
+  print "{$Notification->function};\n";
+}
+?>
+hL();
+<?php if(confirm_url_id(1, 'inventory-details')) { ?>
+  var identifyCurrentBranch = () => {
+      var site2 = branchID;
+      fetchAllProducts(site2);
+  }
+  identifyCurrentBranch();
+<?php } ?>
+<?php if(confirm_url_id(0, 'dashboard')) { ?>
+if(!noInternet) {
+  syncOfflineData('sales').then((resp) => {
+      dPv('sales').then((res) => {
+          preloadData('sales').then((res) => {
+              preloadData('reports');
+          });
+      });
+  });
 }
 <?php } ?>
-  var offline = true;
-  hL();
-  await dOC().then((itResp) => {
-      if(itResp == 1) {
-          offline = false;
-          $(`div[class~="offline-placeholder"]`).css('display','none');
-      } else {
-          offline = true;
-          $(`div[class="connection"]`).css('display','none');
-          $(`div[class~="offline-placeholder"]`).css('display','flex');
-      }
-  }).catch((err) => {
-      offline = true;
-      $(`div[class~="offline-placeholder"]`).css('display','flex');
-      $(`div[class="connection"]`).css('display','none');
-  });
-  <?php if(confirm_url_id(1, 'inventory-details')) { ?>
-    var identifyCurrentBranch = () => {
-        var site2 = branchID;
-        fetchAllProducts(site2);
-    }
-    identifyCurrentBranch();
-  <?php } ?>
-  <?php if(confirm_url_id(0, 'dashboard')) { ?>
-  if(!noInternet) {
-    syncOfflineData('sales').then((resp) => {
-        dPv('sales').then((res) => {
-            preloadData('sales').then((res) => {
-                preloadData('reports');
-            });
-        });
-    });
-  }
-  <?php } ?>
-  <?php if(confirm_url_id(0, 'settings')) { ?>
-  $('textarea[name="terms_and_conditions"]').summernote({
-    width: 600,
-    height: 150,
-    minHeight: 120,
-    maxHeight: 200,
-    focus: false
-  });
-  <?php } ?>
+<?php if(confirm_url_id(0, 'settings')) { ?>
+$('textarea[name="terms_and_conditions"]').summernote({
+  width: 600,
+  height: 150,
+  minHeight: 120,
+  maxHeight: 200,
+  focus: false
+});
+<?php } ?>
 });
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

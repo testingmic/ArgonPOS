@@ -4115,16 +4115,21 @@ if($admin_user->logged_InControlled()) {
 	elseif(confirm_url_id(1, "notificationHandler")) {
 
 		//: enter this yard
-		if(isset($_POST["confirmWelcomeNotice"]) && confirm_url_id(2, "seenWelcome")) {
+		if(isset($_POST["unqID"], $_POST["noteType"]) && confirm_url_id(2, "activeNotice")) {
+
+			//: unique id variable
+			$uniqueId = xss_clean($_POST["unqID"]);
+			$noteType = xss_clean($_POST["noteType"]);
 
 	        //: notification loaders
 			$notify = load_class('Notifications', 'controllers');
-			$notify->setUserSeen($session->clientId, 'welcomeNote');
-
+			$request = $notify->setUserSeen($session->clientId, $uniqueId, $noteType);
+			
 	        //: return a status of success
-	        $response->status = "success";
-	        $response->message = "Initializing Notification Seen.";
-
+	        if($request) {
+		        $response->status = "success";
+		        $response->message = "Initializing Notification Seen.";
+		   	}
 		}
 
 	}
