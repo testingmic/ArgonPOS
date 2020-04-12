@@ -4,8 +4,7 @@ include 'barcode.php';
 $generator = new barcode_generator();
 
 $array = [
-		'PRA12345', 'PRA28883',
-		'PRA29939', 'PRAL49445'
+		'PDT00012'
 ];
 
 foreach($array as $data) {

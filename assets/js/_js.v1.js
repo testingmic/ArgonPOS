@@ -2277,28 +2277,28 @@ if($(".make-online-payment").length) {
             if(currentIndex == customerIndex && customerSelected == "0"){
                 Toast.fire({
                     type: 'error',
-                    title: "Please select a customer"
+                    title: "Please select a customer."
                 });
                 return false;
             }   
             else if((currentIndex == productsIndex && !$("input:checkbox.product-select:checked").length) && (newIndex != 0)) {
                 Toast.fire({
                     type: 'error',
-                    title: "Please select product(s)"
+                    title: "Please select at least one product to proceed"
                 });
                 return false;                   
             }
             else if((currentIndex == paymentIndex && selectedPayType == "0") && (newIndex != 1)) {
                 Toast.fire({
                     type: 'error',
-                    title: "Please select a payment type"
+                    title: "Please select the payment type to proceed."
                 });
                 return false;
             }
             else if(((selectedPayType == "cash") && (amountPaid < amountPayable) && (newIndex == completeIndex))) {
                 Toast.fire({
                     type: 'error',
-                    title: "Amount being paid is less than the total amount."
+                    title: "The Amount being paid is less than the Total Amount."
                 });
                 return false;
             }
@@ -2468,13 +2468,14 @@ if($(".make-online-payment").length) {
                                 title: `Sorry. Maximum number of available ${productName} is ${maximumQty}`
                             });
                         }
-                    })
+                    });
                     $(`.remove-row[data-row='${row.productId}']`).on("click", function(){
                         rvPtRow(row.productId);
                         $(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
-                    })
-                    $(".print-receipt").on("click", printReceipt)
-                })
+                    });
+                    $(".print-receipt").on("click", printReceipt);
+                    document.getElementById("products-search-input").focus();
+                });
             }
             else rvPtRow($(this).data("productId"))
         });
@@ -2641,6 +2642,7 @@ if($(".make-online-payment").length) {
         let receipt_tbody = $(".receipt-table-body");
         $(`tr.receipt-product-row[data-row-id="${rowId}"]`, receipt_tbody).remove();
         $(`tr.products-row[data-row-id="${rowId}"]`, tbody).remove();
+        document.getElementById("products-search-input").focus();
         rcalRowNum();
         rcalTot();
     }
@@ -2649,34 +2651,34 @@ if($(".make-online-payment").length) {
 
         function rcalTot(){
             let totalToPay = 0;
+                overallSubTotal = 0;
 
             if($("tr.products-row .row-subtotal").length){
-            let discountAmount;
+                let discountAmount;
 
                 let discountType = $(`input[name="discount_type"]:checked`).val();
                 if($(`input[name="discount_amount"]`).val().length > 0) {
-                discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
+                    discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
                 } else {
-                discountAmount = 0;
+                    discountAmount = 0;
                 }
-            
-            totalDiscountDeducted = 0;
-            overallSubTotal = 0;
+                
+                totalDiscountDeducted = 0;
 
                 $("tr.products-row .row-subtotal").each(function(){
                     let subtotalVal = parseFloat($(this).text());
                     totalToPay += subtotalVal;
-                overallSubTotal += subtotalVal;
+                    overallSubTotal += subtotalVal;
                 });
                 if(discountType == "cash") {
-                totalToPay = totalToPay - discountAmount;
-                totalDiscountDeducted = discountAmount;
+                    totalToPay = totalToPay - discountAmount;
+                    totalDiscountDeducted = discountAmount;
                 } else {
-                discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
-                totalToPay = (totalToPay - discountAmount);
-                totalDiscountDeducted = discountAmount;
-            }
-            $(`th[data-bind-html='discount_amount']`).html(`${formatCurrency(discountAmount)}`);  
+                    discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
+                    totalToPay = (totalToPay - discountAmount);
+                    totalDiscountDeducted = discountAmount;
+                }
+                $(`th[data-bind-html='discount_amount']`).html(`${formatCurrency(discountAmount)}`);  
             }
 
             let paymentType = $(".payment-type-select").val();

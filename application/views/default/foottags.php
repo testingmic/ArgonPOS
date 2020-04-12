@@ -132,6 +132,7 @@ $welcomeNote = $notify->welcomeNotice();
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
 <script src="<?= $baseUrl ?>assets/js/_js.v1.js"></script>
 <script>
+$(async function() {
 <?php
 // check the welcome notice
 if(!empty($welcomeNote)) {  
@@ -152,50 +153,49 @@ var update_clock = function update_clock() {
   $(`div[class~="liveclock"] span`).html(moment().format("LL HH:mm:ss"));
 }
 <?php } ?>
-$(async function() {
-    var offline = true;
-    hL();
-    await dOC().then((itResp) => {
-        if(itResp == 1) {
-            offline = false;
-            $(`div[class~="offline-placeholder"]`).css('display','none');
-        } else {
-            offline = true;
-            $(`div[class="connection"]`).css('display','none');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-        }
-    }).catch((err) => {
-        offline = true;
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
-        $(`div[class="connection"]`).css('display','none');
-    });
-    <?php if(confirm_url_id(1, 'inventory-details')) { ?>
-      var identifyCurrentBranch = () => {
-          var site2 = branchID;
-          fetchAllProducts(site2);
+  var offline = true;
+  hL();
+  await dOC().then((itResp) => {
+      if(itResp == 1) {
+          offline = false;
+          $(`div[class~="offline-placeholder"]`).css('display','none');
+      } else {
+          offline = true;
+          $(`div[class="connection"]`).css('display','none');
+          $(`div[class~="offline-placeholder"]`).css('display','flex');
       }
-      identifyCurrentBranch();
-    <?php } ?>
-    <?php if(confirm_url_id(0, 'dashboard')) { ?>
-    if(!noInternet) {
-      syncOfflineData('sales').then((resp) => {
-          dPv('sales').then((res) => {
-              preloadData('sales').then((res) => {
-                  preloadData('reports');
-              });
-          });
-      });
+  }).catch((err) => {
+      offline = true;
+      $(`div[class~="offline-placeholder"]`).css('display','flex');
+      $(`div[class="connection"]`).css('display','none');
+  });
+  <?php if(confirm_url_id(1, 'inventory-details')) { ?>
+    var identifyCurrentBranch = () => {
+        var site2 = branchID;
+        fetchAllProducts(site2);
     }
-    <?php } ?>
-    <?php if(confirm_url_id(0, 'settings')) { ?>
-    $('textarea[name="terms_and_conditions"]').summernote({
-      width: 600,
-      height: 150,
-      minHeight: 120,
-      maxHeight: 200,
-      focus: false
+    identifyCurrentBranch();
+  <?php } ?>
+  <?php if(confirm_url_id(0, 'dashboard')) { ?>
+  if(!noInternet) {
+    syncOfflineData('sales').then((resp) => {
+        dPv('sales').then((res) => {
+            preloadData('sales').then((res) => {
+                preloadData('reports');
+            });
+        });
     });
-    <?php } ?>
+  }
+  <?php } ?>
+  <?php if(confirm_url_id(0, 'settings')) { ?>
+  $('textarea[name="terms_and_conditions"]').summernote({
+    width: 600,
+    height: 150,
+    minHeight: 120,
+    maxHeight: 200,
+    focus: false
+  });
+  <?php } ?>
 });
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
