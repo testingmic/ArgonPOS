@@ -251,12 +251,11 @@ class Notifications extends Pos {
 			$daysRemaining = $this->daysDiff(date("Y-m-d"), $this->setupInfo->expiry_date);
 
 			/* Print the notice */
-			$this->message = "You have <strong>{$daysRemaining} days left</strong> 
-				to end your trial version.<br><a href=\"{$this->config->base_url('billing')}\" class=\"btn {$this->themeColors->bg_colors}\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
+			$this->message = "<div class='text-danger'>You have <strong>{$daysRemaining} days left</strong> to end your <strong>trial version.</strong></div><br><a href=\"{$this->config->base_url('billing')}\" class=\"btn {$this->themeColors->bg_colors}\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
 
 			/* If the user has expired usage */
-			// if($daysRemaining <= 0) {
-			if($daysRemaining > 0) {
+			if($daysRemaining <= 0) {
+			// if($daysRemaining > 0) {
 
 				/* Set the expiry message */
 				$this->message = "<span class='text-danger'>Your trial period has ended.</span>";

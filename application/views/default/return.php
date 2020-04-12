@@ -209,12 +209,12 @@ if(confirm_url_id(1)) {
           </div>
           <div class="modal-header">
             <h5 class="modal-title mt-0" id="myLargeModalLabel">
-              This is the header
+              Return All Products
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           </div>
-          <div class="modal-body" style="min-height: 200px; padding-top: 0px">
-            hello {{clientName}}, this is the modal
+          <div class="modal-body text-center" style="min-height: 200px; padding-top: 0px">
+            Hello user, i understand you want to return a product. Don't worry this feature will be added pretty soon.
           </div>
         </div>
       </div>

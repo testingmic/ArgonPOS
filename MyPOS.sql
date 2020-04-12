@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 12, 2020 at 01:36 PM
+-- Generation Time: Apr 12, 2020 at 10:48 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.10
 
@@ -392,7 +392,10 @@ CREATE TABLE `customers` (
 INSERT INTO `customers` (`id`, `clientId`, `branchId`, `customer_id`, `source`, `title`, `firstname`, `lastname`, `role`, `phone_1`, `phone_2`, `email`, `date_of_birth`, `user_image`, `description`, `residence`, `postal_address`, `country`, `nationality`, `gender`, `city`, `user_type`, `website`, `industry`, `balance`, `rating`, `owner_id`, `date_log`, `preferred_payment_type`, `comments`, `status`) VALUES
 (1, '3OKokdt8wveI', 1, 'POS732143158965', 'Evelyn', 'Mr', 'Asamoah', 'John', NULL, '0908877859', NULL, 'asamoahjohn@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'J7Sa5j8FYPGVXKp', '2020-04-10 21:11:14', NULL, NULL, '1'),
 (2, '3OKokdt8wveI', 1, 'POS499688133725', 'Evelyn', 'Mr', 'Amoah', 'Danso', NULL, '0550107770', NULL, 'emmallob14@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3tYcj10KTedBJ6XsiVqnkN94rFlL', '2020-04-10 21:27:47', NULL, NULL, '1'),
-(3, '3OKokdt8wveI', 1, 'WalkIn', 'Argon', NULL, 'WalkIn', 'Customer', NULL, NULL, NULL, NULL, NULL, 'assets/images/users/user-4.jpg', NULL, NULL, NULL, NULL, NULL, 'Male', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-11 09:13:25', NULL, NULL, '1');
+(3, '3OKokdt8wveI', 1, 'WalkIn', 'Argon', NULL, 'WalkIn', 'Customer', NULL, NULL, NULL, NULL, NULL, 'assets/images/users/user-4.jpg', NULL, NULL, NULL, NULL, NULL, 'Male', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-11 09:13:25', NULL, NULL, '1'),
+(5, '3OKokdt8wveI', 1, '1', 'Argon', 'Mr', 'Asamoah', 'John', NULL, '0908877859', NULL, 'asamoahjohn@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, '   ', NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-12 17:36:25', NULL, NULL, '1'),
+(6, '3OKokdt8wveI', 1, '2', 'Argon', 'Mr', 'Joshua Commey', 'Mental Health', NULL, '', NULL, 'joshcommey@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'JHS 2', NULL, NULL, NULL, NULL, '   ', NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-12 17:36:25', NULL, NULL, '1'),
+(7, '3OKokdt8wveI', 1, '3', 'Argon', 'Mr', 'New Added here', 'Maternal And Child Health', NULL, '0987654321', NULL, 'thisnewstuden@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Class 4', NULL, NULL, NULL, NULL, '   ', NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-12 17:36:25', NULL, NULL, '1');
 
 -- --------------------------------------------------------
 
@@ -433,7 +436,12 @@ INSERT INTO `data_monitoring` (`id`, `clientId`, `data_type`, `unique_id`, `data
 (16, 3, 'settings', '3OKokdt8wveI', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"client_name\":\"Emmallen Networks\",\"client_email\":\"emmallob14@gmail.com\",\"client_website\":\"\",\"client_logo\":\"assets\\/images\\/logo.png\",\"primary_contact\":\"0550107770\",\"secondary_contact\":\"\",\"payment_options\":\"cash,credit\",\"shop_opening_days\":\"Monday,Tuesday,Wednesday,Thursday,Friday\",\"address_1\":\"\",\"address_2\":null,\"receipt_message\":\"Thank you for trading with us.\",\"terms_and_conditions\":\"\",\"manager_signature\":null,\"reports_sales_attendant\":\"sales-attendant-performance\",\"reports_period\":\"this-month\",\"total_expenditure\":\"0.00\",\"space_per_square_foot\":\"0.00\",\"default_currency\":\"GHS\",\"print_receipt\":\"\",\"expiry_notification_days\":\"1 MONTH\",\"allow_product_return\":\"1\",\"default_discount\":\"0.00\",\"fiscal_year_start\":\"2020-01-01\",\"display_clock\":\"1\",\"theme_color\":\"{\\\"bg_colors\\\":\\\"bg-purple text-white no-border\\\",\\\"bg_color_code\\\":\\\"#8965e0\\\",\\\"bg_color_light\\\":\\\"#97a5f1\\\",\\\"btn_outline\\\":\\\"btn-outline-primary\\\"}\",\"theme_color_code\":\"purple\",\"setup_info\":\"{\\\"type\\\":\\\"basic\\\",\\\"verified\\\":1,\\\"setup_date\\\":\\\"2020-04-10\\\",\\\"expiry_date\\\":\\\"2020-04-24\\\",\\\"outlets\\\":\\\"2\\\",\\\"initializing\\\":\\\"1\\\"}\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 11:47:33'),
 (17, 3, 'settings', '3OKokdt8wveI', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"client_name\":\"Emmallen Networks\",\"client_email\":\"emmallob14@gmail.com\",\"client_website\":\"\",\"client_logo\":\"assets\\/images\\/logo.png\",\"primary_contact\":\"0550107770\",\"secondary_contact\":\"\",\"payment_options\":\"cash,credit\",\"shop_opening_days\":\"Monday,Tuesday,Wednesday,Thursday,Friday\",\"address_1\":\"\",\"address_2\":null,\"receipt_message\":\"Thank you for trading with us.\",\"terms_and_conditions\":\"\",\"manager_signature\":null,\"reports_sales_attendant\":\"sales-attendant-performance\",\"reports_period\":\"this-week\",\"total_expenditure\":\"0.00\",\"space_per_square_foot\":\"0.00\",\"default_currency\":\"GHS\",\"print_receipt\":\"\",\"expiry_notification_days\":\"1 MONTH\",\"allow_product_return\":\"1\",\"default_discount\":\"0.00\",\"fiscal_year_start\":\"2020-01-01\",\"display_clock\":\"1\",\"theme_color\":\"{\\\"bg_colors\\\":\\\"bg-purple text-white no-border\\\",\\\"bg_color_code\\\":\\\"#8965e0\\\",\\\"bg_color_light\\\":\\\"#97a5f1\\\",\\\"btn_outline\\\":\\\"btn-outline-primary\\\"}\",\"theme_color_code\":\"purple\",\"setup_info\":\"{\\\"type\\\":\\\"alpha\\\",\\\"verified\\\":1,\\\"setup_date\\\":\\\"2020-04-10\\\",\\\"expiry_date\\\":\\\"2020-04-24\\\",\\\"outlets\\\":\\\"5\\\",\\\"initializing\\\":\\\"1\\\"}\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 17:53:04'),
 (18, 3, 'settings', '3OKokdt8wveI', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"client_name\":\"Emmallen Networks\",\"client_email\":\"emmallob14@gmail.com\",\"client_website\":\"\",\"client_logo\":\"assets\\/images\\/logo.png\",\"primary_contact\":\"0550107770\",\"secondary_contact\":\"\",\"payment_options\":\"cash,credit\",\"shop_opening_days\":\"Monday,Tuesday,Wednesday,Thursday,Friday\",\"address_1\":\"\",\"address_2\":null,\"receipt_message\":\"Thank you for trading with us.\",\"terms_and_conditions\":\"\",\"manager_signature\":null,\"reports_sales_attendant\":\"sales-attendant-performance\",\"reports_period\":\"this-week\",\"total_expenditure\":\"0.00\",\"space_per_square_foot\":\"0.00\",\"default_currency\":\"GHS\",\"print_receipt\":\"\",\"expiry_notification_days\":\"1 MONTH\",\"allow_product_return\":\"1\",\"default_discount\":\"0.00\",\"fiscal_year_start\":\"2020-01-01\",\"display_clock\":\"1\",\"theme_color\":\"{\\\"bg_colors\\\":\\\"bg-indigo text-white no-border\\\",\\\"bg_color_code\\\":\\\"#5603ad\\\",\\\"bg_color_light\\\":\\\"#5e72e4\\\",\\\"btn_outline\\\":\\\"btn-outline-primary\\\"}\",\"theme_color_code\":\"indigo\",\"setup_info\":\"{\\\"type\\\":\\\"alpha\\\",\\\"verified\\\":1,\\\"setup_date\\\":\\\"2020-04-10\\\",\\\"expiry_date\\\":\\\"2020-04-24\\\",\\\"outlets\\\":\\\"5\\\",\\\"initializing\\\":\\\"1\\\"}\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 17:53:47'),
-(19, 3, 'settings', '3OKokdt8wveI', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"client_name\":\"Emmallen Networks\",\"client_email\":\"emmallob14@gmail.com\",\"client_website\":\"\",\"client_logo\":\"assets\\/images\\/logo.png\",\"primary_contact\":\"0550107770\",\"secondary_contact\":\"\",\"payment_options\":\"cash,credit\",\"shop_opening_days\":\"Monday,Tuesday,Wednesday,Thursday,Friday\",\"address_1\":\"\",\"address_2\":null,\"receipt_message\":\"Thank you for trading with us.\",\"terms_and_conditions\":\"\",\"manager_signature\":null,\"reports_sales_attendant\":\"sales-attendant-performance\",\"reports_period\":\"all-time\",\"total_expenditure\":\"0.00\",\"space_per_square_foot\":\"0.00\",\"default_currency\":\"GHS\",\"print_receipt\":\"\",\"expiry_notification_days\":\"1 MONTH\",\"allow_product_return\":\"1\",\"default_discount\":\"0.00\",\"fiscal_year_start\":\"2020-01-01\",\"display_clock\":\"1\",\"theme_color\":\"{\\\"bg_colors\\\":\\\"bg-gradient-darker text-white no-border\\\",\\\"bg_color_code\\\":\\\"#000\\\",\\\"bg_color_light\\\":\\\"#3c3939\\\",\\\"btn_outline\\\":\\\"btn-outline-dark\\\"}\",\"theme_color_code\":\"darker\",\"setup_info\":\"{\\\"type\\\":\\\"alpha\\\",\\\"verified\\\":1,\\\"setup_date\\\":\\\"2020-04-10\\\",\\\"expiry_date\\\":\\\"2020-04-24\\\",\\\"outlets\\\":\\\"5\\\",\\\"initializing\\\":\\\"1\\\"}\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 18:19:41');
+(19, 3, 'settings', '3OKokdt8wveI', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"client_name\":\"Emmallen Networks\",\"client_email\":\"emmallob14@gmail.com\",\"client_website\":\"\",\"client_logo\":\"assets\\/images\\/logo.png\",\"primary_contact\":\"0550107770\",\"secondary_contact\":\"\",\"payment_options\":\"cash,credit\",\"shop_opening_days\":\"Monday,Tuesday,Wednesday,Thursday,Friday\",\"address_1\":\"\",\"address_2\":null,\"receipt_message\":\"Thank you for trading with us.\",\"terms_and_conditions\":\"\",\"manager_signature\":null,\"reports_sales_attendant\":\"sales-attendant-performance\",\"reports_period\":\"all-time\",\"total_expenditure\":\"0.00\",\"space_per_square_foot\":\"0.00\",\"default_currency\":\"GHS\",\"print_receipt\":\"\",\"expiry_notification_days\":\"1 MONTH\",\"allow_product_return\":\"1\",\"default_discount\":\"0.00\",\"fiscal_year_start\":\"2020-01-01\",\"display_clock\":\"1\",\"theme_color\":\"{\\\"bg_colors\\\":\\\"bg-gradient-darker text-white no-border\\\",\\\"bg_color_code\\\":\\\"#000\\\",\\\"bg_color_light\\\":\\\"#3c3939\\\",\\\"btn_outline\\\":\\\"btn-outline-dark\\\"}\",\"theme_color_code\":\"darker\",\"setup_info\":\"{\\\"type\\\":\\\"alpha\\\",\\\"verified\\\":1,\\\"setup_date\\\":\\\"2020-04-10\\\",\\\"expiry_date\\\":\\\"2020-04-24\\\",\\\"outlets\\\":\\\"5\\\",\\\"initializing\\\":\\\"1\\\"}\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-11 18:19:41'),
+(20, 3, 'products', '5', '{\"id\":\"5\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"source\":\"db\",\"product_id\":\"PD00012\",\"category_id\":\"PCAT63294\",\"product_title\":\"Hello world\",\"product_type_id\":null,\"product_description\":\"\",\"product_image\":\"assets\\/images\\/products\\/default.png\",\"product_price\":\"6.00\",\"cost_price\":\"2.00\",\"performance_rating\":null,\"date_added\":\"2020-04-12 17:32:04\",\"expiry_date\":\"0000-00-00\",\"added_by\":\"J7Sa5j8FYPGVXKp\",\"status\":\"1\",\"threshold\":\"10\",\"quantity\":\"80\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 17:32:45'),
+(21, 3, 'customers', '2', '{\"id\":\"6\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"customer_id\":\"2\",\"source\":\"Argon\",\"title\":null,\"firstname\":\"Joshua Commey\",\"lastname\":\"Mental Health\",\"role\":null,\"phone_1\":null,\"phone_2\":null,\"email\":\"0099999090 joshcommey@mail.com\",\"date_of_birth\":null,\"user_image\":\"assets\\/images\\/users\\/user-4.jpg\",\"description\":null,\"residence\":\"JHS 2\",\"postal_address\":null,\"country\":null,\"nationality\":null,\"gender\":null,\"city\":\"\\u00a0 \\u00a0\",\"user_type\":null,\"website\":null,\"industry\":null,\"balance\":null,\"rating\":null,\"owner_id\":null,\"date_log\":\"2020-04-12 17:36:25\",\"preferred_payment_type\":null,\"comments\":null,\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 20:55:40'),
+(22, 3, 'customers', '3', '{\"id\":\"7\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"customer_id\":\"3\",\"source\":\"Argon\",\"title\":null,\"firstname\":\"New Added here\",\"lastname\":\"Maternal And Child Health\",\"role\":null,\"phone_1\":null,\"phone_2\":null,\"email\":\"0987654321 thisnewstuden@mail.com\",\"date_of_birth\":null,\"user_image\":\"assets\\/images\\/users\\/user-4.jpg\",\"description\":null,\"residence\":\"Class 4\",\"postal_address\":null,\"country\":null,\"nationality\":null,\"gender\":null,\"city\":\"\\u00a0 \\u00a0\",\"user_type\":null,\"website\":null,\"industry\":null,\"balance\":null,\"rating\":null,\"owner_id\":null,\"date_log\":\"2020-04-12 17:36:25\",\"preferred_payment_type\":null,\"comments\":null,\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 20:55:55'),
+(23, 3, 'customers', '1', '{\"id\":\"5\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"customer_id\":\"1\",\"source\":\"Argon\",\"title\":null,\"firstname\":\"Emmanuel Obeng\",\"lastname\":\"Adult Health\",\"role\":null,\"phone_1\":null,\"phone_2\":null,\"email\":\"0550107770 emmallob14@gmail.com\",\"date_of_birth\":null,\"user_image\":\"assets\\/images\\/users\\/user-4.jpg\",\"description\":null,\"residence\":\"SHS 1\",\"postal_address\":null,\"country\":null,\"nationality\":null,\"gender\":null,\"city\":\"\\u00a0 \\u00a0\",\"user_type\":null,\"website\":null,\"industry\":null,\"balance\":null,\"rating\":null,\"owner_id\":null,\"date_log\":\"2020-04-12 17:36:25\",\"preferred_payment_type\":null,\"comments\":null,\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 21:00:13'),
+(24, 3, 'customers', '1', '{\"id\":\"5\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"customer_id\":\"1\",\"source\":\"Argon\",\"title\":\"Mr\",\"firstname\":\"Asamoah\",\"lastname\":\"John\",\"role\":null,\"phone_1\":\"0908877859\",\"phone_2\":null,\"email\":\"asamoahjohn@mail.com\",\"date_of_birth\":null,\"user_image\":\"assets\\/images\\/users\\/user-4.jpg\",\"description\":null,\"residence\":\"Accra\",\"postal_address\":null,\"country\":null,\"nationality\":null,\"gender\":null,\"city\":\"\\u00a0 \\u00a0\",\"user_type\":null,\"website\":null,\"industry\":null,\"balance\":null,\"rating\":null,\"owner_id\":null,\"date_log\":\"2020-04-12 17:36:25\",\"preferred_payment_type\":null,\"comments\":null,\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 21:01:44');
 
 -- --------------------------------------------------------
 
@@ -592,8 +600,11 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `clientId`, `branchId`, `source`, `product_id`, `category_id`, `product_title`, `product_type_id`, `product_description`, `product_image`, `product_price`, `cost_price`, `performance_rating`, `date_added`, `expiry_date`, `added_by`, `status`, `threshold`, `quantity`) VALUES
-(1, '3OKokdt8wveI', 1, 'db', 'PDT00012', 'PCAT85769', 'HP Laptop', NULL, 'This is an HP Laptop that i want to add to the Store', 'assets/images/products/default.png', 1600.00, '1200.00', NULL, '2020-04-10 21:19:51', '2020-08-27', 'J7Sa5j8FYPGVXKp', '1', 5, 35),
-(2, '3OKokdt8wveI', 2, 'db', 'PDT00012', 'PCAT85769', 'HP Laptop', NULL, 'This is an HP Laptop that i want to add to the Store', 'assets/images/products/default.png', 1600.00, '1200.00', NULL, '2020-04-10 21:23:36', NULL, 'J7Sa5j8FYPGVXKp', '1', 5, 10);
+(1, '3OKokdt8wveI', 1, 'db', 'PDT00012', 'PCAT85769', 'HP Laptop', NULL, 'This is an HP Laptop that i want to add to the Store', 'assets/images/products/default.png', 1600.00, '1200.00', NULL, '2020-04-10 21:19:51', '2020-08-27', 'J7Sa5j8FYPGVXKp', '1', 5, 32),
+(2, '3OKokdt8wveI', 2, 'db', 'PDT00012', 'PCAT85769', 'HP Laptop', NULL, 'This is an HP Laptop that i want to add to the Store', 'assets/images/products/default.png', 1600.00, '1200.00', NULL, '2020-04-10 21:23:36', NULL, 'J7Sa5j8FYPGVXKp', '1', 5, 10),
+(3, 'Y7CSuzFLDd6K', 3, 'db', 'PDT00012', 'PC00027', 'The product test', NULL, '', 'assets/images/products/default.png', 350.00, '200.00', NULL, '2020-04-12 16:14:22', '0000-00-00', 'JmtzvChyWXs0ecj', '1', 10, 95),
+(4, 'Y7CSuzFLDd6K', 3, 'db', 'PD00023', 'PC010001', 'Hello product title again', NULL, '', 'assets/images/products/J4QHk8cCoBWP59TKtZsL2iyqI.jpg', 200.00, '100.00', NULL, '2020-04-12 16:22:34', '0000-00-00', 'JmtzvChyWXs0ecj', '1', 20, 115),
+(5, '3OKokdt8wveI', 1, 'db', 'PD00012', 'PCAT63294', 'Hello world', NULL, '', 'assets/images/products/default.png', 4.00, '2.00', NULL, '2020-04-12 17:32:04', '0000-00-00', 'J7Sa5j8FYPGVXKp', '1', 10, 61);
 
 -- --------------------------------------------------------
 
@@ -615,7 +626,11 @@ CREATE TABLE `products_categories` (
 INSERT INTO `products_categories` (`id`, `clientId`, `category_id`, `category`) VALUES
 (1, '3OKokdt8wveI', 'PCAT63294', 'Fashion'),
 (2, '3OKokdt8wveI', 'PCAT85769', 'Electronics'),
-(3, '3OKokdt8wveI', 'PCAT92358', 'Furniture');
+(3, '3OKokdt8wveI', 'PCAT92358', 'Furniture'),
+(4, 'Y7CSuzFLDd6K', 'PC010001', 'Fashion'),
+(6, 'Y7CSuzFLDd6K', 'PC24', 'Electronics'),
+(7, 'Y7CSuzFLDd6K', 'PC00026', 'Furniture'),
+(8, 'Y7CSuzFLDd6K', 'PC00027', 'Office Wares');
 
 -- --------------------------------------------------------
 
@@ -645,7 +660,10 @@ CREATE TABLE `products_stocks` (
 
 INSERT INTO `products_stocks` (`id`, `clientId`, `branchId`, `auto_id`, `product_id`, `cost_price`, `retail_price`, `previous_quantity`, `quantity`, `total_quantity`, `threshold`, `recorded_by`, `date_log`) VALUES
 (1, '3OKokdt8wveI', '1', 'APfDVY1svECT', 1, '1200.00', '1600.00', 0, 50, 50, 5, 'J7Sa5j8FYPGV', '2020-04-10 21:19:51'),
-(2, '3OKokdt8wveI', '2', 'HtoVnCgbFYIz', 2, '1200.00', '1600.00', 0, 10, 10, 5, 'J7Sa5j8FYPGV', '2020-04-10 21:23:36');
+(2, '3OKokdt8wveI', '2', 'HtoVnCgbFYIz', 2, '1200.00', '1600.00', 0, 10, 10, 5, 'J7Sa5j8FYPGV', '2020-04-10 21:23:36'),
+(3, 'Y7CSuzFLDd6K', '3', 'pDMfFLC5rPKg', 3, '200.00', '350.00', 0, 100, 100, 10, 'JmtzvChyWXs0', '2020-04-12 16:14:22'),
+(4, 'Y7CSuzFLDd6K', '3', '2uG61T079IFs', 4, '100.00', '200.00', 0, 120, 120, 20, 'JmtzvChyWXs0', '2020-04-12 16:22:34'),
+(5, '3OKokdt8wveI', '1', 'HtPTEOQcJosw', 5, '2.00', '6.00', 0, 80, 80, 10, 'J7Sa5j8FYPGV', '2020-04-12 17:32:04');
 
 -- --------------------------------------------------------
 
@@ -745,7 +763,7 @@ INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `branchId`, `order_id`,
 (2, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100003', 'POS732143158965', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 3200.00, 3200.00, NULL, '2020-04-10 21:25:40', 'confirmed', '2020-04-10 21:25:40', '0', '0', NULL, 'cash', '732869344567'),
 (3, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100004', 'POS499688133725', NULL, 'customer', NULL, '3tYcj10KTedBJ6XsiVqnkN94rFlL', 'GH¢', '0', 0.00, 20.00, 1600.00, 1600.00, NULL, '2020-04-10 21:31:25', 'confirmed', '2020-04-10 21:31:25', '0', '0', NULL, 'cash', '927854862141'),
 (4, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100005', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 100.00, 0.00, 1600.00, 1500.00, NULL, '2020-04-11 17:59:12', 'confirmed', '2020-04-11 17:59:12', '0', '0', NULL, 'cash', '256563784171'),
-(5, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100006', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 10:29:56', 'cancelled', '2020-04-12 10:29:56', '1', '0', '2020-04-12 10:35:19', 'MoMo', '811962648739'),
+(5, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100006', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 10:29:56', 'cancelled', '2020-04-12 10:29:56', '1', '0', '2020-04-12 12:41:56', 'MoMo', '811962648739'),
 (6, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100007', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 10:36:58', 'cancelled', '2020-04-12 10:36:58', '0', '0', '2020-04-12 10:37:08', 'MoMo', '645195628417'),
 (7, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100008', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 10:40:13', 'cancelled', '2020-04-12 10:40:13', '0', '0', '2020-04-12 10:41:05', 'MoMo', '944695526782'),
 (8, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100009', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:00:54', 'cancelled', '2020-04-12 11:00:54', '0', '0', '2020-04-12 11:01:56', 'MoMo', '256329891417'),
@@ -756,7 +774,12 @@ INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `branchId`, `order_id`,
 (13, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100014', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 11:45:37', 'cancelled', '2020-04-12 11:45:37', '0', '0', '2020-04-12 11:46:26', 'MoMo', '612823579484'),
 (14, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100015', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -17600.00, 17600.00, 17600.00, NULL, '2020-04-12 11:49:21', 'cancelled', '2020-04-12 11:49:21', '0', '0', '2020-04-12 11:49:31', 'MoMo', '724635678298'),
 (15, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100016', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 12:22:22', 'pending', '2020-04-12 12:22:22', '0', '0', NULL, 'MoMo', '543127858629'),
-(16, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100017', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 12:23:12', 'cancelled', '2020-04-12 12:23:12', '0', '0', '2020-04-12 12:24:23', 'MoMo', '757254669839');
+(16, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100017', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -1600.00, 1600.00, 1600.00, NULL, '2020-04-12 12:23:12', 'cancelled', '2020-04-12 12:23:12', '0', '0', '2020-04-12 12:24:23', 'MoMo', '757254669839'),
+(17, 'Y7CSuzFLDd6K', 'Argon', 'online', 3, 'POS2020040300018', 'WalkIn', NULL, 'customer', NULL, 'JmtzvChyWXs0ecj', 'GH¢', '0', 0.00, 20.00, 2750.00, 2750.00, NULL, '2020-04-12 16:31:07', 'confirmed', '2020-04-12 16:31:07', '0', '0', NULL, 'cash', '685132447975'),
+(18, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100019', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, -4.00, 4.00, 4.00, NULL, '2020-04-12 17:33:21', 'confirmed', '2020-04-12 17:33:21', '0', '0', '2020-04-12 17:33:45', 'MoMo', '759931145362'),
+(19, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100020', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 4.00, 1616.00, 1616.00, NULL, '2020-04-12 18:54:08', 'confirmed', '2020-04-12 18:54:08', '0', '0', NULL, 'cash', '947468253511'),
+(20, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100021', 'POS732143158965', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 192.48, 1.48, 6416.00, 6223.52, NULL, '2020-04-12 19:59:00', 'confirmed', '2020-04-12 19:59:00', '0', '0', NULL, 'cash', '448153195679'),
+(21, '3OKokdt8wveI', 'Argon', 'online', 1, 'POS2020040100022', 'POS732143158965', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 40.00, 40.00, NULL, '2020-04-12 19:59:30', 'confirmed', '2020-04-12 19:59:30', '0', '0', NULL, 'cash', '296572168983');
 
 -- --------------------------------------------------------
 
@@ -798,7 +821,15 @@ INSERT INTO `sales_details` (`id`, `auto_id`, `clientId`, `branchId`, `order_id`
 (13, '5LSwmtuQpFUGlaCXNsWEq7jDB', '3OKokdt8wveI', 1, 'POS2020040100014', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:45:37'),
 (14, 'L02wlIHMEFJBORkWrKu4vCfbY', '3OKokdt8wveI', 1, 'POS2020040100015', '1', 11, '1200.00', 1600.00, 17600.00, '2020-04-12 11:49:21'),
 (15, 'iS4ksDoVYv6Gbm98HgQMAXCI1', '3OKokdt8wveI', 1, 'POS2020040100016', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 12:22:22'),
-(16, 'c8RZFIGH4mvoQiwg9a6KsUOn0', '3OKokdt8wveI', 1, 'POS2020040100017', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 12:23:12');
+(16, 'c8RZFIGH4mvoQiwg9a6KsUOn0', '3OKokdt8wveI', 1, 'POS2020040100017', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 12:23:12'),
+(17, 'AGDt1VkdxRYm03IwJaCLTlpjc', 'Y7CSuzFLDd6K', 3, 'POS2020040300018', '3', 5, '200.00', 350.00, 1750.00, '2020-04-12 16:31:07'),
+(18, '2IlHa8FzxunJWg0KOsjAL3eD4', 'Y7CSuzFLDd6K', 3, 'POS2020040300018', '4', 5, '100.00', 200.00, 1000.00, '2020-04-12 16:31:07'),
+(19, '5F8P6y3m4epLHZOC2jqdIKnGi', '3OKokdt8wveI', 1, 'POS2020040100019', '5', 1, '2.00', 4.00, 4.00, '2020-04-12 17:33:21'),
+(20, 'jK4La07DqmBvsretiEhzYQUTS', '3OKokdt8wveI', 1, 'POS2020040100020', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 18:54:08'),
+(21, 'pK2dXrO8kZyGfbLBemj60Anh1', '3OKokdt8wveI', 1, 'POS2020040100020', '5', 4, '2.00', 4.00, 16.00, '2020-04-12 18:54:08'),
+(22, 'jzerQLmyEt0nsdpRZVKWNoOUX', '3OKokdt8wveI', 1, 'POS2020040100021', '1', 4, '1200.00', 1600.00, 6400.00, '2020-04-12 19:59:00'),
+(23, '0veUnCopAVki2Ir1mZgGNfMlw', '3OKokdt8wveI', 1, 'POS2020040100021', '5', 4, '2.00', 4.00, 16.00, '2020-04-12 19:59:00'),
+(24, 'xXy6wqiosfQmrchFgd8BK9EVM', '3OKokdt8wveI', 1, 'POS2020040100022', '5', 10, '2.00', 4.00, 40.00, '2020-04-12 19:59:30');
 
 -- --------------------------------------------------------
 
@@ -830,6 +861,7 @@ CREATE TABLE `settings` (
   `print_receipt` varchar(12) COLLATE utf8_unicode_ci DEFAULT 'no',
   `expiry_notification_days` varchar(32) COLLATE utf8_unicode_ci DEFAULT '1 MONTH',
   `allow_product_return` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '1',
+  `allow_return_days` int(3) NOT NULL DEFAULT 30,
   `default_discount` double(2,2) NOT NULL DEFAULT 0.00,
   `fiscal_year_start` date DEFAULT '2020-01-01',
   `display_clock` enum('0','1') COLLATE utf8_unicode_ci NOT NULL DEFAULT '1',
@@ -843,9 +875,9 @@ CREATE TABLE `settings` (
 -- Dumping data for table `settings`
 --
 
-INSERT INTO `settings` (`id`, `clientId`, `client_name`, `client_email`, `client_website`, `client_logo`, `primary_contact`, `secondary_contact`, `payment_options`, `shop_opening_days`, `address_1`, `address_2`, `receipt_message`, `terms_and_conditions`, `manager_signature`, `reports_sales_attendant`, `reports_period`, `total_expenditure`, `space_per_square_foot`, `default_currency`, `print_receipt`, `expiry_notification_days`, `allow_product_return`, `default_discount`, `fiscal_year_start`, `display_clock`, `theme_color`, `theme_color_code`, `setup_info`, `deleted`) VALUES
-(1, '3OKokdt8wveI', 'Emmallen Networks', 'emmallob14@gmail.com', '', 'assets/images/logo.png', '0550107770', '', 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', '', NULL, 'Thank you for trading with us.', '', NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', '', '1 MONTH', '1', 0.00, '2020-01-01', '1', '{\"bg_colors\":\"bg-green text-white no-border\",\"bg_color_code\":\"#24a46d\",\"bg_color_light\":\"#2dce89\",\"btn_outline\":\"btn-outline-success\"}', 'green', '{\"type\":\"alpha\",\"verified\":0,\"setup_date\":\"2020-03-10\",\"expiry_date\":\"2020-03-24\",\"outlets\":\"5\"}', '0'),
-(2, 'Y7CSuzFLDd6K', 'Helena Oduro&#39;s Fashion Shop', 'helenaoduro@mail.com', NULL, 'assets/images/logo.png', '0987654321', NULL, 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', NULL, NULL, 'Thank you for trading with us.', NULL, NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', 'no', '1 MONTH', '1', 0.00, '2020-04-11', '1', '{\"bg_colors\":\"bg-purple text-white no-border\",\"bg_color_code\":\"#8965e0\",\"bg_color_light\":\"#97a5f1\",\"btn_outline\":\"btn-outline-primary\"}', 'purple', '{\"type\":\"trial\",\"verified\":1,\"setup_date\":\"2020-04-11\",\"expiry_date\":\"2020-04-25\",\"outlets\":\"5\",\"initializing\":1,\"setup_initializing\":1}', '0');
+INSERT INTO `settings` (`id`, `clientId`, `client_name`, `client_email`, `client_website`, `client_logo`, `primary_contact`, `secondary_contact`, `payment_options`, `shop_opening_days`, `address_1`, `address_2`, `receipt_message`, `terms_and_conditions`, `manager_signature`, `reports_sales_attendant`, `reports_period`, `total_expenditure`, `space_per_square_foot`, `default_currency`, `print_receipt`, `expiry_notification_days`, `allow_product_return`, `allow_return_days`, `default_discount`, `fiscal_year_start`, `display_clock`, `theme_color`, `theme_color_code`, `setup_info`, `deleted`) VALUES
+(1, '3OKokdt8wveI', 'Emmallen Networks', 'emmallob14@gmail.com', '', 'assets/images/logo.png', '0550107770', '', 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', '', NULL, 'Thank you for trading with us.', '', NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', '', '1 MONTH', '1', 30, 0.00, '2020-01-01', '1', '{\"bg_colors\":\"bg-green text-white no-border\",\"bg_color_code\":\"#24a46d\",\"bg_color_light\":\"#2dce89\",\"btn_outline\":\"btn-outline-success\"}', 'green', '{\"type\":\"trial\",\"verified\":0,\"setup_date\":\"2020-04-06\",\"expiry_date\":\"2020-04-20\",\"outlets\":\"5\"}', '0'),
+(2, 'Y7CSuzFLDd6K', 'Helena Oduro&#39;s Fashion Shop', 'helenaoduro@mail.com', NULL, 'assets/images/logo.png', '0987654321', NULL, 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', NULL, NULL, 'Thank you for trading with us.', NULL, NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', 'no', '1 MONTH', '1', 30, 0.00, '2020-04-11', '1', '{\"bg_colors\":\"bg-purple text-white no-border\",\"bg_color_code\":\"#8965e0\",\"bg_color_light\":\"#97a5f1\",\"btn_outline\":\"btn-outline-primary\"}', 'purple', '{\"type\":\"trial\",\"verified\":1,\"setup_date\":\"2020-04-11\",\"expiry_date\":\"2020-04-25\",\"outlets\":\"5\",\"initializing\":1,\"setup_initializing\":1}', '0');
 
 -- --------------------------------------------------------
 
@@ -894,8 +926,8 @@ CREATE TABLE `system_notices` (
 --
 
 INSERT INTO `system_notices` (`id`, `uniqueId`, `notice_type`, `related_to`, `modal`, `modal_function`, `header`, `content`, `seen_by`, `status`, `date_log`) VALUES
-(1, '09oN3tYcj10KTedBdonjBGvfcDrefaOplKimJhnbYtfPld89J6XsiVqnkN94rFlL', 'setup_initializing', 'general', 'WelcomeModal', 'generalNoticeHandler', 'You are warmly welcomed', '<div class=\"modal fade WelcomeModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myLargeModalLabel\" aria-hidden=\"true\">\r\n  <div class=\"modal-dialog\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-header\">\r\n        <h5 class=\"modal-title mt-0\" id=\"myLargeModalLabel\">\r\n          Welcome to join the family!\r\n        </h5>\r\n        <button type=\"button\" class=\"close\" aria-hidden=\"true\">×</button>\r\n      </div>\r\n      <div class=\"modal-body\" style=\"min-height: 200px; padding-top: 0px\">Hello {{clientName}},<br><br>\r\nThis is to welcome you as you join the numerous retailers using {{appName}} to manage their inventory and make informed decisions based on the insights provided on the Analytics Section of the App. <br><br>Please take time to <a href=\"{{appURL}}/explore\">explore</a> the various features. <br><p>It will guide you through a step by step procedure that will enable you to fully setup your store.</p>\r\n<p class=\"text-right\"><a href=\"{{appURL}}/explore\" class=\"btn btn-outline-success\">Take Tour</a></p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>', '1', '1', '2020-04-11 22:55:47'),
-(2, '3tYjSdaWEkj761234VDLPOkN94rFlLhjsa22F3F3A4J3ddIkMkkh09P', 'promotional_message', 'general', 'discountModal', 'generalNoticeHandler', 'Awesome Discount Promotion', '<div class=\"modal discountModal fade\" id=\"discountModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\">\r\n  <div class=\"modal-dialog\" role=\"document\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-body text-center\"><button type=\"button\" class=\"close\" aria-hidden=\"true\">×</button>\r\n        <div class=\"icon text-danger\">\r\n          <i class=\"fas fa-gift\"></i>\r\n        </div>\r\n\r\n        <div class=\"notice\">\r\n          <h4>Get 50% Discount</h4>\r\n          <p>For the next 24 hours you can get any product at half-price.</p>\r\n          \r\n          <p>Use promo code <span class=\"badge badge-info\">50-OFF</span> at checkout.</p>\r\n        </div>\r\n        <div class=\"code\"></div>\r\n      </div>\r\n      <div class=\"modal-footer d-flex justify-content-between\">\r\n        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Nevermind</button>\r\n        <button type=\"button\" class=\"btn btn-danger\">Get Code</button>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>', '1', '1', '2020-04-11 22:55:47');
+(1, '09oN3tYcj10KTedBdonjBGvfcDrefaOplKimJhnbYtfPld89J6XsiVqnkN94rFlL', 'setup_initializing', 'general', 'WelcomeModal', 'generalNoticeHandler', 'You are warmly welcomed', '<div class=\"modal fade WelcomeModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myLargeModalLabel\" aria-hidden=\"true\">\r\n  <div class=\"modal-dialog\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-header\">\r\n        <h5 class=\"modal-title mt-0\" id=\"myLargeModalLabel\">\r\n          Welcome to join the family!\r\n        </h5>\r\n        <button type=\"button\" class=\"close\" aria-hidden=\"true\">×</button>\r\n      </div>\r\n      <div class=\"modal-body\" style=\"min-height: 200px; padding-top: 0px\">Hello {{clientName}},<br><br>\r\nThis is to welcome you as you join the numerous retailers using {{appName}} to manage their inventory and make informed decisions based on the insights provided on the Analytics Section of the App. <br><br>Please take time to <a href=\"{{appURL}}/inventory\">add products </a> to your intory or <a href=\"{{appURL}}/import\">import</a> your bulk products at a go. <br><p>This would enable you to begin your first sale on {{appName}}.</p>\r\n<p class=\"text-right\"> <a href=\"{{appURL}}/product-types\" class=\"btn btn-outline-success\"> Add  Category</a> <a href=\"{{appURL}}/inventory\" class=\"btn btn-outline-success\"> Add Product</a> <a href=\"{{appURL}}/customers\" class=\"btn btn-outline-success\">Add Customers</a></p>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>', '1,2', '1', '2020-04-11 22:55:47'),
+(2, '3tYjSdaWEkj761234VDLPOkN94rFlLhjsa22F3F3A4J3ddIkMkkh09P', 'promotional_message', 'general', 'discountModal', 'generalNoticeHandler', 'Awesome Discount Promotion', '<div class=\"modal discountModal fade\" id=\"discountModal\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"exampleModalLabel\" aria-hidden=\"true\">\r\n  <div class=\"modal-dialog\" role=\"document\">\r\n    <div class=\"modal-content\">\r\n      <div class=\"modal-body text-center\"><button type=\"button\" class=\"close\" aria-hidden=\"true\">×</button>\r\n        <div class=\"icon text-danger\">\r\n          <i class=\"fas fa-gift\"></i>\r\n        </div>\r\n\r\n        <div class=\"notice\">\r\n          <h4>Get 50% Discount</h4>\r\n          <p>For the next 24 hours you can get any product at half-price.</p>\r\n          \r\n          <p>Use promo code <span class=\"badge badge-info\">50-OFF</span> at checkout.</p>\r\n        </div>\r\n        <div class=\"code\"></div>\r\n      </div>\r\n      <div class=\"modal-footer d-flex justify-content-between\">\r\n        <button type=\"button\" class=\"btn btn-secondary\" data-dismiss=\"modal\">Nevermind</button>\r\n        <button type=\"button\" class=\"btn btn-danger\">Get Code</button>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</div>', '1,2', '1', '2020-04-11 22:55:47');
 
 -- --------------------------------------------------------
 
@@ -997,7 +1029,33 @@ INSERT INTO `users_activity_logs` (`id`, `clientId`, `branchId`, `page`, `itemId
 (32, '3OKokdt8wveI', '1', 'pos', 'POS2020040100016', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:22:22'),
 (33, '3OKokdt8wveI', '1', 'pos', 'POS2020040100017', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:23:13'),
 (34, '3OKokdt8wveI', '1', 'pos-revert', 'POS2020040100016', 'J7Sa5j8FYPGVXKp', 'The Transaction recorded at the Point of Sale has been reverted. Reason: User cancelled payment.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:24:23'),
-(35, '3OKokdt8wveI', '1', 'pos-revert', 'POS2020040100017', 'J7Sa5j8FYPGVXKp', 'The Transaction recorded at the Point of Sale has been reverted. Reason: User cancelled payment.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:24:23');
+(35, '3OKokdt8wveI', '1', 'pos-revert', 'POS2020040100017', 'J7Sa5j8FYPGVXKp', 'The Transaction recorded at the Point of Sale has been reverted. Reason: User cancelled payment.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:24:23'),
+(36, '3OKokdt8wveI', '1', 'pos-revert', 'POS2020040100006', 'J7Sa5j8FYPGVXKp', 'The Transaction recorded at the Point of Sale has been reverted. Reason: Unable to process payment.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:41:53'),
+(37, '3OKokdt8wveI', '1', 'pos-revert', 'POS2020040100006', 'J7Sa5j8FYPGVXKp', 'The Transaction recorded at the Point of Sale has been reverted. Reason: Unable to process payment.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 12:41:56'),
+(38, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:34:50'),
+(39, 'Y7CSuzFLDd6K', '3', 'promotional_message', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:34:56'),
+(40, 'Y7CSuzFLDd6K', '3', 'setup_initializing', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:36:07'),
+(41, 'Y7CSuzFLDd6K', '3', 'promotional_message', 'Y7CSuzFLDd6K', 'JmtzvChyWXs0ecj', 'Have acknowledged of having seen the notification shared across the Application.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:36:22'),
+(42, 'Y7CSuzFLDd6K', '3', 'product-type', NULL, 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:46:36'),
+(43, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00026', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:48:11'),
+(44, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00027', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:48:40'),
+(45, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00028', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:49:23'),
+(46, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00029', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:49:29'),
+(47, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00210', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:49:36'),
+(48, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00211', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:49:48'),
+(49, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00212', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:49:55'),
+(50, 'Y7CSuzFLDd6K', '3', 'product-type', 'PC00213', 'JmtzvChyWXs0ecj', 'Added a new product category into the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:50:03'),
+(51, 'Y7CSuzFLDd6K', '3', 'product-type', '9', 'JmtzvChyWXs0ecj', 'Deleted the Product Type from the system.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 15:52:11'),
+(52, 'Y7CSuzFLDd6K', '3', 'pos', 'POS2020040300018', 'JmtzvChyWXs0ecj', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 16:31:08'),
+(53, '3OKokdt8wveI', '1', 'user', 'J7Sa5j8FYPGVXKp', 'J7Sa5j8FYPGVXKp', 'You have successfully deleted your account. Your session will end now. Contact Support if you need help restoring it.', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 17:25:07'),
+(54, '3OKokdt8wveI', '1', 'pos', 'POS2020040100019', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 17:33:21'),
+(55, '3OKokdt8wveI', '1', 'pos', 'POS2020040100020', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 18:54:08'),
+(56, '3OKokdt8wveI', '1', 'pos', 'POS2020040100021', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 19:59:01'),
+(57, '3OKokdt8wveI', '1', 'pos', 'POS2020040100022', 'J7Sa5j8FYPGVXKp', 'Recorded a new Sale at the POS', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 19:59:30'),
+(58, '3OKokdt8wveI', '1', 'customer', '2', 'J7Sa5j8FYPGVXKp', 'Updated the customer details', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 20:55:40'),
+(59, '3OKokdt8wveI', '1', 'customer', '3', 'J7Sa5j8FYPGVXKp', 'Updated the customer details', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 20:55:55'),
+(60, '3OKokdt8wveI', '1', 'customer', '1', 'J7Sa5j8FYPGVXKp', 'Updated the customer details', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 21:00:13'),
+(61, '3OKokdt8wveI', '1', 'customer', '1', 'J7Sa5j8FYPGVXKp', 'Updated the customer details', 'Windows 10 | Chrome | 127.0.0.1', '2020-04-12 21:01:44');
 
 -- --------------------------------------------------------
 
@@ -1036,7 +1094,12 @@ INSERT INTO `users_login_history` (`id`, `clientId`, `branchId`, `username`, `lo
 (12, 'Y7CSuzFLDd6K', '3', 'helenaoduro@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'JmtzvChyWXs0ecj', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 00:59:26'),
 (13, 'Y7CSuzFLDd6K', '3', 'helenaoduro@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'JmtzvChyWXs0ecj', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 06:56:36'),
 (14, 'Y7CSuzFLDd6K', '3', 'helenaoduro@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'JmtzvChyWXs0ecj', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 07:44:52'),
-(15, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 10:01:22');
+(15, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 10:01:22'),
+(16, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 13:16:14'),
+(17, 'Y7CSuzFLDd6K', '3', 'helenaoduro@mail.com', '127.0.0.1', 'Chrome|Windows 10', 'JmtzvChyWXs0ecj', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 15:28:24'),
+(18, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 17:13:43'),
+(19, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 17:25:47'),
+(20, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '127.0.0.1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36', '2020-04-12 21:44:14');
 
 -- --------------------------------------------------------
 
@@ -1266,13 +1329,13 @@ ALTER TABLE `countries`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `data_monitoring`
 --
 ALTER TABLE `data_monitoring`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -1308,19 +1371,19 @@ ALTER TABLE `inventory`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `products_categories`
 --
 ALTER TABLE `products_categories`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `products_stocks`
 --
 ALTER TABLE `products_stocks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `requests`
@@ -1338,13 +1401,13 @@ ALTER TABLE `requests_details`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `sales_details`
 --
 ALTER TABLE `sales_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -1374,13 +1437,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users_activity_logs`
 --
 ALTER TABLE `users_activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users_reset_request`
