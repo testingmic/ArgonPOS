@@ -507,3 +507,24 @@ table#product-select-table thead tr th {
 .no-border {
   border: solid 1px #fff;
 }
+
+.payment-backdrop {
+  position: fixed;
+  z-index: 1140;
+  opacity: 0.7;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+}
+
+.payment-backdrop .payment-buttons {
+  z-index: 1200!important;
+  margin: auto auto;
+  display: inline-block;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

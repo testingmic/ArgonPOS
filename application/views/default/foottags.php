@@ -91,6 +91,12 @@ $notify = load_class('Notifications', 'controllers', $clientData->id);
 $Notification = $notify->availableNotification();
 ?>
 <div class="notification-content"></div>
+<div class="payment-backdrop hidden text-center">
+  <div class="payment-buttons text-center">
+    <button class="btn <?= $clientData->bg_color ?> return-to-payment-window">View Payment Window</button>
+    <button class="btn btn-danger cancel-ongoing-payment-activity">Cancel</button>
+  </div>
+</div>
 <!-- Core -->
 <script src="<?= $baseUrl ?>assets/vendor/jquery/dist/jquery.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

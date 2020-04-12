@@ -44,7 +44,7 @@ function nonWorkingDay($message = "Please note that the Point of Sale is Closed 
   global $clientData, $posClass;
   $openingDays = $clientData->shop_opening_days;
 
-  return '<div class="no-work-placeholder main-body-loader" style="display: none;">
+  return '<div class="no-work-placeholder main-body-loader" style="display: flex;">
           <div class="no-work-content text-center">
               <p class="alert alert-warning text-white" style="border-radius:0px">'.$message.' Come back on <strong>'.$posClass->stringToArray($openingDays)[0].'</strong></p>
           </div>

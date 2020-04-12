@@ -1917,28 +1917,33 @@ if($admin_user->logged_InControlled()) {
 		elseif(isset($_POST['cancelPayment']) && confirm_url_id(2, "cancelPayment")) {
 
 			// assign variable to the transaction id
-			$transaction_id = xss_clean($session->tellerPaymentTransID);
-			$status = false;
-			// update the sales table
-			$query = $posClass->updateData(
-				"sales",
-				"order_status = 'cancelled', deleted = '1'",
-				"transaction_id = '{$transaction_id}'"
-			);
+			$transactionId = xss_clean($session->tellerPaymentTransID);
 
-			// return true
-			if ($query == true) {
-				$status = 200;
-				// Unset Session
-				$session->unset_userdata("tellerPaymentStatus");
-				$session->unset_userdata("tellerPaymentTransID");
-				$session->unset_userdata("tellerUrl");
+			// run if the transaction id not empty
+			if(!empty($transactionId)) {
+				
+				$status = false;
+				// update the sales table
+				$query = $posClass->updateData(
+					"sales",
+					"order_status = 'cancelled', deleted = '1'",
+					"transaction_id = '{$transactionId}'"
+				);
+
+				// return true
+				if ($query == true) {
+					$status = 200;
+					// Unset Session
+					$session->unset_userdata("tellerPaymentStatus");
+					$session->unset_userdata("tellerPaymentTransID");
+					$session->unset_userdata("tellerUrl");
+				}
+
+				$response = [
+					"status" => $status,
+					"result" => ""
+				];
 			}
-
-			$response = [
-				"status" => $status,
-				"result" => ""
-			];
 
 		}
 

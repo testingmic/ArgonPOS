@@ -2754,7 +2754,16 @@ if($(".make-online-payment").length) {
                     if (data.status == true) {
                         if (data.message.action == true) {
                             $(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(res.data.orderTotal)}`);
-                            paymentWindow = window.open(data.message.msg, "_blank");
+                            
+                            $(`div[class~="payment-backdrop"]`).removeClass('hidden');
+                            paymentWindow = window.open(data.message.msg,
+                                `Payment for #${res.data.orderId}`,
+                                `width=700,height=600,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+                            );
+
+                            $(`button[class~="return-to-payment-window"]`).on('click', function() {
+                                paymentWindow.focus();
+                            });
                             paymentCheck = setInterval(function() {
                                 ckPayState();
                             }, 3000);
@@ -2766,6 +2775,7 @@ if($(".make-online-payment").length) {
                             type: "error",
                             title: "Payment Failed! Please try again."
                         });
+                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $(".payment-processing-span").html(``);
                         $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                         $(".make-online-payment").removeClass("d-none");
@@ -2822,10 +2832,12 @@ if($(".make-online-payment").length) {
                         lastTab.removeClass("disabled");
                         $("a", lastTab).trigger("click");
                         lastTab.addClass("disabled");
+                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $("[data-step-action='next']").prop("disabled", false);
                         $(".payment-type-select").prop("disabled", false);
                         $(`span[class="payment-processing-span"]`).html(``);
                     } else {
+                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                         $(".make-online-payment").removeClass("d-none");
                         $(".payment-processing-span").empty();
@@ -2842,14 +2854,14 @@ if($(".make-online-payment").length) {
 
     }
 
-    $(".cancel-online-payment").on("click", function() {
+    $(".cancel-online-payment, button[class~='cancel-ongoing-payment-activity']").on("click", function() {
 
         $.post(`${baseUrl}aj/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
-            data = $.parseJSON( data );
             let toastType = "error";
             let toastMsg  = "Failed To Cancel";
             if (data.status == 200) {
                 clearInterval(paymentCheck);
+                $(`div[class~="payment-backdrop"]`).addClass('hidden');
                 $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                 $(".make-online-payment").removeClass("d-none");
                 $(".cancel-online-payment").addClass("d-none");
@@ -2865,7 +2877,7 @@ if($(".make-online-payment").length) {
                 type: toastType,
                 title: toastMsg
             });
-        });
+        }, 'json');
     });
 
 }

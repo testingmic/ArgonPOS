@@ -27,7 +27,7 @@ if (isset($_GET['status'], $_GET['code'], $_GET['transaction_id'])) {
             if ($code == '000' && $status == 'approved') {
 
                 // Update Order Payment Status
-                $query = $theTeller->updateOrderPayment($trans_id);
+                $query = $theTeller->updateOrderPayment($trans_id, "confirmed", 0);
 
                 if ($query == true) {
                     $payment_successful = true;
@@ -40,7 +40,7 @@ if (isset($_GET['status'], $_GET['code'], $_GET['transaction_id'])) {
             } else {
                 if ($status == 'cancelled') {
 
-                    $theTeller->updateOrderPayment($trans_id, "cancelled");
+                    $theTeller->updateOrderPayment($trans_id, "cancelled", 1);
 
                     $session->set_userdata("tellerPaymentStatus", true);
 
@@ -61,7 +61,7 @@ if (isset($_GET['status'], $_GET['code'], $_GET['transaction_id'])) {
 
 if ($payment_successful == false) {
 
-    $button = '<a href="'.$session->tellerUrl.'" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Try Again Payment</a>';
+    $button = '<a href="'.$session->tellerUrl.'" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Try Payment Again</a>';
 
     show_error("Payment Unsuccessful", $message, $template = 'error_general', 500, $button);
 

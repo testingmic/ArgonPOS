@@ -89,10 +89,10 @@ class Payswitch extends Pos
         return $this->_status;
     }
 
-    public function initiateMOMOTransfer($trancID, $acc_number, $account_issuer, $desc, $amount) {
+    public function initiateMOMOTransfer($transactionId, $acc_number, $account_issuer, $desc, $amount) {
         
         $payload = json_encode([
-            "account_number"=>"$acc_number", "account_issuer"=>"$account_issuer", "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$trancID", "processing_code"=>"404000", "amount"=>"$amount",  "r-switch"=>"FLT", "desc"=>"$desc", "pass_code"=>"{$this->pass_code}"
+            "account_number"=>"$acc_number", "account_issuer"=>"$account_issuer", "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$transactionId", "processing_code"=>"404000", "amount"=>"$amount",  "r-switch"=>"FLT", "desc"=>"$desc", "pass_code"=>"{$this->pass_code}"
         ]);
         
         $curl = curl_init();
@@ -121,12 +121,12 @@ class Payswitch extends Pos
         return $response;
     }
     
-    public function initiateBankTransfer($trancID, $acc_number, $acc_bank, $desc, $amount) {
+    public function initiateBankTransfer($transactionId, $acc_number, $acc_bank, $desc, $amount) {
         
         $this->call_type = $call_type;
         
         $payload = json_encode([
-            "account_number"=>"$acc_number", "account_bank"=>"$acc_bank", "account_issuer"=>"GIP", "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$trancID", "processing_code"=>"404020", "amount"=>"$amount",  "r-switch"=>"FLT", "desc"=>"$desc", "pass_code"=>"{$this->pass_code}"
+            "account_number"=>"$acc_number", "account_bank"=>"$acc_bank", "account_issuer"=>"GIP", "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$transactionId", "processing_code"=>"404020", "amount"=>"$amount",  "r-switch"=>"FLT", "desc"=>"$desc", "pass_code"=>"{$this->pass_code}"
         ]);
         
         $curl = curl_init();
@@ -155,12 +155,12 @@ class Payswitch extends Pos
         return $response;
     }
     
-    public function completeBankTransfer($trancID) {
+    public function completeBankTransfer($transactionId) {
         
         $this->call_type = $call_type;
         
         $payload = json_encode([
-            "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$trancID"
+            "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$transactionId"
         ]);
         
         $curl = curl_init();
@@ -189,12 +189,12 @@ class Payswitch extends Pos
         return $response;
     }
     
-    public function verifyTransaction($trancID) {
+    public function verifyTransaction($transactionId) {
         
         $curl = curl_init();
         
         curl_setopt_array($curl, array(
-          CURLOPT_URL => $this->curl_url."/v1.1/users/transactions/".$trancID."/status",
+          CURLOPT_URL => $this->curl_url."/v1.1/users/transactions/".$transactionId."/status",
           CURLOPT_RETURNTRANSFER => true,
           CURLOPT_ENCODING => "",
           CURLOPT_MAXREDIRS => 10,
@@ -222,12 +222,12 @@ class Payswitch extends Pos
         return $this->pre_amount."00";
     }
 
-    public function getOrderDetails($transId)
+    public function getOrderDetails($transactionId)
     {
         $this->_status = false;
 
         $query = $this->getAllRows(
-            "sales", "*", "transaction_id = '{$transId}'"
+            "sales", "*", "transaction_id = '{$transactionId}'"
         );
 
         if ($query != false) {
@@ -237,11 +237,15 @@ class Payswitch extends Pos
         return $this->_status;
     }
 
-    public function updateOrderPayment($transId, $status = "confirmed")
-    {
+    public function updateOrderPayment($transactionId, $status = "confirmed", $revert){
+
         $this->_status = false;
 
-        $this->_status = $this->updateData("sales", "order_status = '{$status}', payment_date = now()", "transaction_id = '{$transId}'");
+        $this->_status = $this->updateData("sales", "order_status = '{$status}', payment_date = now(), revert='{$revert}'", "transaction_id = '{$transactionId}'");
+        
+        if($status != "confirmed") {
+          $this->revertTransaction();
+        }
 
         return $this->_status;
     }

@@ -63,6 +63,9 @@ class Notifications extends Pos {
 
 				/** Set the notification ID in a session **/
 				$this->session->notificationId = $eachNotice->uniqueId;
+
+				/* break on first seen */
+				break;
 			}
 		}
 
@@ -83,8 +86,8 @@ class Notifications extends Pos {
 			$stmt = $this->pos->prepare("
 				SELECT * FROM system_notices 
 				WHERE  
-					(status = '1' AND (related_to = 'general' AND seen_by NOT IN ({$clientId}))) OR (seen_by IS NULL AND status = '1' AND (related_to = 'general'))
-				ORDER BY id ASC LIMIT 1
+					status = '1' AND (related_to = 'general' OR related_to LIKE '%{$clientId}%')
+				ORDER BY id ASC LIMIT 100
 			");
 			$stmt->execute();
 

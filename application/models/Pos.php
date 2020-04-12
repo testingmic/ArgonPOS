@@ -568,5 +568,53 @@ class Pos {
 		
 		return $percentile;
 	}
+
+	/**
+	 * This reverts all transactions that were not correctly processed
+	 * @method revertTransaction
+	 * @param no parameter (users the logged in client as the reference)
+	 * @return bool
+	 **/
+	public function revertTransaction($clientId = null) {
+
+      try {
+
+      	// set the client id
+      	$clientId = (empty($clientId)) ? $this->clientId : $clientId;
+
+        // fetch the sale item
+        $stmt = $this->pos->prepare("
+          SELECT * FROM sales WHERE revert = ? AND clientId = ?
+        ");
+        $stmt->execute([1, $clientId]);
+
+        // loop through each sale
+        while($eachSale = $stmt->fetch(PDO::FETCH_OBJ)) {
+
+          // foreach sale record fetch the sales details
+          $stmt2 = $this->pos->prepare("
+            SELECT * FROM sales_details WHERE order_id = ?
+          ");
+          $stmt2->execute([$eachSale->order_id]);
+
+          // loop through the list and update the table respectively
+          while($eachDetail = $stmt2->fetch(PDO::FETCH_OBJ)) {
+            
+            // update the equivalent product information
+            $this->pos->query("UPDATE products SET quantity = (quantity+{$eachDetail->product_quantity}) WHERE id = '{$eachDetail->product_id}'");
+          }
+
+          // record the activity
+          $this->userLogs('pos-revert', $eachSale->order_id, 'The Transaction recorded at the Point of Sale has been reverted. Reason: Unable to process payment.');
+
+          // update the sale record when the process is done
+          $this->pos->query("UPDATE sales SET revert = '0' WHERE id = '{$eachSale->id}'");
+        }
+
+        return true;
+      } catch(PDOException $e) {
+        return false;
+      }
+    }
 }
 ?>

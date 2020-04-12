@@ -14,8 +14,11 @@ $openingDays = $clientData->shop_opening_days;
 $validDate = true;
 
 if(!in_array(date("l"), $posClass->stringToArray($openingDays))) {
-  $validDate = false;
+  $validDate = true;
 }
+
+// revert all transactions that are currently witheld
+$posClass->revertTransaction();
 ?>
 <style type="text/css">
 a[href="#finish"] {
@@ -90,6 +93,7 @@ a[href="#finish"] {
                   </div>  
                   <div class="col-sm-12">
                     <dv class="card shadow-none products-table-card slim-scroll" style="max-height: 330px;overflow-y: auto">
+                      <?php if($validDate) { ?>
                       <div class="card-body">
                         <table class="table datatables" id="products-table">
                           <thead>
@@ -102,6 +106,7 @@ a[href="#finish"] {
                           <tbody class="pos-products-list"></tbody>
                         </table>
                       </div>
+                      <?php } ?>
                     </dv>
                   </div>
                 </div><!--end row-->
@@ -113,6 +118,7 @@ a[href="#finish"] {
                     <div class="form-group row justify-content-center">
                       <div class="col-lg-12 text-center">Payment Type</div>
                       <div class="col-lg-8 text-center">
+                        <?php if($validDate) { ?>
                         <select name="payment_type" class="form-control custom-select2 payment-type-select">
                           <option value="0">--Please Select--</option>
                           <?php
@@ -135,15 +141,16 @@ a[href="#finish"] {
                           }
                           ?>
                         </select>
+                        <?php } ?>
                       </div>
                       <div>
                         <span class="payment-processing-span"></span>
                         <button type="button" class="btn btn-primary d-none make-online-payment">Pay</button>
                         <button type="button" class="btn btn-danger d-none cancel-online-payment">Cancel</button>
                       </div>
-
                       <div class="form-group cash-processing mt-5">
                         <hr>
+                        <?php if($validDate) { ?>
                         <div class="justify-content-center row">
                           <div class="cash-process-container text-center">
                             <label for="amount_to_pay"><strong>To Pay</strong></label>
@@ -158,6 +165,7 @@ a[href="#finish"] {
                             <input type="text" placeholder="0.00" readonly="readonly" name="amount_balance" id="amount_balance" class="form-control">
                           </div>
                         </div>
+                        <?php } ?>
                       </div>
                     </div>
                   </div>
@@ -165,6 +173,7 @@ a[href="#finish"] {
               </fieldset><!--end fieldset-->
               <h3>Complete</h3>
               <fieldset>
+                <?php if($validDate) { ?>
                 <div class="p-3">
                   <div class="card-border border-success bg-soft-success card m-auto text-center" style="width: 100%">
                     <div class="card-body">
@@ -224,6 +233,7 @@ a[href="#finish"] {
                     </div>
                   </div>
                 </div>
+                <?php } ?>
               </fieldset><!--end fieldset-->
             </form><!--end form-->
             <div class="custom-steps-actions py-3 row justify-content-<?= ($validDate) ? "between" : "end" ?>">
@@ -232,11 +242,13 @@ a[href="#finish"] {
               <button type="button" data-toggle="modal" data-target="#discardModal" class="btn mb-2 btn-outline-danger discardSale_trigger"><i class="fa fa-trash"></i> Discard</button>
               <button class="btn <?= $clientData->bg_color ?> print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
               <?php } ?>
+              <?php if($validDate) { ?>
               <div class="float-right">
                 <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="previous">Previous</button>
                 <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="next">Next</button>
                 <button type="button" class="btn mb-2 <?= $clientData->bg_color ?>" data-step-action="finish">Finish</button>
               </div>
+              <?php } ?>
             </div>
           </div><!--end card-body-->
         </div><!--end card-->

@@ -44,7 +44,6 @@ class Orders extends Pos {
 			$costPrice = $this->thisProductInfo($productId, 'cost_price');
 			$productTotal = round($productPrice*$productQty, 2);
 			$amountPayable += $productTotal;
-
 			$salesDetailsSQL .= "(";
 			$salesDetailsSQL .= "'".$this->session->clientId."', ";
 			$salesDetailsSQL .= $computed->branchId.", ";
@@ -83,12 +82,15 @@ class Orders extends Pos {
 		// calculate the balance
 		$totalBalance = ($register->payment_type != self::PAYMENT_CREDIT) ? ($register->amount_paying-$amountPayable) : ($overallOrderTotal-$orderDiscount);
 
+		//: set the revert sale value
+		$revertSale = in_array($register->payment_type, [self::PAYMENT_CARD, self::PAYMENT_MOMO]) ? 1 : 0;
+
 		// form the sales query
 		$salesSQL = "INSERT INTO sales(
 				clientId, source, branchId, order_id, customer_id, 
 				recorded_by, credit_sales, order_amount_paid, order_discount, 
 				order_status, overall_order_amount, order_amount_balance, 
-				payment_type, transaction_id
+				payment_type, transaction_id, revert
 		) VALUES (
 			'{$this->session->clientId}',
 			'{$computed->source}',
@@ -103,7 +105,8 @@ class Orders extends Pos {
 			'{$overallOrderTotal}',
 			'{$totalBalance}',
 			'{$register->payment_type}',
-			'{$computed->transactionId}'
+			'{$computed->transactionId}',
+			'{$revertSale}'
 		)";
 
 		try {
