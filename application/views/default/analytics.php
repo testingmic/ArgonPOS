@@ -8,6 +8,7 @@ require_once "headtags.php";
 global $setupInfo, $clientData, $filterPeriod;
 
 $session->reportingCustomerId = null;
+$session->productsLimit = 50;
 ?>
 <!-- Page Content-->
 <!-- Header -->

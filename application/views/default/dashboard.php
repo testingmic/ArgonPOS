@@ -8,6 +8,8 @@ require_once "headtags.php";
 // Global functions
 global $posClass, $baseUrl, $clientData;
 
+$session->reportingCustomerId = null;
+$session->productsLimit = 100;
 ?>	
 <!-- Header -->
 <div class="sales-overview-data"></div>
@@ -54,7 +56,7 @@ global $posClass, $baseUrl, $clientData;
             <div class="card-body">
               <div class="row">
                 <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Products Cost</h5>
+                  <h5 class="card-title text-uppercase text-muted mb-0">Sold Products Cost</h5>
                   <span class="h2 font-weight-bold mb-0 total-cost">0.00</span>
                 </div>
                 <div class="col-auto">
@@ -120,7 +122,7 @@ global $posClass, $baseUrl, $clientData;
 <div class="container-fluid mt--6">
   <div class="row">
     <div class="col-xl-8">
-      <div class="card">
+      <div class="card" style="height: 510px;">
         <?= connectionLost(); ?>
         <div class="card-header">
           <div class="row align-items-center">
@@ -143,7 +145,28 @@ global $posClass, $baseUrl, $clientData;
       </div>
     </div>
     <div class="col-xl-4">
-      <div class="col-xl-12 col-md-12">
+      
+      
+      <div class="card">
+        <!-- Card header -->
+        <div class="card-header">
+          <!-- Title -->
+          <h5 class="h3 mb-0">4 Most Performing Products</h5>
+        </div>
+        <!-- Card body -->
+        <div class="card-body">
+          <!-- List group -->
+          <ul class="list-group list-group-flush most-performing-products list my--3">
+          </ul>
+        </div>
+      </div>
+        
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-4 col-md-4">
         <div class="card card-stats">
           <!-- Card body -->
           <div class="card-body">
@@ -165,7 +188,7 @@ global $posClass, $baseUrl, $clientData;
         </div>
       </div>
 
-      <div class="col-xl-12 col-md-12">
+      <div class="col-xl-4 col-md-4">
         <div class="card card-stats">
           <!-- Card body -->
           <div class="card-body">
@@ -187,7 +210,7 @@ global $posClass, $baseUrl, $clientData;
         </div>
       </div>
 
-      <div class="col-xl-12 col-md-12">
+      <div class="col-xl-4 col-md-4">
         <div class="card card-stats">
           <!-- Card body -->
           <div class="card-body">
@@ -208,8 +231,6 @@ global $posClass, $baseUrl, $clientData;
           </div>
         </div>
       </div>
-
-    </div>
   </div>
   
   
@@ -292,7 +313,8 @@ global $posClass, $baseUrl, $clientData;
                   // print the list of result
                   print "<tr>";
                   print "<td>{$i}</td>";
-                  print "<td>{$result->product_title} <br> <span class='badge {$result->branch_color}'>{$result->branch_name}</span></td>";
+                  print "<td><a href=\"{$config->base_url('inventory/inventory-details/'.$result->branchId.'?tp=true')}\">{$result->product_title}</a>
+                  <br> <span class='badge {$result->branch_color}'>{$result->branch_name}</span></td>";
                   print "<td>{$result->quantity}</td>";
                   print "<td>{$result->threshold}</td>";
                   print "</tr>";

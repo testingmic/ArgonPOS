@@ -3153,23 +3153,53 @@ $(function() {
     }
 
     var populateProductsPerformance = (productsInfo) => {
-        $(`table[class~="products-performance"]`).dataTable().fnDestroy();
-        $(`table[class~="products-performance"]`).dataTable({
-            "iDisplayLength": 7,
-            "aaData": productsInfo,
-            "buttons": ["copy", "print","csvHtml5"],
-            "lengthChange": !1,
-            "dom": "Bfrtip",
-            "columns": [
-                { "data": 'row_id'},
-                { "data": 'product_title'},
-                { "data": 'orders_count'},
-                { "data": 'quantity_sold'},
-                { "data": 'total_selling_cost'},
-                { "data": 'total_selling_revenue'},
-                { "data": 'product_profit'}
-            ]
-        });
+
+        if($(`ul[class~="most-performing-products"]`).length) {
+            var productsArray = ``;
+
+                $.each(productsInfo, function(i, e) {
+                    productsArray += `<li class="list-group-item px-0">
+                      <div class="row align-items-center">
+                        <div class="col-auto">
+                          <a href="${baseUrl}products/${e.id}" class="avatar rounded-circle">
+                            <img alt="" src="${baseUrl}${e.product_image}">
+                          </a>
+                        </div>
+                        <div class="col">
+                          <h5>${e.product_title}</h5>
+                          <div class="progress progress-xs mb-0">
+                            <div class="progress-bar bg-orange" role="progressbar" aria-valuenow="${e.percentage}" aria-valuemin="0" aria-valuemax="100" style="width: ${e.percentage}%;"></div>
+                          </div>
+                          <div class="row justify-content-between">
+                            <div class="pl-2"><strong>Sold:</strong> ${e.quantity_sold}</div>
+                            <div class="pr-3"><strong>Revenue:</strong> ${e.total_selling_revenue}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>`;
+                });
+
+            $(`ul[class~="most-performing-products"]`).html(productsArray);
+
+        } else {
+            $(`table[class~="products-performance"]`).dataTable().fnDestroy();
+            $(`table[class~="products-performance"]`).dataTable({
+                "iDisplayLength": 7,
+                "aaData": productsInfo,
+                "buttons": ["copy", "print","csvHtml5"],
+                "lengthChange": !1,
+                "dom": "Bfrtip",
+                "columns": [
+                    { "data": 'row_id'},
+                    { "data": 'product_title'},
+                    { "data": 'orders_count'},
+                    { "data": 'quantity_sold'},
+                    { "data": 'total_selling_cost'},
+                    { "data": 'total_selling_revenue'},
+                    { "data": 'product_profit'}
+                ]
+            });
+        }
     }
 
     var branchPerformance = (periodSelected = 'today') => {
@@ -4457,9 +4487,8 @@ $(function() {
             $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
 
             if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"]`).length) {
-                fetchInventoryRecords();
                 fetchSalesRecords();
-                fetchProductThresholds();
+                salesAttendantPerformance(period);
 
                 if($(`div[class~="sales-overview-data"]`).length) {
                     salesOverview('this-week');

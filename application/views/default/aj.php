@@ -987,6 +987,7 @@ if($admin_user->logged_InControlled()) {
 				$products_stmt = $pos->prepare("
 					SELECT
 						a.id, a.category_id, a.product_title, b.branch_name,
+						a.product_image,
 						(
 							SELECT 
 								COUNT(c.order_id) 
@@ -1040,13 +1041,14 @@ if($admin_user->logged_InControlled()) {
 					FROM 
 						products a
 					LEFT JOIN branches b ON b.id = a.branchId
-					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT 50
+					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT {$session->productsLimit}
 
 				");
 				$products_stmt->execute();
 				
 				// initializing
 				$productsArray = [];
+				$overallSale = array_sum($paymentValues);
 				$iv = 0;
 
 				// loop through the product information that have been fetched
@@ -1054,11 +1056,13 @@ if($admin_user->logged_InControlled()) {
 					$iv++;
 					$productsArray[] = [
 						'row_id' => $iv,
+						'percentage' => ($product_result->totalProductsRevenue > 0) ? number_format(($product_result->totalProductsRevenue/$overallSale)*100) : 0,
 						'product_id' => $product_result->id,
 						'category_id' => $product_result->category_id,
 						'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
+						'product_image' => $product_result->product_image,
 						'orders_count' => $product_result->orders_count,
-						'quantity_sold' => $product_result->totalQuantitySold,
+						'quantity_sold' => (int) $product_result->totalQuantitySold,
 						'total_selling_cost' => $clientData->default_currency.number_format($product_result->totalProductsSoldCost, 2),
 						'total_selling_revenue' => $clientData->default_currency.number_format($product_result->totalProductsRevenue, 2),
 						'product_profit' => $clientData->default_currency.number_format($product_result->totalProductsProfit, 2)

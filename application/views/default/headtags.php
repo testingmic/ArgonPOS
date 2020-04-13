@@ -256,7 +256,7 @@ if($setupInfo->type == "alpha") {
               </div>
             </li>
             <li class="nav-item offline-menu">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['analytics'])) ? "active" : null; ?>" href="<?= $baseUrl ?>analytics">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['analytics', 'customer-detail'])) ? "active" : null; ?>" href="<?= $baseUrl ?>analytics">
                 <i class="ni ni-chart-pie-35 text-info"></i>
                 <span class="nav-link-text">Analytics</span>
               </a>
@@ -311,11 +311,12 @@ if($setupInfo->type == "alpha") {
             </li>
             <?php } ?>            
           </ul>
-          <!-- Divider -->
+          <?php if(!confirm_url_id(0, 'point-of-sale')) { ?>
           <hr class="my-3">
           <div class="text-center">
             <?= $notify->message; ?>
           </div>
+          <?php } ?>
         </div>
       </div>
     </div>
