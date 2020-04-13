@@ -85,15 +85,15 @@ a.current .card {
 }
 
 .connection-lost {
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 12px;
   max-width: 100%;
   min-width: 100%;
   padding: 5px 10px;
   text-align: center;
-  background: #6f188e;
-  border-radius: 4px;
+  background: #8e1820;
+  border-radius: 0px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   color: #fff;
@@ -105,14 +105,14 @@ a.current .card {
 
 .connection-restored {
   display: none;
-  font-size: 11px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 12px;
   max-width: 100%;
   min-width: 100%;
   padding: 5px 10px;
   text-align: center;
-  background: #3ab724;
+  background: #4caf50;
   border-radius: 4px;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -240,13 +240,6 @@ a.current .card {
 .main-content-loader i.fa{
   display: block !important;
   margin: auto !important;;
-}
-
-.offline-menu {
-  /*z-index: 9999;
-  position: relative;
-  left: 0;
-  background-color: #ccc;*/
 }
 
 .offline-placeholder {

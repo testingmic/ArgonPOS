@@ -256,7 +256,7 @@ a[href="#finish"] {
       <div class="col-lg-6">
         <div class="card">
           <?= (!$validDate) ? nonWorkingDay() : null; ?>
-          <div class="card-body register-build">
+          <div class="card-body register-build" style="padding: 10px">
             <div class="content-loader register-form-loader" style="display: none"><i class="fa fa-3x fa-pulse fa-spinner"></i></div>
             <h5 class="text-center text-default">Customer</h5>
             <h6 class="text-center text-muted selected-customer-name">No Customer Selected</h6>

@@ -269,4 +269,3 @@ class Notifications extends Pos {
 	}
 }
 ?>
-<!-- allow_return_days -->

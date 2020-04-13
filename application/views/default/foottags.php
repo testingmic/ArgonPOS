@@ -233,15 +233,17 @@ hL();
   identifyCurrentBranch();
 <?php } ?>
 <?php if(confirm_url_id(0, 'dashboard')) { ?>
-if(!noInternet) {
-  syncOfflineData('sales').then((resp) => {
-      dPv('sales').then((res) => {
-          preloadData('sales').then((res) => {
-              preloadData('reports');
+  await dOC().then((itResp) => {
+    if (itResp == 1) {
+      syncOfflineData('sales').then((resp) => {
+          dPv('sales').then((res) => {
+              preloadData('sales').then((res) => {
+                  preloadData('reports');
+              });
           });
       });
+    }
   });
-}
 <?php } ?>
 <?php if(confirm_url_id(0, 'settings')) { ?>
 $('textarea[name="terms_and_conditions"]').summernote({

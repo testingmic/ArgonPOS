@@ -269,6 +269,8 @@ function sPIDB() {
             }
         });
 
+        var recalculatedValue = parseFloat(calNewT).toFixed(2);
+
         var mainSalesDetails = [{
             clientId: clientId,
             source: "Evelyn",
@@ -289,12 +291,12 @@ function sPIDB() {
             order_amount_balance: amountBalance,
             order_discount: disAmt,
             order_date: log_date,
+            total_expected_selling_price: (amountToBePaid + disAmt),
+            total_cost_price: recalculatedValue,
             order_status: 'confirmed',
             payment_type: paymentType,
             transaction_id: transactionId
         }];
-        
-        var recalculatedValue = parseFloat(calNewT).toFixed(2);
         
         if (regItems.length < 1) {
             result = 'Sorry! You have not selected any products.';
@@ -434,22 +436,26 @@ var syncOfflineData = async (dataToSync) => {
 }
 
 var preloadData = async (dataset) => {
-    $.ajax({
-        url: `${baseUrl}doprocess_db/preloadData`,
-        data: {preloadData: true, dataType: dataset},
-        dataType: "json",
-        type: "post",
-        success: function(resp) {
-            if(resp.status == 200) {
-                if(resp.request == "reports")  {
-                    var queryResult = resp.result;
-                    $.each(queryResult, function(i, e) {
-                        upIDB("reports", e);
-                    });
-                } else {
-                    upIDB(dataset, resp.result);
+    await dOC().then((itResp) => {
+        if(itResp == 1) {
+            $.ajax({
+                url: `${baseUrl}doprocess_db/preloadData`,
+                data: {preloadData: true, dataType: dataset},
+                dataType: "json",
+                type: "post",
+                success: function(resp) {
+                    if(resp.status == 200) {
+                        if(resp.request == "reports")  {
+                            var queryResult = resp.result;
+                            $.each(queryResult, function(i, e) {
+                                upIDB("reports", e);
+                            });
+                        } else {
+                            upIDB(dataset, resp.result);
+                        }
+                    }
                 }
-            }
+            });
         }
     });
 }
@@ -867,7 +873,7 @@ var populateCustOptionsList = (data) => {
         $(`select[class~="customer-select"]`).append('<option value="null" data-contact="No Contact" selected="selected">-- Select Customer --</option>');
     }
     $.each(data, function(i, e) {
-        $(`select[class~="customer-select"]`).append(`<option data-prefered-payment='${e.preferred_payment_type}' data-email='${e.email}' data-contact='${e.phone_1}' value='${e.customer_id}'>${e.fullname} (${e.phone_1})</option>`);
+        $(`select[class~="customer-select"]`).append(`<option data-prefered-payment='${e.preferred_payment_type}' data-email='${e.email}' data-contact='${e.phone_1}' title='${e.fullname} (${e.phone_1})' value='${e.customer_id}'>${e.fullname}</option>`);
     });
 }
 
@@ -882,11 +888,15 @@ var fetchPOSCustomersList = async () => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
             $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
         $(`div[class~="offline-placeholder"]`).css('display','flex');
+        $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+        $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
     });
 
     if(noInternet) {
@@ -977,11 +987,15 @@ var fetchPOSProductsList = async () => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
             $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
         $(`div[class~="offline-placeholder"]`).css('display','flex');
+        $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+        $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
     });
 
     if(noInternet) {
@@ -2420,6 +2434,9 @@ if($(".make-online-payment").length) {
                             });
                         }
                     });
+                    $(`tr[class='products-row']`).on('click', function(e) {
+                        $(`input[name="products[${$(this).data('row-id')}][qty]"]`).focus();
+                    });
                     $(`.remove-row[data-row='${row.productId}']`).on("click", function(){
                         rvPtRow(row.productId);
                         $(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
@@ -2572,7 +2589,7 @@ if($(".make-online-payment").length) {
             <td style="padding-top:20px">${rowData.productName}</td>
             <td style="padding-top:20px">${rowData.productPrice}</td>
             <td>
-            <input type='number' data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
+            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
             <input type="hidden" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
             <td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
             <td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
@@ -4283,6 +4300,8 @@ $(function() {
                     offline = true;
                     $(`div[class="connection"]`).css('display', 'block');
                     $(`div[class~="offline-placeholder"]`).css('display','flex');
+                    $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+                    $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
                 }
             }).catch((err) => {
                 offline = true;
@@ -4290,11 +4309,12 @@ $(function() {
                 $(`div[class~="offline-placeholder"]`).css('display','flex');
             });
 
-            if (offline) {
+            if(offline) {
 
                 $(`select[name="periodSelected"], select[name="periodSelect"]`).prop('disabled', true);
                 $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
-
+                $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+                $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
                 dashboardAnalitics().then(async (dashboardInsights) => {
 
                     if($(`table[class~="salesLists"]`).length) {

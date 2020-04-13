@@ -247,7 +247,7 @@ $session->productsLimit = 100;
             </div>
           </div>
         </div>
-        <div class="s-responsive">
+        <div class="table-responsive">
           <!-- Projects table -->
             <table class="table salesLists table-flush">
             <thead class="thead-light">
@@ -267,7 +267,7 @@ $session->productsLimit = 100;
       </div>
     </div>
     
-    <div class="col-xl-6 col-md-6">
+    <div class="col-xl-6 col-md-12">
       <div class="card">
         <?= connectionLost(); ?>
         <div class="card-header border-0">
@@ -277,7 +277,7 @@ $session->productsLimit = 100;
             </div>
           </div>
 
-          <div class="s-responsive">
+          <div class="table-responsive">
             <!-- Projects table -->
               <table class="table simple-table table-flush">
               <thead class="thead-light">
@@ -328,7 +328,7 @@ $session->productsLimit = 100;
       </div>
     </div>
 
-    <div class="col-xl-6 col-md-6">
+    <div class="col-xl-6 col-md-12">
       <div class="card">
         <?= connectionLost(); ?>
         <div class="card-header border-0">
@@ -338,7 +338,7 @@ $session->productsLimit = 100;
             </div>
           </div>
 
-          <div class="s-responsive">
+          <div class="table-responsive">
             <!-- Projects table -->
               <table class="table simple-table table-flush">
               <thead class="thead-light">

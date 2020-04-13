@@ -169,6 +169,7 @@ if($setupInfo->type == "alpha") {
   </style>
 </head>
 <body>
+  <div class="connection"><div class="connection-lost">Connection lost. Changes will be synced once it is restored. <i class="fa fa-spinner fa-spin"></i><div class="internet-check" data-internet-up="0"></div></div></div><div class="connection"><div class="connection-restored">Your connection is restored, refreshing content <i class="fa fa-spin fa-spinner"></i><div class="internet-check" data-internet-up="0"></div></div></div>
   <nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
     <div class="scrollbar-inner">
       <!-- Brand -->
@@ -217,17 +218,17 @@ if($setupInfo->type == "alpha") {
                   </li>
                   <?php if($accessObject->hasAccess('view', 'quotes')) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>quotes" class="nav-link">Quotes</a>
+                    <a href="<?= $baseUrl ?>quotes" class="nav-link shortcut-offline">Quotes</a>
                   </li>
                   <?php } ?>
                   <?php if($accessObject->hasAccess('view', 'orders')) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>orders" class="nav-link">Orders</a>
+                    <a href="<?= $baseUrl ?>orders" class="nav-link shortcut-offline">Orders</a>
                   </li>
                   <?php } ?>
                   <?php if($clientData->allow_product_return) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>return" class="nav-link">Return Sale</a>
+                    <a href="<?= $baseUrl ?>return" class="nav-link shortcut-offline">Return Sale</a>
                   </li>
                   <?php } ?>
                 </ul>
@@ -371,28 +372,28 @@ if($setupInfo->type == "alpha") {
                     </span>
                     <small>Sales</small>
                   </a>
-                  <a href="<?= $baseUrl ?>analytics" class="col-4 shortcut-item">
+                  <a href="<?= $baseUrl ?>analytics" class="col-4 shortcut-item shortcut-offline">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-green">
                       <i class="ni ni-books"></i>
                     </span>
                     <small>Analytics</small>
                   </a>
                   <?php if($accessObject->hasAccess('view', 'branches')) { ?>
-                  <a href="<?= $baseUrl ?>branches" class="col-4 shortcut-item">
+                  <a href="<?= $baseUrl ?>branches" class="col-4 shortcut-item shortcut-offline">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-purple">
                       <i class="ni ni-pin-3"></i>
                     </span>
-                    <small>Branches</small>
+                    <small>Outlets</small>
                   </a>
                   <?php } ?>
-                  <a href="<?= $baseUrl ?>inventory" class="col-4 shortcut-item">
+                  <a href="<?= $baseUrl ?>inventory" class="col-4 shortcut-item shortcut-offline">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-orange">
                       <i class="fa fa-list"></i>
                     </span>
                     <small>Inventory</small>
                   </a>
                   <?php if($accessObject->hasAccess('view', 'users')) { ?>
-                  <a href="<?= $baseUrl ?>users" class="col-4 shortcut-item">
+                  <a href="<?= $baseUrl ?>users" class="col-4 shortcut-item shortcut-offline">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-gray-dark">
                       <i class="fa fa-users"></i>
                     </span>
@@ -419,19 +420,19 @@ if($setupInfo->type == "alpha") {
                 <div class="dropdown-header noti-title">
                   <h6 class="text-overflow m-0">Welcome!</h6>
                 </div>
-                <a href="<?= $baseUrl ?>profile" class="dropdown-item">
+                <a href="<?= $baseUrl ?>profile" class="dropdown-item shortcut-offline">
                   <i class="ni ni-single-02"></i>
                   <span>My profile</span>
                 </a>
                 <?php if(!$session->accountExpired) { ?>
                   <?php if($accessObject->hasAccess('view', 'settings')) { ?>
-                  <a href="<?= $baseUrl ?>settings" class="dropdown-item">
+                  <a href="<?= $baseUrl ?>settings" class="dropdown-item shortcut-offline">
                     <i class="ni ni-settings-gear-65"></i>
                     <span>Settings</span>
                   </a>
                   <?php } ?>
                 <?php } ?>
-                <a href="<?= $baseUrl ?>users-login-history" class="dropdown-item">
+                <a href="<?= $baseUrl ?>users-login-history" class="dropdown-item shortcut-offline">
                   <i class="ni ni-calendar-grid-58"></i>
                   <span>Login History</span>
                 </a>
