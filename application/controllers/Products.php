@@ -12,13 +12,14 @@ class Products extends Pos {
 	# Main PDO Connection Instance
 	protected $session;
 
-	function __construct(){
+	public function __construct($clientId = null){
 		global $session, $config, $pos;
 		
 		parent::__construct();
 
 		$this->imagesUrl = $config->base_url();
 		$this->defaultImg = "default.png";
+		$this->clientId = (!empty($clientId)) ? $clientId : $this->clientId;
 	}
 
     /**
@@ -104,7 +105,7 @@ class Products extends Pos {
 	 * @return [object]
 	 */
 	public function getCategories(){
-		$stmt = $this->db->query("SELECT * FROM products_categories WHERE clientId = '{$this->session->clientId}'");
+		$stmt = $this->db->query("SELECT * FROM products_categories WHERE clientId = '{$this->clientId}'");
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 

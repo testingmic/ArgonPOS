@@ -8,8 +8,10 @@ class Customers extends Pos {
 	protected $db;
 	protected $session;
 
-	public function __construct(){
+	public function __construct($clientId = null){
 		parent::__construct();
+
+		$this->clientId = (!empty($clientId)) ? $clientId : $this->clientId;
 	}
 
 	public function fetch($columns = "*", $whereClause = null, $leftJoin = null){

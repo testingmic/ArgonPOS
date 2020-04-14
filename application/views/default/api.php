@@ -31,6 +31,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	if(isset($apiAccessValues->clientId)) {
 		//: create a new object of the notification class
 		$accountNotify = load_class('Notifications', 'controllers', $apiAccessValues->clientId);
+		$posClass->clientId = $apiAccessValues->clientId;
 		$theAccountState = $accountNotify->accountNotification()->hasExpired;
 	}
 
@@ -1729,6 +1730,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	
 		//: fetch customers list for json
 		if(isset($_POST["fetchCustomersOptionsList"]) && confirm_url_id (1, "fetchCustomersOptionsList")) {
+
 			// fetch the data
 			$customersClass = load_class("Customers", "controllers");
 			$customers = $customersClass->fetch("id, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, branchId, phone_1, phone_2, email, residence", "AND customer_id != 'WalkIn'");
@@ -2759,16 +2761,16 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$status = false;
 			
 			// create a new products object
-			$productsClass = load_class("Products", "controllers");
+			$productsClass = load_class("Products", "controllers", $loggedUserClientId);
 
 			$baseUrl = $config->base_url();
 
 			//: process inventories
-			if (isset($_POST['request'])) {
+			if (isset($_REQUEST['request'])) {
 
-				if (isset($_POST['branchID'], $_POST['location'], $_POST['request']) && confirm_url_id(2, "getAllProducts")) {
+				if (isset($_REQUEST['branchID'], $_REQUEST['request']) && confirm_url_id(2, "getAllProducts")) {
 
-					$branchID = (!empty($_POST['branchID'])) ? xss_clean($_POST['branchID']) : null;
+					$branchID = (!empty($_REQUEST['branchID'])) ? xss_clean($_REQUEST['branchID']) : null;
 
 					$allProducts = $productsClass->all(false, $branchID);
 					$session->set_userdata("invSelectedCard", $branchID);
@@ -2779,44 +2781,52 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$message = [];
 
 						foreach ($allProducts as $product) {
-							$i++;
-							$price = $posClass->toDecimal($product->product_price, 2, ',');
 
-							// Check Indicator
-							$calcA = (0.5 * $product->quantity) + $product->quantity;
-							$calcB = (0.5 * $product->quantity);
-							$indicator = ($calcA > $product->threshold) ? "success" : 
-							(
-								($calcB <= $product->threshold) ? "danger" : 
+							// request through api access
+							if($rawJSON) {
+								$message[] = $product;
+							} else {
+								// request from site
+								$i++;
+								$price = $posClass->toDecimal($product->product_price, 2, ',');
+
+								// Check Indicator
+								$calcA = (0.5 * $product->quantity) + $product->quantity;
+								$calcB = (0.5 * $product->quantity);
+								$indicator = ($calcA > $product->threshold) ? "success" : 
 								(
-									($calcA > $product->threshold && $calcB < $product->threshold) ? "warning" : null
-								)
-							);
+									($calcB <= $product->threshold) ? "danger" : 
+									(
+										($calcA > $product->threshold && $calcB < $product->threshold) ? "warning" : null
+									)
+								);
 
-							$action = "<div class='text-center'>
-									<a class=\"btn btn-outline-info btn-sm\" href=\"{$baseUrl}products/{$product->pid}\">
-		                                <i class=\"fa fa-edit\"></i></a>";
-				            // ensure the user has the needed permissions
-				            if($accessObject->hasAccess('inventory_branches', 'products')) {
-				            	// show button if the quantity is more than 1
-					            if($product->quantity > 0) {
-					            	$action .= "<a class=\"btn btn-sm btn-outline-success transfer-product\" href=\"javascript:void(0)\" onclick=\"return transferProduct('{$product->product_id}');\"><i class=\"fa fa-share\"></i></a>";
-					            }
-					        }
-				            $action .= "</div>";
+								$action = "<div class='text-center'>
+										<a class=\"btn btn-outline-info btn-sm\" href=\"{$baseUrl}products/{$product->pid}\">
+			                                <i class=\"fa fa-edit\"></i></a>";
+					            // ensure the user has the needed permissions
+					            if($accessObject->hasAccess('inventory_branches', 'products')) {
+					            	// show button if the quantity is more than 1
+						            if($product->quantity > 0) {
+						            	$action .= "<a class=\"btn btn-sm btn-outline-success transfer-product\" href=\"javascript:void(0)\" onclick=\"return transferProduct('{$product->product_id}');\"><i class=\"fa fa-share\"></i></a>";
+						            }
+						        }
+					            $action .= "</div>";
 
-							$message[] = [
-								'row_id' => $i,
-								'product_name' => "
-								<a href=\"{$baseUrl}products/{$product->pid}\" class=\"b-0 product-name\">{$product->product_title}</a><br>
-								ID: <strong>{$product->product_id}</strong>
-								",
-				                'category' => $product->category,
-				                'price' => "{$clientData->default_currency} {$price}",
-				                'quantity' => "<div class='text-center'>{$product->quantity}</div>",
-				                'indicator' => "<div class='text-center'><span style=\"font-size: 9px;\" class=\"fa fa-circle text-{$indicator}\"></span></div>",
-				                'action' => $action
-							];
+								$message[] = [
+									'row_id' => $i,
+									'product_name' => "
+									<a href=\"{$baseUrl}products/{$product->pid}\" class=\"b-0 product-name\">{$product->product_title}</a><br>
+									ID: <strong>{$product->product_id}</strong>
+									",
+					                'category' => $product->category,
+					                'price' => "{$clientData->default_currency} {$price}",
+					                'quantity' => "<div class='text-center'>{$product->quantity}</div>",
+					                'indicator' => "<div class='text-center'><span style=\"font-size: 9px;\" class=\"fa fa-circle text-{$indicator}\"></span></div>",
+					                'action' => $action
+								];
+							}
+
 				        }
 				        $status = true;
 				    }
@@ -3697,10 +3707,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		elseif (confirm_url_id(1, "customerManagement")) {
 			
 			//: begin the queries
-			if(isset($_POST["listCustomers"]) && confirm_url_id(2, "listCustomers")) {
+			if(isset($_REQUEST["listCustomers"]) && confirm_url_id(2, "listCustomers")) {
 				
 				//: query for the list of all customers
-				$customersClass = load_class("Customers", "controllers");
+				$customersClass = load_class("Customers", "controllers", $loggedUserClientId);
 				$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, b.branch_name", "AND a.customer_id != 'WalkIn' {$branchAccess}",
 					"LEFT JOIN branches b ON b.id = a.branchId"
 				);
@@ -3710,23 +3720,27 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				$row_id = 0;
 				// loop through the list
 				foreach($customersList as $eachCustomer) {
-					$row_id++;
-					// set the action button
-					$eachCustomer->row_id = $row_id;
-					$eachCustomer->action = "<div align=\"center\">";
 
-					if($accessObject->hasAccess('update', 'customers')) {
-			        	$eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a>";
-			        } 
+					//: If the request is from the website
+					if(!$rawJSON) {
+						$row_id++;
+						// set the action button
+						$eachCustomer->row_id = $row_id;
+						$eachCustomer->action = "<div align=\"center\">";
 
-			        $eachCustomer->action .= "&nbsp;<a href=\"{$config->base_url('customer-detail/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
+						if($accessObject->hasAccess('update', 'customers')) {
+				        	$eachCustomer->action .= "<a class=\"btn btn-sm edit-customer btn-outline-success\" title=\"Update Customer Details\" data-value=\"{$eachCustomer->customer_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-edit\"></i> </a>";
+				        } 
 
-			        if($accessObject->hasAccess('delete', 'customers')) {
-	                    $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('aj/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";
-	                }
-			        $eachCustomer->action .= "</div>";
+				        $eachCustomer->action .= "&nbsp;<a href=\"{$config->base_url('customer-detail/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
 
-			        $eachCustomer->fullname = "<a data-id=\"{$eachCustomer->customer_id}\" data-info='".json_encode($eachCustomer)."'>{$eachCustomer->title} {$eachCustomer->fullname}<br><span style='background-color: #9ba7ca;' class='badge badge-default'>{$eachCustomer->branch_name}</span></a>";
+				        if($accessObject->hasAccess('delete', 'customers')) {
+		                    $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('aj/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";
+		                }
+				        $eachCustomer->action .= "</div>";
+
+				        $eachCustomer->fullname = "<a data-id=\"{$eachCustomer->customer_id}\" data-info='".json_encode($eachCustomer)."'>{$eachCustomer->title} {$eachCustomer->fullname}<br><span style='background-color: #9ba7ca;' class='badge badge-default'>{$eachCustomer->branch_name}</span></a>";
+			    	}
 					//append to the list
 					$customers[] = $eachCustomer;
 				}
