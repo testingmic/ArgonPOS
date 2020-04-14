@@ -1,6 +1,6 @@
 const iName = 'argonPOS-db';
 const iVer = 1;
-var companyVariables = $.parseJSON($(`link[rel="params"]`).attr('_cl'));
+var storeValues = $.parseJSON($(`link[rel="params"]`).attr('_cl'));
 
 $(".overlay").css('display', 'block');
 
@@ -45,17 +45,9 @@ function cOS() {
     var open = indexedDB.open(iName, iVer);
     open.onupgradeneeded = function(evt) {
         var obST = {
-            users: 'user_id',
             request_products: 'product_id',
-            branches: 'branch_id',
-            quotes: 'request_id',
-            orders: 'request_id',
             customers: 'customer_id',
-            requests: 'request_id',
-            payment_types: 'payment_type_id',
             sales: 'order_id',
-            payment_types: 'id',
-            settings: 'this_key',
             reports: 'reports_id'
         };
         var store;
@@ -178,55 +170,6 @@ function clearDBStore(sN) {
     });
 }
 
-
-function updateUsersRecordIndexDb(obDet) {
-    return new Promise((resolve, reject) => {
-        var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
-        var open = indexedDB.open(iName, iVer);
-        open.onsuccess = function() {
-            var db = open.result;
-            var tx = db.transaction('users', 'readwrite');
-            var store = tx.objectStore('users');
-            var req;
-            try {
-                $.each(obDet, function(ie, value) {
-                    req = store.put(value);
-                });
-            } catch (e) {
-                if (e.name == 'DataCloneError') {}
-            }
-            req.onsuccess = function(evt) {
-                resolve(200);
-            };
-            req.onerror = function() {};
-        };
-    });
-}
-
-function deleteUserFromIndexDb(uniqueId) {
-    return new Promise((resolve, reject) => {
-        var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
-        var open = indexedDB.open(iName, iVer);
-        open.onsuccess = function() {
-            var db = open.result;
-            var tx = db.transaction('users', 'readwrite');
-            var store = tx.objectStore('users');
-            var req;
-            try {
-                var newInfo = { user_id: uniqueId, deleted: 1 };
-                req = store.put(newInfo);
-            } catch (e) {
-                if (e.name == 'DataCloneError') {}
-                throw e;
-            }
-            req.onsuccess = function(evt) {
-                resolve(200);
-            };
-            req.onerror = function() {};
-        };
-    });
-}
-
 function del(sN, recordId) {
     return new Promise((resolve, reject) => {
         var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
@@ -290,10 +233,10 @@ function sPIDB() {
             totalToPay = (totalToPay - disAmt);
         }
 
-        var userId = companyVariables._ud;
-        var userName = companyVariables._un;
-        var branchId = companyVariables._clb;
-        var clientId = companyVariables._cl;
+        var userId = storeValues._ud;
+        var userName = storeValues._un;
+        var branchId = storeValues._clb;
+        var clientId = storeValues._cl;
 
         var regItems = [];
         var calNewT = 0;
@@ -326,6 +269,8 @@ function sPIDB() {
             }
         });
 
+        var recalculatedValue = parseFloat(calNewT).toFixed(2);
+
         var mainSalesDetails = [{
             clientId: clientId,
             source: "Evelyn",
@@ -346,12 +291,12 @@ function sPIDB() {
             order_amount_balance: amountBalance,
             order_discount: disAmt,
             order_date: log_date,
+            total_expected_selling_price: (amountToBePaid + disAmt),
+            total_cost_price: recalculatedValue,
             order_status: 'confirmed',
             payment_type: paymentType,
             transaction_id: transactionId
         }];
-        
-        var recalculatedValue = parseFloat(calNewT).toFixed(2);
         
         if (regItems.length < 1) {
             result = 'Sorry! You have not selected any products.';
@@ -430,22 +375,9 @@ async function dOC() {
     });
 }
 
-$(`table[class~="simple-table"]`).dataTable({
-    iDisplayLength: 5,
-});
-
-dOC().then((itResp) => {
-    if(itResp == 1) {
-        noInternet = false;
-        $(`div[class="connection"]`).css('display','none');
-    } else {
-        noInternet = true;
-        $(`div[class="connection"]`).css('display','block');
-    }
-}).catch((err) => {
-    noInternet = true;
-    $(`div[class="connection"]`).css('display','block');
-});
+if($(`table[class~="simple-table"]`).length) {
+    $(`table[class~="simple-table"]`).dataTable({iDisplayLength: 5});
+}
 
 var recon;
 
@@ -504,22 +436,26 @@ var syncOfflineData = async (dataToSync) => {
 }
 
 var preloadData = async (dataset) => {
-    $.ajax({
-        url: `${baseUrl}doprocess_db/preloadData`,
-        data: {preloadData: true, dataType: dataset},
-        dataType: "json",
-        type: "post",
-        success: function(resp) {
-            if(resp.status == 200) {
-                if(resp.request == "reports")  {
-                    var queryResult = resp.result;
-                    $.each(queryResult, function(i, e) {
-                        upIDB("reports", e);
-                    });
-                } else {
-                    upIDB(dataset, resp.result);
+    await dOC().then((itResp) => {
+        if(itResp == 1) {
+            $.ajax({
+                url: `${baseUrl}doprocess_db/preloadData`,
+                data: {preloadData: true, dataType: dataset},
+                dataType: "json",
+                type: "post",
+                success: function(resp) {
+                    if(resp.status == 200) {
+                        if(resp.request == "reports")  {
+                            var queryResult = resp.result;
+                            $.each(queryResult, function(i, e) {
+                                upIDB("reports", e);
+                            });
+                        } else {
+                            upIDB(dataset, resp.result);
+                        }
+                    }
                 }
-            }
+            });
         }
     });
 }
@@ -665,6 +601,7 @@ if($(`table[class~="productsList"]`).length) {
         $(`input[name="categoryId"]`).val('');
         $(`input[name="request"]`).val("add");
         $(`div[class~="categoryModal"]`).modal('show');
+        document.getElementById("categoryModal").focus();
     });
 
     $(`div[class~="categoryModal"] button[type="submit"]`).on('click', function() {
@@ -674,7 +611,7 @@ if($(`table[class~="productsList"]`).length) {
 
         $(`div[class="form-content-loader"]`).css("display","none");
 
-        $.post(baseUrl+"aj/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
+        $.post(baseUrl+"api/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
             if(res.status == 200){
                 $(`div[class~="categoryModal"]`).modal('hide');
                 Toast.fire({
@@ -711,6 +648,7 @@ if($(`table[class~="productsList"]`).length) {
             "dom": "Bfrtip",
             "columns": [
                {"data": 'row'},
+               {"data": 'category_id'},
                {"data": 'category'},
                {"data": 'products_count'},
                {"data": 'action'}
@@ -732,7 +670,7 @@ if($(`table[class~="productsList"]`).length) {
     function listProductCategories() {
         $.ajax({
             method: "POST",
-            url: `${baseUrl}aj/categoryManagement/listProductCategories`,
+            url: `${baseUrl}api/categoryManagement/listProductCategories`,
             data: { listProductCategories: true},
             dataType: "JSON",
             success: function(resp) {
@@ -756,33 +694,26 @@ async function listRequests(requestType, tableName) {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         noInternet = true;
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
         $(`div[class="connection"]`).css('display','block');
     });
 
-    if(noInternet) {
-
-        await listIDB(`${requestType.toString().toLowerCase()}s`).then((res) => {
-            populateRequestsList(res, `${tableName}`);
-        });
-
-        return false;
-    }
-
     $.ajax({
         method: "POST",
-        url: `${baseUrl}aj/listRequests`,
+        url: `${baseUrl}api/listRequests`,
         data: { listRequests: "true", requestType: requestType },
         dataType: "JSON",
         beforeSend: function() {},
         success: function(resp) {
             populateRequestsList(resp.result, `${tableName}`);
-            upIDB(`${requestType.toString().toLowerCase()}s`, resp.result);
         }, complete: function(data) {
             inputController();
             hL();
@@ -792,6 +723,29 @@ async function listRequests(requestType, tableName) {
     });
 }
 
+function removeItem(sessionName) {
+    $(`div[class="main-content"]`).on('click', `span[class~="remove-item"]`, function(e) {
+
+        var productId = $(this).attr('data-value');
+        var thisSum = $(this).attr('data-sum');
+        $.ajax({
+            type: "POST",
+            url: `${baseUrl}doprocess_sales/removeItem`,
+            data: { removeItem: "true", sessionName: sessionName, productId:productId },
+            dataType: "JSON",
+            success: function(resp) {
+            }, complete: function(data) {
+                $(`tr[data-row="${productId}"]`).remove();
+                let overAll = $(`td[data-overall]`).attr('data-total');
+                let curTotal = (parseInt(overAll) - parseInt(thisSum));
+
+                $(`td[data-overall]`).attr('data-total', curTotal);
+                $(`span[class="overall-total"]`).html(formatCurrency(curTotal))
+
+            }
+        });
+    });
+}
 
 function serealizeSelects(select) {
     
@@ -872,13 +826,16 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
         if(itResp == 1) {
             offline = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             offline = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         offline = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if(offline) {
@@ -886,7 +843,7 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
 
         $(`button[class~="confirm-clear-cache"]`).on('click', function(e) {
             caches.delete('argonPOS-Static-v1').then((res) => {
-                window.location.href = baseUrl;
+                window.location.href = `${baseUrl}login`;
             });
         });
     }
@@ -908,7 +865,7 @@ function stripHtml(html) {
     return html.replace(/(<([^>]+)>)/ig, "");
 }
 
-var populateCustOptionsList = (data) => {
+var popCustLst = (data) => {
     $(`select[class~="customer-select"]`).find('option').remove().end();
     if(!$(`span[class="hide-walk-in-customer"]`).length) {
         $(`select[class~="customer-select"]`).append('<option value="WalkIn" data-prefered-payment="" data-contact="No Contact" selected="selected">Walk In Customer</option>');
@@ -916,23 +873,30 @@ var populateCustOptionsList = (data) => {
         $(`select[class~="customer-select"]`).append('<option value="null" data-contact="No Contact" selected="selected">-- Select Customer --</option>');
     }
     $.each(data, function(i, e) {
-        $(`select[class~="customer-select"]`).append(`<option data-prefered-payment='${e.preferred_payment_type}' data-email='${e.email}' data-contact='${e.phone_1}' value='${e.customer_id}'>${e.fullname} (${e.phone_1})</option>`);
+        $(`select[class~="customer-select"]`).append(`<option data-prefered-payment='${e.preferred_payment_type}' data-email='${e.email}' data-contact='${e.phone_1}' title='${e.fullname} (${e.phone_1})' value='${e.customer_id}'>${e.fullname}</option>`);
     });
 }
 
-var fetchPOSCustomersList = async () => {
+var ftchCutLst = async () => {
 
     await dOC().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
+        $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+        $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
     });
 
     if(noInternet) {
@@ -945,16 +909,18 @@ var fetchPOSCustomersList = async () => {
                     newResults.push(e);
                 }
             });
-            populateCustOptionsList(newResults);
+            popCustLst(newResults);
         });
         return false;
     }
 
     await syncOfflineData('customers').then((resp) => {
-        $.post(baseUrl + "aj/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
+        $.post(baseUrl + "api/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
             await clearDBStore('customers').then((resp) => {
-                populateCustOptionsList(data.result);
-                upIDB('customers', data.result);
+                popCustLst(data.result);
+                if(data.result.length) {
+                    upIDB('customers', data.result);
+                }
             });
         }, 'json');
     });
@@ -962,10 +928,10 @@ var fetchPOSCustomersList = async () => {
 }
 
 if($(`select[class~="customer-select"]`).length) {
-    fetchPOSCustomersList();
+    ftchCutLst();
 }
 
-var triggerCellClick = () => {
+var trgClClk = () => {
     $(".product-title-cell").on("click", function(e) {
         let cellCheckbox = $(this).siblings("td").find(".checkbox input:checkbox");
         cellCheckbox.prop("checked", !cellCheckbox.is(":checked"))
@@ -973,7 +939,7 @@ var triggerCellClick = () => {
     });
 }
 
-var populatePOSProductsList = (data) => {
+var popPrdLst = (data) => {
 
     let htmlData = ``;
 
@@ -981,7 +947,7 @@ var populatePOSProductsList = (data) => {
 
         var trClass,
         checkbox = `<div class="checkbox checkbox-primary checkbox-single">
-                <input type="checkbox" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-price="${e.price}" data-product-img="${e.image}">
+                <input type="checkbox" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-code="${e.product_code}" data-product-price="${e.price}" data-product-img="${e.image}">
                 <label for="productCheck-${e.product_id}">
                 </label>
             </div>`;
@@ -993,8 +959,8 @@ var populatePOSProductsList = (data) => {
             trClass = `title="${e.product_quantity} Stock Quantity Left"`;
         }
 
-        htmlData += `<tr ${trClass} data-toggle="tooltip" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-price="${e.price}" data-product-img="${e.image}" style="transition: all 0.8s ease" data-category="${e.category_id}" data-product_max="${e.product_quantity}">
-            <td>
+        htmlData += `<tr ${trClass} data-toggle="tooltip" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-code="${e.product_code}" data-product-name="${e.product_title}" data-product-price="${e.price}" data-product-img="${e.image}" style="transition: all 0.8s ease" data-category="${e.category_id}" data-product_max="${e.product_quantity}">
+            <td data-product-code="${e.product_code}">
                 ${checkbox}
             </td>
             <td><img class="product-title-cell" src="${e.image}" width="24px"></td>
@@ -1006,23 +972,30 @@ var populatePOSProductsList = (data) => {
     $(`tbody[class="pos-products-list"]`).html(htmlData);
 
     $(`tr[data-toggle="tooltip"]`).tooltip();
-    triggerCellClick();
-    initialiteProductSelect();
+    trgClClk();
+    initPrdSelt();
 }
 
-var fetchPOSProductsList = async () => {
+var ftcPrdList = async () => {
 
     await dOC().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
+        $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+        $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
     });
 
     if(noInternet) {
@@ -1035,23 +1008,24 @@ var fetchPOSProductsList = async () => {
                     newResults.push(e);
                 }
             });
-            populatePOSProductsList(newResults);
+            popPrdLst(newResults);
         });
         return false;
     }
 
-    $.post(baseUrl + "aj/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
+    $.post(baseUrl + "api/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
         await clearDBStore('request_products').then((resp) => {
-            upIDB('request_products', data.result).then((resp) => {
-                populatePOSProductsList(data.result);
-            });
+            popPrdLst(data.result);
+            if(data.result.length) {
+                upIDB('request_products', data.result);
+            }
         });
     }, 'json');
 
 }
 
 if($(`tbody[class="pos-products-list"]`).length) {
-    fetchPOSProductsList();
+    ftcPrdList();
 }
 
 var populateUsersList = (usersObject) => {
@@ -1084,46 +1058,9 @@ var populateUsersList = (usersObject) => {
 var fetchUsersLists = async () => {
     
     if ($("table[class~='usersAccounts']").length) {
-        
-        sL();
-
-        await dOC().then((itResp) => {
-            if(itResp == 1) {
-                noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-            } else {
-                noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-            }
-        }).catch((err) => {
-            noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-        });
-
-        if(noInternet) {
-
-            var info = await listIDB('users').then((resp) => {
-                var row_id = 0, newResults = [];
-                $.each(resp, function(i, e) {
-                    if(e.deleted != 1) {
-                        row_id++;
-                        e.row_id = row_id;
-
-                        newResults.push(e);
-                    }
-                });
-
-                populateUsersList(newResults);
-
-            });
-
-            hL();
-
-            return false;
-        }
 
         $.ajax({
-            url: baseUrl + "aj/userManagement/fetchUsersLists",
+            url: baseUrl + "api/userManagement/fetchUsersLists",
             type: "POST",
             data: { fetchUsersLists: true },
             dataType: "json",
@@ -1133,7 +1070,6 @@ var fetchUsersLists = async () => {
             },
             success: function(data) {
                 populateUsersList(data.message);
-                aIDB('users', data.message);
             },
             error: function() {
                 
@@ -1146,7 +1082,75 @@ var fetchUsersLists = async () => {
     }
 
 }
+
 fetchUsersLists();
+
+
+async function deleteMyItem(itemId, page, callBack = "") {
+
+    if (itemId != "") {
+
+        await dOC().then((itResp) => {
+            if(itResp == 1) {
+                noInternet = false;
+                $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
+            } else {
+                noInternet = true;
+                $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
+            }
+        }).catch((err) => {
+            noInternet = true;
+            $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
+        });
+
+        if(noInternet) {
+            Toast.fire({
+                type: 'error',
+                title: 'Error Processing Request'
+            });
+            return false;
+        }
+
+        $.ajax({
+            url: baseUrl + "api/userManagement/deleteUser",
+            type: "POST",
+            data: { deleteUser: true, itemId: itemId },
+            dataType: "json",
+            cache: false,
+            beforeSend: function() {
+                $(".show-delete-msg").html(`
+                    <p class="text-center"><span class="fa fa-spinner fa-spin"></span><br>Please Wait...</p>
+                `);
+                $(".confirm-delete-btn").hide();
+            },
+            success: function(data) {
+                Toast.fire({
+                    type: data.status,
+                    title: data.message
+                });
+                $(`div[class~="deleteModal"]`).modal('hide');
+                $(".confirm-delete-btn").fadeIn(1000);
+            },
+            error: function() {
+                Toast.fire({
+                    type: 'error',
+                    title: 'Error Processing Request'
+                });
+            },
+            complete: function() {
+                callBack;
+                setTimeout(function() {
+                    $(".show-delete-msg").empty();
+                }, 3000);
+            }
+        })
+
+    }
+
+}
 
 $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
 
@@ -1154,157 +1158,6 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
 
 
     if (confirm("Do you want to submit this form?")) {
-
-        $(`div[class="form-content-loader"]`).css("display","flex");
-
-        await dOC().then((itResp) => {
-            if(itResp == 1) {
-                noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-            } else {
-                noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-            }
-        }).catch((err) => {
-            noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-        });
-
-        if(noInternet) {
-
-            if($(`input[name="this-form"]`).val() == "branches") {
-                
-                var uniqueId;
-                
-                if($(`input[name="record_type"]`).val() == 'update-record') {
-                    uniqueId = $(`input[name="branchId"]`).val();
-                } else {
-                    uniqueId = randomString(12);
-                }
-                
-                let branch_status = $(`input[name="status"]`).val();
-                let branch_type = $(`select[name="branchType"]`).val();
-                let branchType = `<br><span class='badge ${((branch_type == 'Store') ? "badge-primary" : "badge-success")}'>${branch_type}</span>`;
-
-                let actionBtn = `<div width="100%" align="center">
-                    <button class="btn btn-sm btn-outline-success edit-branch" data-branch-id="${uniqueId}\">
-                            <i class="mdi mdi-pencil-outline"></i>
-                        </button>
-                    <button class="btn btn-sm "${((branch_status == 1) ? "btn-outline-danger" : "btn-outline-primary")}" delete-item" data-url="${baseUrl}aj/branchManagment/updateStatus" data-state="${branch_status}" data-msg="${((branch_status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")}" data-request="branch-status" data-id="${uniqueId}">
-                            <i class="fa ${((branch_status == 1) ? "fa-stop" : "fa-play")}"></i>
-                        </button> </div>`;
-                
-                let branch_name = $(`input[name="branchName"]`).val();
-
-                if(branch_name.length < 3) {
-                    $(".form-result").html(`<p class="alert alert-danger text-white">Branch name cannot be empty.</p>`);
-                } else {
-                    let location = $(`input[name="location"]`).val();
-                    let phone = $(`input[name="phone"]`).val();
-                    let email = $(`input[name="email"]`).val();
-                    let status =   `<div align='center'>${((branch_status == 1) ? "<span class='badge badge-success'>Active</span>" : "<span class='badge badge-danger'>Inactive</span>")}</div>`;
-
-                    var formDetails = [{
-                        branch_id: uniqueId, contact: phone,
-                        branch_name: branch_name+branchType,
-                        location: location, email: email,
-                        branch_type: branch_type, status: status,
-                        branch_name_text: branch_name,
-                        action: actionBtn
-                    }];
-
-                    await upIDB('branches', formDetails).then((resp) => {
-                        if(resp == 200) {
-                            $(".form-result").html(`
-                                <p class="alert alert-success text-white">Branch Have Been Successfully Registered.</p>
-                            `);
-                            if ($(`[name="record_type"]`).val() == "new-record") {
-                                $(".submitThisForm:visible")[0].reset();
-                            }
-                            fetchBranchLists();
-                            setTimeout(function() {
-                                $(".form-result").empty();
-                                $(`div[id="newModalWindow"]`).modal('hide');
-                            }, 2000);
-                        } else {
-                            $(".form-result").html(`<p class="alert alert-danger text-white">Error encountered while processing request.</p>`);
-                        }
-                    });
-                }
-
-                $(`div[class="form-content-loader"]`).css("display","none");
-
-                return false;
-            }
-            else if($(`input[name="this-form"]`).val() == "users") {
-                
-                var uniqueId;
-
-                if($(`input[name="record_type"]`).val() == 'update-record') {
-                    uniqueId = $(`input[name="user_id"]`).val();
-                } else {
-                    uniqueId = randomString(12);
-                }
-
-                var actionBtn = `
-                    <div class='text-center'><button class="btn btn-sm btn-outline-success edit-user" data-user-id="${uniqueId}">
-                            <i class="mdi mdi-pencil-outline"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger delete-user" data-user-id="${uniqueId}">
-                        <i class="mdi mdi-trash-can"></i>
-                    </button></div>`;
-
-                var formDetails = [{
-                    user_id: uniqueId,
-                    access_level_id: $(`select[name="access_level"]`).val(),
-                    access_level: $(`select[name="access_level"]`).children('option:selected').attr('data-name'),
-                    fullname: $(`input[name="fullName"]`).val(),
-                    email: $(`input[name="email"]`).val(),
-                    contact: $(`input[name="phone"]`).val(),
-                    branchId: $(`select[name="branchId"]`).val(),
-                    branch_name: $(`select[name="branchId"]`).children('option:selected').attr('data-name'),
-                    gender: $(`select[name="gender"]`).val(),
-                    registered_date: jsDate(),
-                    action: actionBtn
-                }];
-
-                if($(`input[name="record_type"]`).val() != 'update-record') {
-                    await aIDB('users', formDetails).then((resp) => {
-                        if(resp == 200) {
-                            $("form[class~='submitThisForm']")[0].reset();
-                            $(".form-result").html(`
-                                <p class="alert alert-success text-white">User Have Been Successfully Registered.</p>
-                            `);
-                            setTimeout(function() {
-                                $(".form-result").empty();
-                                fetchUsersLists();
-                            }, 2000);
-                        } else {
-                            console.log('Ooops!!!!');
-                        }
-                    });
-                } else {
-                    await updateUsersRecordIndexDb(formDetails).then((resp) => {
-                        if(resp == 200) {
-                            $("form[class~='submitThisForm']")[0].reset();
-                            $(".form-result").html(`
-                                <p class="alert alert-success text-white">User Have Been Successfully Updated.</p>
-                            `);
-                            setTimeout(function() {
-                                $(".form-result").empty();
-                                fetchUsersLists();
-                            }, 3000);
-                        } else {
-                            console.log('Ooops!!!!');
-                        }
-                    });
-                }
-
-                $(`div[class="form-content-loader"]`).css("display","none");
-                return false;
-            }
-
-        }
 
         $.ajax({
             url: $(this).attr("action"),
@@ -1388,13 +1241,16 @@ var editUserDetails = () => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
             } else {
                 noInternet = true;
                 $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             }
         }).catch((err) => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         });
 
         if(noInternet) {
@@ -1411,7 +1267,7 @@ var editUserDetails = () => {
 
         if (userId != "") {
             $.ajax({
-                url: baseUrl + "aj/userManagement/getUserDetails",
+                url: baseUrl + "api/userManagement/getUserDetails",
                 data: { getUserDetails: true, userId: userId },
                 dataType: "json",
                 type: "POST",
@@ -1445,7 +1301,7 @@ var editUserAccessLevel = () => {
 
         if (user_id != "") {
             $.ajax({
-                url: baseUrl + "aj/userManagement/permissionManagement",
+                url: baseUrl + "api/userManagement/permissionManagement",
                 data: { getUserAccessLevels: true, user_id: user_id },
                 dataType: "json",
                 type: "POST",
@@ -1553,7 +1409,7 @@ $(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e)
     var access_level = $(`[name="access_level"]`).val();
 
     $.ajax({
-        url: baseUrl + "aj/userManagement",
+        url: baseUrl + "api/userManagement",
         type: "POST",
         data: { request: "fetchAccessLevelPermissions", access_level: access_level },
         dataType: "json",
@@ -1674,7 +1530,7 @@ var saveAccessLevelSettings = () => {
 
             $.ajax({
 
-                url: baseUrl + "aj/userManagement/saveAccessLevelSettings",
+                url: baseUrl + "api/userManagement/saveAccessLevelSettings",
                 type: "POST",
                 data: { saveAccessLevelSettings: true, aclSettings: items_array, acl: acl, accessUser: aclUser },
                 dataType: "json",
@@ -1777,13 +1633,16 @@ var editBranchDetails = () => {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
             } else {
                 noInternet = true;
                 $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             }
         }).catch((err) => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         });
 
         if(noInternet) {
@@ -1796,7 +1655,7 @@ var editBranchDetails = () => {
 
         if (branchId != "") {
             $.ajax({
-                url: baseUrl + "aj/branchManagment/getBranchDetails",
+                url: baseUrl + "api/branchManagment/getBranchDetails",
                 data: { getBranchDetails: true, branchId: branchId },
                 dataType: "json",
                 type: "POST",
@@ -1856,13 +1715,16 @@ async function fetchBranchLists() {
             if(itResp == 1) {
                 noInternet = false;
                 $(`div[class="connection"]`).css('display','none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
             } else {
                 noInternet = true;
                 $(`div[class="connection"]`).css('display','block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             }
         }).catch((err) => {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         });
 
         if(noInternet) {
@@ -1887,7 +1749,7 @@ async function fetchBranchLists() {
         }
             
         $.ajax({
-            url: baseUrl + "aj/branchManagment/fetchBranchesLists",
+            url: baseUrl + "api/branchManagment/fetchBranchesLists",
             type: "POST",
             data: { request: "fetchBranchesLists" },
             dataType: "json",
@@ -1907,6 +1769,17 @@ async function fetchBranchLists() {
 }
 fetchBranchLists();
 
+var triggerPrintReceipt = () => {
+    $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
+        let orderId = $(this).data('sales-id');
+        window.open(
+            `${baseUrl}receipt/${orderId}`,
+            `Sales Invoice - Receipt #${orderId}`,
+            `width=650,height=750,resizable,scrollbars=yes,status=1`
+        );
+    });
+}
+
 function cusPurHis() {
                     
     let userId = $(`a[class="view-user-sales"]`).attr('data-value');
@@ -1915,7 +1788,7 @@ function cusPurHis() {
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+        url: `${baseUrl}api/reportsAnalytics/generateReport`,
         data: {generateReport: true, salesAttendantHistory: true, queryMetric:"salesAttendantPerformance", userId: userId, recordType: recordType},
         dataType: "JSON",
         beforeSend: function() {
@@ -1949,11 +1822,11 @@ function cusPurHis() {
 
                 trData += `<tr>`;
                 trData += `<td>${count}</td>`;
-                trData += `<td><a class="get-sales-details text-success" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a></td>`;
-                trData += `<td>${companyVariables.cur} ${e.order_amount_paid}</td>`;
+                trData += `<td><a onclick="return getSalesDetails('${e.order_id}')" class="get-sales-details text-success" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a></td>`;
+                trData += `<td>${storeValues.cur} ${e.order_amount_paid}</td>`;
                 trData += `<td>${e.order_date}</td>`;
                 trData += `<td>${creditBadge}</td>`;
-                trData += `<td><a href="${baseUrl}invoice/${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
+                trData += `<td><a href="javascript:void(0);" class="print-receipt" data-sales-id="${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
                 trData += `</tr>`;
             });
 
@@ -1968,7 +1841,9 @@ function cusPurHis() {
                 "dom": "Bfrtip",
             });
 
-        }, complete: function(data) {}, error: function(err) {
+        }, complete: function(data) {
+            triggerPrintReceipt();
+        }, error: function(err) {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                 <p align="center">No records found.</p>
             `);
@@ -2022,7 +1897,7 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
         thisEmail.prop('disabled', true);
 
         $.ajax({
-            url: `${baseUrl}aj/pointOfSaleProcessor/sendMail`,
+            url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
             type: `POST`,
             data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname, thisRequest: thisRequest},
             dataType: "json",
@@ -2056,20 +1931,26 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
     }
 });
 
-if($(`table[class~="customersList"]`).length) {
+if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
 
     $("#updateCustomerForm").on("submit", async function(event) {
     
         event.preventDefault();
         let formData = $(this).serialize();
 
-        $.post(baseUrl+"aj/customerManagement/updateCustomerDetails", formData, (res) => {
+        $.post(baseUrl+"api/customerManagement/updateCustomerDetails", formData, (res) => {
             if(res.status == 200){
                 Toast.fire({
                     type: 'success',
                     title: res.message
                 });
-                listCustomers();
+                if($(`span[class~="customersList"]`).length) {
+                    setTimeout(() => {
+                        window.location.href = '';
+                    }, 1200);
+                } else  {
+                    listCustomers();
+                }
                 $("#updateCustomerForm").parents(".modal").modal("hide");
                 $("#updateCustomerForm").trigger("reset");
             } else {
@@ -2140,7 +2021,7 @@ if($(`table[class~="customersList"]`).length) {
     function listCustomers() {
         $.ajax({
             method: "POST",
-            url: `${baseUrl}aj/customerManagement/listCustomers`,
+            url: `${baseUrl}api/customerManagement/listCustomers`,
             data: { listCustomers: true},
             dataType: "JSON",
             success: function(resp) {
@@ -2153,7 +2034,9 @@ if($(`table[class~="customersList"]`).length) {
         });
     }
 
-    listCustomers();
+    if($(`table[class~="customersList"]`).length) {
+        listCustomers();
+    }
 }
 
 $("#newCustomer_form").on("submit", async function(event) {
@@ -2165,13 +2048,16 @@ $("#newCustomer_form").on("submit", async function(event) {
         if(itResp == 1) {
             noInternet = false;
             $(`div[class="connection"]`).css('display','none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             noInternet = true;
             $(`div[class="connection"]`).css('display','block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         noInternet = true;
         $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if(noInternet) {
@@ -2185,8 +2071,8 @@ $("#newCustomer_form").on("submit", async function(event) {
             lastname: $(`input[name="nc_lastname"]`).val(),
             phone_1: $(`input[name="nc_contact"]`).val(),
             email: $(`input[name="nc_email"]`).val(),
-            clientId: companyVariables.clientId,
-            branchId: companyVariables.branchId,
+            clientId: storeValues.clientId,
+            branchId: storeValues.branchId,
             fullname: $(`input[name="nc_firstname"]`).val() + ' ' + $(`input[name="nc_lastname"]`).val() 
         }];
 
@@ -2226,7 +2112,7 @@ $("#newCustomer_form").on("submit", async function(event) {
         }
     }
 
-    $.post(baseUrl+"aj/pointOfSaleProcessor/quick-add-customer", formData, (res) => {
+    $.post(baseUrl+"api/pointOfSaleProcessor/quick-add-customer", formData, (res) => {
         if(res.status == "success"){
             $(".customer-select").children("option:first").after(`<option selected data-email='${res.data[3]}' data-contact='${res.data[4]}' value=${res.data[0]}>${res.data[1]} ${res.data[2]}</option>`)
             if(res.data[3]){
@@ -2272,7 +2158,7 @@ $(`div[class~="complete-branch-selection"]`).on('click', function() {
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}aj/importManager/setBranchId`,
+        url: `${baseUrl}api/importManager/setBranchId`,
         data: {setBranchId: true, curBranchId: branchId},
         success: function(resp) {
             window.location.href = $(`div[class="redirection-href"]`).attr('data-href');
@@ -2302,7 +2188,7 @@ if($(".make-online-payment").length) {
         enablePagination: false,
         onFinished(e){
             rtRegForm();
-            $(`span[class="sub_total"]`).html(`${companyVariables.cur} 0.00`);
+            $(`span[class="sub_total"]`).html(`${storeValues.cur} 0.00`);
             $(".content-loader.register-form-loader").css({display: "none"});
         },
         onInit(event, newIndex){
@@ -2319,8 +2205,11 @@ if($(".make-online-payment").length) {
             $(`select[class~="custom-select2"]`).select2({ width: '280px' });
         },
         onStepChanged(event, currentIndex, newIndex){
-            $(".register-form ul[role='tablist'] li").addClass("disabled")
-            $(".register-form ul[role='tablist'] li.current").removeClass("disabled")
+            $(".register-form ul[role='tablist'] li").addClass("disabled");
+            $(".register-form ul[role='tablist'] li.current").removeClass("disabled");
+            if(currentIndex == productsIndex) {
+                document.getElementById("products-search-input").focus();
+            }
         },
         onStepChanging(event, currentIndex, newIndex){
 
@@ -2353,28 +2242,28 @@ if($(".make-online-payment").length) {
             if(currentIndex == customerIndex && customerSelected == "0"){
                 Toast.fire({
                     type: 'error',
-                    title: "Please select a customer"
+                    title: "Please select a customer."
                 });
                 return false;
             }   
             else if((currentIndex == productsIndex && !$("input:checkbox.product-select:checked").length) && (newIndex != 0)) {
                 Toast.fire({
                     type: 'error',
-                    title: "Please select product(s)"
+                    title: "Please select at least one product to proceed"
                 });
                 return false;                   
             }
             else if((currentIndex == paymentIndex && selectedPayType == "0") && (newIndex != 1)) {
                 Toast.fire({
                     type: 'error',
-                    title: "Please select a payment type"
+                    title: "Please select the payment type to proceed."
                 });
                 return false;
             }
             else if(((selectedPayType == "cash") && (amountPaid < amountPayable) && (newIndex == completeIndex))) {
                 Toast.fire({
                     type: 'error',
-                    title: "Amount being paid is less than the total amount."
+                    title: "The Amount being paid is less than the Total Amount."
                 });
                 return false;
             }
@@ -2435,29 +2324,36 @@ if($(".make-online-payment").length) {
                                 title: "Payment Successfully Recorded"
                             });
                             $(".cash-process-loader").removeClass("d-flex");
-                            if(companyVariables.prt == "yes") {
+                            if(storeValues.prt == "yes") {
                                 $(`button[class~="print-receipt"]`).trigger('click');
                             }
-                            fetchPOSProductsList();
-                            fetchPOSCustomersList();
+                            ftcPrdList();
+                            $(`select[class~="customer-select"]`).val('WalkIn').change();
                         }
 
                     });
 
                 } else {
                     svReg().then((res) => {
-                        $("[data-bind-html='orderId']").html(res.data._oid);
-                        $(`span[class="generated_order"]`).html(res.data._oid);
-                        Toast.fire({
-                            type: 'success',
-                            title: "Payment Successfully Recorded"
-                        });
-                        if(companyVariables.prt == "yes") {
-                            $(`button[class~="print-receipt"]`).trigger('click');
+                        if(res.status == "success") {
+                            $("[data-bind-html='orderId']").html(res.data._oid);
+                            $(`span[class="generated_order"]`).html(res.data._oid);
+                            Toast.fire({
+                                type: 'success',
+                                title: "Payment Successfully Recorded"
+                            });
+                            if(storeValues.prt == "yes") {
+                                $(`button[class~="print-receipt"]`).trigger('click');
+                            }
+                            ftcPrdList();
+                            $(`select[class~="customer-select"]`).val('WalkIn').change();
+                            $(".cash-process-loader").removeClass("d-flex");
+                        } else {
+                            Toast.fire({
+                                type: 'error',
+                                title: "Error processing the Sale Record."
+                            });
                         }
-                        fetchPOSProductsList();
-                        fetchPOSCustomersList();
-                        $(".cash-process-loader").removeClass("d-flex");
                     });
                 }
             }
@@ -2483,7 +2379,7 @@ if($(".make-online-payment").length) {
         let discountType = $(`input[name="discount_type"]:checked`).val();
         let discountAmount = $(`input[name="discount_amount"]`).val();
         formData += `&total_to_pay=${totalToPay}&discountType=${discountType}&discountAmount=${discountAmount}`;
-        return $.post(baseUrl+"aj/pointOfSaleProcessor/saveRegister", formData)
+        return $.post(baseUrl+"api/pointOfSaleProcessor/saveRegister", formData)
     }
 
     let productPrices = [];
@@ -2499,7 +2395,7 @@ if($(".make-online-payment").length) {
         if(selectedCat == "all" || selectedCat == ""){
             $(`table[id="products-table"] thead tr`).show();
             $(`td.product-title-cell`).parent().hide();
-            $(`td.product-title-cell:Contains(${input})`).parent().show();
+            $(`td.product-title-cell:Contains(${input}), td[data-product-code~="${input}"]`).parent().show();
             ckEmpTb($("#products-table"));
         }
         else{
@@ -2510,7 +2406,7 @@ if($(".make-online-payment").length) {
         }
     });
 
-    var initialiteProductSelect = () => {
+    var initPrdSelt = () => {
         $(".product-select").on("change", async function(){
             if($(this).is(":checked")) {
                 await adProR($(this).data())
@@ -2544,13 +2440,17 @@ if($(".make-online-payment").length) {
                                 title: `Sorry. Maximum number of available ${productName} is ${maximumQty}`
                             });
                         }
-                    })
+                    });
+                    $(`tr[class='products-row']`).on('click', function(e) {
+                        $(`input[name="products[${$(this).data('row-id')}][qty]"]`).focus();
+                    });
                     $(`.remove-row[data-row='${row.productId}']`).on("click", function(){
                         rvPtRow(row.productId);
                         $(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
-                    })
-                    $(".print-receipt").on("click", printReceipt)
-                })
+                    });
+                    $(".print-receipt").on("click", printReceipt);
+                    document.getElementById("products-search-input").focus();
+                });
             }
             else rvPtRow($(this).data("productId"))
         });
@@ -2665,7 +2565,7 @@ if($(".make-online-payment").length) {
         $("a", firstTab).trigger("click");
         $(".receipt-table-body").html('');
         $(`input[name="discount_amount"]`).val('');
-        $(`span[class="sub_total"]`).html(`${companyVariables.cur} 0.00`);
+        $(`span[class="sub_total"]`).html(`${storeValues.cur} 0.00`);
         $(".selected-customer-name").html("No Customer Selected");
         $(`button[class~="discardSale_trigger"]`).css('display', 'none');
         $(".products-table-body tr:not(.empty-message-row)").remove();
@@ -2696,7 +2596,7 @@ if($(".make-online-payment").length) {
             <td style="padding-top:20px">${rowData.productName}</td>
             <td style="padding-top:20px">${rowData.productPrice}</td>
             <td>
-            <input type='number' data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
+            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
             <input type="hidden" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
             <td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
             <td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
@@ -2717,6 +2617,7 @@ if($(".make-online-payment").length) {
         let receipt_tbody = $(".receipt-table-body");
         $(`tr.receipt-product-row[data-row-id="${rowId}"]`, receipt_tbody).remove();
         $(`tr.products-row[data-row-id="${rowId}"]`, tbody).remove();
+        document.getElementById("products-search-input").focus();
         rcalRowNum();
         rcalTot();
     }
@@ -2725,38 +2626,38 @@ if($(".make-online-payment").length) {
 
         function rcalTot(){
             let totalToPay = 0;
+                overallSubTotal = 0;
 
             if($("tr.products-row .row-subtotal").length){
-            let discountAmount;
+                let discountAmount;
 
                 let discountType = $(`input[name="discount_type"]:checked`).val();
                 if($(`input[name="discount_amount"]`).val().length > 0) {
-                discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
+                    discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
                 } else {
-                discountAmount = 0;
+                    discountAmount = 0;
                 }
-            
-            totalDiscountDeducted = 0;
-            overallSubTotal = 0;
+                
+                totalDiscountDeducted = 0;
 
                 $("tr.products-row .row-subtotal").each(function(){
                     let subtotalVal = parseFloat($(this).text());
                     totalToPay += subtotalVal;
-                overallSubTotal += subtotalVal;
+                    overallSubTotal += subtotalVal;
                 });
                 if(discountType == "cash") {
-                totalToPay = totalToPay - discountAmount;
-                totalDiscountDeducted = discountAmount;
+                    totalToPay = totalToPay - discountAmount;
+                    totalDiscountDeducted = discountAmount;
                 } else {
-                discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
-                totalToPay = (totalToPay - discountAmount);
-                totalDiscountDeducted = discountAmount;
-            }
-            $(`th[data-bind-html='discount_amount']`).html(`${formatCurrency(discountAmount)}`);  
+                    discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
+                    totalToPay = (totalToPay - discountAmount);
+                    totalDiscountDeducted = discountAmount;
+                }
+                $(`th[data-bind-html='discount_amount']`).html(`${formatCurrency(discountAmount)}`);  
             }
 
             let paymentType = $(".payment-type-select").val();
-            $(`span[class="sub_total"]`).html(`${companyVariables.cur} ${formatCurrency(overallSubTotal)}`);
+            $(`span[class="sub_total"]`).html(`${storeValues.cur} ${formatCurrency(overallSubTotal)}`);
             $("[data-bind-html='totaltopay']").html(formatCurrency(overallSubTotal));
             $(".total-to-pay-amount").text(formatCurrency(totalToPay));
             $(".total-to-pay-amount").attr("data-order-total", totalToPay);
@@ -2777,17 +2678,17 @@ if($(".make-online-payment").length) {
             $(".make-online-payment").removeAttr("data-order-total");
             $("[data-step-action='next']").prop("disabled", false);
 
-            $(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(value)}`);
-            $("[data-bind-html='payment']").html(`${companyVariables.cur} ${formatCurrency(overallSubTotal-totalDiscountDeducted)}`);
-                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(value)}` : `${companyVariables.cur} ${formatCurrency(balance)}`);
+            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${formatCurrency(value)}`);
+            $("[data-bind-html='payment']").html(`${storeValues.cur} ${formatCurrency(overallSubTotal-totalDiscountDeducted)}`);
+                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${formatCurrency(value)}` : `${storeValues.cur} ${formatCurrency(balance)}`);
             } else {
                 $(`input[name="amount_balance"]`).val('0.00');
 
                 $(".make-online-payment").addClass("d-none");
             $(".make-online-payment").attr("data-order-total", max);
-            $(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} 0.00`);
-            $("[data-bind-html='payment']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(max)}` : "${companyVariables.cur} 0.00");
-                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(max)}` : "${companyVariables.cur} 0.00");
+            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} 0.00`);
+            $("[data-bind-html='payment']").html(paymentType == 'credit' ? `${storeValues.cur} ${formatCurrency(max)}` : "${storeValues.cur} 0.00");
+                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${formatCurrency(max)}` : "${storeValues.cur} 0.00");
             }
     }
 
@@ -2825,7 +2726,7 @@ if($(".make-online-payment").length) {
             thisEmail.prop('disabled', true);
 
             $.ajax({
-                url: `${baseUrl}aj/pointOfSaleProcessor/sendMail`,
+                url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
                 type: `POST`,
                 data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname},
                 dataType: "json",
@@ -2882,7 +2783,7 @@ if($(".make-online-payment").length) {
             $(`span[class="generated_order"]`).html(res.data._oid);
             var userEmail = $("input[id='receipt-email']").val();
             $.ajax({
-                url: baseUrl + "aj/pointOfSaleProcessor/processMyPayment",
+                url: baseUrl + "api/pointOfSaleProcessor/processMyPayment",
                 data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
                 dataType: "json",
                 type: "POST",
@@ -2898,8 +2799,17 @@ if($(".make-online-payment").length) {
                 success: function(data) {
                     if (data.status == true) {
                         if (data.message.action == true) {
-                            $(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(res.data.orderTotal)}`);
-                            paymentWindow = window.open(data.message.msg, "_blank");
+                            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${formatCurrency(res.data.orderTotal)}`);
+                            
+                            $(`div[class~="payment-backdrop"]`).removeClass('hidden');
+                            paymentWindow = window.open(data.message.msg,
+                                `Payment for #${res.data.orderId}`,
+                                `width=700,height=600,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+                            );
+
+                            $(`button[class~="return-to-payment-window"]`).on('click', function() {
+                                paymentWindow.focus();
+                            });
                             paymentCheck = setInterval(function() {
                                 ckPayState();
                             }, 3000);
@@ -2911,6 +2821,7 @@ if($(".make-online-payment").length) {
                             type: "error",
                             title: "Payment Failed! Please try again."
                         });
+                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $(".payment-processing-span").html(``);
                         $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                         $(".make-online-payment").removeClass("d-none");
@@ -2942,7 +2853,7 @@ if($(".make-online-payment").length) {
     function ckPayState() {
         
         $.ajax({
-            url: `${baseUrl}aj/pointOfSaleProcessor/checkPaymentStatus`,
+            url: `${baseUrl}api/pointOfSaleProcessor/checkPaymentStatus`,
             type: "POST",
             data: { checkPaymentStatus: true },
             dataType: "json",
@@ -2967,10 +2878,12 @@ if($(".make-online-payment").length) {
                         lastTab.removeClass("disabled");
                         $("a", lastTab).trigger("click");
                         lastTab.addClass("disabled");
+                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $("[data-step-action='next']").prop("disabled", false);
                         $(".payment-type-select").prop("disabled", false);
                         $(`span[class="payment-processing-span"]`).html(``);
                     } else {
+                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                         $(".make-online-payment").removeClass("d-none");
                         $(".payment-processing-span").empty();
@@ -2987,14 +2900,14 @@ if($(".make-online-payment").length) {
 
     }
 
-    $(".cancel-online-payment").on("click", function() {
+    $(".cancel-online-payment, button[class~='cancel-ongoing-payment-activity']").on("click", function() {
 
-        $.post(`${baseUrl}aj/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
-            data = $.parseJSON( data );
+        $.post(`${baseUrl}api/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
             let toastType = "error";
             let toastMsg  = "Failed To Cancel";
             if (data.status == 200) {
                 clearInterval(paymentCheck);
+                $(`div[class~="payment-backdrop"]`).addClass('hidden');
                 $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                 $(".make-online-payment").removeClass("d-none");
                 $(".cancel-online-payment").addClass("d-none");
@@ -3010,7 +2923,7 @@ if($(".make-online-payment").length) {
                 type: toastType,
                 title: toastMsg
             });
-        });
+        }, 'json');
     });
 
 }
@@ -3031,35 +2944,41 @@ async function getSalesDetails(salesID) {
         if (itResp == 1) {
             offline = false;
             $(`div[class="connection"]`).css('display', 'none');
+            $(`div[class~="offline-placeholder"]`).css('display','none');
         } else {
             offline = true;
             $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
         }
     }).catch((err) => {
         offline = true;
         $(`div[class="connection"]`).css('display', 'block');
+        $(`div[class~="offline-placeholder"]`).css('display','flex');
     });
 
     if (offline) {
 
-        listIDB('sales_details').then(async(salesDetailsResult) => {
+        var trData = `
+            <div class="row table-responsive">`;
 
-            var trData = `
-                <div class="row table-responsive">`;
+        var salesInfo = await gIDBR('sales', salesID).then((salesResult) => {
 
-            var salesInfo = await gIDBR('sales', salesID).then((salesResult) => {
-
-                trData += `<table class="table table-bordered">
-                        <tr>
-                            <td><strong>Customer Name</strong>: ${salesResult.customer_fullname}</td>
-                            <td align='left'><strong>Transaction ID:</strong>: ${salesResult.order_id}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Contact</strong>: ${salesResult.customer_contact}</td>
-                            <td align='left'><strong>Transaction Date</strong>: ${salesResult.order_date}</td>
-                        </tr>
-                    </table>`;
-            });
+            trData += `<table class="table table-bordered">
+                    <tr>
+                        <td colspan='2' class='text-center'>
+                            <strong>Served By: </strong> ${salesResult.recorded_by}<br>
+                            <strong>Point of Sale: </strong> ${storeValues._clbn}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Customer Name</strong>: ${salesResult.customer_fullname}</td>
+                        <td align='left'><strong>Transaction ID:</strong>: ${salesResult.order_id}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Contact</strong>: ${salesResult.customer_contact}</td>
+                        <td align='left'><strong>Transaction Date</strong>: ${salesResult.order_date}</td>
+                    </tr>
+                </table>`;
 
             trData += `<table class="table table-bordered">
                     <thead>
@@ -3073,19 +2992,17 @@ async function getSalesDetails(salesID) {
                     <tbody>`;
 
             var subTotal = 0,
-                discount = 0;
+                discount = salesResult.order_discount;
 
-            $.each(salesDetailsResult, function(i, e) {
-                if (e.order_id == salesID) {
-                    trData += `
-                        <tr>
-                            <td>${e.product_title}</td>
-                            <td>${e.product_quantity}</td>
-                            <td class=\"text-right\">${companyVariables.cur} ${e.product_unit_price}</td>
-                            <td class=\"text-right\">${companyVariables.cur} ${e.product_total}</td>
-                        </tr>`;
-                    subTotal += parseFloat(e.product_total);
-                }
+            $.each(salesResult.saleItems, function(i, e) {
+                trData += `
+                    <tr>
+                        <td>${e.product_title}</td>
+                        <td>${e.product_quantity}</td>
+                        <td class=\"text-right\">${storeValues.cur} ${e.product_unit_price}</td>
+                        <td class=\"text-right\">${storeValues.cur} ${e.product_total}</td>
+                    </tr>`;
+                subTotal += parseFloat(e.product_total);
             });
 
             var overall = subTotal - discount;
@@ -3093,16 +3010,16 @@ async function getSalesDetails(salesID) {
             trData += `<tr>
                     <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Subtotal</td>
                     <td style="font-weight:bolder;text-transform:uppercase" class="text-right">
-                        ${companyVariables.cur} ${formatCurrency(subTotal)}
+                        ${storeValues.cur} ${formatCurrency(subTotal)}
                     </td>
                 </tr>
                 <tr>
                     <td style="font-weight:;text-transform:uppercase" colspan="3" class="text-right">Discount</td>
-                    <td style="font-weight:;text-transform:uppercase" class="text-right">${companyVariables.cur} ${discount}</td>
+                    <td style="font-weight:;text-transform:uppercase" class="text-right">${storeValues.cur} ${discount}</td>
                 </tr>
                 <tr>
                     <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Overall Total</td>
-                    <td style="font-weight:bolder;text-transform:uppercase" class="text-right">${companyVariables.cur} ${formatCurrency(overall)}</td>
+                    <td style="font-weight:bolder;text-transform:uppercase" class="text-right">${storeValues.cur} ${formatCurrency(overall)}</td>
                 </tr>
 
                 </tbody>
@@ -3122,12 +3039,14 @@ async function getSalesDetails(salesID) {
             $(".show-modal-body").html(trData);
             $(`div[class="form-content-loader"]`).css("display","none");
             reConnect();
+
         });
+
         return false;
     }
 
     $.ajax({
-        url: baseUrl + "aj/dashboardAnalytics/getSalesDetails",
+        url: baseUrl + "api/dashboardAnalytics/getSalesDetails",
         type: "POST",
         dataType: "json",
         data: { getSalesDetails: true, salesID: salesID },
@@ -3246,7 +3165,7 @@ $(function() {
                 y: {
                     formatter: function(y) {
                         if (typeof y !== "undefined") {
-                            return companyVariables.cur + formatCurrency(y);
+                            return storeValues.cur + formatCurrency(y);
                         }
                         return y;
 
@@ -3264,30 +3183,60 @@ $(function() {
     }
 
     var populateProductsPerformance = (productsInfo) => {
-        $(`table[class~="products-performance"]`).dataTable().fnDestroy();
-        $(`table[class~="products-performance"]`).dataTable({
-            "iDisplayLength": 7,
-            "aaData": productsInfo,
-            "buttons": ["copy", "print","csvHtml5"],
-            "lengthChange": !1,
-            "dom": "Bfrtip",
-            "columns": [
-                { "data": 'row_id'},
-                { "data": 'product_title'},
-                { "data": 'orders_count'},
-                { "data": 'quantity_sold'},
-                { "data": 'total_selling_cost'},
-                { "data": 'total_selling_revenue'},
-                { "data": 'product_profit'}
-            ]
-        });
+
+        if($(`ul[class~="most-performing-products"]`).length) {
+            var productsArray = ``;
+
+                $.each(productsInfo, function(i, e) {
+                    productsArray += `<li class="list-group-item px-0">
+                      <div class="row align-items-center">
+                        <div class="col-auto">
+                          <a href="${baseUrl}products/${e.id}" class="avatar rounded-circle">
+                            <img alt="" src="${baseUrl}${e.product_image}">
+                          </a>
+                        </div>
+                        <div class="col">
+                          <h5>${e.product_title}</h5>
+                          <div class="progress progress-xs mb-0">
+                            <div class="progress-bar bg-orange" role="progressbar" aria-valuenow="${e.percentage}" aria-valuemin="0" aria-valuemax="100" style="width: ${e.percentage}%;"></div>
+                          </div>
+                          <div class="row justify-content-between">
+                            <div class="pl-2"><strong>Sold:</strong> ${e.quantity_sold}</div>
+                            <div class="pr-3"><strong>Revenue:</strong> ${e.total_selling_revenue}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>`;
+                });
+
+            $(`ul[class~="most-performing-products"]`).html(productsArray);
+
+        } else {
+            $(`table[class~="products-performance"]`).dataTable().fnDestroy();
+            $(`table[class~="products-performance"]`).dataTable({
+                "iDisplayLength": 7,
+                "aaData": productsInfo,
+                "buttons": ["copy", "print","csvHtml5"],
+                "lengthChange": !1,
+                "dom": "Bfrtip",
+                "columns": [
+                    { "data": 'row_id'},
+                    { "data": 'product_title'},
+                    { "data": 'orders_count'},
+                    { "data": 'quantity_sold'},
+                    { "data": 'total_selling_cost'},
+                    { "data": 'total_selling_revenue'},
+                    { "data": 'product_profit'}
+                ]
+            });
+        }
     }
 
     var branchPerformance = (periodSelected = 'today') => {
         if ($(`table[class~="branch-overview"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "branchPerformance", salesPeriod: periodSelected},
                 dataType: "JSON",
                 beforeSend: function() {
@@ -3304,7 +3253,7 @@ $(function() {
     var summaryItems = (periodSelected = 'today') => {
         $.ajax({
             type: "POST",
-            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "summaryItems", salesPeriod: periodSelected },
             dataType: "JSON",
             beforeSend: function() {
@@ -3315,12 +3264,11 @@ $(function() {
             },
             success: function(resp) {
                 $.each(resp.result, function(i, e) {
-                    $(`div[data-report="${e.column}"] h3[class="my-3"]`).html(e.total);
+                    $(`div[data-report="${e.column}"] h3[class~="my-3"]`).html(e.total);
                     $(`div[data-report="${e.column}"] p[class~="text-truncate"]`).html(e.trend);
                 });
             },
             error: function(err) {
-                console.log(err);
             }
         });
     }
@@ -3329,7 +3277,7 @@ $(function() {
 
         $.ajax({
             type: "POST",
-            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "salesOverview", salesPeriod: periodSelected },
             dataType: "JSON",
             success: function(resp) {
@@ -3349,111 +3297,115 @@ $(function() {
 
                 populateProductsPerformance(resp.result.sales.products_performance);
 
-                var thisOpts = {
-                    chart: {
-                        height: 374,
-                        type: 'line',
-                        shadow: {
-                            enabled: false,
-                            color: '#bbb',
-                            top: 3,
-                            left: 2,
-                            blur: 3,
-                            opacity: 1
+                if ($("#sales-overview-chart").length) {
+                    
+                    var thisOpts = {
+                        chart: {
+                            height: 374,
+                            type: 'line',
+                            shadow: {
+                                enabled: false,
+                                color: '#bbb',
+                                top: 3,
+                                left: 2,
+                                blur: 3,
+                                opacity: 1
+                            },
+                            zoom: false
                         },
-                        zoom: false
-                    },
-                   
-                    plotOptions: {
-                        bar: {
-                            columnWidth: '30%'
-                        }
-                    },
-                    stroke: {
-                        width: [4, 0],
-                        curve: 'smooth'
-                    },
-                    series: [{
-                        type: 'line',
-                        name: 'Total Sales With Discount',
-                        data: resp.result.sales.discount_effect.with_discount
-                    }, {
-                        type: 'area',
-                        name: 'Total Sales Without Discount',
-                        data: resp.result.sales.discount_effect.without_discount
-                    }],
-                    xaxis: {
-                        type: 'datetime',
-                        categories: resp.result.labeling,
-                        axisBorder: {
-                            show: true,
-                            color: '#bec7e0',
-                        },
-                        axisTicks: {
-                            show: true,
-                            color: '#f1646c',
-                        },
-                    },   
-                    colors: ["#1ecab8", "#f7cda0"],                 
-                    markers: {
-                        size: 4,
-                        opacity: 0.9,
-                        colors: ["#ffbc00"],
-                        strokeColor: "#fff",
-                        strokeWidth: 2,
-                        style: 'hollow',
-                        hover: {
-                            size: 7,
-                        }
-                    },
-                    yaxis: {
-                        title: {
-                            text: 'Sales Values',
-                        },
-                    },
-                    fill: {
-                      type: 'gradient',
-                      gradient: {
-                        gradientToColors: ['#f1646c'],
-                        shadeIntensity: 0.1,
-                        type: 'horizontal',
-                        opacityFrom: 0.7,
-                        opacityTo: 1,
-                        stops: [0, 100, 100, 100]
-                      },
-                    },
-                    tooltip: {
-                        shared: true,
-                        intersect: false,
-                        y: {
-                            formatter: function(y) {
-                                if (typeof y !== "undefined") {
-                                    return companyVariables.cur + formatCurrency(y);
-                                }
-                                return y;
-
+                       
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '30%'
                             }
+                        },
+                        stroke: {
+                            width: [4, 0],
+                            curve: 'smooth'
+                        },
+                        series: [{
+                            type: 'line',
+                            name: 'Total Sales With Discount',
+                            data: resp.result.sales.discount_effect.with_discount
+                        }, {
+                            type: 'area',
+                            name: 'Total Sales Without Discount',
+                            data: resp.result.sales.discount_effect.without_discount
+                        }],
+                        xaxis: {
+                            type: 'datetime',
+                            categories: resp.result.labeling,
+                            axisBorder: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                            axisTicks: {
+                                show: true,
+                                color: '#f1646c',
+                            },
+                        },   
+                        colors: ["#1ecab8", "#f7cda0"],                 
+                        markers: {
+                            size: 4,
+                            opacity: 0.9,
+                            colors: ["#ffbc00"],
+                            strokeColor: "#fff",
+                            strokeWidth: 2,
+                            style: 'hollow',
+                            hover: {
+                                size: 7,
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Sales Values',
+                            },
+                        },
+                        fill: {
+                          type: 'gradient',
+                          gradient: {
+                            gradientToColors: ['#f1646c'],
+                            shadeIntensity: 0.1,
+                            type: 'horizontal',
+                            opacityFrom: 0.7,
+                            opacityTo: 1,
+                            stops: [0, 100, 100, 100]
+                          },
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function(y) {
+                                    if (typeof y !== "undefined") {
+                                        return storeValues.cur + formatCurrency(y);
+                                    }
+                                    return y;
+
+                                }
+                            }
+                        },
+                        grid: {
+                          row: {
+                            colors: ['transparent', 'transparent'], 
+                            opacity: 0.2
+                          },
+                          borderColor: '#185a9d'
                         }
-                    },
-                    grid: {
-                      row: {
-                        colors: ['transparent', 'transparent'], 
-                        opacity: 0.2
-                      },
-                      borderColor: '#185a9d'
                     }
+
+                    if (periodSelected == 'today') {
+                        delete thisOpts.xaxis.type;
+                    }
+
+                    var chart = new ApexCharts(
+                        document.querySelector("#sales-overview-chart"),
+                        thisOpts
+                    );
+
+                    chart.render();
+
                 }
-
-                if (periodSelected == 'today') {
-                    delete thisOpts.xaxis.type;
-                }
-
-                var chart = new ApexCharts(
-                    document.querySelector("#sales-overview-chart"),
-                    thisOpts
-                );
-
-                chart.render();
 
 
                 if($(`div[class="chart-comparison"]`).length){
@@ -3546,7 +3498,7 @@ $(function() {
                             y: {
                                 formatter: function(y) {
                                     if (typeof y !== "undefined") {
-                                        return companyVariables.cur + formatCurrency(y);
+                                        return storeValues.cur + formatCurrency(y);
                                     }
                                     return y;
 
@@ -3593,7 +3545,7 @@ $(function() {
                         y: {
                             formatter: function(y) {
                                 if (typeof y !== "undefined") {
-                                    return companyVariables.cur + formatCurrency(y);
+                                    return storeValues.cur + formatCurrency(y);
                                 }
                                 return y;
 
@@ -3649,7 +3601,7 @@ $(function() {
                         y: {
                             formatter: function(y) {
                                 if (typeof y !== "undefined") {
-                                    return companyVariables.cur + formatCurrency(y);
+                                    return storeValues.cur + formatCurrency(y);
                                 }
                                 return y;
 
@@ -3683,115 +3635,116 @@ $(function() {
 
                 $(`div[class="revenue-chart"]`).html(``);
                 $(`div[class="revenue-chart"]`).html(`<div id="revenue-trend" class="apex-charts"></div>`);
-                var revenueOptions = {
-                  chart: {
-                      height: 450,
-                      type: 'line',
-                      stacked: false,
-                      zoom: false,
-                      toolbar: {
-                          show: false
-                      }
-                  },
-                  dataLabels: {
-                      enabled: false
-                  },
-                  stroke: {
-                      width: [0, 0, 2]
-                  },
-                  plotOptions: {
-                    bar: {
-                        columnWidth: '40%'
-                    }
-                  },
-                  series: [{
-                      name: 'Products Cost Price',
-                      type: 'column',
-                      data: resp.result.sales.revenue.cost
-                  }, {
-                      name: 'Products Selling Price',
-                      type: 'column',
-                      data: resp.result.sales.revenue.selling
-                  }, {
-                      name: 'Profit Generated',
-                      type: 'line',
-                      data: resp.result.sales.revenue.profit
-                  }],
-                  colors: ["#fa5c7c", "#20016c", "#77d0ba"],
-                  xaxis: {
-                      type: 'datetime',
-                      categories: resp.result.labeling,
-                      axisBorder: {
-                        show: true,
-                        color: '#bec7e0',
-                      },  
-                      axisTicks: {
-                        show: true,
-                        color: '#bec7e0',
-                    }, 
-                  },
-                  yaxis: [
-                      {
-                          opposite: true,
-                          axisTicks: {
-                              show: true,
-                          },
-                          axisBorder: {
-                              show: true,
-                              color: '#77d0ba'
-                          },
-                          labels: {
-                              style: {
-                                  color: '#77d0ba',
-                              }
-                          },
-                          title: {
-                              text: "Products Cost, Selling & Revenue Generated"
+                if($("#revenue-trend").length) {
+                    var revenueOptions = {
+                      chart: {
+                          height: 450,
+                          type: 'line',
+                          stacked: false,
+                          zoom: false,
+                          toolbar: {
+                              show: false
                           }
                       },
-
-                  ],
-                  tooltip: {
-                      followCursor: true,
-                      y: {
-                          formatter: function (y) {
-                              if (typeof y !== "undefined") {
-                                  return companyVariables.cur + formatCurrency(y);
+                      dataLabels: {
+                          enabled: false
+                      },
+                      stroke: {
+                          width: [0, 0, 2]
+                      },
+                      plotOptions: {
+                        bar: {
+                            columnWidth: '40%'
+                        }
+                      },
+                      series: [{
+                          name: 'Products Cost Price',
+                          type: 'column',
+                          data: resp.result.sales.revenue.cost
+                      }, {
+                          name: 'Products Selling Price',
+                          type: 'column',
+                          data: resp.result.sales.revenue.selling
+                      }, {
+                          name: 'Profit Generated',
+                          type: 'line',
+                          data: resp.result.sales.revenue.profit
+                      }],
+                      colors: ["#fa5c7c", "#20016c", "#77d0ba"],
+                      xaxis: {
+                          type: 'datetime',
+                          categories: resp.result.labeling,
+                          axisBorder: {
+                            show: true,
+                            color: '#bec7e0',
+                          },  
+                          axisTicks: {
+                            show: true,
+                            color: '#bec7e0',
+                        }, 
+                      },
+                      yaxis: [
+                          {
+                              opposite: true,
+                              axisTicks: {
+                                  show: true,
+                              },
+                              axisBorder: {
+                                  show: true,
+                                  color: '#77d0ba'
+                              },
+                              labels: {
+                                  style: {
+                                      color: '#77d0ba',
+                                  }
+                              },
+                              title: {
+                                  text: "Products Cost, Selling & Revenue Generated"
                               }
-                              return y;
-                          }
-                      }
-                  },
-                  grid: {
-                      borderColor: '#f1f3fa'
-                  },
-                  legend: {
-                      offsetY: -10,
-                  },
-                  responsive: [{
-                      breakpoint: 600,
-                      options: {
-                          yaxis: {
-                              show: false
                           },
-                          legend: {
-                              show: false
+
+                      ],
+                      tooltip: {
+                          followCursor: true,
+                          y: {
+                              formatter: function (y) {
+                                  if (typeof y !== "undefined") {
+                                      return storeValues.cur + formatCurrency(y);
+                                  }
+                                  return y;
+                              }
                           }
-                      }
-                  }]
+                      },
+                      grid: {
+                          borderColor: '#f1f3fa'
+                      },
+                      legend: {
+                          offsetY: -10,
+                      },
+                      responsive: [{
+                          breakpoint: 600,
+                          options: {
+                              yaxis: {
+                                  show: false
+                              },
+                              legend: {
+                                  show: false
+                              }
+                          }
+                      }]
+                    }
+                    if (periodSelected == 'today') {
+                        delete revenueOptions.xaxis.type;
+                    }
+                    var revenueChart = new ApexCharts(
+                        document.querySelector("#revenue-trend"),
+                        revenueOptions
+                    );
+                    revenueChart.render();
                 }
-                if (periodSelected == 'today') {
-                    delete revenueOptions.xaxis.type;
-                }
-                var revenueChart = new ApexCharts(
-                    document.querySelector("#revenue-trend"),
-                    revenueOptions
-                );
-                revenueChart.render();
                 $(`div[class~="apexcharts-legend"]`).addClass('hidden');
             },
             error: function(err) {
-                console.log(err);
                 hL();
             }, complete: function(data) {
                 setTimeout(function() {
@@ -3819,7 +3772,7 @@ $(function() {
 
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
                 dataType: "JSON",
                 beforeSend: function() {
@@ -3852,9 +3805,9 @@ $(function() {
                         trData += `<tr>`;
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
-                        trData += `<td>${companyVariables.cur}${e.order_amount_paid}</td>`;
+                        trData += `<td>${storeValues.cur}${e.order_amount_paid}</td>`;
                         trData += `<td>${e.order_date}</td>`;
-                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="${baseUrl}invoices/${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
+                        trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
                         trData += `</tr>`;
                     });
 
@@ -3865,7 +3818,9 @@ $(function() {
                     $(`table[class~="orderHistory"]`).DataTable();
 
                 },
-                complete: function(data) {},
+                complete: function(data) {
+                    triggerPrintReceipt();
+                },
                 error: function(err) {
                     $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                         <p align="center">No records found.</p>
@@ -3880,7 +3835,7 @@ $(function() {
         if ($(`div[id="attendant-performance"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "salesAttendantPerformance", salesPeriod: periodSelected },
                 dataType: "JSON",
                 beforeSend: function() {
@@ -3896,7 +3851,6 @@ $(function() {
                     $(`div[class~="apexcharts-legend"]`).removeClass('center');
                 },
                 error: function(err) {
-                    console.log(err);
                 }
             });
         }
@@ -3905,7 +3859,7 @@ $(function() {
     var ordersCount = (periodSelected = 'today') => {
         $.ajax({
             type: "POST",
-            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "ordersCount", salesPeriod: periodSelected },
             dataType: "JSON",
             beforeSend: function() {
@@ -3996,7 +3950,7 @@ $(function() {
         if ($(`table[class~="custPerformance"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
                 dataType: "JSON",
                 beforeSend: function() {},
@@ -4035,15 +3989,11 @@ $(function() {
         var period = $(`select[name="periodSelected"]`).val();
 
         $.ajax({
-            url: `${baseUrl}aj/dashboardAnalytics/getSales`,
+            url: `${baseUrl}api/dashboardAnalytics/getSales`,
             type: "POST",
             dataType: "json",
             data: { getSales: true, salesPeriod: period },
-            beforeSend: function() {
-                $(".total-sales-trend, .total-served-trend, .total-products-worth, .total-credit-sales-trend").html(`
-                    <span class="fa fa-spin fa-spinner"></span>
-                `);
-            },
+            beforeSend: function() {},
             success: function(data) {
 
                 $(`table[class~="salesLists"]`).dataTable().fnDestroy();
@@ -4114,7 +4064,7 @@ $(function() {
             var colspan = "7";
 
             $.ajax({
-                url: `${baseUrl}aj/dashboardAnalytics/fetchInventoryRecords`,
+                url: `${baseUrl}api/dashboardAnalytics/fetchInventoryRecords`,
                 type: "POST",
                 dataType: "json",
                 data: { fetchInventoryRecords: true, request: "fetchInventoryRecords" },
@@ -4144,7 +4094,7 @@ $(function() {
         if ($(`table[class~="thresholdLists"]`).length) {
             var colspan = "3";
             $.ajax({
-                url: baseUrl + "aj/dashboardAnalytics",
+                url: baseUrl + "api/dashboardAnalytics",
                 type: "POST",
                 dataType: "json",
                 data: { request: "getProductThresholds" },
@@ -4199,8 +4149,8 @@ $(function() {
 
         $.each(salesData, function(i, e) {
 
-            if ((companyVariables._hi != 1)) {
-                if ((e.branchId == companyVariables._clb) && (e.recorded_by == companyVariables._ud)) {
+            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+                if ((e.branchId == storeValues._clb) && (e.recorded_by == storeValues._ud)) {
                     orders += 1;
                     customerArray.push(e.customer_id);
                     totals += parseFloat(e.order_amount_paid);
@@ -4216,7 +4166,7 @@ $(function() {
                         paidSalesArray.push(parseFloat(e.order_amount_paid));
                     }
                 }
-            } else {
+            } else if((e.clientId == storeValues._cl)) {
                 orders += 1;
                 if(e.credit_sales == 1) {
                     creditSalesArray.push(parseFloat(e.order_amount_paid));
@@ -4231,10 +4181,9 @@ $(function() {
                 expectedSellingPrice += parseFloat(e.total_expected_selling_price);
 
                 vHours.push(parseFloat(e.hour_of_day));
-                
             }
 
-            if (e.credit_sales == 1) {
+            if ((e.credit_sales == 1) && (e.clientId == storeValues._cl)) {
                 credits += parseFloat(e.order_amount_paid);
             }
 
@@ -4248,8 +4197,8 @@ $(function() {
                 creditBadge = `<span class="text-gray">Credit</span>`;
             }
 
-            if ((companyVariables._hi != 1)) {
-                if (e.recorded_by == companyVariables._ud) {
+            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+                if (e.recorded_by == storeValues._ud) {
                     salesArray.push({
                         row: orders,
                         order_id: `${e.order_id} <br> ${creditBadge}`,
@@ -4262,7 +4211,7 @@ $(function() {
                         </a>`
                     });
                 }
-            } else {
+            } else if((e.clientId == storeValues._cl)) {
                 salesArray.push({
                     row: orders,
                     order_id: `${e.order_id} <br> ${creditBadge}`,
@@ -4277,15 +4226,15 @@ $(function() {
             }
         });
 
-        var lowestSale = `${companyVariables.cur} ${formatCurrency(Math.min(...salesFigures))}`;
-        var highestSale = `${companyVariables.cur} ${formatCurrency(Math.max(...salesFigures))}`;
-        var totalDiscount = `${companyVariables.cur} (${formatCurrency(expectedSellingPrice - totals)})`;
-        var creditTotal = `${companyVariables.cur} ${formatCurrency(credits)}`;
-        var salesTotal = `${companyVariables.cur} ${formatCurrency(totals)}`;
-        var totalCost = `${companyVariables.cur} ${formatCurrency(productsCostPrice)}`;
-        var totalProfit = `${companyVariables.cur} ${formatCurrency(totals-productsCostPrice)}`;
-        var creditPercent = `<span class='text-danger'>${companyVariables.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
-        var average = `${companyVariables.cur} ${formatCurrency(totals/orders)}`;
+        var lowestSale = `${storeValues.cur} ${formatCurrency(Math.min(...salesFigures))}`;
+        var highestSale = `${storeValues.cur} ${formatCurrency(Math.max(...salesFigures))}`;
+        var totalDiscount = `${storeValues.cur} (${formatCurrency(expectedSellingPrice - totals)})`;
+        var creditTotal = `${storeValues.cur} ${formatCurrency(credits)}`;
+        var salesTotal = `${storeValues.cur} ${formatCurrency(totals)}`;
+        var totalCost = `${storeValues.cur} ${formatCurrency(productsCostPrice)}`;
+        var totalProfit = `${storeValues.cur} ${formatCurrency(totals-productsCostPrice)}`;
+        var creditPercent = `<span class='text-danger'>${storeValues.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
+        var average = `${storeValues.cur} ${formatCurrency(totals/orders)}`;
 
         var hValues = new Array();
         for(var i = 0; i < vHours.length; i++) {
@@ -4337,7 +4286,7 @@ $(function() {
         $(`div[class~="${hide}"]`).addClass('hidden').fadeOut('slow');
 
         await $.ajax({
-            url: `${baseUrl}aj/branchManagment/saveReportsRecord`,
+            url: `${baseUrl}api/branchManagment/saveReportsRecord`,
             data: { saveReportsRecord: true, attendantPerformance: show },
             type: "POST",
             dataType: "JSON",
@@ -4356,21 +4305,26 @@ $(function() {
                 if (itResp == 1) {
                     offline = false;
                     $(`div[class="connection"]`).css('display', 'none');
+                    $(`div[class~="offline-placeholder"]`).css('display','none');
                 } else {
                     offline = true;
                     $(`div[class="connection"]`).css('display', 'block');
+                    $(`div[class~="offline-placeholder"]`).css('display','flex');
+                    $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+                    $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
                 }
             }).catch((err) => {
                 offline = true;
                 $(`div[class="connection"]`).css('display', 'block');
+                $(`div[class~="offline-placeholder"]`).css('display','flex');
             });
 
-            if (offline) {
+            if(offline) {
 
                 $(`select[name="periodSelected"], select[name="periodSelect"]`).prop('disabled', true);
-                $(`div[class~="offline-placeholder"]`).css({ 'display': 'flex' });
                 $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
-
+                $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+                $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
                 dashboardAnalitics().then(async (dashboardInsights) => {
 
                     if($(`table[class~="salesLists"]`).length) {
@@ -4513,7 +4467,7 @@ $(function() {
                                 y: {
                                     formatter: function(y) {
                                         if (typeof y !== "undefined") {
-                                            return companyVariables.cur + formatCurrency(y);
+                                            return storeValues.cur + formatCurrency(y);
                                         }
                                         return y;
 
@@ -4563,9 +4517,8 @@ $(function() {
             $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
 
             if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"]`).length) {
-                fetchInventoryRecords();
                 fetchSalesRecords();
-                fetchProductThresholds();
+                salesAttendantPerformance(period);
 
                 if($(`div[class~="sales-overview-data"]`).length) {
                     salesOverview('this-week');
@@ -4643,15 +4596,16 @@ if($(`div[class~="request-form"]`).length) {
             } else {
                 discountAmount = 0;
             }
-            
+
             totalDiscountDeducted = 0;
             overallSubTotal = 0;
 
-            $("tr.products-row .row-subtotal div").each(function(){
-                let subtotalVal = parseFloat($(this).text());
+            $("tr.products-row .row-subtotal").each(function(){
+                let subtotalVal = parseFloat($(this).html());
                 totalToPay += subtotalVal;
                 overallSubTotal += subtotalVal;
             });
+
             if(discountType == "cash") {
                 totalToPay = totalToPay - discountAmount;
                 totalDiscountDeducted = discountAmount;
@@ -4664,7 +4618,7 @@ if($(`div[class~="request-form"]`).length) {
         }
 
         let paymentType = $(".payment-type-select").val();
-        $(`span[class="sub_total"]`).html(`${companyVariables.cur} ${formatCurrency(overallSubTotal)}`);
+        $(`span[class="sub_total"]`).html(`${storeValues.cur} ${formatCurrency(overallSubTotal)}`);
         $("[data-bind-html='totaltopay']").html(formatCurrency(overallSubTotal));
         $(".total-to-pay-amount").text(formatCurrency(totalToPay));
         $(".total-to-pay-amount").attr("data-order-total", totalToPay);
@@ -4765,13 +4719,13 @@ if($(`div[class~="request-form"]`).length) {
 
             let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
             
-            <td class='products-row-number'>${rowCount}</td>
-            <td>${rowData.productName}</td>
+            <td class='products-row-number' style='padding-top: 30px;'>
+            <td style="padding-top: 30px;">${rowData.productName}</td>
             <td><input type="number" min="1" onkeypress="return isNumber(event)" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" class="form-control product-price" style="width:110px" value="${rowData.productPrice}"></td>
             <td>
             <input type='number' onkeypress="return isNumber(event)" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
             </td>
-            <td class='row-subtotal'><div class="mt-2">${subTotal}</div></td>
+            <td class='row-subtotal' style="padding-top: 30px;">${subTotal}</td>
             <td class='p-0'><button class='btn mt-4 btn-sm btn-outline-danger mb-1 remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
             </tr>`;
             let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
@@ -4785,7 +4739,7 @@ if($(`div[class~="request-form"]`).length) {
         })
     }
 
-    var initialiteProductSelect = () => {
+    var initPrdSelt = () => {
         $(".product-select").on("change", async function(){
             if($(this).is(":checked")) {
                 await addProductRow($(this).data())
@@ -4908,7 +4862,7 @@ if($(`div[class~="request-form"]`).length) {
             }
 
             if(confirm("Are you sure you want to complete this transaction?")) {
-                $.post(`${baseUrl}aj/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
+                $.post(`${baseUrl}api/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
                     
                     if(resp.status != 200) {
                         Toast({
@@ -4927,7 +4881,7 @@ if($(`div[class~="request-form"]`).length) {
 
                         if(buttonClicked == "save-invoice") {
                             setTimeout(function() {
-                                window.location.href = `${baseUrl}invoice/${resp.result.invoiceNumber}`;
+                                window.location.href = `${baseUrl}export/${resp.result.invoiceNumber}`;
                             }, 500);
                         } else {
                             setTimeout(function() {
@@ -4991,7 +4945,7 @@ $(() => {
             $(".main-content-loader.main-body-loader").css({display: "flex"});
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/importManager/uploadCSVData/${currentData}`,
+                url: `${baseUrl}api/importManager/uploadCSVData/${currentData}`,
                 data: {csvKey: Object.keys(csvContent), csvValues: Object.values(csvContent), uploadCSVData: true},
                 dataType: "json",
                 success: function(resp) {
@@ -5172,7 +5126,7 @@ $(() => {
 
         $.ajax({
             type: 'POST',
-            url: `${baseUrl}aj/importManager/loadCSV`,
+            url: `${baseUrl}api/importManager/loadCSV`,
             data: formdata,
             dataType: 'JSON',
             contentType: false,
@@ -5234,7 +5188,7 @@ var transferProduct = (productId) => {
     let transfer_from = currentBranchId;
 
     $.ajax({
-        url: baseUrl + "aj/inventoryManagement",
+        url: baseUrl + "api/inventoryManagement",
         type: "POST",
         dataType: "json",
         data: { getWarehouseProduct: true, productId: productId, transferFrom: transfer_from },
@@ -5276,7 +5230,7 @@ var submitTransferProduct = () => {
         else if (confirm("Do you want to transfer product now?")) {
 
             $.ajax({
-                url: baseUrl + "aj/inventoryManagement/submitTransferProduct",
+                url: baseUrl + "api/inventoryManagement/submitTransferProduct",
                 type: "POST",
                 dataType: "json",
                 data: $(this).serialize() + "&request=submitTransferProduct",
@@ -5334,7 +5288,7 @@ submitTransferProduct();
 var fetchAllProducts = (branchID = null, location = branch_type) => {
     
     $.ajax({
-        url: baseUrl + "aj/inventoryManagement/getAllProducts",
+        url: baseUrl + "api/inventoryManagement/getAllProducts",
         type: "POST",
         dataType: "json",
         data: { request: true, getAllProducts: true, branchID: branchID, location: location },
@@ -5438,7 +5392,7 @@ $(`form[id="updateWareHouseStock"]`).on('submit', function(e) {
         var stockQuantities = productsList.join(",");
 
         $.ajax({
-            url: `${baseUrl}aj/inventoryManagement/updateWareHouseStock`,
+            url: `${baseUrl}api/inventoryManagement/updateWareHouseStock`,
             data: {updateWareHouseStock: true, stockQuantities: stockQuantities},
             type: "POST",
             dataType: "json",
@@ -5503,7 +5457,6 @@ var removeRow = () => {
 var removeAppendRow = () => {
     $(`span[class~="remove-this-row"]`).on('click', function() {
         let rowId = $(this).attr('data-value');
-        console.log(rowId);
         $(`div[class~="update-stock-rows"] div[data-row="${rowId}"]`).remove();
     });
 }
@@ -5597,8 +5550,6 @@ $(`div[class~="update-stock-rows"] button[class~="append-row"]`).on('click', fun
 
     let selectOptions = $('div[class~="update-stock-rows"] div[data-row]:last select > option').length;
 
-    console.log(lastRowId, selectOptions);
-
     if(selectOptions == lastRowId) {
         return false;
     }
@@ -5614,13 +5565,13 @@ $(`div[class~="update-stock-rows"] button[class~="append-row"]`).on('click', fun
             </div>
             <div class="col-md-2 mb-3">
                 <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">${companyVariables.cur}</span></div>
+                    <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
                     <input type="number" step="0.1" value="0.00" class="form-control" name="cost_${lastRowId}">
                 </div>
             </div>
             <div class="col-md-2 mb-3">
                 <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">${companyVariables.cur}</span></div>
+                    <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
                     <input type="number" step="0.1" value="0.00" class="form-control" name="price_${lastRowId}">
                 </div>
             </div>
@@ -5670,7 +5621,7 @@ $("form[class~='submit-bulk-transfer-product']").on("submit", function(e) {
         if (confirm("Do you want to transfer these products?")) {
 
             $.ajax({
-                url: baseUrl + "aj/inventoryManagement/bulkTransferProducts",
+                url: baseUrl + "api/inventoryManagement/bulkTransferProducts",
                 type: "POST",
                 dataType: "json",
                 data: $(this).serialize() + "&request=true&bulkTransferProducts=true&productIds="+productIds,
@@ -5719,3 +5670,39 @@ $("form[class~='submit-bulk-transfer-product']").on("submit", function(e) {
     }
     
 });
+if($(`div[id="payment_options"]`).length) {
+    function loadPaymentOptions() {       
+      $.ajax({
+        url: `${baseUrl}api/branchManagment/loadPaymentOptions`,
+        data: { loadPaymentOptions: true },
+        type: "POST",
+        dataType: "JSON",
+        success: function(resp) {
+          if(resp.status == 200) {
+            var paymentOptions = resp.message;
+            $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
+              if(($.inArray($(this).attr(`data-module`), paymentOptions) !== -1) && ($(this).attr('data-value') == 'checked')) {
+                $(this).attr('checked', true);
+                $(this).parent('label').addClass('active');
+              } else if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
+                $(this).attr('checked', true);
+                $(this).parent('label').addClass('active');
+              }
+            });
+          } else {
+            $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
+              if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
+                $(this).attr('checked', true);
+                $(this).parent('label').addClass('active');
+              }
+            });
+          }
+        }, complete: function(data) {
+          $(`div[class="form-content-loader"]`).css("display","none");
+        }, error: function(err) {
+          $(`div[class="form-content-loader"]`).css("display","none");
+        }
+      })
+    }
+    loadPaymentOptions();
+}

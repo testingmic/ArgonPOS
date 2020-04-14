@@ -31,6 +31,7 @@ if (isset($_GET['status'], $_GET['code'], $_GET['transaction_id'])) {
 
                 if ($query == true) {
                     $payment_successful = true;
+                    $session->set_userdata("_oid_LastPaymentMade", true);
                     $session->set_userdata("tellerPaymentStatus", true);
                     $message = "Payment Success";
                 } else {

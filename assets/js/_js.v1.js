@@ -1,6 +1,6 @@
 const iName = 'argonPOS-db';
 const iVer = 1;
-var companyVariables = $.parseJSON($(`link[rel="params"]`).attr('_cl'));
+var storeValues = $.parseJSON($(`link[rel="params"]`).attr('_cl'));
 
 $(".overlay").css('display', 'block');
 
@@ -200,9 +200,9 @@ function sPIDB() {
 
         var log_date = jsDate();
         var discountAmt = 0.00;
-        var transactionId = randomInt(13);
+        var transactionId = rndInt(13);
         var sales_type = "Sales";
-        var orderId = `INV${randomInt(13)}`;
+        var orderId = `INV${rndInt(13)}`;
         var customerId = $(`select[name="customer"]`).val();
         var paidAmount = parseFloat($(`input[name="amount_paying"]`).val());
         var totalToPay = parseFloat($(`span[class="total-to-pay-amount"]`).attr("data-order-total")).toFixed(2);
@@ -233,10 +233,10 @@ function sPIDB() {
             totalToPay = (totalToPay - disAmt);
         }
 
-        var userId = companyVariables._ud;
-        var userName = companyVariables._un;
-        var branchId = companyVariables._clb;
-        var clientId = companyVariables._cl;
+        var userId = storeValues._ud;
+        var userName = storeValues._un;
+        var branchId = storeValues._clb;
+        var clientId = storeValues._cl;
 
         var regItems = [];
         var calNewT = 0;
@@ -250,10 +250,10 @@ function sPIDB() {
             if (typeof attrk !== typeof undefined && attrk !== false) {
 
                 var eachTotal = (quantity * unit_price);
-                var autoId = `${randomString(20)}`;
+                var autoId = `${rndStr(20)}`;
 
                 regItems.push({
-                    id: randomInt(12),
+                    id: rndInt(12),
                     auto_id: autoId,
                     product_title: product_title,
                     clientId: clientId,
@@ -381,7 +381,7 @@ if($(`table[class~="simple-table"]`).length) {
 
 var recon;
 
-function reConnect() {
+function rConInt() {
 
     $(`div[class~="offline-placeholder"] button[type="button"]`).on('click', async function() {
 
@@ -423,7 +423,7 @@ function reConnect() {
     });
     
 }
-reConnect();
+rConInt();
 
 var syncOfflineData = async (dataToSync) => {
     await listIDB(dataToSync).then((resp) => {
@@ -492,7 +492,7 @@ function delI() {
 
 delI();
 
-function inputController() {
+function inpCont() {
     $(`input[class~="input_ctrl"]`).on('input', function(e) {
         let row_id = $(this).attr("data-row-value");
         let quantity = $(`input[id="product_quantity_${row_id}"]`).val();
@@ -500,7 +500,7 @@ function inputController() {
 
         let calculate = (parseInt(quantity) * parseInt(price));
 
-        $(`span[data-row-value="${row_id}"]`).html(formatCurrency(calculate));
+        $(`span[data-row-value="${row_id}"]`).html(fmtCurr(calculate));
 
         if($(`input[id="product_price_${row_id}"]`).parents(`tr`).hasClass('selected')) {
             $(`button[data-row-value="${row_id}"]`).html('Update').addClass('btn-primary update-button').removeClass('btn-success');
@@ -530,7 +530,7 @@ function dismissModal(sessionName, modalWindow) {
 
 }
 
-var populateRequestsList = (requestsData, tableName) => {
+var popReqLst = (requestsData, tableName) => {
     $(`table[id="${tableName}"]`).dataTable().fnDestroy();
     $(`table[id="${tableName}"]`).dataTable({
         "aaData": requestsData,
@@ -589,7 +589,7 @@ var discountCalculator = () => {
             .html(discount_amt.toFixed(2));
         $(`span[class="overalltotal"]`)
             .attr('data-overalltotal', overallTotal)
-            .html(formatCurrency(overallTotal));
+            .html(fmtCurr(overallTotal));
         $(`td[data-overalltotal]`).attr('data-overalltotal', overallTotal);
     });
 }
@@ -619,7 +619,7 @@ if($(`table[class~="productsList"]`).length) {
                     title: res.message
                 });
                 $(`div[class="form-content-loader"]`).css("display","none");
-                listProductCategories();
+                listCatLst();
             } else {
                 Toast.fire({
                     type: 'error',
@@ -637,7 +637,7 @@ if($(`table[class~="productsList"]`).length) {
         });
     });
 
-    var populateCategoryList = (productsCategoryData) => {
+    var popCatLst = (productsCategoryData) => {
         hL();
         $(`table[class~="productsList"]`).dataTable().fnDestroy();
         $(`table[class~="productsList"]`).dataTable({
@@ -667,14 +667,14 @@ if($(`table[class~="productsList"]`).length) {
         });
     }
 
-    function listProductCategories() {
+    function listCatLst() {
         $.ajax({
             method: "POST",
             url: `${baseUrl}api/categoryManagement/listProductCategories`,
             data: { listProductCategories: true},
             dataType: "JSON",
             success: function(resp) {
-                populateCategoryList(resp.result);
+                popCatLst(resp.result);
             }, complete: function(data) {
                 hL();
             }, error: function(err) {
@@ -683,7 +683,7 @@ if($(`table[class~="productsList"]`).length) {
         });
     }
 
-    listProductCategories();
+    listCatLst();
 }
 
 async function listRequests(requestType, tableName) {
@@ -713,9 +713,9 @@ async function listRequests(requestType, tableName) {
         dataType: "JSON",
         beforeSend: function() {},
         success: function(resp) {
-            populateRequestsList(resp.result, `${tableName}`);
+            popReqLst(resp.result, `${tableName}`);
         }, complete: function(data) {
-            inputController();
+            inpCont();
             hL();
         }, error: function(err) {
             hL();
@@ -740,7 +740,7 @@ function removeItem(sessionName) {
                 let curTotal = (parseInt(overAll) - parseInt(thisSum));
 
                 $(`td[data-overall]`).attr('data-total', curTotal);
-                $(`span[class="overall-total"]`).html(formatCurrency(curTotal))
+                $(`span[class="overall-total"]`).html(fmtCurr(curTotal))
 
             }
         });
@@ -757,7 +757,7 @@ function serealizeSelects(select) {
 
 }
 
-function formatCurrency(total) {
+function fmtCurr(total) {
     var neg = false;
     if(total < 0) {
         neg = true;
@@ -766,7 +766,7 @@ function formatCurrency(total) {
     return (neg ? "-" : '') + parseFloat(total, 10).toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, "$1,").toString();
 }
 
-function randomInt(length = 10) {
+function rndInt(length = 10) {
    var result           = '';
    var characters       = '0123456789';
    var charactersLength = characters.length;
@@ -776,7 +776,7 @@ function randomInt(length = 10) {
    return result;
 }
 
-function randomString(length) {
+function rndStr(length) {
    var result           = '';
    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
    var charactersLength = characters.length;
@@ -865,7 +865,7 @@ function stripHtml(html) {
     return html.replace(/(<([^>]+)>)/ig, "");
 }
 
-var populateCustOptionsList = (data) => {
+var popCustLst = (data) => {
     $(`select[class~="customer-select"]`).find('option').remove().end();
     if(!$(`span[class="hide-walk-in-customer"]`).length) {
         $(`select[class~="customer-select"]`).append('<option value="WalkIn" data-prefered-payment="" data-contact="No Contact" selected="selected">Walk In Customer</option>');
@@ -877,7 +877,7 @@ var populateCustOptionsList = (data) => {
     });
 }
 
-var fetchPOSCustomersList = async () => {
+var ftchCutLst = async () => {
 
     await dOC().then((itResp) => {
         if(itResp == 1) {
@@ -909,7 +909,7 @@ var fetchPOSCustomersList = async () => {
                     newResults.push(e);
                 }
             });
-            populateCustOptionsList(newResults);
+            popCustLst(newResults);
         });
         return false;
     }
@@ -917,7 +917,7 @@ var fetchPOSCustomersList = async () => {
     await syncOfflineData('customers').then((resp) => {
         $.post(baseUrl + "api/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
             await clearDBStore('customers').then((resp) => {
-                populateCustOptionsList(data.result);
+                popCustLst(data.result);
                 if(data.result.length) {
                     upIDB('customers', data.result);
                 }
@@ -928,10 +928,10 @@ var fetchPOSCustomersList = async () => {
 }
 
 if($(`select[class~="customer-select"]`).length) {
-    fetchPOSCustomersList();
+    ftchCutLst();
 }
 
-var triggerCellClick = () => {
+var trgClClk = () => {
     $(".product-title-cell").on("click", function(e) {
         let cellCheckbox = $(this).siblings("td").find(".checkbox input:checkbox");
         cellCheckbox.prop("checked", !cellCheckbox.is(":checked"))
@@ -939,7 +939,7 @@ var triggerCellClick = () => {
     });
 }
 
-var populatePOSProductsList = (data) => {
+var popPrdLst = (data) => {
 
     let htmlData = ``;
 
@@ -972,11 +972,11 @@ var populatePOSProductsList = (data) => {
     $(`tbody[class="pos-products-list"]`).html(htmlData);
 
     $(`tr[data-toggle="tooltip"]`).tooltip();
-    triggerCellClick();
-    initialiteProductSelect();
+    trgClClk();
+    initPrdSelt();
 }
 
-var fetchPOSProductsList = async () => {
+var ftcPrdList = async () => {
 
     await dOC().then((itResp) => {
         if(itResp == 1) {
@@ -1008,14 +1008,14 @@ var fetchPOSProductsList = async () => {
                     newResults.push(e);
                 }
             });
-            populatePOSProductsList(newResults);
+            popPrdLst(newResults);
         });
         return false;
     }
 
     $.post(baseUrl + "api/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
         await clearDBStore('request_products').then((resp) => {
-            populatePOSProductsList(data.result);
+            popPrdLst(data.result);
             if(data.result.length) {
                 upIDB('request_products', data.result);
             }
@@ -1025,7 +1025,7 @@ var fetchPOSProductsList = async () => {
 }
 
 if($(`tbody[class="pos-products-list"]`).length) {
-    fetchPOSProductsList();
+    ftcPrdList();
 }
 
 var populateUsersList = (usersObject) => {
@@ -1176,7 +1176,7 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                     fetchUsersLists();
                     fetchBranchLists();
                     if($(`table[class~="productsList"]`).length) {
-                        listProductCategories();
+                        listCatLst();
                     }
                     if($(`table[class~="customersList"]`).length) {
                         listCustomers();
@@ -1823,7 +1823,7 @@ function cusPurHis() {
                 trData += `<tr>`;
                 trData += `<td>${count}</td>`;
                 trData += `<td><a onclick="return getSalesDetails('${e.order_id}')" class="get-sales-details text-success" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a></td>`;
-                trData += `<td>${companyVariables.cur} ${e.order_amount_paid}</td>`;
+                trData += `<td>${storeValues.cur} ${e.order_amount_paid}</td>`;
                 trData += `<td>${e.order_date}</td>`;
                 trData += `<td>${creditBadge}</td>`;
                 trData += `<td><a href="javascript:void(0);" class="print-receipt" data-sales-id="${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
@@ -2062,7 +2062,7 @@ $("#newCustomer_form").on("submit", async function(event) {
 
     if(noInternet) {
 
-        let customerId = randomInt(12);
+        let customerId = rndInt(12);
 
         var formDetails = [{
             customer_id: `EV${customerId}`,
@@ -2071,8 +2071,8 @@ $("#newCustomer_form").on("submit", async function(event) {
             lastname: $(`input[name="nc_lastname"]`).val(),
             phone_1: $(`input[name="nc_contact"]`).val(),
             email: $(`input[name="nc_email"]`).val(),
-            clientId: companyVariables.clientId,
-            branchId: companyVariables.branchId,
+            clientId: storeValues.clientId,
+            branchId: storeValues.branchId,
             fullname: $(`input[name="nc_firstname"]`).val() + ' ' + $(`input[name="nc_lastname"]`).val() 
         }];
 
@@ -2188,7 +2188,7 @@ if($(".make-online-payment").length) {
         enablePagination: false,
         onFinished(e){
             rtRegForm();
-            $(`span[class="sub_total"]`).html(`${companyVariables.cur} 0.00`);
+            $(`span[class="sub_total"]`).html(`${storeValues.cur} 0.00`);
             $(".content-loader.register-form-loader").css({display: "none"});
         },
         onInit(event, newIndex){
@@ -2324,29 +2324,36 @@ if($(".make-online-payment").length) {
                                 title: "Payment Successfully Recorded"
                             });
                             $(".cash-process-loader").removeClass("d-flex");
-                            if(companyVariables.prt == "yes") {
+                            if(storeValues.prt == "yes") {
                                 $(`button[class~="print-receipt"]`).trigger('click');
                             }
-                            fetchPOSProductsList();
-                            fetchPOSCustomersList();
+                            ftcPrdList();
+                            $(`select[class~="customer-select"]`).val('WalkIn').change();
                         }
 
                     });
 
                 } else {
                     svReg().then((res) => {
-                        $("[data-bind-html='orderId']").html(res.data._oid);
-                        $(`span[class="generated_order"]`).html(res.data._oid);
-                        Toast.fire({
-                            type: 'success',
-                            title: "Payment Successfully Recorded"
-                        });
-                        if(companyVariables.prt == "yes") {
-                            $(`button[class~="print-receipt"]`).trigger('click');
+                        if(res.status == "success") {
+                            $("[data-bind-html='orderId']").html(res.data._oid);
+                            $(`span[class="generated_order"]`).html(res.data._oid);
+                            Toast.fire({
+                                type: 'success',
+                                title: "Payment Successfully Recorded"
+                            });
+                            if(storeValues.prt == "yes") {
+                                $(`button[class~="print-receipt"]`).trigger('click');
+                            }
+                            ftcPrdList();
+                            $(`select[class~="customer-select"]`).val('WalkIn').change();
+                            $(".cash-process-loader").removeClass("d-flex");
+                        } else {
+                            Toast.fire({
+                                type: 'error',
+                                title: "Error processing the Sale Record."
+                            });
                         }
-                        fetchPOSProductsList();
-                        fetchPOSCustomersList();
-                        $(".cash-process-loader").removeClass("d-flex");
                     });
                 }
             }
@@ -2399,7 +2406,7 @@ if($(".make-online-payment").length) {
         }
     });
 
-    var initialiteProductSelect = () => {
+    var initPrdSelt = () => {
         $(".product-select").on("change", async function(){
             if($(this).is(":checked")) {
                 await adProR($(this).data())
@@ -2422,7 +2429,7 @@ if($(".make-online-payment").length) {
                         let subtotal = (productPrices[row.productId]*selectedQty).toFixed(2);
                         subTotalBox.text(subtotal);
                         receipt_qty.text(selectedQty);
-                        receipt_subTotal.text(formatCurrency(subtotal));
+                        receipt_subTotal.text(fmtCurr(subtotal));
                         rcalTot();
                         amtPay();
                         
@@ -2512,11 +2519,11 @@ if($(".make-online-payment").length) {
         var selectedPaymentType = $(this).val();
 
         $(`input[name="amount_paying"]`).prop("value","");
-        $(`input[name="amount_to_pay"]`).attr({"max": $(".total-to-pay-amount").attr("data-order-total"), "value": formatCurrency($(".total-to-pay-amount").attr("data-order-total"))});
+        $(`input[name="amount_to_pay"]`).attr({"max": $(".total-to-pay-amount").attr("data-order-total"), "value": fmtCurr($(".total-to-pay-amount").attr("data-order-total"))});
         $(`input[name="amount_balance"]`).prop("value","0.00");
 
-        $("[data-bind-html='payment']").html(formatCurrency($(".total-to-pay-amount").attr("data-order-total")));
-        $("[data-bind-html='balance']").html(selectedPaymentType == 'credit' ? formatCurrency($(".total-to-pay-amount").attr("data-order-total")) : '0.00');
+        $("[data-bind-html='payment']").html(fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
+        $("[data-bind-html='balance']").html(selectedPaymentType == 'credit' ? fmtCurr($(".total-to-pay-amount").attr("data-order-total")) : '0.00');
 
         if(selectedPaymentType == "0") {
             $(".selected-payment-type").html("None Selected");
@@ -2542,7 +2549,7 @@ if($(".make-online-payment").length) {
             $(`input[name="amount_paying"]`).focus();
         }
     } else {
-        $(".total-to-pay-amount").attr("data-order-total", formatCurrency($(".total-to-pay-amount").attr("data-order-total")));
+        $(".total-to-pay-amount").attr("data-order-total", fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
         $(`div[class~="cash-processing"]`).slideUp('fast');
         $(".make-online-payment").addClass("d-none");
         $(".make-online-payment").removeAttr("data-order-total");
@@ -2558,7 +2565,7 @@ if($(".make-online-payment").length) {
         $("a", firstTab).trigger("click");
         $(".receipt-table-body").html('');
         $(`input[name="discount_amount"]`).val('');
-        $(`span[class="sub_total"]`).html(`${companyVariables.cur} 0.00`);
+        $(`span[class="sub_total"]`).html(`${storeValues.cur} 0.00`);
         $(".selected-customer-name").html("No Customer Selected");
         $(`button[class~="discardSale_trigger"]`).css('display', 'none');
         $(".products-table-body tr:not(.empty-message-row)").remove();
@@ -2597,7 +2604,7 @@ if($(".make-online-payment").length) {
             let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
                 <td>${rowData.productName}</td>
                 <td class='receipt-row-quantity'>${qty}</td>
-                <td class="text-right receipt-row-subtotal">${formatCurrency(subTotal)}</td>
+                <td class="text-right receipt-row-subtotal">${fmtCurr(subTotal)}</td>
             </tr>`;
             tbody.append(tr);
             $("[data-bind-html='productrow']").append(rr);
@@ -2646,16 +2653,16 @@ if($(".make-online-payment").length) {
                     totalToPay = (totalToPay - discountAmount);
                     totalDiscountDeducted = discountAmount;
                 }
-                $(`th[data-bind-html='discount_amount']`).html(`${formatCurrency(discountAmount)}`);  
+                $(`th[data-bind-html='discount_amount']`).html(`${fmtCurr(discountAmount)}`);  
             }
 
             let paymentType = $(".payment-type-select").val();
-            $(`span[class="sub_total"]`).html(`${companyVariables.cur} ${formatCurrency(overallSubTotal)}`);
-            $("[data-bind-html='totaltopay']").html(formatCurrency(overallSubTotal));
-            $(".total-to-pay-amount").text(formatCurrency(totalToPay));
+            $(`span[class="sub_total"]`).html(`${storeValues.cur} ${fmtCurr(overallSubTotal)}`);
+            $("[data-bind-html='totaltopay']").html(fmtCurr(overallSubTotal));
+            $(".total-to-pay-amount").text(fmtCurr(totalToPay));
             $(".total-to-pay-amount").attr("data-order-total", totalToPay);
             $(`input[name="amount_paying"]`).attr({"max": totalToPay, "min": 0});
-            $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": formatCurrency(totalToPay)});
+            $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": fmtCurr(totalToPay)});
         }
 
         var amtPay = () => {
@@ -2665,23 +2672,23 @@ if($(".make-online-payment").length) {
             let balance = (value-max);
 
             if($(`input[name="amount_paying"]`).val().length > 0) {
-                $(`input[name="amount_balance"]`).val(formatCurrency(balance));
+                $(`input[name="amount_balance"]`).val(fmtCurr(balance));
 
                 $(".make-online-payment").addClass("d-none");
             $(".make-online-payment").removeAttr("data-order-total");
             $("[data-step-action='next']").prop("disabled", false);
 
-            $(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(value)}`);
-            $("[data-bind-html='payment']").html(`${companyVariables.cur} ${formatCurrency(overallSubTotal-totalDiscountDeducted)}`);
-                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(value)}` : `${companyVariables.cur} ${formatCurrency(balance)}`);
+            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(value)}`);
+            $("[data-bind-html='payment']").html(`${storeValues.cur} ${fmtCurr(overallSubTotal-totalDiscountDeducted)}`);
+                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(value)}` : `${storeValues.cur} ${fmtCurr(balance)}`);
             } else {
                 $(`input[name="amount_balance"]`).val('0.00');
 
                 $(".make-online-payment").addClass("d-none");
             $(".make-online-payment").attr("data-order-total", max);
-            $(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} 0.00`);
-            $("[data-bind-html='payment']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(max)}` : "${companyVariables.cur} 0.00");
-                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${companyVariables.cur} ${formatCurrency(max)}` : "${companyVariables.cur} 0.00");
+            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} 0.00`);
+            $("[data-bind-html='payment']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
+                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
             }
     }
 
@@ -2792,7 +2799,7 @@ if($(".make-online-payment").length) {
                 success: function(data) {
                     if (data.status == true) {
                         if (data.message.action == true) {
-                            $(`[data-bind-html='amount_paid']`).html(`${companyVariables.cur} ${formatCurrency(res.data.orderTotal)}`);
+                            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(res.data.orderTotal)}`);
                             
                             $(`div[class~="payment-backdrop"]`).removeClass('hidden');
                             paymentWindow = window.open(data.message.msg,
@@ -2960,7 +2967,7 @@ async function getSalesDetails(salesID) {
                     <tr>
                         <td colspan='2' class='text-center'>
                             <strong>Served By: </strong> ${salesResult.recorded_by}<br>
-                            <strong>Point of Sale: </strong> ${companyVariables._clbn}
+                            <strong>Point of Sale: </strong> ${storeValues._clbn}
                         </td>
                     </tr>
                     <tr>
@@ -2992,8 +2999,8 @@ async function getSalesDetails(salesID) {
                     <tr>
                         <td>${e.product_title}</td>
                         <td>${e.product_quantity}</td>
-                        <td class=\"text-right\">${companyVariables.cur} ${e.product_unit_price}</td>
-                        <td class=\"text-right\">${companyVariables.cur} ${e.product_total}</td>
+                        <td class=\"text-right\">${storeValues.cur} ${e.product_unit_price}</td>
+                        <td class=\"text-right\">${storeValues.cur} ${e.product_total}</td>
                     </tr>`;
                 subTotal += parseFloat(e.product_total);
             });
@@ -3003,16 +3010,16 @@ async function getSalesDetails(salesID) {
             trData += `<tr>
                     <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Subtotal</td>
                     <td style="font-weight:bolder;text-transform:uppercase" class="text-right">
-                        ${companyVariables.cur} ${formatCurrency(subTotal)}
+                        ${storeValues.cur} ${fmtCurr(subTotal)}
                     </td>
                 </tr>
                 <tr>
                     <td style="font-weight:;text-transform:uppercase" colspan="3" class="text-right">Discount</td>
-                    <td style="font-weight:;text-transform:uppercase" class="text-right">${companyVariables.cur} ${discount}</td>
+                    <td style="font-weight:;text-transform:uppercase" class="text-right">${storeValues.cur} ${discount}</td>
                 </tr>
                 <tr>
                     <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Overall Total</td>
-                    <td style="font-weight:bolder;text-transform:uppercase" class="text-right">${companyVariables.cur} ${formatCurrency(overall)}</td>
+                    <td style="font-weight:bolder;text-transform:uppercase" class="text-right">${storeValues.cur} ${fmtCurr(overall)}</td>
                 </tr>
 
                 </tbody>
@@ -3031,7 +3038,7 @@ async function getSalesDetails(salesID) {
 
             $(".show-modal-body").html(trData);
             $(`div[class="form-content-loader"]`).css("display","none");
-            reConnect();
+            rConInt();
 
         });
 
@@ -3158,7 +3165,7 @@ $(function() {
                 y: {
                     formatter: function(y) {
                         if (typeof y !== "undefined") {
-                            return companyVariables.cur + formatCurrency(y);
+                            return storeValues.cur + fmtCurr(y);
                         }
                         return y;
 
@@ -3262,7 +3269,6 @@ $(function() {
                 });
             },
             error: function(err) {
-                console.log(err);
             }
         });
     }
@@ -3372,7 +3378,7 @@ $(function() {
                             y: {
                                 formatter: function(y) {
                                     if (typeof y !== "undefined") {
-                                        return companyVariables.cur + formatCurrency(y);
+                                        return storeValues.cur + fmtCurr(y);
                                     }
                                     return y;
 
@@ -3492,7 +3498,7 @@ $(function() {
                             y: {
                                 formatter: function(y) {
                                     if (typeof y !== "undefined") {
-                                        return companyVariables.cur + formatCurrency(y);
+                                        return storeValues.cur + fmtCurr(y);
                                     }
                                     return y;
 
@@ -3539,7 +3545,7 @@ $(function() {
                         y: {
                             formatter: function(y) {
                                 if (typeof y !== "undefined") {
-                                    return companyVariables.cur + formatCurrency(y);
+                                    return storeValues.cur + fmtCurr(y);
                                 }
                                 return y;
 
@@ -3595,7 +3601,7 @@ $(function() {
                         y: {
                             formatter: function(y) {
                                 if (typeof y !== "undefined") {
-                                    return companyVariables.cur + formatCurrency(y);
+                                    return storeValues.cur + fmtCurr(y);
                                 }
                                 return y;
 
@@ -3703,7 +3709,7 @@ $(function() {
                           y: {
                               formatter: function (y) {
                                   if (typeof y !== "undefined") {
-                                      return companyVariables.cur + formatCurrency(y);
+                                      return storeValues.cur + fmtCurr(y);
                                   }
                                   return y;
                               }
@@ -3739,7 +3745,6 @@ $(function() {
                 $(`div[class~="apexcharts-legend"]`).addClass('hidden');
             },
             error: function(err) {
-                console.log(err);
                 hL();
             }, complete: function(data) {
                 setTimeout(function() {
@@ -3800,7 +3805,7 @@ $(function() {
                         trData += `<tr>`;
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
                         trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
-                        trData += `<td>${companyVariables.cur}${e.order_amount_paid}</td>`;
+                        trData += `<td>${storeValues.cur}${e.order_amount_paid}</td>`;
                         trData += `<td>${e.order_date}</td>`;
                         trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
                         trData += `</tr>`;
@@ -3846,7 +3851,6 @@ $(function() {
                     $(`div[class~="apexcharts-legend"]`).removeClass('center');
                 },
                 error: function(err) {
-                    console.log(err);
                 }
             });
         }
@@ -4145,8 +4149,8 @@ $(function() {
 
         $.each(salesData, function(i, e) {
 
-            if ((companyVariables._hi != 1) && (e.clientId == companyVariables._cl)) {
-                if ((e.branchId == companyVariables._clb) && (e.recorded_by == companyVariables._ud)) {
+            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+                if ((e.branchId == storeValues._clb) && (e.recorded_by == storeValues._ud)) {
                     orders += 1;
                     customerArray.push(e.customer_id);
                     totals += parseFloat(e.order_amount_paid);
@@ -4162,7 +4166,7 @@ $(function() {
                         paidSalesArray.push(parseFloat(e.order_amount_paid));
                     }
                 }
-            } else if((e.clientId == companyVariables._cl)) {
+            } else if((e.clientId == storeValues._cl)) {
                 orders += 1;
                 if(e.credit_sales == 1) {
                     creditSalesArray.push(parseFloat(e.order_amount_paid));
@@ -4179,7 +4183,7 @@ $(function() {
                 vHours.push(parseFloat(e.hour_of_day));
             }
 
-            if ((e.credit_sales == 1) && (e.clientId == companyVariables._cl)) {
+            if ((e.credit_sales == 1) && (e.clientId == storeValues._cl)) {
                 credits += parseFloat(e.order_amount_paid);
             }
 
@@ -4193,8 +4197,8 @@ $(function() {
                 creditBadge = `<span class="text-gray">Credit</span>`;
             }
 
-            if ((companyVariables._hi != 1) && (e.clientId == companyVariables._cl)) {
-                if (e.recorded_by == companyVariables._ud) {
+            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+                if (e.recorded_by == storeValues._ud) {
                     salesArray.push({
                         row: orders,
                         order_id: `${e.order_id} <br> ${creditBadge}`,
@@ -4207,7 +4211,7 @@ $(function() {
                         </a>`
                     });
                 }
-            } else if((e.clientId == companyVariables._cl)) {
+            } else if((e.clientId == storeValues._cl)) {
                 salesArray.push({
                     row: orders,
                     order_id: `${e.order_id} <br> ${creditBadge}`,
@@ -4222,15 +4226,15 @@ $(function() {
             }
         });
 
-        var lowestSale = `${companyVariables.cur} ${formatCurrency(Math.min(...salesFigures))}`;
-        var highestSale = `${companyVariables.cur} ${formatCurrency(Math.max(...salesFigures))}`;
-        var totalDiscount = `${companyVariables.cur} (${formatCurrency(expectedSellingPrice - totals)})`;
-        var creditTotal = `${companyVariables.cur} ${formatCurrency(credits)}`;
-        var salesTotal = `${companyVariables.cur} ${formatCurrency(totals)}`;
-        var totalCost = `${companyVariables.cur} ${formatCurrency(productsCostPrice)}`;
-        var totalProfit = `${companyVariables.cur} ${formatCurrency(totals-productsCostPrice)}`;
-        var creditPercent = `<span class='text-danger'>${companyVariables.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
-        var average = `${companyVariables.cur} ${formatCurrency(totals/orders)}`;
+        var lowestSale = `${storeValues.cur} ${fmtCurr(Math.min(...salesFigures))}`;
+        var highestSale = `${storeValues.cur} ${fmtCurr(Math.max(...salesFigures))}`;
+        var totalDiscount = `${storeValues.cur} (${fmtCurr(expectedSellingPrice - totals)})`;
+        var creditTotal = `${storeValues.cur} ${fmtCurr(credits)}`;
+        var salesTotal = `${storeValues.cur} ${fmtCurr(totals)}`;
+        var totalCost = `${storeValues.cur} ${fmtCurr(productsCostPrice)}`;
+        var totalProfit = `${storeValues.cur} ${fmtCurr(totals-productsCostPrice)}`;
+        var creditPercent = `<span class='text-danger'>${storeValues.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
+        var average = `${storeValues.cur} ${fmtCurr(totals/orders)}`;
 
         var hValues = new Array();
         for(var i = 0; i < vHours.length; i++) {
@@ -4463,7 +4467,7 @@ $(function() {
                                 y: {
                                     formatter: function(y) {
                                         if (typeof y !== "undefined") {
-                                            return companyVariables.cur + formatCurrency(y);
+                                            return storeValues.cur + fmtCurr(y);
                                         }
                                         return y;
 
@@ -4610,16 +4614,16 @@ if($(`div[class~="request-form"]`).length) {
                 totalToPay = (totalToPay - discountAmount);
                 totalDiscountDeducted = discountAmount;
             }
-            $(`th[data-bind-html='discount_amount']`).html(`${formatCurrency(discountAmount)}`);  
+            $(`th[data-bind-html='discount_amount']`).html(`${fmtCurr(discountAmount)}`);  
         }
 
         let paymentType = $(".payment-type-select").val();
-        $(`span[class="sub_total"]`).html(`${companyVariables.cur} ${formatCurrency(overallSubTotal)}`);
-        $("[data-bind-html='totaltopay']").html(formatCurrency(overallSubTotal));
-        $(".total-to-pay-amount").text(formatCurrency(totalToPay));
+        $(`span[class="sub_total"]`).html(`${storeValues.cur} ${fmtCurr(overallSubTotal)}`);
+        $("[data-bind-html='totaltopay']").html(fmtCurr(overallSubTotal));
+        $(".total-to-pay-amount").text(fmtCurr(totalToPay));
         $(".total-to-pay-amount").attr("data-order-total", totalToPay);
         $(`input[name="amount_paying"]`).attr({"max": totalToPay, "min": 0});
-        $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": formatCurrency(totalToPay)});
+        $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": fmtCurr(totalToPay)});
     }
 
     $.expr[':'].Contains = function(a,i,m){
@@ -4735,7 +4739,7 @@ if($(`div[class~="request-form"]`).length) {
         })
     }
 
-    var initialiteProductSelect = () => {
+    var initPrdSelt = () => {
         $(".product-select").on("change", async function(){
             if($(this).is(":checked")) {
                 await addProductRow($(this).data())
@@ -4771,7 +4775,7 @@ if($(`div[class~="request-form"]`).length) {
                         
                         subTotalBox.text(subtotal);
                         receipt_qty.text(selectedQty);
-                        receipt_subTotal.text(formatCurrency(subtotal));
+                        receipt_subTotal.text(fmtCurr(subtotal));
                         recalculateTotalToPay();
                         
                         if((sessionName == "OrdersList") && currentInput.hasClass('product-quantity')) {
@@ -4798,7 +4802,7 @@ if($(`div[class~="request-form"]`).length) {
     $(`div[class~="request-form"] button[class~="save-request"]`).on('click', function() {
         var btnClicked = $(this),
             buttonClicked = $(this).attr('data-request'),
-            requestId = randomInt(12);
+            requestId = rndInt(12);
             customerId = $(`select[name="customer"]`).val();
             discountType = $(`input[name="discount_type"]:checked`).val();
             request = $(`span[class="hide-walk-in-customer"]`).data('request');
@@ -5453,7 +5457,6 @@ var removeRow = () => {
 var removeAppendRow = () => {
     $(`span[class~="remove-this-row"]`).on('click', function() {
         let rowId = $(this).attr('data-value');
-        console.log(rowId);
         $(`div[class~="update-stock-rows"] div[data-row="${rowId}"]`).remove();
     });
 }
@@ -5547,8 +5550,6 @@ $(`div[class~="update-stock-rows"] button[class~="append-row"]`).on('click', fun
 
     let selectOptions = $('div[class~="update-stock-rows"] div[data-row]:last select > option').length;
 
-    console.log(lastRowId, selectOptions);
-
     if(selectOptions == lastRowId) {
         return false;
     }
@@ -5564,13 +5565,13 @@ $(`div[class~="update-stock-rows"] button[class~="append-row"]`).on('click', fun
             </div>
             <div class="col-md-2 mb-3">
                 <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">${companyVariables.cur}</span></div>
+                    <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
                     <input type="number" step="0.1" value="0.00" class="form-control" name="cost_${lastRowId}">
                 </div>
             </div>
             <div class="col-md-2 mb-3">
                 <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">${companyVariables.cur}</span></div>
+                    <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
                     <input type="number" step="0.1" value="0.00" class="form-control" name="price_${lastRowId}">
                 </div>
             </div>

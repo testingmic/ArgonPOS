@@ -1705,6 +1705,10 @@ if($admin_user->logged_InControlled()) {
 			// data
 			$productsList = [];
 			$ii = 0;
+
+			// set the payment made session as false
+			$session->_oid_LastPaymentMade = false;
+
 			// initializing
 			if(count($result) > 0) {
 				// loop through the list of products
@@ -1778,14 +1782,23 @@ if($admin_user->logged_InControlled()) {
 				$ordersObj = load_class("Orders", "controllers");
 				$register = (object) $_POST;
 
+				// this is the second stage and also returns true
+				if(isset($register->amount_paying, 
+					$register->customer, $register->amount_to_pay,
+					$register->total_to_pay, $register->discountType, $register->discountAmount) && !isset($register->payment_type)) {
+
+					// confirm that the previous payment has been made
+					if($session->_oid_LastPaymentMade) {
+						// set the response 
+						$response->status = "success";
+						$response->message = "Payment successfully made.";
+						$response->data = true;
+					}
+				}
+
 				// ensure all required parameters was parsed
-				if(
-					isset(
-						$register->payment_type, $register->amount_paying, 
-						$register->customer, $register->amount_to_pay,
-						$register->total_to_pay, $register->discountType, $register->discountAmount
-					)
-				) {
+				elseif(isset($register->payment_type, $register->amount_paying, $register->customer, $register->amount_to_pay,$register->total_to_pay, $register->discountType, $register->discountAmount)) {
+
 					// submit the data for processing
 					$result = $ordersObj->saveRegister($register);
 
