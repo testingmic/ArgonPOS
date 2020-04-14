@@ -611,7 +611,7 @@ if($(`table[class~="productsList"]`).length) {
 
         $(`div[class="form-content-loader"]`).css("display","none");
 
-        $.post(baseUrl+"aj/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
+        $.post(baseUrl+"api/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
             if(res.status == 200){
                 $(`div[class~="categoryModal"]`).modal('hide');
                 Toast.fire({
@@ -670,7 +670,7 @@ if($(`table[class~="productsList"]`).length) {
     function listProductCategories() {
         $.ajax({
             method: "POST",
-            url: `${baseUrl}aj/categoryManagement/listProductCategories`,
+            url: `${baseUrl}api/categoryManagement/listProductCategories`,
             data: { listProductCategories: true},
             dataType: "JSON",
             success: function(resp) {
@@ -708,7 +708,7 @@ async function listRequests(requestType, tableName) {
 
     $.ajax({
         method: "POST",
-        url: `${baseUrl}aj/listRequests`,
+        url: `${baseUrl}api/listRequests`,
         data: { listRequests: "true", requestType: requestType },
         dataType: "JSON",
         beforeSend: function() {},
@@ -915,7 +915,7 @@ var fetchPOSCustomersList = async () => {
     }
 
     await syncOfflineData('customers').then((resp) => {
-        $.post(baseUrl + "aj/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
+        $.post(baseUrl + "api/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
             await clearDBStore('customers').then((resp) => {
                 populateCustOptionsList(data.result);
                 if(data.result.length) {
@@ -1013,7 +1013,7 @@ var fetchPOSProductsList = async () => {
         return false;
     }
 
-    $.post(baseUrl + "aj/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
+    $.post(baseUrl + "api/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
         await clearDBStore('request_products').then((resp) => {
             populatePOSProductsList(data.result);
             if(data.result.length) {
@@ -1060,7 +1060,7 @@ var fetchUsersLists = async () => {
     if ($("table[class~='usersAccounts']").length) {
 
         $.ajax({
-            url: baseUrl + "aj/userManagement/fetchUsersLists",
+            url: baseUrl + "api/userManagement/fetchUsersLists",
             type: "POST",
             data: { fetchUsersLists: true },
             dataType: "json",
@@ -1115,7 +1115,7 @@ async function deleteMyItem(itemId, page, callBack = "") {
         }
 
         $.ajax({
-            url: baseUrl + "aj/userManagement/deleteUser",
+            url: baseUrl + "api/userManagement/deleteUser",
             type: "POST",
             data: { deleteUser: true, itemId: itemId },
             dataType: "json",
@@ -1267,7 +1267,7 @@ var editUserDetails = () => {
 
         if (userId != "") {
             $.ajax({
-                url: baseUrl + "aj/userManagement/getUserDetails",
+                url: baseUrl + "api/userManagement/getUserDetails",
                 data: { getUserDetails: true, userId: userId },
                 dataType: "json",
                 type: "POST",
@@ -1301,7 +1301,7 @@ var editUserAccessLevel = () => {
 
         if (user_id != "") {
             $.ajax({
-                url: baseUrl + "aj/userManagement/permissionManagement",
+                url: baseUrl + "api/userManagement/permissionManagement",
                 data: { getUserAccessLevels: true, user_id: user_id },
                 dataType: "json",
                 type: "POST",
@@ -1409,7 +1409,7 @@ $(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e)
     var access_level = $(`[name="access_level"]`).val();
 
     $.ajax({
-        url: baseUrl + "aj/userManagement",
+        url: baseUrl + "api/userManagement",
         type: "POST",
         data: { request: "fetchAccessLevelPermissions", access_level: access_level },
         dataType: "json",
@@ -1530,7 +1530,7 @@ var saveAccessLevelSettings = () => {
 
             $.ajax({
 
-                url: baseUrl + "aj/userManagement/saveAccessLevelSettings",
+                url: baseUrl + "api/userManagement/saveAccessLevelSettings",
                 type: "POST",
                 data: { saveAccessLevelSettings: true, aclSettings: items_array, acl: acl, accessUser: aclUser },
                 dataType: "json",
@@ -1655,7 +1655,7 @@ var editBranchDetails = () => {
 
         if (branchId != "") {
             $.ajax({
-                url: baseUrl + "aj/branchManagment/getBranchDetails",
+                url: baseUrl + "api/branchManagment/getBranchDetails",
                 data: { getBranchDetails: true, branchId: branchId },
                 dataType: "json",
                 type: "POST",
@@ -1749,7 +1749,7 @@ async function fetchBranchLists() {
         }
             
         $.ajax({
-            url: baseUrl + "aj/branchManagment/fetchBranchesLists",
+            url: baseUrl + "api/branchManagment/fetchBranchesLists",
             type: "POST",
             data: { request: "fetchBranchesLists" },
             dataType: "json",
@@ -1788,7 +1788,7 @@ function cusPurHis() {
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+        url: `${baseUrl}api/reportsAnalytics/generateReport`,
         data: {generateReport: true, salesAttendantHistory: true, queryMetric:"salesAttendantPerformance", userId: userId, recordType: recordType},
         dataType: "JSON",
         beforeSend: function() {
@@ -1897,7 +1897,7 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
         thisEmail.prop('disabled', true);
 
         $.ajax({
-            url: `${baseUrl}aj/pointOfSaleProcessor/sendMail`,
+            url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
             type: `POST`,
             data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname, thisRequest: thisRequest},
             dataType: "json",
@@ -1938,7 +1938,7 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
         event.preventDefault();
         let formData = $(this).serialize();
 
-        $.post(baseUrl+"aj/customerManagement/updateCustomerDetails", formData, (res) => {
+        $.post(baseUrl+"api/customerManagement/updateCustomerDetails", formData, (res) => {
             if(res.status == 200){
                 Toast.fire({
                     type: 'success',
@@ -2021,7 +2021,7 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
     function listCustomers() {
         $.ajax({
             method: "POST",
-            url: `${baseUrl}aj/customerManagement/listCustomers`,
+            url: `${baseUrl}api/customerManagement/listCustomers`,
             data: { listCustomers: true},
             dataType: "JSON",
             success: function(resp) {
@@ -2112,7 +2112,7 @@ $("#newCustomer_form").on("submit", async function(event) {
         }
     }
 
-    $.post(baseUrl+"aj/pointOfSaleProcessor/quick-add-customer", formData, (res) => {
+    $.post(baseUrl+"api/pointOfSaleProcessor/quick-add-customer", formData, (res) => {
         if(res.status == "success"){
             $(".customer-select").children("option:first").after(`<option selected data-email='${res.data[3]}' data-contact='${res.data[4]}' value=${res.data[0]}>${res.data[1]} ${res.data[2]}</option>`)
             if(res.data[3]){
@@ -2158,7 +2158,7 @@ $(`div[class~="complete-branch-selection"]`).on('click', function() {
 
     $.ajax({
         type: "POST",
-        url: `${baseUrl}aj/importManager/setBranchId`,
+        url: `${baseUrl}api/importManager/setBranchId`,
         data: {setBranchId: true, curBranchId: branchId},
         success: function(resp) {
             window.location.href = $(`div[class="redirection-href"]`).attr('data-href');
@@ -2372,7 +2372,7 @@ if($(".make-online-payment").length) {
         let discountType = $(`input[name="discount_type"]:checked`).val();
         let discountAmount = $(`input[name="discount_amount"]`).val();
         formData += `&total_to_pay=${totalToPay}&discountType=${discountType}&discountAmount=${discountAmount}`;
-        return $.post(baseUrl+"aj/pointOfSaleProcessor/saveRegister", formData)
+        return $.post(baseUrl+"api/pointOfSaleProcessor/saveRegister", formData)
     }
 
     let productPrices = [];
@@ -2719,7 +2719,7 @@ if($(".make-online-payment").length) {
             thisEmail.prop('disabled', true);
 
             $.ajax({
-                url: `${baseUrl}aj/pointOfSaleProcessor/sendMail`,
+                url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
                 type: `POST`,
                 data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname},
                 dataType: "json",
@@ -2776,7 +2776,7 @@ if($(".make-online-payment").length) {
             $(`span[class="generated_order"]`).html(res.data._oid);
             var userEmail = $("input[id='receipt-email']").val();
             $.ajax({
-                url: baseUrl + "aj/pointOfSaleProcessor/processMyPayment",
+                url: baseUrl + "api/pointOfSaleProcessor/processMyPayment",
                 data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
                 dataType: "json",
                 type: "POST",
@@ -2846,7 +2846,7 @@ if($(".make-online-payment").length) {
     function ckPayState() {
         
         $.ajax({
-            url: `${baseUrl}aj/pointOfSaleProcessor/checkPaymentStatus`,
+            url: `${baseUrl}api/pointOfSaleProcessor/checkPaymentStatus`,
             type: "POST",
             data: { checkPaymentStatus: true },
             dataType: "json",
@@ -2895,7 +2895,7 @@ if($(".make-online-payment").length) {
 
     $(".cancel-online-payment, button[class~='cancel-ongoing-payment-activity']").on("click", function() {
 
-        $.post(`${baseUrl}aj/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
+        $.post(`${baseUrl}api/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
             let toastType = "error";
             let toastMsg  = "Failed To Cancel";
             if (data.status == 200) {
@@ -2957,6 +2957,12 @@ async function getSalesDetails(salesID) {
         var salesInfo = await gIDBR('sales', salesID).then((salesResult) => {
 
             trData += `<table class="table table-bordered">
+                    <tr>
+                        <td colspan='2' class='text-center'>
+                            <strong>Served By: </strong> ${salesResult.recorded_by}<br>
+                            <strong>Point of Sale: </strong> ${companyVariables._clbn}
+                        </td>
+                    </tr>
                     <tr>
                         <td><strong>Customer Name</strong>: ${salesResult.customer_fullname}</td>
                         <td align='left'><strong>Transaction ID:</strong>: ${salesResult.order_id}</td>
@@ -3033,7 +3039,7 @@ async function getSalesDetails(salesID) {
     }
 
     $.ajax({
-        url: baseUrl + "aj/dashboardAnalytics/getSalesDetails",
+        url: baseUrl + "api/dashboardAnalytics/getSalesDetails",
         type: "POST",
         dataType: "json",
         data: { getSalesDetails: true, salesID: salesID },
@@ -3223,7 +3229,7 @@ $(function() {
         if ($(`table[class~="branch-overview"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "branchPerformance", salesPeriod: periodSelected},
                 dataType: "JSON",
                 beforeSend: function() {
@@ -3240,7 +3246,7 @@ $(function() {
     var summaryItems = (periodSelected = 'today') => {
         $.ajax({
             type: "POST",
-            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "summaryItems", salesPeriod: periodSelected },
             dataType: "JSON",
             beforeSend: function() {
@@ -3265,7 +3271,7 @@ $(function() {
 
         $.ajax({
             type: "POST",
-            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "salesOverview", salesPeriod: periodSelected },
             dataType: "JSON",
             success: function(resp) {
@@ -3761,7 +3767,7 @@ $(function() {
 
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
                 dataType: "JSON",
                 beforeSend: function() {
@@ -3824,7 +3830,7 @@ $(function() {
         if ($(`div[id="attendant-performance"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "salesAttendantPerformance", salesPeriod: periodSelected },
                 dataType: "JSON",
                 beforeSend: function() {
@@ -3849,7 +3855,7 @@ $(function() {
     var ordersCount = (periodSelected = 'today') => {
         $.ajax({
             type: "POST",
-            url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
             data: { generateReport: true, queryMetric: "ordersCount", salesPeriod: periodSelected },
             dataType: "JSON",
             beforeSend: function() {
@@ -3940,7 +3946,7 @@ $(function() {
         if ($(`table[class~="custPerformance"]`).length) {
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/reportsAnalytics/generateReport`,
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
                 dataType: "JSON",
                 beforeSend: function() {},
@@ -3979,7 +3985,7 @@ $(function() {
         var period = $(`select[name="periodSelected"]`).val();
 
         $.ajax({
-            url: `${baseUrl}aj/dashboardAnalytics/getSales`,
+            url: `${baseUrl}api/dashboardAnalytics/getSales`,
             type: "POST",
             dataType: "json",
             data: { getSales: true, salesPeriod: period },
@@ -4054,7 +4060,7 @@ $(function() {
             var colspan = "7";
 
             $.ajax({
-                url: `${baseUrl}aj/dashboardAnalytics/fetchInventoryRecords`,
+                url: `${baseUrl}api/dashboardAnalytics/fetchInventoryRecords`,
                 type: "POST",
                 dataType: "json",
                 data: { fetchInventoryRecords: true, request: "fetchInventoryRecords" },
@@ -4084,7 +4090,7 @@ $(function() {
         if ($(`table[class~="thresholdLists"]`).length) {
             var colspan = "3";
             $.ajax({
-                url: baseUrl + "aj/dashboardAnalytics",
+                url: baseUrl + "api/dashboardAnalytics",
                 type: "POST",
                 dataType: "json",
                 data: { request: "getProductThresholds" },
@@ -4276,7 +4282,7 @@ $(function() {
         $(`div[class~="${hide}"]`).addClass('hidden').fadeOut('slow');
 
         await $.ajax({
-            url: `${baseUrl}aj/branchManagment/saveReportsRecord`,
+            url: `${baseUrl}api/branchManagment/saveReportsRecord`,
             data: { saveReportsRecord: true, attendantPerformance: show },
             type: "POST",
             dataType: "JSON",
@@ -4852,7 +4858,7 @@ if($(`div[class~="request-form"]`).length) {
             }
 
             if(confirm("Are you sure you want to complete this transaction?")) {
-                $.post(`${baseUrl}aj/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
+                $.post(`${baseUrl}api/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
                     
                     if(resp.status != 200) {
                         Toast({
@@ -4935,7 +4941,7 @@ $(() => {
             $(".main-content-loader.main-body-loader").css({display: "flex"});
             $.ajax({
                 type: "POST",
-                url: `${baseUrl}aj/importManager/uploadCSVData/${currentData}`,
+                url: `${baseUrl}api/importManager/uploadCSVData/${currentData}`,
                 data: {csvKey: Object.keys(csvContent), csvValues: Object.values(csvContent), uploadCSVData: true},
                 dataType: "json",
                 success: function(resp) {
@@ -5116,7 +5122,7 @@ $(() => {
 
         $.ajax({
             type: 'POST',
-            url: `${baseUrl}aj/importManager/loadCSV`,
+            url: `${baseUrl}api/importManager/loadCSV`,
             data: formdata,
             dataType: 'JSON',
             contentType: false,
@@ -5178,7 +5184,7 @@ var transferProduct = (productId) => {
     let transfer_from = currentBranchId;
 
     $.ajax({
-        url: baseUrl + "aj/inventoryManagement",
+        url: baseUrl + "api/inventoryManagement",
         type: "POST",
         dataType: "json",
         data: { getWarehouseProduct: true, productId: productId, transferFrom: transfer_from },
@@ -5220,7 +5226,7 @@ var submitTransferProduct = () => {
         else if (confirm("Do you want to transfer product now?")) {
 
             $.ajax({
-                url: baseUrl + "aj/inventoryManagement/submitTransferProduct",
+                url: baseUrl + "api/inventoryManagement/submitTransferProduct",
                 type: "POST",
                 dataType: "json",
                 data: $(this).serialize() + "&request=submitTransferProduct",
@@ -5278,7 +5284,7 @@ submitTransferProduct();
 var fetchAllProducts = (branchID = null, location = branch_type) => {
     
     $.ajax({
-        url: baseUrl + "aj/inventoryManagement/getAllProducts",
+        url: baseUrl + "api/inventoryManagement/getAllProducts",
         type: "POST",
         dataType: "json",
         data: { request: true, getAllProducts: true, branchID: branchID, location: location },
@@ -5382,7 +5388,7 @@ $(`form[id="updateWareHouseStock"]`).on('submit', function(e) {
         var stockQuantities = productsList.join(",");
 
         $.ajax({
-            url: `${baseUrl}aj/inventoryManagement/updateWareHouseStock`,
+            url: `${baseUrl}api/inventoryManagement/updateWareHouseStock`,
             data: {updateWareHouseStock: true, stockQuantities: stockQuantities},
             type: "POST",
             dataType: "json",
@@ -5614,7 +5620,7 @@ $("form[class~='submit-bulk-transfer-product']").on("submit", function(e) {
         if (confirm("Do you want to transfer these products?")) {
 
             $.ajax({
-                url: baseUrl + "aj/inventoryManagement/bulkTransferProducts",
+                url: baseUrl + "api/inventoryManagement/bulkTransferProducts",
                 type: "POST",
                 dataType: "json",
                 data: $(this).serialize() + "&request=true&bulkTransferProducts=true&productIds="+productIds,
@@ -5666,7 +5672,7 @@ $("form[class~='submit-bulk-transfer-product']").on("submit", function(e) {
 if($(`div[id="payment_options"]`).length) {
     function loadPaymentOptions() {       
       $.ajax({
-        url: `${baseUrl}aj/branchManagment/loadPaymentOptions`,
+        url: `${baseUrl}api/branchManagment/loadPaymentOptions`,
         data: { loadPaymentOptions: true },
         type: "POST",
         dataType: "JSON",

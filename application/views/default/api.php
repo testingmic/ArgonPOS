@@ -163,7 +163,7 @@ if($admin_user->logged_InControlled()) {
 					$i++;
 
 					$orderDate = date('jS F Y h:iA', strtotime($data->order_date));
-					$totalOrder= $hrClass->toDecimal($data->order_amount_paid, 2, ',');
+					$totalOrder= $posClass->toDecimal($data->order_amount_paid, 2, ',');
 
 					$results[] = [
 						'row' => "$i.",
@@ -231,15 +231,15 @@ if($admin_user->logged_InControlled()) {
 			if ($prevSales != false) {
 				$prevSales = $prevSales[0];
 
-				$totalSellingTrend = $hrClass->percentDifference(floatval($totalSellingPrice), floatval($prevSales->totalSellingPrice));
-				$totalCostTrend = $hrClass->percentDifference(floatval($prevSales->totalCostPrice), floatval($totalCostPrice));
-				$totalProfitTrend = $hrClass->percentDifference(floatval($totalProfit-$totalDiscount), floatval($prevSales->totalProfitMade-$prevSales->totalDiscountGiven));
-				$totalServedTrend = $hrClass->percentDifference(floatval($totalServed), floatval($prevSales->totalPrevServed));
-				$totalSalesTrend = $hrClass->percentDifference(floatval($totalSales), floatval($prevSales->totalPrevSales));
-				$totalCreditTrend = $hrClass->percentDifference(floatval($totalCreditSales), floatval($prevSales->totalPrevCreditSales));
+				$totalSellingTrend = $posClass->percentDifference(floatval($totalSellingPrice), floatval($prevSales->totalSellingPrice));
+				$totalCostTrend = $posClass->percentDifference(floatval($prevSales->totalCostPrice), floatval($totalCostPrice));
+				$totalProfitTrend = $posClass->percentDifference(floatval($totalProfit-$totalDiscount), floatval($prevSales->totalProfitMade-$prevSales->totalDiscountGiven));
+				$totalServedTrend = $posClass->percentDifference(floatval($totalServed), floatval($prevSales->totalPrevServed));
+				$totalSalesTrend = $posClass->percentDifference(floatval($totalSales), floatval($prevSales->totalPrevSales));
+				$totalCreditTrend = $posClass->percentDifference(floatval($totalCreditSales), floatval($prevSales->totalPrevCreditSales));
 				$totalPercent = (!empty($totalCreditSales) && !empty($totalSales)) ? round(($totalCreditSales/$totalSales)*100, 2) : 0.00;
-				$averageSalesTrend = $hrClass->percentDifference(floatval($averageSalesValue), floatval($prevSales->averageSalesValue));
-				$totalDiscountTrend = $hrClass->percentDifference(floatval($totalDiscount), floatval($prevSales->totalDiscountGiven));
+				$averageSalesTrend = $posClass->percentDifference(floatval($averageSalesValue), floatval($prevSales->averageSalesValue));
+				$totalDiscountTrend = $posClass->percentDifference(floatval($totalDiscount), floatval($prevSales->totalDiscountGiven));
 
 				$status = true;
 			}
@@ -252,15 +252,15 @@ if($admin_user->logged_InControlled()) {
 				"message" => [
 					"table" => $message, 
 					"totalSales" => [
-						"total" => $clientData->default_currency . $hrClass->toDecimal($totalSales, 2, ','), 
+						"total" => $clientData->default_currency . $posClass->toDecimal($totalSales, 2, ','), 
 						"trend" => $totalSalesTrend ." ". $display
 					],
 					"totalServed" => [
-						"total" => $hrClass->toDecimal($totalServed, 0, ','),
+						"total" => $posClass->toDecimal($totalServed, 0, ','),
 						"trend" => $totalServedTrend ." ". $display
 					],
 					"totalDiscount" => [
-						"total" => $clientData->default_currency . $hrClass->toDecimal($totalDiscount, 0, ','),
+						"total" => $clientData->default_currency . $posClass->toDecimal($totalDiscount, 0, ','),
 						"trend" => $totalDiscountTrend ." ". $display
 					],
 					"averageSales" => [
@@ -268,15 +268,15 @@ if($admin_user->logged_InControlled()) {
 						"trend" => $averageSalesTrend ." ". $display
 					],
 					"totalCredit" => [
-						"total" => $clientData->default_currency . $hrClass->toDecimal($totalCreditSales, 2, ','),
+						"total" => $clientData->default_currency . $posClass->toDecimal($totalCreditSales, 2, ','),
 						"trend" =>  "<span class='text-gray'>{$totalPercent}% of Total Sales ({$creditProfitPercentage}% of profit)</span>"
 					],
 					"salesComparison" => [
-						"profit" => $clientData->default_currency . $hrClass->toDecimal(($totalProfit-$totalDiscount), 2, ','),
+						"profit" => $clientData->default_currency . $posClass->toDecimal(($totalProfit-$totalDiscount), 2, ','),
 						"profit_trend" =>  $totalProfitTrend ." ". $display,
-						"selling" => $clientData->default_currency . $hrClass->toDecimal($totalSellingPrice, 2, ','),
+						"selling" => $clientData->default_currency . $posClass->toDecimal($totalSellingPrice, 2, ','),
 						"selling_trend" =>  $totalSellingTrend ." ". $display,
-						"cost" => $clientData->default_currency . $hrClass->toDecimal($totalCostPrice, 2, ','),
+						"cost" => $clientData->default_currency . $posClass->toDecimal($totalCostPrice, 2, ','),
 						"cost_trend" =>  $totalCostTrend ." ". $display
 					]
 				],
@@ -371,7 +371,7 @@ if($admin_user->logged_InControlled()) {
 							<tbody>";
 
 					foreach ($query as $data) {
-						$productTotal = $hrClass->toDecimal($data->product_total, 2, ',');
+						$productTotal = $posClass->toDecimal($data->product_total, 2, ',');
 						$message .= "
 							<tr>
 								<td>{$data->product_title}</td>
@@ -381,14 +381,14 @@ if($admin_user->logged_InControlled()) {
 							</tr>";
 
 						$subTotal += $data->product_total;
-						$discount = $hrClass->toDecimal($data->order_discount, 2, ',');
+						$discount = $posClass->toDecimal($data->order_discount, 2, ',');
 					}
-					$overall = $hrClass->toDecimal($subTotal - $discount, 2, ',');
+					$overall = $posClass->toDecimal($subTotal - $discount, 2, ',');
 					$message .= "
 						<tr>
 							<td style=\"font-weight:bolder;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Subtotal</td>
 							<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">
-								{$clientData->default_currency} ".$hrClass->toDecimal($subTotal, 2, ',')."
+								{$clientData->default_currency} ".$posClass->toDecimal($subTotal, 2, ',')."
 							</td>
 						</tr>
 						<tr>
@@ -790,19 +790,19 @@ if($admin_user->logged_InControlled()) {
 					$prevStockTurnoverRate = ($prevSales->costOfGoodsSold > 0 && $prevAverageInventory > 0) ? ($prevSales->costOfGoodsSold / $prevAverageInventory) : 0;
 
 					// trend calculation
-					$totalServedTrend = $hrClass->percentDifference(floatval($totalServed), floatval($prevSales->totalPrevServed));
-					$totalSalesTrend = $hrClass->percentDifference(floatval($totalSales), floatval($prevSales->totalPrevSales));
-					$highestSalesTrend = $hrClass->percentDifference(floatval($highestSalesValue), floatval($prevSales->highestSalesValue));
-					$averageSalesTrend = $hrClass->percentDifference(floatval($averageSalesValue), floatval($prevSales->averageSalesValue));
-					$stockTurnoverRateTrend = $hrClass->percentDifference(floatval($stockTurnoverRate), floatval($prevStockTurnoverRate));
-					$averageUnitPerTransactionTrend = ($prevSales->totalPrevServed > 0) ? $hrClass->percentDifference(floatval($averageUnitPerTransaction), (floatval($prevSales->totalQuantitiesSold)/$prevSales->totalPrevServed)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';		
-					$orderDiscountTrend = $hrClass->percentDifference(floatval($orderDiscount), floatval($prevSales->total_order_discount));
-					$salesPerEmployeeTrend = $hrClass->percentDifference(floatval($salesPerEmployee), floatval($prevSales->salesPerEmployee));
-					$grossProfitTrend = $hrClass->percentDifference(floatval($grossProfit), (floatval($prevSales->totalRevenue)-$prevSales->costOfGoodsSold));
-					$grossProfitMarginTrend = ($prevSales->totalRevenue > 0) ? $hrClass->percentDifference(floatval($grossProfitMargin), (((floatval($prevSales->totalRevenue)-floatval($prevSales->costOfGoodsSold))/floatval($prevSales->totalRevenue)) * 100)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
-					$netProfitTrend = $hrClass->percentDifference(floatval($netProfit), (floatval($prevSales->totalRevenue)-($allExpenses+$prevSales->costOfGoodsSold)));
-					$netProfitMarginTrend = ($prevSales->totalRevenue > 0) ? $hrClass->percentDifference(floatval($netProfitMargin), (((floatval($prevSales->totalRevenue)-($allExpenses+$prevSales->costOfGoodsSold))/floatval($prevSales->totalRevenue)) * 100)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
-					$salesPerSquareFeetTrend = ($prevSales->totalPrevSales > 0 && $salesPerSquareFeet > 0) ? $hrClass->percentDifference(floatval($salesPerSquareFeet), (floatval($prevSales->totalPrevSales)/($salesPerSquareFeet))) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
+					$totalServedTrend = $posClass->percentDifference(floatval($totalServed), floatval($prevSales->totalPrevServed));
+					$totalSalesTrend = $posClass->percentDifference(floatval($totalSales), floatval($prevSales->totalPrevSales));
+					$highestSalesTrend = $posClass->percentDifference(floatval($highestSalesValue), floatval($prevSales->highestSalesValue));
+					$averageSalesTrend = $posClass->percentDifference(floatval($averageSalesValue), floatval($prevSales->averageSalesValue));
+					$stockTurnoverRateTrend = $posClass->percentDifference(floatval($stockTurnoverRate), floatval($prevStockTurnoverRate));
+					$averageUnitPerTransactionTrend = ($prevSales->totalPrevServed > 0) ? $posClass->percentDifference(floatval($averageUnitPerTransaction), (floatval($prevSales->totalQuantitiesSold)/$prevSales->totalPrevServed)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';		
+					$orderDiscountTrend = $posClass->percentDifference(floatval($orderDiscount), floatval($prevSales->total_order_discount));
+					$salesPerEmployeeTrend = $posClass->percentDifference(floatval($salesPerEmployee), floatval($prevSales->salesPerEmployee));
+					$grossProfitTrend = $posClass->percentDifference(floatval($grossProfit), (floatval($prevSales->totalRevenue)-$prevSales->costOfGoodsSold));
+					$grossProfitMarginTrend = ($prevSales->totalRevenue > 0) ? $posClass->percentDifference(floatval($grossProfitMargin), (((floatval($prevSales->totalRevenue)-floatval($prevSales->costOfGoodsSold))/floatval($prevSales->totalRevenue)) * 100)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
+					$netProfitTrend = $posClass->percentDifference(floatval($netProfit), (floatval($prevSales->totalRevenue)-($allExpenses+$prevSales->costOfGoodsSold)));
+					$netProfitMarginTrend = ($prevSales->totalRevenue > 0) ? $posClass->percentDifference(floatval($netProfitMargin), (((floatval($prevSales->totalRevenue)-($allExpenses+$prevSales->costOfGoodsSold))/floatval($prevSales->totalRevenue)) * 100)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
+					$salesPerSquareFeetTrend = ($prevSales->totalPrevSales > 0 && $salesPerSquareFeet > 0) ? $posClass->percentDifference(floatval($salesPerSquareFeet), (floatval($prevSales->totalPrevSales)/($salesPerSquareFeet))) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
 				}
 
 				// show this section if the main analytics is been requested
@@ -2721,7 +2721,7 @@ if($admin_user->logged_InControlled()) {
 
 						foreach ($allProducts as $product) {
 							$i++;
-							$price = $hrClass->toDecimal($product->product_price, 2, ',');
+							$price = $posClass->toDecimal($product->product_price, 2, ',');
 
 							// Check Indicator
 							$calcA = (0.5 * $product->quantity) + $product->quantity;
@@ -2814,7 +2814,7 @@ if($admin_user->logged_InControlled()) {
 
 							if ($query == true) {
 								// Reduce Sending Shop Product Stock
-								$hrClass->updateData(
+								$posClass->updateData(
 									"products", 
 									"quantity = (quantity - $postData->transferProductQuantity)",
 									"product_id = '{$postData->transferProductID}' && branchId = '{$postData->transferFrom}'"
@@ -2899,7 +2899,7 @@ if($admin_user->logged_InControlled()) {
 								$productQty= (int) xss_clean($currItem[1]);
 								$postData->transferProductQuantity = $productQty;
 
-								$productData = $hrClass->getAllRows("products","product_price, cost_price, product_id", "id='{$productID}'")[0];
+								$productData = $posClass->getAllRows("products","product_price, cost_price, product_id", "id='{$productID}'")[0];
 
 								$sellPrice = $productData->product_price;
 								$nproductID = $productData->product_id;
@@ -2929,7 +2929,7 @@ if($admin_user->logged_InControlled()) {
 
 								if ($query == true) {
 									// Reduce Branch Transferring Product Stock
-									$hrClass->updateData(
+									$posClass->updateData(
 										"products", 
 										"quantity = (quantity - $productQty)",
 										"id = '{$productID}' && branchId = '{$postData->transferFrom}'"
@@ -3000,7 +3000,7 @@ if($admin_user->logged_InControlled()) {
 						$threshold = (isset($eachExplode[4])) ? (int) $eachExplode[4] : 0;
 
 						// each product information
-						$eachProduct = $hrClass->getAllRows("products", "quantity", "id='{$productId}'")[0];
+						$eachProduct = $posClass->getAllRows("products", "quantity", "id='{$productId}'")[0];
 						$newQuantity = $eachProduct->quantity+$quantity;
 
 						//: form the sql query to insert

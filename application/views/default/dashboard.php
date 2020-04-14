@@ -128,7 +128,7 @@ $session->productsLimit = 100;
           <div class="row align-items-center">
             <div class="col">
               <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-              <h5 class="h3 mb-0">Sales value</h5>
+              <h5 class="h3 mb-0">This Week Sales Return</h5>
             </div>
           </div>
         </div>

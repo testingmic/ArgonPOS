@@ -21,7 +21,7 @@
  		e.preventDefault();
  		var formData = $(this).serialize();
  		$(`div[class~="form-result"]`).html(``);
- 		$.post(`<?= $config->base_url('ajs/letsBegin') ?>`, formData, (resp) => {
+ 		$.post(`<?= $config->base_url('setup/letsBegin') ?>`, formData, (resp) => {
  			$(`div[class~="form-result"]`).html(`<div class='alert alert-${resp.status}'>${resp.result}</div>`);
  			if(resp.status == 'success') {
  				$(`form[class="setup"]`)[0].reset();

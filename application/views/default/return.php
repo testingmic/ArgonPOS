@@ -231,7 +231,7 @@ if(confirm_url_id(1)) {
     $(`div[class~="order-details"] tbody`).html(`<tr><td colspan="6">No sale found with the specified id</td></tr>`);
     if(orderId.length > 12) {
       $.ajax({
-        url: `${baseUrl}aj/returnOrderProcessor/searchOrder`,
+        url: `${baseUrl}api/returnOrderProcessor/searchOrder`,
         data: {searchOrder:true, orderId},
         dataType: `json`,
         type: `POST`,

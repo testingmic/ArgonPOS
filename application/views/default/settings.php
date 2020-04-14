@@ -100,7 +100,7 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
                       <?= connectionLost(); ?>
                       <?= form_loader(); ?>
                       <div class="card-body">
-                        <form autocomplete="Off" autocomplete="Off" data-form="company-details" class="company_settings" action="<?= $config->base_url('aj/branchManagment/settingsManager/updateCompanyDetail'); ?>" method="post" enctype="multipart/form-data">
+                        <form autocomplete="Off" autocomplete="Off" data-form="company-details" class="company_settings" action="<?= $config->base_url('api/branchManagment/settingsManager/updateCompanyDetail'); ?>" method="post" enctype="multipart/form-data">
                           <div class="row">
                             <div class="col-md-4">
                               <div class="form-group">
@@ -309,7 +309,7 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
                       <?= form_loader(); ?>
                       <?= connectionLost(); ?>
                       <div class="card-body">
-                        <form autocomplete="Off" data-form="sales-details" class="company_settings" action="<?= $config->base_url('aj/branchManagment/settingsManager/updateSalesDetails'); ?>" method="post" enctype="multipart/form-data">
+                        <form autocomplete="Off" data-form="sales-details" class="company_settings" action="<?= $config->base_url('api/branchManagment/settingsManager/updateSalesDetails'); ?>" method="post" enctype="multipart/form-data">
                           <div class="row">
                             <div class="col-md-6 col-lg-6">
                               <div class="form-group">
@@ -432,7 +432,7 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
                       <?= form_loader(); ?>
                       <?= connectionLost(); ?>
                       <div class="card-body">
-                        <form autocomplete="Off" data-form="reports-details" class="company_settings" action="<?= $config->base_url('aj/branchManagment/settingsManager/updateReportsDetails'); ?>" method="post" enctype="multipart/form-data">
+                        <form autocomplete="Off" data-form="reports-details" class="company_settings" action="<?= $config->base_url('api/branchManagment/settingsManager/updateReportsDetails'); ?>" method="post" enctype="multipart/form-data">
                           <div class="row">
 
                             <div class="col-lg-12">
@@ -585,7 +585,7 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
       let Value = $(this).attr('data-value');
 
       $.ajax({
-        url: `${baseUrl}aj/branchManagment/updatePaymentOptions`,
+        url: `${baseUrl}api/branchManagment/updatePaymentOptions`,
         data: { updatePaymentOptions: true, Option: Option, Value: Value },
         type: "POST",
         dataType: "JSON",

@@ -130,7 +130,7 @@ if($setupInfo->type == "alpha") {
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/select2/dist/css/select2.min.css" type="text/css">
   <link href="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.css" rel="stylesheet" />
-  <link rel="params" _cl='{"_un":"Emmallen Networks","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>","cur":"<?= $clientData->default_currency ?>","prt":"<?= $clientData->print_receipt ?>","tbr_col":"<?= $clientData->bg_color_code ?>"}'>
+  <link rel="params" _cl='{"_un":"<?= $clientData->client_name ?>","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>","cur":"<?= $clientData->default_currency ?>","prt":"<?= $clientData->print_receipt ?>","_clbn":"<?= $branchData->branch_name ?>"}'>
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/argon.min9f1e.css?v=1.1.0" type="text/css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/custom.css" type="text/css">
   <style>
