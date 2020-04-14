@@ -240,7 +240,7 @@ a[href="#finish"] {
               <?php if($validDate  && !$session->accountExpired) { ?>
               <button type="button" data-toggle="modal" data-target="#newCustomerModal" class="btn mb-2 btn-sm <?=  $clientData->btn_outline; ?> newCustomer_trigger"><i class="fa fa-user"></i> New Customer</button>
               <button type="button" data-toggle="modal" data-target="#discardModal" class="btn mb-2 btn-outline-danger discardSale_trigger"><i class="fa fa-trash"></i> Discard</button>
-              <button class="btn <?= $clientData->bg_color ?> print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
+              <button onclick="return triggerPrintReceipt();" class="btn <?= $clientData->bg_color ?> print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
               <?php } ?>
               <?php if($validDate  && !$session->accountExpired) { ?>
               <div class="float-right">

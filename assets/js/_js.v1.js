@@ -1770,14 +1770,13 @@ async function fetchBranchLists() {
 fetchBranchLists();
 
 var triggerPrintReceipt = () => {
-    $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
-        let orderId = $(this).data('sales-id');
-        window.open(
-            `${baseUrl}receipt/${orderId}`,
-            `Sales Invoice - Receipt #${orderId}`,
-            `width=650,height=750,resizable,scrollbars=yes,status=1`
-        );
-    });
+    let orderId = $(`span[class="generated_order"]`).html();
+    window.open(
+        `${baseUrl}receipt/${orderId}`,
+        `Sales Invoice - Receipt #${orderId}`,
+        `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+    );
+
 }
 
 function cusPurHis() {
@@ -2325,7 +2324,7 @@ if($(".make-online-payment").length) {
                             });
                             $(".cash-process-loader").removeClass("d-flex");
                             if(storeValues.prt == "yes") {
-                                $(`button[class~="print-receipt"]`).trigger('click');
+                                triggerPrintReceipt();
                             }
                             ftcPrdList();
                             $(`select[class~="customer-select"]`).val('WalkIn').change();
@@ -2343,7 +2342,7 @@ if($(".make-online-payment").length) {
                                 title: "Payment Successfully Recorded"
                             });
                             if(storeValues.prt == "yes") {
-                                $(`button[class~="print-receipt"]`).trigger('click');
+                                triggerPrintReceipt();
                             }
                             ftcPrdList();
                             $(`select[class~="customer-select"]`).val('WalkIn').change();
@@ -2448,7 +2447,6 @@ if($(".make-online-payment").length) {
                         rvPtRow(row.productId);
                         $(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
                     });
-                    $(".print-receipt").on("click", printReceipt);
                     document.getElementById("products-search-input").focus();
                 });
             }
@@ -2770,9 +2768,9 @@ if($(".make-online-payment").length) {
         e.preventDefault();
         let orderId = $(`span[class="generated_order"]`).html();
         window.open(
-        `${baseUrl}receipt/${orderId}`,
-        `Sales Invoice - Receipt #${orderId}`,
-        `width=650,height=750,resizable,scrollbars=yes,status=1`
+            `${baseUrl}receipt/${orderId}`,
+            `Sales Invoice - Receipt #${orderId}`,
+            `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
         );
     }
 
@@ -4049,7 +4047,7 @@ $(function() {
                     window.open(
                         `${baseUrl}receipt/${orderId}`,
                         `Sales Invoice - Receipt #${orderId}`,
-                        `width=650,height=750,resizable,scrollbars=yes,status=1`
+                        `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
                     );
                 });
                 hL();
