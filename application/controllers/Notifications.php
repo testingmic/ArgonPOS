@@ -259,7 +259,7 @@ class Notifications extends Pos {
 				// if($daysRemaining > 0) {
 
 				/* Set the expiry message */
-				$this->message = "<span class='text-danger'>Your trial period has ended.</span>";
+				$this->message = "<span class='text-danger'>Your trial version has expired.</span>";
 				$this->message .= "<a href=\"{$this->config->base_url('billing')}\" class=\"btn {$this->themeColors->bg_colors}\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
 				/* Set a session in motion */
 				$this->session->accountExpired = true;

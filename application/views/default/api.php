@@ -4259,7 +4259,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	$response = (Object) $response;
 
 	if($expiredAccount) {
-		$response->state = 'Account Expired: Viewing this Limited Data';
+		$response->state = 'Account Expired: Showing Limited Data.';
 	}
 
 }

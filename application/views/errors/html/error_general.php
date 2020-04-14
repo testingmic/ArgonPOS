@@ -1,6 +1,6 @@
 <?php
 #FETCH SOME GLOBAL FUNCTIONS
-global $config, $message, $button;
+global $config, $message, $button, $session;
 
 // Define Root Directory
 $rootDir = $config->base_url();
@@ -19,7 +19,7 @@ $rootDir = $config->base_url();
   <link rel="icon" href="<?= $rootDir; ?>assets/img/brand/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
   <link rel="stylesheet" href="<?= $rootDir; ?>assets/vendor/nucleo/css/nucleo.css" type="text/css">
-  <link rel="stylesheet" href="<?= $rootDir; ?>assets/vendor/%40fortawesome/fontawesome-free/css/all.min.css" type="text/css">
+  <link rel="stylesheet" href="<?= $rootDir; ?>assets/vendor/fortawesome/fontawesome-free/css/all.min.css" type="text/css">
   <link rel="stylesheet" href="<?= $rootDir; ?>assets/css/argon.min9f1e.css?v=1.1.0" type="text/css">
 </head>
 
@@ -50,14 +50,22 @@ $rootDir = $config->base_url();
       <div class="row justify-content-center">
         <div class="col-lg-5 col-md-7">
           <div class="card bg-secondary border-0 mb-0">
-            <img src="<?= $config->base_url('assets/img/404.jpg'); ?>" alt="" class="d-block mx-auto mt-4" height="250">
+            <?php if($session->accountExpired) { ?>
+              <img src="<?= $config->base_url('assets/images/trial.jpg'); ?>" alt="" class="d-block mx-auto mt-4" height="250">
+            <?php } else { ?>
+              <img src="<?= $config->base_url('assets/img/404.jpg'); ?>" alt="" class="d-block mx-auto mt-4" height="250">
+            <?php } ?>
             <div class="card-body text-center px-lg-5 py-lg-5">
               <div class="form-result">
                 <h4 class="mt-0 mb-3"><p><?= $message; ?></p></h4>
-                <?php if(isset($button) && !empty($button)) { ?>
-                <?= $button; ?>
+                <?php if(!$session->accountExpired) { ?>
+                  <?php if(isset($button) && !empty($button)) { ?>
+                  <?= $button; ?>
+                  <?php } else { ?>
+                  <a href="<?= $config->base_url('dashboard'); ?>" class="btn btn-primary"><i class="fa fa-home"></i> Back to Dashboard</a>
+                  <?php } ?>
                 <?php } else { ?>
-                <a href="<?= $config->base_url('dashboard'); ?>" class="btn btn-sm btn-primary">Back to Dashboard</a>
+                  <a href="<?= $config->base_url('billing'); ?>" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Activate Now</a>
                 <?php } ?>
               </div>
             </div>
