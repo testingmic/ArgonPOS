@@ -34,7 +34,7 @@ $session->productsLimit = 50;
   <div class="row mb-2 pos-reporting">
       <div class="col-lg-9 col-mb-8"></div>
       <div class="col-lg-3 col-mb-4 mb-2">
-          <select class="form-control selectpicker" name="periodSelect">
+          <select class="form-control selectpicker" name="periodSelected">
             <?php foreach($filterPeriod as $key => $value) { ?>
             <option <?= ($session->reportPeriod == $key) ? "selected" : null ?> value="<?= $key ?>"><?= $value ?></option>
             <?php } ?>
@@ -549,5 +549,10 @@ $session->productsLimit = 50;
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 <?php require_once 'foottags.php'; ?>
+<?php if($session->accountExpired) { ?>
+<script>
+  $(`select[name="periodSelected"]`).prop('disabled', true);
+</script>
+<?php } ?>
 </body>
 </html>

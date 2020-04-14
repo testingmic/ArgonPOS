@@ -3,8 +3,15 @@ $PAGETITLE = "Inventory Management";
 $productsObj = load_class("Products", "controllers");
 
 global $accessObject;
+
 // create a new object for the access level
 $accessObject->userId = $session->userId;
+
+// if expired then exit the page
+if($session->accountExpired) {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+    exit;
+}
 
 $categories = $productsObj->getCategories();
 $defaultImg = $productsObj->getDefaultImage();

@@ -1,5 +1,5 @@
 var cacheName = 'argonPOS-IDB';
-var appUrl = 'https://dev.localhost.com/pos/';
+var appUrl = 'http://localhost/pos/';
 
 var dc = [
   `${appUrl}`,

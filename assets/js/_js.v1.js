@@ -4328,7 +4328,7 @@ $(function() {
 
             if(offline) {
 
-                $(`select[name="periodSelected"], select[name="periodSelect"]`).prop('disabled', true);
+                $(`select[name="periodSelected"]`).prop('disabled', true);
                 $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
                 $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
                 $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
@@ -4533,7 +4533,7 @@ $(function() {
 
             } else if($(`div[class~="pos-reporting"]`).length) {
 
-                var period = $(`select[name="periodSelect"]`).val();
+                var period = $(`select[name="periodSelected"]`).val();
                 
                 if ($(`div[class~="reports-summary"]`).length) {
                     summaryItems(period);
@@ -4546,7 +4546,7 @@ $(function() {
                     branchPerformance(period);
                 }
 
-                $(`select[name="periodSelect"]`).on('change', function() {
+                $(`select[name="periodSelected"]`).on('change', function() {
                     sL();
                     var periodSelected = $(this).val();
                     summaryItems(periodSelected);

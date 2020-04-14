@@ -44,16 +44,9 @@ require_once "headtags.php";
       </div> --> <!--end col-->
       <div class="col-lg-3 col-mb-4 mb-2">
           <select class="form-control selectpicker" name="periodSelected">
-              <option value="today">Today</option>
-              <option <?= ($session->dashboardPeriod == "thisWk") ? "selected" : null ?> value="thisWk">
-                  This Week
-              </option>
-              <option <?= ($session->dashboardPeriod == "thisMonth") ? "selected" : null ?> value="thisMonth">
-                  This Month
-              </option>
-              <option <?= ($session->dashboardPeriod == "thisYr") ? "selected" : null ?> value="thisYr">
-                  This Year
-              </option>
+              <?php foreach($filterPeriod as $key => $value) { ?>
+              <option <?= ($session->reportPeriod == $key) ? "selected" : null ?> value="<?= $key ?>"><?= $value ?></option>
+              <?php } ?>
           </select>
       </div> <!--end col-->
       <div class="col-lg-1 mb-2 hidden">
@@ -84,5 +77,10 @@ require_once "headtags.php";
     
   </div><!--end row-->
 <?php require_once 'foottags.php'; ?>
+<?php if($session->accountExpired) { ?>
+<script>
+  $(`select[name="periodSelected"]`).prop('disabled', true);
+</script>
+<?php } ?>
 </body>
 </html>

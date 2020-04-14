@@ -2,8 +2,17 @@
 global $posClass, $session;
 
 $PAGETITLE = "Point of Sale";
+
+// if expired then exit the page
+if($session->accountExpired) {
+  show_error('Page Not Found', 'Sorry the page you are trying to view does not exist on this server');
+    exit;
+}
+
+// include the header file
 require_once "headtags.php";
-$customersClass = load_class("Customers", "controllers");
+
+// create some few objects
 $productsClass = load_class("Products", "controllers");
 $products = $productsClass->all();
 $categories = $productsClass->getCategories();
@@ -122,7 +131,7 @@ a[href="#finish"] {
                         <select name="payment_type" class="form-control custom-select2 payment-type-select">
                           <option value="0">--Please Select--</option>
                           <?php
-                          $payments = $customersClass->getAllRows(
+                          $payments = $posClass->getAllRows(
                             "settings",
                             "payment_options",
                             "clientId = '{$session->clientId}'"

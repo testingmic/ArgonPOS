@@ -17,6 +17,7 @@ class Notifications extends Pos {
 	// This is the response general response to be returned
 	public $notice = null;
 	public $message = null;
+	public $hasExpired = false;
 
 	// This is the global variable that checks if a notification is available for display
 	public $notificationAvailable = false;
@@ -255,17 +256,18 @@ class Notifications extends Pos {
 
 			/* If the user has expired usage */
 			if($daysRemaining <= 0) {
-			// if($daysRemaining > 0) {
+				// if($daysRemaining > 0) {
 
 				/* Set the expiry message */
 				$this->message = "<span class='text-danger'>Your trial period has ended.</span>";
 				$this->message .= "<a href=\"{$this->config->base_url('billing')}\" class=\"btn {$this->themeColors->bg_colors}\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
 				/* Set a session in motion */
 				$this->session->accountExpired = true;
+				$this->hasExpired = true;
 			}
 		}
 
-		return $this->message;
+		return $this;
 	}
 }
 ?>

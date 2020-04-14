@@ -102,12 +102,15 @@ if(!empty($product)) {
                             <h5 class="text-muted font-13">Description :</h5> 
                             <p><?= !empty($product->product_description) ? $product->product_description : "<span class='text-muted'>No description for product</span>" ?></p>
                             <div><strong>Product Expiry Date:</strong> <span class="<?= $expiry_color ?>"><?= date("jS F, Y", strtotime($product->expiry_date)) ?></span></div>
-                            <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>
-                            <div class="quantity mt-3 ">
-                                <button type="button" class="btn <?= $clientData->bg_color; ?> waves-effect waves-light" data-toggle="modal" data-animation="bounce" data-target=".bs-example-modal-lg">
-                                <i class="mdi mdi-pencil mr-2"></i> Edit product
-                            </button>
-                            </div>
+
+                            <?php if(!$session->accountExpired) { ?>
+                              <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>
+                              <div class="quantity mt-3 ">
+                                  <button type="button" class="btn <?= $clientData->bg_color; ?> waves-effect waves-light" data-toggle="modal" data-animation="bounce" data-target=".bs-example-modal-lg">
+                                  <i class="mdi mdi-pencil mr-2"></i> Edit product
+                              </button>
+                              </div>
+                            <?php } ?>
                             <?php } ?>
                         </div>
                     </div><!--end col-->
@@ -201,7 +204,7 @@ if(!empty($product)) {
       </div><!--end col-->
   </div><!--end row-->
 
-  <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>
+  <?php if($accessObject->hasAccess('inventory_branches', 'products') && !$session->accountExpired) { ?>
   <!--  Modal content for the above example -->
   <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">

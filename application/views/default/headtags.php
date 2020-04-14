@@ -154,6 +154,12 @@ if($setupInfo->type == "alpha") {
       background-color: <?= $clientData->bg_color_code; ?>;
       border: solid 1px #fff;
     }
+    .blur-content {
+      <?php if($session->accountExpired) { ?>
+        pointer-events: none;
+        filter: blur(4px);
+      <?php } ?>
+    }
   </style>
 </head>
 <body>
@@ -187,8 +193,8 @@ if($setupInfo->type == "alpha") {
                 <span class="nav-link-text">Dashboard</span>
               </a>
             </li>
-            <?php if(!$session->accountExpired) { ?>
-            <li class="nav-item">
+            <?php //if(!$session->accountExpired) { ?>
+            <li class="nav-item blur-content">
               <a class="nav-link <?= (in_array($SITEURL[0], ['point-of-sale'])) ? "active" : null; ?>" href="<?= $baseUrl ?>point-of-sale">
                 <i class="ni ni-ui-04 text-success"></i>
                 <span class="nav-link-text">Sales Register</span>
@@ -206,29 +212,29 @@ if($setupInfo->type == "alpha") {
                   </li>
                   <?php if($accessObject->hasAccess('view', 'quotes')) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>quotes" class="nav-link shortcut-offline">Quotes</a>
+                    <a href="<?= $baseUrl ?>quotes" class="nav-link blur-content shortcut-offline">Quotes</a>
                   </li>
                   <?php } ?>
                   <?php if($accessObject->hasAccess('view', 'orders')) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>orders" class="nav-link shortcut-offline">Orders</a>
+                    <a href="<?= $baseUrl ?>orders" class="nav-link blur-content shortcut-offline">Orders</a>
                   </li>
                   <?php } ?>
                   <?php if($clientData->allow_product_return) { ?>
                   <li class="nav-item">
-                    <a href="<?= $baseUrl ?>return" class="nav-link shortcut-offline">Return Sale</a>
+                    <a href="<?= $baseUrl ?>return" class="nav-link blur-content shortcut-offline">Return Sale</a>
                   </li>
                   <?php } ?>
                 </ul>
               </div>
             </li>
-            <li class="nav-item offline-menu">
+            <li class="nav-item blur-content offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['customers'])) ? "active" : null; ?>" href="<?= $baseUrl ?>customers">
                 <i class="fa fa-users text-purple"></i>
                 <span class="nav-link-text">Customers</span>
               </a>
             </li>
-            <li class="nav-item offline-menu">
+            <li class="nav-item blur-content offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['inventory', 'inventory-details', 'products', 'product-types', 'product-brands'])) ? "active" : null; ?>" href="#navbar-inventory" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-inventory">
                 <i class="ni ni-ungroup text-orange"></i>
                 <span class="nav-link-text">Inventory</span>
@@ -250,7 +256,7 @@ if($setupInfo->type == "alpha") {
                 <span class="nav-link-text">Analytics</span>
               </a>
             </li>
-            <?php } ?>
+            <?php // } ?>
             <?php if($accessObject->hasAccess('view', 'settings')) { ?>    
             <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'users', 'settings', 'import'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
@@ -261,7 +267,7 @@ if($setupInfo->type == "alpha") {
                 <ul class="nav nav-sm flex-column">
                   <?php if(!$session->accountExpired) { ?>
                     <?php if($accessObject->hasAccess('view', 'users')) { ?>
-                    <li class="nav-item">
+                    <li class="nav-item blur-content">
                       <a href="<?= $baseUrl ?>users" class="nav-link">
                         <i class="fa fa-users text-dark"></i>Users
                       </a>
@@ -269,20 +275,20 @@ if($setupInfo->type == "alpha") {
                     <?php } ?>
                     <?php if($accessObject->hasAccess('view', 'branches')) { ?>
                     <li class="nav-item">
-                      <a class="nav-link" href="<?= $baseUrl ?>outlets">
+                      <a class="nav-link blur-content" href="<?= $baseUrl ?>outlets">
                         <i class="ni ni-archive-2 text-green"></i>
                         <span class="nav-link-text">Store Outlets</span>
                       </a>
                     </li>
                     <?php } ?>
                     <?php if($accessObject->hasAccess('update', 'settings')) { ?>
-                    <li class="nav-item">
+                    <li class="nav-item blur-content">
                       <a class="nav-link <?= (in_array($SITEURL[0], ['settings'])) ? "active" : null; ?>" href="<?= $baseUrl ?>settings">
                         <i class="ni ni-align-left-2 text-default"></i>
                         <span class="nav-link-text">Settings</span>
                       </a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item blur-content">
                       <a class="nav-link <?= (in_array($SITEURL[0], ['import'])) ? "active" : null; ?>" href="<?= $baseUrl ?>import">
                         <i class="fa fa-download text-purple"></i>
                         <span class="nav-link-text">Import Data</span>
@@ -348,7 +354,7 @@ if($setupInfo->type == "alpha") {
               </a>
               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-dark bg-default dropdown-menu-right">
                 <div class="row shortcuts px-4">
-                  <a href="<?= $baseUrl ?>point-of-sale" class="col-4 shortcut-item">
+                  <a href="<?= $baseUrl ?>point-of-sale" class="col-4 blur-content shortcut-item">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-yellow">
                       <i class="ni ni-basket"></i>
                     </span>
@@ -367,21 +373,21 @@ if($setupInfo->type == "alpha") {
                     <small>Analytics</small>
                   </a>
                   <?php if($accessObject->hasAccess('view', 'branches')) { ?>
-                  <a href="<?= $baseUrl ?>branches" class="col-4 shortcut-item shortcut-offline">
+                  <a href="<?= $baseUrl ?>branches" class="col-4 blur-content shortcut-item shortcut-offline">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-purple">
                       <i class="ni ni-pin-3"></i>
                     </span>
                     <small>Outlets</small>
                   </a>
                   <?php } ?>
-                  <a href="<?= $baseUrl ?>inventory" class="col-4 shortcut-item shortcut-offline">
+                  <a href="<?= $baseUrl ?>inventory" class="col-4 blur-content shortcut-item shortcut-offline">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-orange">
                       <i class="fa fa-list"></i>
                     </span>
                     <small>Inventory</small>
                   </a>
                   <?php if($accessObject->hasAccess('view', 'users')) { ?>
-                  <a href="<?= $baseUrl ?>users" class="col-4 shortcut-item shortcut-offline">
+                  <a href="<?= $baseUrl ?>users" class="col-4 blur-content shortcut-item shortcut-offline">
                     <span class="shortcut-media avatar rounded-circle bg-gradient-gray-dark">
                       <i class="fa fa-users"></i>
                     </span>
@@ -408,19 +414,19 @@ if($setupInfo->type == "alpha") {
                 <div class="dropdown-header noti-title">
                   <h6 class="text-overflow m-0">Welcome!</h6>
                 </div>
-                <a href="<?= $baseUrl ?>profile" class="dropdown-item shortcut-offline">
+                <a href="<?= $baseUrl ?>profile" class="dropdown-item blur-content shortcut-offline">
                   <i class="ni ni-single-02"></i>
                   <span>My profile</span>
                 </a>
                 <?php if(!$session->accountExpired) { ?>
                   <?php if($accessObject->hasAccess('view', 'settings')) { ?>
-                  <a href="<?= $baseUrl ?>settings" class="dropdown-item shortcut-offline">
+                  <a href="<?= $baseUrl ?>settings" class="dropdown-item blur-content shortcut-offline">
                     <i class="ni ni-settings-gear-65"></i>
                     <span>Settings</span>
                   </a>
                   <?php } ?>
                 <?php } ?>
-                <a href="<?= $baseUrl ?>users-login-history" class="dropdown-item shortcut-offline">
+                <a href="<?= $baseUrl ?>users-login-history" class="dropdown-item blur-content shortcut-offline">
                   <i class="ni ni-calendar-grid-58"></i>
                   <span>Login History</span>
                 </a>

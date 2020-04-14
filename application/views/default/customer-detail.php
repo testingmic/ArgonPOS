@@ -71,7 +71,7 @@ if(isset($customerDetails->fullname)) {
         
         <div class="form-group text-white">
           <label for="periodSelect">Filter Record By Period</label>
-          <select class="form-control selectpicker" name="periodSelect">
+          <select class="form-control selectpicker" name="periodSelected">
             <?php foreach($filterPeriod as $key => $value) { ?>
             <option <?= ($session->reportPeriod == $key) ? "selected" : null ?> value="<?= $key ?>"><?= $value ?></option>
             <?php } ?>
@@ -330,6 +330,9 @@ $(function() {
         $(`div[id="newCustomerModal"] input[name="customer_id"]`).val(userId);
         $(`div[id="newCustomerModal"] input[name="request"]`).val('update-record');
     });
+    <?php if($session->accountExpired) { ?>
+    $(`select[name="periodSelected"]`).prop('disabled', true);
+    <?php } ?>
 });
 </script>
 </body>

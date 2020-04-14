@@ -8,7 +8,10 @@ header("Access-Control-Max-Age: 3600");
 header("Cache-Control: no-cache");
 
 //: initializing
-$response = (object) ["status" => "error", "message" => "Error Processing The Request"];
+$response = (object) [
+	"status" => "error", 
+	"message" => "Error Processing The Request"
+];
 
 //: create a new object
 $apiValidate = load_class('Api', 'models');
@@ -18,18 +21,29 @@ $apiValidate = load_class('Api', 'models');
 // print base64_encode("emmallob:dj0yJmk9bDg4dWFTaXVyVXFRJmQ9WVdrOWNIaDNUbHBvTTJNbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWFi");
 
 $apiAccessValues = $apiValidate->validateApiKey();
+$expiredAccount = true;
+// $theAccountState = 
 
 //: confirm that the user is logged in
 if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
-	// $admin_user->logged_InControlled() || 
-	// $response->status = 'success';
-	// $response->message = 'Entry successful';
+	//: if the user accessed the file using an access token
+	if(isset($apiAccessValues->clientId)) {
+		//: create a new object of the notification class
+		$accountNotify = load_class('Notifications', 'controllers', $apiAccessValues->clientId);
+		$theAccountState = $accountNotify->accountNotification()->hasExpired;
+	}
 
 	//: initializing
 	$loggedUserBranchId = (isset($apiAccessValues->branchId)) ? xss_clean($apiAccessValues->branchId) : $session->branchId;
 	$loggedUserClientId = (isset($apiAccessValues->clientId)) ? xss_clean($apiAccessValues->clientId) : $session->clientId;
 	$loggedUserId = (isset($apiAccessValues->userId)) ? xss_clean($apiAccessValues->userId) : $session->userId;
+
+	//: if the user requested the data from the browser
+	$expiredAccount = $session->accountExpired;
+
+	//: if the request is from an api request then push only json raw data
+	$rawJSON = (isset($apiAccessValues->branchId)) ? true : false;
 
 	//: create a new object
 	$dateClass = load_class('Dates', 'models');
@@ -42,6 +56,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	$clientData = $clientData[0];
 	$branchData = $branchData[0];
 
+	//: get the client information
 	$setupInfo = (Object) json_decode($clientData->setup_info);
 
 	//: create new objects
@@ -86,23 +101,25 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			$session->set_userdata("dashboardPeriod", $period);
 
+			$period = ($expiredAccount) ? "this-week" : $period;
+
 			// Check Sales Period
 			switch ($period) {
-				case 'thisWk':
+				case 'this-week':
 					$dateFrom = $dateClass->get_week("this_wkstart", date('Y-m-d'));
 					$dateTo = $dateClass->get_week("this_wkend", date('Y-m-d'));
 					$datePrevFrom = $dateClass->get_week("last_wkstart", date('Y-m-d'));
 					$datePrevTo = $dateClass->get_week("last_wkend", date('Y-m-d'));
 					$display = "Last Week";
 					break;
-				case 'thisMonth':
+				case 'this-month':
 					$dateFrom = $dateClass->get_month("this_mntstart", date('m'), date('Y'));
 					$dateTo = $dateClass->get_month("this_mntend", date('m'), date('Y'));
 					$datePrevFrom = $dateClass->get_month("last_mntstart", date('m'), date('Y'));
 					$datePrevTo = $dateClass->get_month("last_mntend", date('m'), date('Y'));
 					$display = "Last Month";
 					break;
-				case 'thisYr':
+				case 'this-year':
 					$dateFrom = date('Y-01-01');
 					$dateTo = date('Y-12-31');
 					$datePrevFrom = date('Y-01-01', strtotime("first day of last year"));
@@ -491,6 +508,9 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$period = (isset($postData->salesPeriod)) ? strtolower($postData->salesPeriod) : "today";
 			$metric = (isset($postData->queryMetric)) ? $postData->queryMetric : null;
 			$productLimit = ((!empty($postData->productsLimit)) ? (int) $postData->productsLimit : (!empty($session->productsLimit) ? $session->productsLimit : 50));
+
+			//: if account expired then show only the weeks data
+			$period = ($expiredAccount) ? "this-week" : $period;
 
 			// set the range in a session
 			if(isset($postData->salesPeriod)) {
@@ -1705,7 +1725,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	}
 
 	//: MOVE INTO THIS ENTIRE SECTION IF THE ACCOUNT HAS NOT YET EXPIRED
-	elseif(!$session->accountExpired) {
+	elseif(!$expiredAccount) {
 	
 		//: fetch customers list for json
 		if(isset($_POST["fetchCustomersOptionsList"]) && confirm_url_id (1, "fetchCustomersOptionsList")) {
@@ -4234,6 +4254,12 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 		}
 
+	}
+
+	$response = (Object) $response;
+
+	if($expiredAccount) {
+		$response->state = 'Account Expired: Viewing this Limited Data';
 	}
 
 }
