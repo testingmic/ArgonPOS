@@ -22,7 +22,8 @@ $apiValidate = load_class('Api', 'models');
 
 $apiAccessValues = $apiValidate->validateApiKey();
 $expiredAccount = true;
-// $theAccountState = 
+
+print_r($apiAccessValues);exit;
 
 //: confirm that the user is logged in
 if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {

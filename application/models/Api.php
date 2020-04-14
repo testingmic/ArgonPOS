@@ -56,7 +56,8 @@ class Api extends Pos {
 		$stmt = $this->pos->prepare("
 			SELECT 
 				a.username, a.access_token,
-				a.userId, b.clientId, b.branchId
+				a.userId, b.clientId, b.branchId,
+				a.expiry_date
 			FROM 
 				api_keys a
 			LEFT JOIN users b ON b.user_id = a.userId
@@ -69,6 +70,7 @@ class Api extends Pos {
 		while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
 			// verify the access token that has been parsed
 			if(password_verify($accessToken, $result->access_token)) {
+				$result->access_token = $accessToken;
 				return $result;
 			}
 		}
