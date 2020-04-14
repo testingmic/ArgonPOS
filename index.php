@@ -17,7 +17,7 @@ DEFINE('VIEWPATH', $application_folder.DIRECTORY_SEPARATOR);
 
 function forceHttps() {
 	if($_SERVER["SERVER_PORT"] !==433 && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"]=="off")) {
-		header("Location: https://dev.".$_SERVER["HTTP_HOST"].'.com'.$_SERVER["REQUEST_URI"]."");
+		// header("Location: https://dev.".$_SERVER["HTTP_HOST"].'.com'.$_SERVER["REQUEST_URI"]."");
 	}
 }
 

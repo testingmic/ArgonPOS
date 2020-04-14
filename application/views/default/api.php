@@ -2,20 +2,41 @@
 //: call global variables
 global $session, $pos, $admin_user, $accessObject, $posClass;
 //: set the page header type
-header("Content-Type: application/json");
+header('Content-Type: application/json; charset=utf-8');
+header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Max-Age: 3600");
+header("Cache-Control: no-cache");
 
 //: initializing
-$response = (object) ["status" => "error", "message" => "Error Processing Request"];
+$response = (object) ["status" => "error", "message" => "Error Processing The Request"];
+
+//: create a new object
+$apiValidate = load_class('Api', 'models');
+
+// ZW1tYWxsb2I6UDhHUnhFM0NKTW9PVWRUQWdTQmhLcUlwbGFZN2lXY205amVRenJ2Nk5rMGIx
+
+// print base64_encode("emmallob:dj0yJmk9bDg4dWFTaXVyVXFRJmQ9WVdrOWNIaDNUbHBvTTJNbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWFi");
+
+$apiAccessValues = $apiValidate->validateApiKey();
 
 //: confirm that the user is logged in
-if($admin_user->logged_InControlled()) {
+if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
+
+	// $admin_user->logged_InControlled() || 
+	// $response->status = 'success';
+	// $response->message = 'Entry successful';
+
+	//: initializing
+	$loggedUserBranchId = (isset($apiAccessValues->branchId)) ? xss_clean($apiAccessValues->branchId) : $session->branchId;
+	$loggedUserClientId = (isset($apiAccessValues->clientId)) ? xss_clean($apiAccessValues->clientId) : $session->clientId;
+	$loggedUserId = (isset($apiAccessValues->userId)) ? xss_clean($apiAccessValues->userId) : $session->userId;
 
 	//: create a new object
 	$dateClass = load_class('Dates', 'models');
 	
 	//: client data
-	$clientData = $posClass->getAllRows("settings", "*", "clientId='{$posClass->clientId}'");
-	$branchData = $posClass->getAllRows("branches", "*", "id='{$session->branchId}'");
+	$clientData = $posClass->getAllRows("settings", "*", "clientId='{$loggedUserClientId}'");
+	$branchData = $posClass->getAllRows("branches", "*", "id='{$loggedUserBranchId}'");
 	
 	//: set the data set
 	$clientData = $clientData[0];
@@ -24,7 +45,7 @@ if($admin_user->logged_InControlled()) {
 	$setupInfo = (Object) json_decode($clientData->setup_info);
 
 	//: create new objects
-	$accessObject->userId = $session->userId;
+	$accessObject->userId = $loggedUserId;
 	
 	//: where clause for the user role
 	$branchAccess = '';
@@ -36,17 +57,17 @@ if($admin_user->logged_InControlled()) {
 	$accessLimitInner2 = '';
 	$branchAccess2 = '';
 	$customerLimitInner2 = '';
-	$clientAccess = " AND a.clientId = '{$posClass->clientId}'";
-	$clientAccessInner = " AND b.clientId = '{$posClass->clientId}'";
+	$clientAccess = " AND a.clientId = '{$loggedUserClientId}'";
+	$clientAccessInner = " AND b.clientId = '{$loggedUserClientId}'";
 
 	//: use the access level for limit contents that is displayed
 	if(!$accessObject->hasAccess('monitoring', 'branches')) {
-		$branchAccess2 = " AND a.branch_id = '{$session->branchId}'";
-		$branchAccess = " AND a.branchId = '{$session->branchId}'";
-		$branchAccessInner = " AND b.branchId = '{$session->branchId}'";
-		$accessLimit = " AND a.recorded_by = '{$session->userId}'";
-		$accessLimitInner = " AND b.recorded_by = '{$session->userId}'";
-		$accessLimitInner2 = " AND c.recorded_by = '{$session->userId}'";
+		$branchAccess2 = " AND a.branch_id = '{$loggedUserBranchId}'";
+		$branchAccess = " AND a.branchId = '{$loggedUserBranchId}'";
+		$branchAccessInner = " AND b.branchId = '{$loggedUserBranchId}'";
+		$accessLimit = " AND a.recorded_by = '{$loggedUserId}'";
+		$accessLimitInner = " AND b.recorded_by = '{$loggedUserId}'";
+		$accessLimitInner2 = " AND c.recorded_by = '{$loggedUserId}'";
 	}
 
 	//: if the customer id is set
@@ -334,7 +355,7 @@ if($admin_user->logged_InControlled()) {
 					a.order_date, a.order_id, d.phone_1 AS contact,
 					a.payment_type, e.branch_name, f.name AS sales_person
 					", 
-					"a.clientId = '{$posClass->clientId}' && b.order_id = '{$postData->salesID}' ORDER BY b.id"
+					"a.clientId = '{$loggedUserClientId}' && b.order_id = '{$postData->salesID}' ORDER BY b.id"
 				);
 
 				if ($query != false) {
@@ -462,9 +483,14 @@ if($admin_user->logged_InControlled()) {
 		// process the summary results set
 		if (isset($_REQUEST['generateReport'], $_REQUEST['queryMetric']) && confirm_url_id(2, 'generateReport')) {
 
+			// default variables
+			$productLimit = 50;
+
+			// check parsed
 			$postData = (Object) array_map('xss_clean', $_REQUEST);
 			$period = (isset($postData->salesPeriod)) ? strtolower($postData->salesPeriod) : "today";
 			$metric = (isset($postData->queryMetric)) ? $postData->queryMetric : null;
+			$productLimit = ((!empty($postData->productsLimit)) ? (int) $postData->productsLimit : (!empty($session->productsLimit) ? $session->productsLimit : 50));
 
 			// set the range in a session
 			if(isset($postData->salesPeriod)) {
@@ -601,7 +627,7 @@ if($admin_user->logged_InControlled()) {
 				$posClass->updateData(
 					"settings",
 					"reports_period='{$period}'",
-					"clientId='{$posClass->clientId}'"
+					"clientId='{$loggedUserClientId}'"
 				);
 			}
 
@@ -1041,7 +1067,7 @@ if($admin_user->logged_InControlled()) {
 					FROM 
 						products a
 					LEFT JOIN branches b ON b.id = a.branchId
-					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT {$session->productsLimit}
+					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT {$productLimit}
 
 				");
 				$products_stmt->execute();
@@ -1373,7 +1399,7 @@ if($admin_user->logged_InControlled()) {
 					// access control
 					$userLimit = "";
 					if(!$accessObject->hasAccess('monitoring', 'branches')) {
-						$userLimit = "AND a.user_id='{$session->userId}'";
+						$userLimit = "AND a.user_id='{$loggedUserId}'";
 					}
 
 					// begin the query
@@ -1608,7 +1634,7 @@ if($admin_user->logged_InControlled()) {
 				$chart_stmt->execute();
 
 				// Check If User ID Exists
-				$branchesList = $posClass->getAllRows("branches", "branch_name, id", "clientId='{$posClass->clientId}' AND deleted='0'");
+				$branchesList = $posClass->getAllRows("branches", "branch_name, id", "clientId='{$loggedUserClientId}' AND deleted='0'");
 
 				// set some array functions
 				$Labeling = array();
@@ -1700,7 +1726,7 @@ if($admin_user->logged_InControlled()) {
 		elseif(isset($_POST["fetchPOSProductsList"]) && confirm_url_id (1, "fetchPOSProductsList")) {
 			// query the database
 			$result = $posClass->getAllRows("products", 
-				"id, product_image, category_id, product_title, source, quantity, category_id, product_image AS image, product_id, product_price, date_added, product_description, product_price, cost_price, threshold", "status = '1' AND branchId = '{$session->branchId}' AND clientId = '{$posClass->clientId}'");
+				"id, product_image, category_id, product_title, source, quantity, category_id, product_image AS image, product_id, product_price, date_added, product_description, product_price, cost_price, threshold", "status = '1' AND branchId = '{$loggedUserBranchId}' AND clientId = '{$loggedUserClientId}'");
 
 			// data
 			$productsList = [];
@@ -1826,7 +1852,7 @@ if($admin_user->logged_InControlled()) {
 				else {
 
 					// additional data
-					$email->branchId = (isset($email->branchId)) ? $email->branchId : $session->branchId;
+					$email->branchId = (isset($email->branchId)) ? $email->branchId : $loggedUserBranchId;
 					$email->template_type = (isset($email->thisRequest)) ? $email->thisRequest : "invoice";
 					$email->itemId = $session->_oid_Generated;
 					$email->fullname = (isset($email->fullname)) ? str_replace(["\t", "\n"], "", trim($email->fullname)) : null;
@@ -1838,7 +1864,7 @@ if($admin_user->logged_InControlled()) {
 								"fullname" => $email->fullname,
 								"email" => $email->thisEmail,
 								"customer_id" => $session->_uid_Generated,
-								"branchId" => $session->branchId
+								"branchId" => $loggedUserBranchId
 							]
 						]
 					];
@@ -1993,7 +2019,7 @@ if($admin_user->logged_InControlled()) {
 			// check the access levels
 			if($accessObject->hasAccess('view', 'branches')) {
 				// list all quotes
-				$accessLevelClause = "AND rq.branchId = '{$session->branchId}'"; 
+				$accessLevelClause = "AND rq.branchId = '{$loggedUserBranchId}'"; 
 			}
 
 			// query the database
@@ -2009,7 +2035,7 @@ if($admin_user->logged_InControlled()) {
 					us.name AS recorded_by
 				", 
 				"rq.deleted = '0' {$accessLevelClause} AND 
-					rq.clientId = '{$posClass->clientId}' AND rq.request_type = '{$postData->requestType}' ORDER BY rq.id DESC"
+					rq.clientId = '{$loggedUserClientId}' AND rq.request_type = '{$postData->requestType}' ORDER BY rq.id DESC"
 			);
 
 			// initializing
@@ -2132,7 +2158,7 @@ if($admin_user->logged_InControlled()) {
 						  FROM branches 
 						WHERE clientId = ? {$condition} ORDER BY id");
 
-					if ($query->execute([$posClass->clientId, 0])) {
+					if ($query->execute([$loggedUserClientId, 0])) {
 						$i = 0;
 						while ($data = $query->fetch(PDO::FETCH_OBJ)) {
 							$i++;
@@ -2186,7 +2212,7 @@ if($admin_user->logged_InControlled()) {
 					// Check If Branch Exists
 					$query = $pos->prepare("SELECT * FROM branches WHERE branch_id = ? && deleted = ? && clientId = ?");
 
-					if ($query->execute([$branchId, '0', $posClass->clientId])) {
+					if ($query->execute([$branchId, '0', $loggedUserClientId])) {
 
 						$data = $query->fetch(PDO::FETCH_OBJ);
 
@@ -2231,7 +2257,7 @@ if($admin_user->logged_InControlled()) {
 						if ($branchData->record_type == "new-record") {
 
 							// Check Email Exists
-							$checkData = $posClass->getAllRows("branches", "COUNT(*) AS proceed", "branch_name='{$branchData->branchName}' && branch_type = '{$branchData->branchType}' && deleted = '0' && clientId = '{$posClass->clientId}'");
+							$checkData = $posClass->getAllRows("branches", "COUNT(*) AS proceed", "branch_name='{$branchData->branchName}' && branch_type = '{$branchData->branchType}' && deleted = '0' && clientId = '{$loggedUserClientId}'");
 
 							if ($checkData != false && $checkData[0]->proceed == '0') {
 
@@ -2243,7 +2269,7 @@ if($admin_user->logged_InControlled()) {
 									// Add Record To Database
 									$response = $posClass->addData(
 										"branches" ,
-										"clientId='{$posClass->clientId}', branch_type='{$branchData->branchType}', branch_name='{$branchData->branchName}', location='{$branchData->location}', branch_email='{$branchData->email}', branch_contact='{$branchData->phone}', branch_logo='{$clientData->client_logo}', branch_id = '{$branch_id}'"
+										"clientId='{$loggedUserClientId}', branch_type='{$branchData->branchType}', branch_name='{$branchData->branchName}', location='{$branchData->location}', branch_email='{$branchData->email}', branch_contact='{$branchData->phone}', branch_logo='{$clientData->client_logo}', branch_id = '{$branch_id}'"
 									);
 
 									// Record user activity
@@ -2274,7 +2300,7 @@ if($admin_user->logged_InControlled()) {
 								// check if the user has permissions to perform this action
 								if($accessObject->hasAccess('update', 'branches')) {
 									// save the previous data set
-									$prevData = $posClass->getAllRows("branches", "*", "clientId='{$session->clientId}' AND branch_id='{$branchData->branchId}'")[0];
+									$prevData = $posClass->getAllRows("branches", "*", "clientId='{$loggedUserClientId}' AND branch_id='{$branchData->branchId}'")[0];
 
 									/* Record the initial data before updating the record */
 									$posClass->dataMonitoring('branches', $branchData->branchId, json_encode($prevData));
@@ -2283,7 +2309,7 @@ if($admin_user->logged_InControlled()) {
 									$response = $posClass->updateData(
 										"branches",
 										"branch_name='{$branchData->branchName}', location='{$branchData->location}', branch_type='{$branchData->branchType}', branch_email='{$branchData->email}', branch_contact='{$branchData->phone}'",
-										"branch_id='{$branchData->branchId}' && clientId='{$posClass->clientId}'"
+										"branch_id='{$branchData->branchId}' && clientId='{$loggedUserClientId}'"
 									);
 
 									// Record user activity
@@ -2327,7 +2353,7 @@ if($admin_user->logged_InControlled()) {
 					$query = $pos->prepare("SELECT status FROM branches WHERE id = ? && deleted = ? && clientId = ?");
 
 					// execute and fetch the record
-					if ($query->execute([$branchData->itemId, '0', $posClass->clientId])) {
+					if ($query->execute([$branchData->itemId, '0', $loggedUserClientId])) {
 						// get the data
 						$data = $query->fetch(PDO::FETCH_OBJ);
 						
@@ -2338,7 +2364,7 @@ if($admin_user->logged_InControlled()) {
 						$posClass->updateData(
 							"branches",
 							"status='{$state}'",
-							"clientId='{$posClass->clientId}' AND id='{$branchData->itemId}'"
+							"clientId='{$loggedUserClientId}' AND id='{$branchData->itemId}'"
 						);
 
 						// Record user activity
@@ -2357,10 +2383,10 @@ if($admin_user->logged_InControlled()) {
 			elseif(confirm_url_id(2, 'settingsManager')) {
 
 				// save the previous data set
-				$prevData = $posClass->getAllRows("settings", "*", "clientId='{$session->clientId}'")[0];
+				$prevData = $posClass->getAllRows("settings", "*", "clientId='{$loggedUserClientId}'")[0];
 
 				/* Record the initial data before updating the record */
-				$posClass->dataMonitoring('settings', $session->clientId, json_encode($prevData));
+				$posClass->dataMonitoring('settings', $loggedUserClientId, json_encode($prevData));
 
 				// update the store settings
 				if(isset($_POST['updateCompanyDetail']) && confirm_url_id(3, "updateCompanyDetail")) {
@@ -2457,11 +2483,11 @@ if($admin_user->logged_InControlled()) {
 								"settings",
 								"client_name='{$postData->company_name}', client_email='{$postData->email}', client_website='{$postData->website}', primary_contact='{$postData->primary_contact}', secondary_contact='{$postData->secondary_contact}', address_1='{$postData->address}', display_clock='{$display_clock}', theme_color_code='{$postData->theme_color}', theme_color='".json_encode($theme_color)."'
 								",
-								"clientId='{$posClass->clientId}'"
+								"clientId='{$loggedUserClientId}'"
 							);
 
 							// Record user activity
-							$posClass->userLogs('settings', $session->clientId, 'Updated the general settings tab of the Company.');
+							$posClass->userLogs('settings', $loggedUserClientId, 'Updated the general settings tab of the Company.');
 
 							// continue
 				            $status = 200;
@@ -2473,7 +2499,7 @@ if($admin_user->logged_InControlled()) {
 								$posClass->updateData(
 									"settings",
 									"client_logo='{$uploadedFile}'",
-									"clientId='{$posClass->clientId}'"
+									"clientId='{$loggedUserClientId}'"
 								);
 
 								$status = 201;
@@ -2516,11 +2542,11 @@ if($admin_user->logged_InControlled()) {
 						receipt_message='".xss_clean($postData->receipt_message)."',
 						terms_and_conditions='".htmlentities($postData->terms_and_conditions)."'
 						",
-						"clientId='{$posClass->clientId}'"
+						"clientId='{$loggedUserClientId}'"
 					);
 
 					// Record user activity
-					$posClass->userLogs('settings', $session->clientId, 'Updated the sales details tab of the Company.');
+					$posClass->userLogs('settings', $loggedUserClientId, 'Updated the sales details tab of the Company.');
 
 					$uploadDir = 'assets/images/company/';
 
@@ -2552,7 +2578,7 @@ if($admin_user->logged_InControlled()) {
 				        $posClass->updateData(
 							"settings",
 							"manager_signature='{$uploadedFile}'",
-							"clientId='{$posClass->clientId}'"
+							"clientId='{$loggedUserClientId}'"
 						);
 						$message = $config->base_url($uploadedFile);
 				    }		
@@ -2568,7 +2594,7 @@ if($admin_user->logged_InControlled()) {
 						$posClass->updateData(
 							"settings",
 							"reports_sales_attendant='".xss_clean($postData->attendantPerformance)."'",
-							"clientId='{$posClass->clientId}'"
+							"clientId='{$loggedUserClientId}'"
 						);
 					}
 				}
@@ -2597,7 +2623,7 @@ if($admin_user->logged_InControlled()) {
 								"square_feet_area='".xss_clean($value)."', 
 								recurring_expenses='".$postData->recurringExpense[$key]."',
 								fixed_expenses='".$postData->fixedExpense[$key]."'",
-								"clientId='{$posClass->clientId}' AND id='{$key}'"
+								"clientId='{$loggedUserClientId}' AND id='{$key}'"
 							);
 
 						}
@@ -2606,11 +2632,11 @@ if($admin_user->logged_InControlled()) {
 							"settings",
 							"total_expenditure='".xss_clean($totalExpenses)."',
 							space_per_square_foot='".xss_clean($totalSquareFoot)."'",
-							"clientId='{$posClass->clientId}'"
+							"clientId='{$loggedUserClientId}'"
 						);
 
 						// Record user activity
-						$posClass->userLogs('settings', $session->clientId, 'Updated the reports details tab of the Company.');
+						$posClass->userLogs('settings', $loggedUserClientId, 'Updated the reports details tab of the Company.');
 
 						$status = 201;
 					}
@@ -2687,11 +2713,11 @@ if($admin_user->logged_InControlled()) {
 					$posClass->updateData(
 						"settings",
 						"payment_options='".implode(",", $options)."'",
-						"clientId='{$posClass->clientId}'"
+						"clientId='{$loggedUserClientId}'"
 					);
 
 					// Record user activity
-					$posClass->userLogs('settings', $session->clientId, 'Updated the payment options of the Company.');
+					$posClass->userLogs('settings', $loggedUserClientId, 'Updated the payment options of the Company.');
 
 					$message = $options;
 
@@ -2812,7 +2838,7 @@ if($admin_user->logged_InControlled()) {
 								// Get Product Details
 								$product->branchId = $postData->branchId;
 								$product->transferQuantity = $postData->transferProductQuantity;
-								$product->userId = $session->userId;
+								$product->userId = $loggedUserId;
 								// generate a new stock auto id
 								$stockAutoId = random_string('alnum', 12);
 								
@@ -2834,8 +2860,8 @@ if($admin_user->logged_InControlled()) {
 								);
 
 								// Add Product Transfer To Inventory
-								$postData->clientId = $posClass->clientId;
-								$postData->userId = $session->userId;
+								$postData->clientId = $loggedUserClientId;
+								$postData->userId = $loggedUserId;
 								$postData->selling_price = $sellPrice;
 								$productsClass->addToInventory($postData);
 
@@ -2930,7 +2956,7 @@ if($admin_user->logged_InControlled()) {
 
 									$product->branchId = $postData->branchId;
 									$product->transferQuantity = $productQty;
-									$product->userId = $session->userId;
+									$product->userId = $loggedUserId;
 									$product->stockAutoId = $stockAutoId;
 
 									// Add Quantity To Product Table Stock
@@ -2949,8 +2975,8 @@ if($admin_user->logged_InControlled()) {
 									);
 
 									// Add Product Transfer To Inventory
-									$postData->clientId = $posClass->clientId;
-									$postData->userId = $session->userId;
+									$postData->clientId = $loggedUserClientId;
+									$postData->userId = $loggedUserId;
 									$postData->selling_price = $sellPrice;
 									$productsClass->addToInventory($postData);
 
@@ -3017,9 +3043,9 @@ if($admin_user->logged_InControlled()) {
 						$newQuantity = $eachProduct->quantity+$quantity;
 
 						//: form the sql query to insert
-						$updateQuery .= "UPDATE products SET quantity = (quantity+$quantity), threshold='{$threshold}', cost_price = '{$costPrice}', product_price='{$retailPrice}' WHERE id = '{$productId}' AND branchId='{$session->currentBranchId}' AND clientId='{$posClass->clientId}';";
+						$updateQuery .= "UPDATE products SET quantity = (quantity+$quantity), threshold='{$threshold}', cost_price = '{$costPrice}', product_price='{$retailPrice}' WHERE id = '{$productId}' AND branchId='{$session->currentBranchId}' AND clientId='{$loggedUserClientId}';";
 
-						$insertQuery .= "('{$posClass->clientId}', '{$session->currentBranchId}', '{$autoId}', '{$productId}', '{$costPrice}', '{$retailPrice}', '{$eachProduct->quantity}', '{$quantity}', '{$newQuantity}', '{$threshold}', '{$session->userId}'),";
+						$insertQuery .= "('{$loggedUserClientId}', '{$session->currentBranchId}', '{$autoId}', '{$productId}', '{$costPrice}', '{$retailPrice}', '{$eachProduct->quantity}', '{$quantity}', '{$newQuantity}', '{$threshold}', '{$loggedUserId}'),";
 					}
 
 				}
@@ -3046,7 +3072,7 @@ if($admin_user->logged_InControlled()) {
 				$res = (Object) [
 					'status' => 'error', 
 					'message' => 'Error Processing Request',
-					'branchId' => $session->branchId
+					'branchId' => $loggedUserBranchId
 				];
 				$imgDir = "assets/images/products";
 
@@ -3054,7 +3080,7 @@ if($admin_user->logged_InControlled()) {
 				if(isset($_POST['addProduct']) && confirm_url_id(2, 'addProduct')){
 
 					// check the product code 
-					if(!empty($_POST["product_code"]) && ($posClass->countRows("products", "product_id='".xss_clean($_POST["product_code"])."' AND branchId='{$session->branchId}'") > 0)) {
+					if(!empty($_POST["product_code"]) && ($posClass->countRows("products", "product_id='".xss_clean($_POST["product_code"])."' AND branchId='{$loggedUserBranchId}'") > 0)) {
 						$res->message = "A duplicate product is been added to the same branch.";
 					}
 					// start the validation process
@@ -3174,7 +3200,7 @@ if($admin_user->logged_InControlled()) {
 			            $postData->image = $uploadedFile;
 
 			            // save the previous data set
-						$prevData = $posClass->getAllRows("products", "*", "clientId='{$session->clientId}' AND id='{$postData->productId}'")[0];
+						$prevData = $posClass->getAllRows("products", "*", "clientId='{$loggedUserClientId}' AND id='{$postData->productId}'")[0];
 
 						/* Record the initial data before updating the record */
 						$posClass->dataMonitoring('products', $postData->productId, json_encode($prevData));
@@ -3255,7 +3281,7 @@ if($admin_user->logged_InControlled()) {
 						ON c.id = a.branchId
 					 WHERE a.clientId = ? && a.status = ? {$condition}");
 
-				if ($query->execute([$session->clientId, '1'])) {
+				if ($query->execute([$loggedUserClientId, '1'])) {
 					$i = 0;
 
 					while ($data = $query->fetch(PDO::FETCH_OBJ)) {
@@ -3382,7 +3408,7 @@ if($admin_user->logged_InControlled()) {
 
 								$response = $posClass->addData(
 									"users" ,
-									"clientId='{$session->clientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}'
+									"clientId='{$loggedUserClientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}'
 									"
 								);
 
@@ -3413,7 +3439,7 @@ if($admin_user->logged_InControlled()) {
 								$response = $posClass->updateData(
 									"users",
 									"name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}'",
-									"user_id='{$userData->userId}' && clientId='{$session->clientId}'"
+									"user_id='{$userData->userId}' && clientId='{$loggedUserClientId}'"
 								);
 
 								if ($response == true) {
@@ -3575,7 +3601,7 @@ if($admin_user->logged_InControlled()) {
 				//: validate the user information
 				if(!empty($postData->phone) && !preg_match('/^[0-9+]+$/', $postData->phone)) {
 					$message = "Please enter a valid contact number";
-				} elseif($postData->userId != $session->userId) {
+				} elseif($postData->userId != $loggedUserId) {
 					$message = "You are not permitted to update this account.";
 				} else {
 					//: update the user information
@@ -3602,7 +3628,7 @@ if($admin_user->logged_InControlled()) {
 				$itemId = xss_clean($_POST['itemId']);
 
 				// Check User ID Exists
-				$checkData = $posClass->getAllRows("users", "COUNT(*) AS proceed", "user_id='{$itemId}' AND clientId = '{$session->clientId}'");
+				$checkData = $posClass->getAllRows("users", "COUNT(*) AS proceed", "user_id='{$itemId}' AND clientId = '{$loggedUserClientId}'");
 				// confirm that the user has the needed permissions
 				if($accessObject->hasAccess('delete', 'users')) {
 
@@ -3610,19 +3636,19 @@ if($admin_user->logged_InControlled()) {
 					if ($checkData != false && $checkData[0]->proceed == '1') {
 						
 						// delete the user from the system
-						$response = $posClass->updateData("users", "status='0'", "user_id='{$itemId}' AND clientId = '{$session->clientId}'");
+						$response = $posClass->updateData("users", "status='0'", "user_id='{$itemId}' AND clientId = '{$loggedUserClientId}'");
 
 						if ($response == true) {
 							
 							// check the user who has been deleted
-							if($itemId == $session->userId) {
+							if($itemId == $loggedUserId) {
 								$status = 'success';
 								$message = "You have successfully deleted your account. Your session will end now. Contact Support if you need help restoring it.";
 								
 								// log user activity
 								$posClass->userLogs('user', $itemId, 'You have successfully deleted your account. Your session will end now. Contact Support if you need help restoring it.');
 
-								$session->userId = null;
+								$loggedUserId = null;
 								session_destroy();
 							} else {
 								$message = "User Have Been Successfully Deleted.";
@@ -3712,7 +3738,7 @@ if($admin_user->logged_InControlled()) {
 	                if($postData->request == "update-record") {
 
 	                	// save the previous data set
-						$prevData = $posClass->getAllRows("customers", "*", "clientId='{$session->clientId}' AND customer_id='{$postData->customer_id}'")[0];
+						$prevData = $posClass->getAllRows("customers", "*", "clientId='{$loggedUserClientId}' AND customer_id='{$postData->customer_id}'")[0];
 
 						/* Record the initial data before updating the record */
 						$posClass->dataMonitoring('customers', $postData->customer_id, json_encode($prevData));
@@ -3746,7 +3772,7 @@ if($admin_user->logged_InControlled()) {
 				} else {
 
 					// update the customr status
-					$query = $pos->prepare("UPDATE customers SET status='0' WHERE id='{$postData->itemId}' AND clientId='{$session->clientId}'");
+					$query = $pos->prepare("UPDATE customers SET status='0' WHERE id='{$postData->itemId}' AND clientId='{$loggedUserClientId}'");
 					
 					if($query->execute()) {
 						
@@ -3796,7 +3822,7 @@ if($admin_user->logged_InControlled()) {
 				//: run the query
 				$i = 0;
 	            # list categories
-	            $categoryList = $posClass->getAllRows("products_categories a", "a.*, (SELECT COUNT(*) FROM products b WHERE a.category_id = b.category_id) AS products_count", "a.clientId='{$session->clientId}'");
+	            $categoryList = $posClass->getAllRows("products_categories a", "a.*, (SELECT COUNT(*) FROM products b WHERE a.category_id = b.category_id) AS products_count", "a.clientId='{$loggedUserClientId}'");
 
 	            $categories = [];
 	            // loop through the branches list
@@ -3835,14 +3861,14 @@ if($admin_user->logged_InControlled()) {
 				$response = (Object) [
 					'status' => 'error', 
 					'message' => 'Error Processing Request',
-					'branchId' => $session->branchId
+					'branchId' => $loggedUserBranchId
 				];
 
 				if(empty($postData->name)) {
 					$response->message = "Category name cannot be empty";
 				} else {
 					if($postData->dataset == "update") {
-						$query = $pos->prepare("UPDATE products_categories SET category = '{$postData->name}' WHERE id='{$postData->id}' AND clientId='{$session->clientId}'");
+						$query = $pos->prepare("UPDATE products_categories SET category = '{$postData->name}' WHERE id='{$postData->id}' AND clientId='{$loggedUserClientId}'");
 
 						if($query->execute()) {
 							$response->status = 200;
@@ -3858,7 +3884,7 @@ if($admin_user->logged_InControlled()) {
 						$query = $pos->prepare("
 							INSERT INTO products_categories 
 							SET category = '{$postData->name}', 
-							category_id='{$itemId}', clientId='{$session->clientId}'
+							category_id='{$itemId}', clientId='{$loggedUserClientId}'
 						");
 
 						// if it was successfully executed
@@ -3882,7 +3908,7 @@ if($admin_user->logged_InControlled()) {
 				$response = (Object) [
 					'status' => 'error', 
 					'message' => 'Error Processing Request',
-					'branchId' => $session->branchId
+					'branchId' => $loggedUserBranchId
 				];
 
 				if(empty($postData->itemId)) {
@@ -3890,7 +3916,7 @@ if($admin_user->logged_InControlled()) {
 				} else {
 
 					// delete the product type from the system
-					$query = $pos->prepare("DELETE FROM products_categories WHERE id='{$postData->itemId}' AND clientId='{$session->clientId}'");
+					$query = $pos->prepare("DELETE FROM products_categories WHERE id='{$postData->itemId}' AND clientId='{$loggedUserClientId}'");
 					
 					// if it was successfully executed
 					if($query->execute()) {
@@ -4119,7 +4145,7 @@ if($admin_user->logged_InControlled()) {
 		                            }
 
 		                            // initializing
-		                            $sqlQuery .= "('{$session->clientId}','{$session->curBranchId}',{$unqData}";
+		                            $sqlQuery .= "('{$loggedUserClientId}','{$session->curBranchId}',{$unqData}";
 		                            $ik = 0;
 		                            // loop through each data
 		                            foreach($eachData as $eachKey => $eachValue) {

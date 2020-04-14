@@ -1,1 +1,0 @@
-[14-Apr-2020 17:24:30 Africa/Accra] PHP Notice:  Undefined property: stdClass::$nc_title in C:\xampp\htdocs\pos\application\controllers\Customers.php on line 74

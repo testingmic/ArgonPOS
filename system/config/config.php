@@ -12,8 +12,8 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['base_url'] = 'https://dev.localhost.com/pos';
-$config['manager_dashboard'] = 'https://dev.localhost.com/pos/app';
+$config['base_url'] = 'http://localhost/pos';
+$config['manager_dashboard'] = 'http://localhost/pos/app';
 $config['rowsperpage'] = 40;
 $config['version'] = 'v1';
 $config['site_url'] = 'https://www.visaminetsolutions.com';
