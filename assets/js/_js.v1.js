@@ -1769,11 +1769,16 @@ async function fetchBranchLists() {
 }
 fetchBranchLists();
 
-var triggerPrintReceipt = () => {
-    let orderId = $(`span[class="generated_order"]`).html();
+var triggerPrintReceipt = (saleId = null) => {
+    
+    let thisSaleId = saleId;
+
+    if(saleId == null) {
+        thisSaleId = $(`span[class="generated_order"]`).html();
+    }
     window.open(
-        `${baseUrl}receipt/${orderId}`,
-        `Sales Invoice - Receipt #${orderId}`,
+        `${baseUrl}receipt/${thisSaleId}`,
+        `Sales Invoice - Receipt #${thisSaleId}`,
         `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
     );
 
@@ -1841,7 +1846,9 @@ function cusPurHis() {
             });
 
         }, complete: function(data) {
-            triggerPrintReceipt();
+            $(`a[class~="print-receipt"]`).on('click', function() {
+                triggerPrintReceipt($(this).data('sales-id'));
+            });
         }, error: function(err) {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                 <p align="center">No records found.</p>
@@ -1945,7 +1952,7 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
                 });
                 if($(`span[class~="customersList"]`).length) {
                     setTimeout(() => {
-                        window.location.href = '';
+                        // window.location.href = '';
                     }, 1200);
                 } else  {
                     listCustomers();
@@ -3817,7 +3824,9 @@ $(function() {
 
                 },
                 complete: function(data) {
-                    triggerPrintReceipt();
+                    $(`a[class~="print-receipt"]`).on('click', function() {
+                        triggerPrintReceipt($(this).data('sales-id'));
+                    });
                 },
                 error: function(err) {
                     $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
