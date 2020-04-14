@@ -1,6 +1,6 @@
 const iName = 'argonPOS-db';
 const iVer = 1;
-var storeValues = $.parseJSON($(`link[rel="params"]`).attr('_cl'));
+var storeValues = $.parseJSON($(`link[rel="prc"]`).attr('_cl'));
 
 $(".overlay").css('display', 'block');
 

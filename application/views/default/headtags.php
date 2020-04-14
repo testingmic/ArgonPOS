@@ -95,32 +95,21 @@ if($setupInfo->type == "alpha") {
   <meta name="description" content="Start your development with a Dashboard for Bootstrap 4.">
   <meta name="author" content="<?= config_item('site_name'); ?>">
   <title><?= $PAGETITLE; ?> :: <?= config_item('site_name'); ?></title>
-  <!-- Extra details for Live View on GitHub Pages -->
-  <!-- Canonical SEO -->
   <link rel="canonical" href="<?= $baseUrl ?>" />
-  <!--  Social tags      -->
   <meta name="keywords" content="">
-  <!-- Schema.org markup for Google+ -->
   <meta itemprop="name" content="<?= $PAGETITLE; ?> :: <?= config_item('site_name'); ?>">
-  <meta itemprop="description" content="Start your development with a Dashboard for Bootstrap 4.">
-  <!-- Twitter Card data -->
+  <link rel="prc" _cl='{"_un":"<?= $clientData->client_name ?>","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>","cur":"<?= $clientData->default_currency ?>","prt":"<?= $clientData->print_receipt ?>","_clbn":"<?= $branchData->branch_name ?>"}'>
+  <meta itemprop="description" content="<?= config_item('site_name') ?> - Best Point of Sale Application to ease the stress of managing your stores.">
   <meta name="twitter:card" content="product">
-  <meta name="twitter:site" content="@visaminetsolutions">
+  <meta name="twitter:site" content="@argonpos">
   <meta name="twitter:title" content="<?= $PAGETITLE; ?> :: <?= config_item('site_name'); ?>">
-  <meta name="twitter:description" content="Start your development with a Dashboard for Bootstrap 4.">
-  <meta name="twitter:creator" content="@visaminetsolutions">
+  <meta name="twitter:creator" content="@argonpos">
   <meta name="twitter:image" content="<?= $config->base_url('assets/images/logo.png') ?>">
-  <!-- Open Graph data -->
   <meta property="og:title" content="<?= $PAGETITLE; ?> :: <?= config_item('site_name'); ?>" />
-  <meta property="og:type" content="article" />
   <meta property="og:url" content="<?= $baseUrl ?>" />
   <meta property="og:image" content="<?= $config->base_url('assets/images/logo.png') ?>" />
-  <meta property="og:description" content="Start your development with a Dashboard for Bootstrap 4." />
   <meta property="og:site_name" content="<?= config_item('site_name'); ?>" />
-  <!-- Favicon -->
   <link rel="icon" href="<?= $baseUrl ?>assets/img/brand/favicon.png" type="image/png">
-  <!-- Fonts -->
-  <!-- Icons -->
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/nucleo/css/nucleo.css" type="text/css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/fortawesome/fontawesome-free/css/all.min.css" type="text/css">
   <link href="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" type="text/css" />
@@ -130,7 +119,6 @@ if($setupInfo->type == "alpha") {
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/select2/dist/css/select2.min.css" type="text/css">
   <link href="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.css" rel="stylesheet" />
-  <link rel="params" _cl='{"_un":"<?= $clientData->client_name ?>","_cl":"<?= $session->clientId ?>","_clb":"<?= $session->branchId ?>","_ud":"<?= $session->userId ?>","_un":"<?= $session->userName; ?>","_hi":"<?= $accessObject->hasAccess('monitoring', 'branches'); ?>","cur":"<?= $clientData->default_currency ?>","prt":"<?= $clientData->print_receipt ?>","_clbn":"<?= $branchData->branch_name ?>"}'>
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/argon.min9f1e.css?v=1.1.0" type="text/css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/custom.css" type="text/css">
   <style>
