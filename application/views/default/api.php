@@ -4422,6 +4422,60 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	           	];
 			}
 
+			//: process the expense
+			elseif(isset($_POST["expenseId"], $_POST["date"], $_POST["category"], $_POST["amount"], $_POST["tax"]) && confirm_url_id(2, 'manageExpenses')) {
+
+				//: assign and clean the variables parsed
+				$postData = (Object) array_map('xss_clean', $_POST);
+
+				//: run some validations
+				if(isset($postData->outletId) && ($postData->outletId == 'null')){
+					$response->result = "Please select an outlet for this expense.";
+				} elseif(strlen($postData->date) != 10) {
+					$response->result = "Select a correct date.";
+				} elseif($postData->category == 'null') {
+					$response->result = "Category cannot be empty.";
+				} elseif(!preg_match('/^[0-9]+(\.[0-9]{1,2})?$/', $postData->amount)) {
+					$response->result = "Please enter a valid Amount. (Should contain at most 2 decimal places)";
+				} elseif(!empty($postData->tax) && !preg_match('/^[0-9]+(\.[0-9]{1,2})?$/', $postData->tax)) {
+					$response->result = "Please enter a valid Tax Value. (Should contain at most 2 decimal places)";
+				} else {
+
+					//: continue processing
+					$postData->outletId = (isset($postData->outletId)) ? $postData->outletId : $loggedUserBranchId;
+
+					//: predefined user request
+					$postData->userRequest = 'addExpense';
+
+					//: confirm if a valid expense id was parsed
+					if(!empty($postData->expenseId)) {
+						// run the query
+						$validExpense = $posClass->getAllRows("expenses", "COUNT(*) AS num_rows", "clientId='{$loggedUserClientId}' AND id='{$postData->expenseId}'")[0];
+						// check if it was found
+						if(!empty($validExpense) && ($validExpense->num_rows == 1)) {
+							// set the request to be to update the record
+							$postData->userRequest = 'updateExpense';
+						}
+					}
+
+					//: confirm that the user has the required permissions
+					if(($accessObject->hasAccess('expenses_add', 'expenses') && $postData->userRequest == 'addExpense') || ($accessObject->hasAccess('expenses_update', 'expenses') && $postData->userRequest == 'updateExpense')) {
+						
+						//: create a new object of the expenses class
+						$expensesObject = load_class('Expenses', 'controllers');
+						$request = $expensesObject->pushExpense($postData);
+
+						if($request) {
+							$response->status = 'success';
+							$response->result = 'Expense was successfully recorded';
+						}
+
+					}
+
+				}
+
+			}
+
 		}
 
 	}

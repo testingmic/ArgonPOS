@@ -101,7 +101,7 @@ global $accessObject;
                   <?php } ?>
                   <div class="form-group col-lg-12">
                     <label for="date">Date <span class="required">*</span></label>
-                    <input autocomplete="Off" type="text" maxlength="10" placeholder="Select Expense Date" name="date" id="date" class="form-control datepicker">
+                    <input value="<?= date("Y-m-d") ?>" autocomplete="Off" type="text" maxlength="10" placeholder="Select Expense Date" name="date" id="date" class="form-control datepicker">
                   </div>
                   <div class="form-group col-lg-12">
                     <label for="date">Expense Category <span class="required">*</span></label>
@@ -135,6 +135,7 @@ global $accessObject;
                   </div>
                   <div class="form-group col-lg-12">
                     <div class="text-right">
+                      <input type="hidden" name="expenseId" class="expenseId">
                       <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save</button>
                     </div>
                   </div>

@@ -57,7 +57,7 @@ $session->limitedData = false;
             <div class="card-body">
               <div class="row">
                 <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Sold Products Cost</h5>
+                  <h5 class="card-title text-uppercase text-muted mb-0">Purchase Price</h5>
                   <span class="h2 font-weight-bold mb-0 total-cost">0.00</span>
                 </div>
                 <div class="col-auto">
@@ -78,7 +78,7 @@ $session->limitedData = false;
             <div class="card-body">
               <div class="row">
                 <div class="col">
-                  <h5 class="card-title text-uppercase text-muted mb-0">Revenue</h5>
+                  <h5 class="card-title text-uppercase text-muted mb-0">Profit</h5>
                   <span class="h2 font-weight-bold mb-0 total-profit">0.00%</span>
                 </div>
                 <div class="col-auto">
