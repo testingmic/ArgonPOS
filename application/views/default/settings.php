@@ -77,9 +77,6 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
                   <li class="nav-item">
                     <a class="nav-link" id="payment_options_tab" data-toggle="pill" href="#payment_options">Payment Options</a>
                   </li>
-                  <li class="nav-item">
-                    <a class="nav-link" id="reports_options_tab" data-toggle="pill" href="#reports_options">Reports</a>
-                  </li>
                 </ul>        
               </div><!--end card-body-->
             </div><!--end card-->
@@ -419,81 +416,6 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
 
                           </div>
                         </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="tab-pane fade" id="reports_options">
-                <div class="row">
-                  <div class="col-lg-12">
-                    <div class="card">
-                      <?= form_loader(); ?>
-                      <?= connectionLost(); ?>
-                      <div class="card-body">
-                        <form autocomplete="Off" data-form="reports-details" class="company_settings" action="<?= $config->base_url('api/branchManagment/settingsManager/updateReportsDetails'); ?>" method="post" enctype="multipart/form-data">
-                          <div class="row">
-
-                            <div class="col-lg-12">
-                              <div class="form-group">
-                                <label for="branches_sq_feet">Branches Information</label>
-                                <table width="100%" class="table table-bordered">
-                                  <thead>
-                                    <th>Branch Name</th>
-                                    <th>Type</th>
-                                    <th>Square Foot Area</th>
-                                    <th>Monthly Recurring Expenses</th>
-                                    <th>Monthly Fixed Expense</th>
-                                  </thead>
-                                  <tbody>
-                                    <?php
-                                    $branchList = $posClass->getAllRows("branches", "*", "clientId='{$session->clientId}' AND deleted='0'");
-                                    // loop through the branches list
-                                    foreach($branchList as $eachBranch) {
-                                      ?>
-                                      <tr>
-                                        <td><?= $eachBranch->branch_name ?></td>
-                                        <td><?= $eachBranch->branch_type ?></td>
-                                        <td><input placeholder="Sq. Feet Area" name="squareFeetArea[<?= $eachBranch->id ?>]" onkeypress="return isNumber(event);" value="<?= $eachBranch->square_feet_area ?>" type="text" name="" id="square_feet_<?= $eachBranch->id ?>" class="form-control"></td>
-                                        <td>
-                                          <div class="input-group">
-                                            <div class="input-group-prepend">
-                                              <span class="input-group-text">GH&cent;</span>
-                                            </div>
-                                            <input placeholder="Sq. Feet Area" name="recurringExpense[<?= $eachBranch->id ?>]" onkeypress="return isNumber(event);" value="<?= $eachBranch->recurring_expenses ?>" type="text" name="" id="recurring_expenses_<?= $eachBranch->id ?>" class="form-control">
-                                          </div>
-                                        </td>
-                                        <td>
-                                          <div class="input-group">
-                                            <div class="input-group-prepend">
-                                              <span class="input-group-text">GH&cent;</span>
-                                            </div>
-                                            <input placeholder="Sq. Feet Area" name="fixedExpense[<?= $eachBranch->id ?>]" onkeypress="return isNumber(event);" value="<?= $eachBranch->fixed_expenses ?>" type="text" name="" id="fixed_expenses_<?= $eachBranch->id ?>" class="form-control">
-                                        </td>
-                                      </tr>
-                                      <?php 
-                                    }
-                                    ?>
-                                  </tbody>
-                                </table>
-                              </div>
-                            </div>
-
-
-                            <?php if($accessObject->hasAccess('update', 'settings')) { ?>
-                              <div class="col-lg-10"></div>
-                              <div class="col-lg-2 text-right">
-                                <input type="hidden" name="updateReportDetails" value="updateReportDetails">
-                                <button type="submit" class="btn <?= $clientData->btn_outline ?>"><i class="fa fa-save"></i> Save Changes</button>
-                              </div>
-                            <?php } ?>
-
-                          
-                          </div>
-
-                        </form>
-
                       </div>
                     </div>
                   </div>

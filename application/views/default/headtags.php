@@ -185,7 +185,6 @@ if(in_array($SITEURL[0], ["sales", "analytics", "customer-detail"])) {
                 <span class="nav-link-text">Dashboard</span>
               </a>
             </li>
-            <?php //if(!$session->accountExpired) { ?>
             <li class="nav-item blur-content">
               <a class="nav-link <?= (in_array($SITEURL[0], ['point-of-sale'])) ? "active" : null; ?>" href="<?= $baseUrl ?>point-of-sale">
                 <i class="ni ni-ui-04 text-success"></i>
@@ -242,13 +241,28 @@ if(in_array($SITEURL[0], ["sales", "analytics", "customer-detail"])) {
                 </ul>
               </div>
             </li>
+            <li class="nav-item blur-content offline-menu">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['expenses', 'expenses-category'])) ? "active" : null; ?>" href="#navbar-expenses" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-expenses">
+                <i class="fa fa-money-bill text-danger"></i>
+                <span class="nav-link-text">Expenses</span>
+              </a>
+              <div class="collapse <?= (in_array($SITEURL[0], ['expenses', 'expenses-category'])) ? "show" : null; ?>" id="navbar-expenses">
+                <ul class="nav nav-sm flex-column">
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>expenses" class="nav-link">Expenses</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>expenses-category" class="nav-link">Categories</a>
+                  </li>
+                </ul>
+              </div>
+            </li>
             <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['analytics', 'customer-detail'])) ? "active" : null; ?>" href="<?= $baseUrl ?>analytics">
                 <i class="ni ni-chart-pie-35 text-info"></i>
                 <span class="nav-link-text">Analytics</span>
               </a>
             </li>
-            <?php // } ?>
             <?php if($accessObject->hasAccess('view', 'settings')) { ?>    
             <li class="nav-item offline-menu">
               <a class="nav-link <?= (in_array($SITEURL[0], ['outlets', 'users', 'settings', 'import'])) ? "active" : null; ?>" href="#navbar-tables" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-tables">
