@@ -10,7 +10,6 @@ if(!$admin_user->logged_InControlled()) {
     include_once "login.php";
     exit;
 }
-
 // client data
 $clientData = $posClass->getAllRows("settings", "*", "clientId='{$posClass->clientId}'");
 $branchData = $posClass->getAllRows("branches", "*", "id='{$session->branchId}'");

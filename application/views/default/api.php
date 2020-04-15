@@ -499,13 +499,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		if (isset($_REQUEST['generateReport'], $_REQUEST['queryMetric']) && confirm_url_id(2, 'generateReport')) {
 
 			// default variables
-			$productLimit = 50;
+			$productLimit = 100;
 
 			// check parsed
 			$postData = (Object) array_map('xss_clean', $_REQUEST);
 			$period = (isset($postData->salesPeriod)) ? strtolower($postData->salesPeriod) : "today";
 			$metric = (isset($postData->queryMetric)) ? $postData->queryMetric : null;
-			$productLimit = ((!empty($postData->productsLimit)) ? (int) $postData->productsLimit : (!empty($session->productsLimit) ? $session->productsLimit : 50));
+			$productLimit = ((!empty($postData->productsLimit)) ? (int) $postData->productsLimit : (!empty($session->productsLimit) ? $session->productsLimit : $productLimit));
 
 			//: if account expired then show only the weeks data
 			$period = ($expiredAccount) ? "this-week" : $period;

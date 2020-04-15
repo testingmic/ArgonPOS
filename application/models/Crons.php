@@ -3,17 +3,26 @@
 class Crons {
 
 	public $dbConn;
+	public $storeContent;
+	public $pdfAttachment = null;
 
 	public function __construct() {
 		$this->baseUrl = "https://pos.visaminetsolutions.com/";
-		$this->siteName = "ArgonPOS";
+		$this->siteName = "EvelynPOS - Analitica Innovare";
 	}
 
-	private function dbConn() {
+	public function addToMailList(stdClass $mailData) {
+		
+		global $evelyn;
+
+
+	}
+
+	public function dbConn() {
 		
 		// CONNECT TO THE DATABASE
 		$connectionArray = array(
-			'hostname' => "mysql.uk.cloudlogin.co",
+			'hostname' => "localhost",
 			'database' => 'kofifenix_einvnt',
 			'username' => 'kofifenix_einvnt',
 			'password' => 't0Wwp0KB7r'
@@ -57,8 +66,7 @@ class Crons {
 		            b.product_unit_price AS product_price, a.payment_type, a.order_date AS request_date, 
 		            e.name AS recorder_name, a.overall_order_amount, a.order_amount_balance,
 		            f.branch_name, CONCAT(d.firstname, ' ', d.lastname) AS customer_name, 
-		            d.phone_1, d.residence, d.email, g.receipt_message,
-		            g.client_name, g.client_email, g.client_logo, g.client_website
+		            d.phone_1, d.residence, d.email, g.client_name, g.receipt_message
 	            FROM sales_details b 
 	            LEFT JOIN products c ON b.product_id = c.id 
 	            LEFT JOIN sales a ON a.order_id = b.order_id 
@@ -75,8 +83,7 @@ class Crons {
 		            c.product_title, b.*, a.request_discount, a.request_date, a.request_type,
 		            CONCAT(d.firstname, ' ', d.lastname) AS customer_name, 
 		            f.branch_name, d.phone_1, e.name AS recorder_name, 
-		            d.residence, d.email, g.receipt_message,
-		            g.client_name, g.client_email, g.client_logo, g.client_website
+		            d.residence, d.email, g.client_name
 	            FROM requests_details b 
 	                LEFT JOIN products c ON b.product_id = c.id 
 	                INNER JOIN requests a ON a.request_id = b.request_id 
@@ -111,9 +118,10 @@ class Crons {
 
 	        $overall = number_format($subTotal - $discount, 2);
 	        $request_date = $query[0]->request_date;
-	        $request_type = (isset($query[0]->request_type)) ? $query[0]->request_type : "Invoice";
+	        $request_type = "INVOICE";
 	        $recorded_by = $query[0]->recorder_name;
 	        $order_balance = ($queryType == "invoice") ? $query[0]->order_amount_balance : 0.00;
+	        $amount_tendered = number_format(($query[0]->order_amount_paid+$order_balance), 2);
 	        $order_amount_paid = ($queryType == "invoice") ? number_format($query[0]->order_amount_paid, 2) : 0.00;
 
 	        $subTotalRow = "
@@ -135,7 +143,7 @@ class Crons {
 	            <tr class=\"bg-dark text-white\">
 	                <th class=\"border-0\"></th>                                                        
 	                <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>Amount Paid</b></td>
-	                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>GH&cent; {$order_amount_paid}</b></td>
+	                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>GH&cent; ".($amount_tendered)."</b></td>
 	            </tr>";
 
 	        // show this section if its an invoice
@@ -148,29 +156,21 @@ class Crons {
 		    }
 
 	        $mailerContent = '
-	        	<style>
-				    .bg-span {
-						color: #5e2572; 
-				    	font-size: 30px;
-				    	font-weight:bolder;
-				    	max-width: 100px;
-				    }
-				    h1 {
-				        color: navy;
-				        font-family: times;
-				        font-size: 20pt;
-				        text-decoration: none;
-				    }
-				</style>
-				<div style="margin: auto auto; width: 610px;">
-					<table width="600px" cellpadding="0" style="min-height: 400px; margin: auto auto;" cellspacing="0">
+	        <!DOCTYPE html>
+			<html>
+				<head>
+					<title>EvelynPOS_Invoice_'.$invoiceId.'</title>
+				</head>
+				<body style="background: #d0ceb8">
+				<div style="margin: auto auto; width: 610px; background: #fff; border-radius: 5px; box-shadow: 0px 1px 2px #000;">
+					<table width="600px" cellpadding="5px" style="min-height: 400px; margin: auto auto;" cellspacing="5px">
 						<tr style="padding: 5px; border-bottom: solid 1px #ccc;">
 							<td colspan="4" align="center" style="padding: 10px;">
 								<h1 style="margin-bottom: 0px; margin-top:0px">'.strtoupper($query[0]->client_name).'</h1>
 								'.(!empty($query[0]->branch_name) ? "(".$query[0]->branch_name.")" : null).'<br>
 								'.(($queryType == "invoice") ? "Served by: " : "Prepared By: ").' '.$query[0]->recorder_name.'
-								<hr style="border: dashed 1px #ccc;">
-								<div style="font-family: Calibri Light; font-size: 16px">
+								<hr style="border: dashed 1px #ccc;"><br>
+								<div style="font-family: Calibri Light; font-size: 15px">
 								Receipt #: <strong>'.$invoiceId.'</strong><br>
 								'.date("d M Y h:ia", strtotime($request_date)).'
 								</div>
@@ -193,46 +193,155 @@ class Crons {
 						'.$rows.'
 						'.$subTotalRow.'
 					</table>
-					<table width="600px">
+					<table width="600px" align="center">
 						<tbody style="text-align: center;">
 							<tr>
-								<td colspan="4">
+								<td colspan="4" align="center">
 									<hr style="border: dashed 1px #ccc; text-align: center;">
 									<img width="150px" src="'.$this->baseUrl.'assets/images/logo.png"  alt="logo-small" class="logo-sm">
 								</td>
 							</tr>
 						</tbody>
 					</table>
-				</div>';
+				</div>
+				</body>
+			</html>';
 	    }
 
-	    // generate a new pdf document
-		$fileName = strtolower("C:\\xampp\htdocs\\analitica_innovare\\einventory\\assets\\pdfs\\".$request_type."_".$invoiceId);
+		return $mailerContent;
 
-		// $this->generateEmailAttachment($fileName, $mailerContent);
+	}
+
+	private function generateGeneralMessage($message, $subject, $template_type) {
+
+		$mailerContent = '
+		<!DOCTYPE html>
+        <html>
+            <head>
+                <title>'.$subject.'</title>
+            </head>
+            <body style="background: #d0ceb8">
+                <div style="margin: auto auto; width: 610px; background: #fff; box-shadow: 0px 1px 2px #000; border-radius: 5px">
+                    <table width="600px" border="0" cellpadding="0" style="min-height: 400px; margin: auto auto;" cellspacing="0">
+                        <tr style="padding: 5px; border-bottom: solid 1px #ccc;">
+                            <td colspan="4" align="center" style="padding: 10px;">
+                                <h1 style="margin-bottom: 0px; margin-top:0px">'.$this->siteName.'</h1>
+                                <hr style="border: dashed 1px #ccc;">
+                                <div style="font-family: Calibri Light; background: #9932cc; font-size: 20px; padding: 5px;color: white; text-transform: uppercase; font-weight; bolder">
+                                <strong>'.$subject.'</strong>
+                                </div>
+                                <hr style="border: dashed 1px #ccc;">
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase;">
+                                '.$message.'
+                            </td>
+                        </tr>
+                    </table>
+                    <table width="600px">
+                        <tbody style="text-align: center;">
+                            <tr>
+                                <td colspan="4">
+                                    <hr style="border: dashed 1px #ccc; text-align: center;">
+                                    <img width="150px" src="'.$this->baseUrl.'assets/images/logo.png"  alt="logo-small" class="logo-sm">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </body>
+        </html>';
 
 		return $mailerContent;
 	}
 
+	public function loadEmailRequests() {
+		
+		// begin the database connection
+		$this->dbConn();
+
+		// run the query
+		$stmt = $this->dbConn->prepare(
+            "SELECT 
+            	a.*, 
+            	b.client_name, b.client_email, b.client_logo, 
+            	b.primary_contact, b.address_1, c.branch_name, 
+            	c.location, c.branch_contact, c.branch_email,
+            	b.client_website
+            FROM email_list a
+            LEFT JOIN settings b ON a.clientId = b.clientId
+            LEFT JOIN branches c ON c.branch_id = a.branchId
+            WHERE a.sent_status='0' AND a.deleted='0' LIMIT 5
+        ");
+        $stmt->execute();
+
+        $dataToUse = null;
+
+        // looping through the content
+        while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
+        	
+        	// set the store content
+        	$this->storeContent = $result;
+
+        	// commence the processing
+        	if(in_array($result->template_type, array("invoice", "request"))) {
+        		$subject = ($result->template_type == "invoice") ? "Sales Invoice #{$result->itemId}" : ucfirst($result->template_type)." Invoice #{$result->itemId}";
+        		$dataToUse = $this->loadSalesInvoice($result->itemId, $result->template_type);
+
+        		// generate a new pdf document
+				$fileName = "/home/www/dev.analiticainnovare.net/app/evelyn/pos/assets/pdfs/".$result->template_type."_".$result->itemId;
+
+				$this->pdfAttachment = $fileName;
+
+				$this->generateEmailAttachment($fileName, $dataToUse);
+
+        	} elseif(in_array($result->template_type, array("login", "recovery"))) {
+        		$subject = $result->subject;
+        		$dataToUse = $this->generateGeneralMessage($result->message, $subject, $result->template_type);
+        	}
+
+        	// use the content submitted
+        	if(!empty($dataToUse)) {
+
+        		// convert the recipient list to an array
+        		$recipient_list = json_decode($result->recipients_list, true);
+        		$recipient_list = $recipient_list["recipients_list"];
+        		
+    			// submit the data for processing
+    			$mailing = $this->cronSendMail($recipient_list, $subject, $dataToUse);
+
+    			// set the mail status to true
+    			if($mailing) {
+    				$this->dbConn->query("UPDATE email_list SET sent_status = '1', date_sent=now() WHERE id='{$result->id}'");
+
+    				print "Mails successfully sent\n";
+    			}
+
+        	}
+        }
+
+	}
+
 	private function generateEmailAttachment($fileName, $fileContent) {
 
+		// print_r($this->storeContent);exit;
 		// create a new object
-		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\pdf\\tcpdf_include.php";
-
-		// require "/home/www/dev.analiticainnovare.net/pos/pos/system/libraries/pdf/tcpdf_include.php";
+		require "/home/www/dev.analiticainnovare.net/app/evelyn/pos/system/libraries/pdf/tcpdf_include.php";
 
 		// create new PDF document
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
 		// set document information
 		$pdf->SetCreator(PDF_CREATOR);
-		$pdf->SetAuthor('Argon POS - VisamiNetSolutions');
-		$pdf->SetTitle("$invoiceId | $clientData->branch_name - ".config_item('site_name'));
+		$pdf->SetAuthor('EvelynPOS - Analitica Innovare');
+		$pdf->SetTitle("{$this->storeContent->itemId} | {$this->storeContent->branch_name} - {$this->siteName}");
 		$pdf->SetSubject('Sales Invoice');
-		$pdf->SetKeywords('cms, sales, invoice, pos, VisamiNetSolutions');
+		$pdf->SetKeywords('cms, sales, invoice, evelyn, analitica innovare');
 
 		// set default header data
-		$pdf->SetHeaderData('assets/images/logo.png', PDF_HEADER_LOGO_WIDTH, $clientData->branch_name, "Phone: " .$clientData->branch_contact."\nEmail: ".$clientData->client_email."\nWebsite: ".$clientData->client_website);
+		$pdf->SetHeaderData('/home/www/dev.analiticainnovare.net/app/evelyn/pos/assets/images/logo.png', PDF_HEADER_LOGO_WIDTH, $this->storeContent->branch_name, "Phone: " .$this->storeContent->branch_contact."\nEmail: ".$this->storeContent->client_email."\nWebsite: ".$this->storeContent->client_website);
 
 		// set header and footer fonts
 		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
@@ -272,114 +381,16 @@ class Crons {
 
 	}
 
-	private function generateGeneralMessage($message, $subject, $template_type) {
-
-		$mailerContent = '
-		<div style="margin: auto auto; width: 610px;">
-			<table width="600px" border="1" cellpadding="0" style="min-height: 400px; margin: auto auto;" cellspacing="0">
-				<tr style="padding: 5px; border-bottom: solid 1px #ccc;">
-					<td colspan="4" align="center" style="padding: 10px;">
-						<h1 style="margin-bottom: 0px; margin-top:0px">'.$this->siteName.'</h1>
-						<hr style="border: dashed 1px #ccc;">
-						<div style="font-family: Calibri Light; background: #9932cc; font-size: 20px; padding: 5px;color: white; text-transform: uppercase; font-weight; bolder">
-						<strong>'.$subject.'</strong>
-						</div>
-						<hr style="border: dashed 1px #ccc;">
-					</td>
-				</tr>
-
-				<tr>
-					<td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase;">
-						'.$message.'
-					</td>
-				</tr>
-			</table>
-			<table width="600px">
-				<tbody style="text-align: center;">
-					<tr>
-						<td colspan="4">
-							<hr style="border: dashed 1px #ccc; text-align: center;">
-							<img width="150px" src="'.$this->baseUrl.'assets/images/logo.png"  alt="logo-small" class="logo-sm">
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>';
-
-		return $mailerContent;
-	}
-
-	private function loadEmailRequests() {
-		
-		// begin the database connection
-		$this->dbConn();
-
-		try {
-
-			// run the query
-			$stmt = $this->dbConn->prepare(
-	            "SELECT 
-	            	a.*, 
-	            	b.client_name, b.client_email, b.client_logo, b.primary_contact, b.address_1,
-	            	c.branch_name, c.location, c.branch_contact, c.branch_email
-	            FROM email_list a
-	            LEFT JOIN settings b ON a.clientId = b.clientId
-	            LEFT JOIN branches c ON c.branch_id = a.branchId
-	            WHERE a.sent_status='0' AND a.deleted='0' LIMIT 5
-	        ");
-	        $stmt->execute();
-
-	        $dataToUse = null;
-
-	        // looping through the content
-	        while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-	        	
-	        	// commence the processing
-	        	if(in_array($result->template_type, array("invoice", "request"))) {
-	        		$subject = ($result->template_type == "invoice") ? "Sales Invoice #{$result->itemId}" : ucfirst($result->template_type)." Invoice #{$result->itemId}";
-	        		$dataToUse = $this->loadSalesInvoice($result->itemId, $result->template_type);
-	        	} elseif(in_array($result->template_type, array("login", "recovery"))) {
-	        		$subject = $result->subject;
-	        		$dataToUse = $this->generateGeneralMessage($result->message, $subject, $result->template_type);
-	        	}
-
-	        	// use the content submitted
-	        	if(!empty($dataToUse)) {
-
-	        		// convert the recipient list to an array
-	        		$recipient_list = json_decode($result->recipients_list, true);
-	        		$recipient_list = $recipient_list["recipients_list"];
-	        		
-	    			// submit the data for processing
-	    			$mailing = $this->cronSendMail($recipient_list, $subject, $dataToUse);
-
-	    			// set the mail status to true
-	    			if($mailing) {
-	    				$this->dbConn->query("UPDATE email_list SET sent_status = '1', date_sent=now() WHERE id='{$result->id}'");
-
-	    				print "Mails successfully sent\n";
-	    			}
-
-	        	}
-	        }
-
-	    } catch(PDOException $e) {
-	    	return $e->getMessage();
-	    }
-
-	}
-
 	private function cronSendMail($recipient_list, $subject, $message) {
 
-		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Phpmailer.php";
-		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Smtp.php";
-
+		require "/home/www/dev.analiticainnovare.net/app/evelyn/pos/system/libraries/Phpmailer.php";
+		require "/home/www/dev.analiticainnovare.net/app/evelyn/pos/system/libraries/Smtp.php";
 		$mail = new Phpmailer();
 		$smtp = new Smtp();
 
 		$config = (Object) array(
 			'subject' => $subject,
-			'headers' => "From: (Argon POS - VisamiNetSolutions) <info@analiticainnovare.com> \r\n Content-type: text/html; charset=utf-8",
+			'headers' => "From: (EvelynPOS - Analitica Innovare) <no-reply@analiticainnovare.net> \r\n Content-type: text/html; charset=utf-8",
 			'Smtp' => true,
 			'SmtpHost' => 'mail.supremecluster.com',
 			'SmtpPort' => '465',
@@ -389,7 +400,7 @@ class Crons {
 		);
 
 		$mail->isSMTP();
-		$mail->SMTPDebug = 1;
+		$mail->SMTPDebug = 0;
 		$mail->Host = $config->SmtpHost;
 		$mail->SMTPAuth = true;
 		$mail->Username = $config->SmtpUser;
@@ -416,12 +427,12 @@ class Crons {
 		if($mail->send()) {
 			return true;
 		} else {
- 			return false;
+			return false;
 		}
 
 	}
 
-	private function customerPreferredPayment() {
+	public function customerPreferredPayment() {
 		// begin the database connection
 		$this->dbConn();
 		$last30Days = date("Y-m-d", strtotime("30 days ago"));
@@ -510,14 +521,10 @@ class Crons {
 
 	}
 
-	public function processAllMails() {
-		$this->loadEmailRequests();
-		$this->customerPreferredPayment();
-	}
-
 }
 
 // create new object
 $cronMailer = new Crons;
-$cronMailer->processAllMails();
+$cronMailer->loadEmailRequests();
+$cronMailer->customerPreferredPayment();
 ?>

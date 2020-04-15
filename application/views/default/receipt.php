@@ -90,6 +90,7 @@ if(confirm_url_id(1)) {
         $request_type = $query[0]->request_type;
         $recorded_by = $query[0]->recorder_name;
         $order_balance = $query[0]->order_amount_balance;
+        $amount_tendered = number_format(($query[0]->order_amount_paid+$order_balance), 2);
         $order_amount_paid = number_format($query[0]->order_amount_paid, 2);
 
         $subTotalRow = "
@@ -111,7 +112,7 @@ if(confirm_url_id(1)) {
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
                 <td colspan=\"2\" style=\"padding-top: 10px; padding-bottom:10px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>Amount Paid</b></td>
-                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} {$order_amount_paid}</b></td>
+                <td style=\"padding: 5px; font-family: Calibri Light; border-bottom: solid 1px #ccc;\"><b>{$clientData->default_currency} ".($amount_tendered)."</b></td>
             </tr>
             <tr class=\"bg-dark text-white\">
                 <th class=\"border-0\"></th>                                                        
@@ -133,8 +134,8 @@ if(!$found) {
 <head>
 	<title>EvelynPOS_Invoice_<?= $orderId ?></title>
 </head>
-<body>
-	<div style="margin: auto auto; width: 610px;">
+<body style="background: #1cdcca">
+	<div style="margin: auto auto; width: 610px; background: #fff; border-radius: 5px; box-shadow: 0px 1px 2px #000;">
 		<table width="600px" cellpadding="0" style="min-height: 400px; margin: auto auto;" cellspacing="0">
 			<tr style="padding: 5px; border-bottom: solid 1px #ccc;">
 				<td colspan="4" align="center" style="padding: 10px">
@@ -178,11 +179,11 @@ if(!$found) {
 	</div>
 	<script>
 		window.onload = (evt) => {
-			window.print();
+			// window.print();
 		}
 
 		window.onafterprint = (evt) => {
-			window.close();
+			// window.close();
 		}
 	</script>
 </body>

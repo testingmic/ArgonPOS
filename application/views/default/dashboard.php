@@ -9,7 +9,7 @@ require_once "headtags.php";
 global $posClass, $baseUrl, $clientData;
 
 $session->reportingCustomerId = null;
-$session->productsLimit = 100;
+$session->productsLimit = 4;
 ?>	
 <!-- Header -->
 <div class="sales-overview-data"></div>
