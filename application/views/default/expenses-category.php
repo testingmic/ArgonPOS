@@ -40,19 +40,24 @@ global $accessObject;
 <div class="container-fluid mt--6">
   
   <div class="row">
-      
-      <div class="col-lg-12 col-sm-12 productsList">
+      <style>
+        table.dataTable thead tr th {
+            word-wrap: break-word!important;
+            word-break: break-all!important;
+        }
+      </style>
+      <div class="col-lg-12 col-sm-12">
           <div class="card">
               <div class="card-body">
                 <div class="table-responsive">
-                  <table data-content="non-filtered" class="table nowrap datatable-buttons expenseCategories">
+                  <table width="100%" class="table expenseCategories">
                       <thead class="thead-light">
-                          <tr>
-                              <th width="7%">#</th>
-                              <th>Category</th>
-                              <th>Category Description</th>
-                              <th width="10%"></th>
-                          </tr>
+                        <tr>
+                            <th width="7%">#</th>
+                            <th width="20%">Category</th>
+                            <th width="60%">Category Description</th>
+                            <th width="13%"></th>
+                        </tr>
                       </thead>
                       <tbody></tbody>
                   </table>
@@ -63,7 +68,7 @@ global $accessObject;
 
   </div><!--end row-->
 <?php if($accessObject->hasAccess('category_add', 'expenses') || $accessObject->hasAccess('category_update', 'expenses')) { ?>
-<div class="modal fade categoryModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div class="modal fade categoryModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
       <div class="modal-content">
         <?= form_loader(); ?>

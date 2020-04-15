@@ -4257,6 +4257,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	            		$eachCategory->action = "---";
 	            	}
 
+	            	$eachCategory->description = limit_words($eachCategory->description, 10)."...";
+
 	                $categories[] = $eachCategory;
 	           	}
 
@@ -4359,6 +4361,65 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$posClass->userLogs('expenses-category', $postData->itemId, 'Deleted the Expenses Category from the system.');
 					}
 				}
+			}
+
+			//: main expenses data
+			elseif(isset($_POST["listExpenses"]) && confirm_url_id(2, "listExpenses")) {
+				//: run the query
+				$i = 0;
+
+	            # list expenses
+	            $expensesList = $posClass->getAllRows("
+	            	expenses a 
+	            	LEFT JOIN expenses_category b ON b.id = a.category_id 
+	            	LEFT JOIN branches c ON c.id = a.branchId
+	            	LEFT JOIN users d ON d.user_id = a.created_by
+	            	", 
+	            	"a.*, c.branch_name, c.branch_contact, b.name AS category, d.name AS created_by", 
+	            	"a.clientId='{$loggedUserClientId}' AND a.status='1' {$branchAccess}"
+	        	);
+
+	            $expenses = [];
+	            $totals = 0;
+	            $tax = 0;
+	            // loop through the branches list
+	            foreach($expensesList as $eachExpense) {
+	            	$i++;
+	            	
+	            	$totals += $eachExpense->amount;
+	            	$tax += $eachExpense->tax;
+
+	            	$eachExpense->row = $i;
+	            	$eachExpense->action = "";
+
+	            	if($accessObject->hasAccess('expenses_update', 'expenses')) {
+
+	            		$eachExpense->action .= "<a data-content='".json_encode($eachExpense)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-expense\" data-id=\"{$eachExpense->id}\"><i class=\"fa fa-edit\"></i></a>";
+	            	}
+	            	
+	            	if($accessObject->hasAccess('expenses_delete', 'expenses')) {
+	            		$eachExpense->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Expense?\" data-request=\"expense\" data-url=\"{$config->base_url('api/expensesManagement/deleteExpense')}\" data-id=\"{$eachExpense->id}\"><i class=\"fa fa-trash\"></i></a>";
+	            	}
+
+	            	if(empty($eachExpense->action)) {
+	            		$eachExpense->action = "---";
+	            	}
+
+	            	$eachExpense->description = limit_words($eachExpense->description, 10)."...";
+
+	                $expenses[] = $eachExpense;
+	           	}
+
+	           	$response = [
+	           		'status' => 200,
+	           		'result' => [
+	           			'list' => $expenses,
+	           			'summary' => [
+	           				'tax' => $tax,
+	           				'total' => $totals
+	           			]
+	           		]
+	           	];
 			}
 
 		}

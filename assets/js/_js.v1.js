@@ -686,6 +686,68 @@ if($(`table[class~="productsList"]`).length) {
     listCatLst();
 }
 
+if($(`table[class~="expensesList"]`).length) {
+
+    $(`div[class~="expensesModal"]`).modal('show');
+    
+    $(`div[class="main-content"]`).on('click', `a[class~="add-expense"]`, function(e) {
+        $(`div[class~="expensesModal"] form`)[0].reset();
+        $(`div[class~="expensesModal"] form select`).val('null').change;
+        $(`div[class~="expensesModal"]`).modal('show');
+    });
+
+    var popCatLst = (expensesData) => {
+        hL();
+        $(`table[class~="expensesList"]`).dataTable().fnDestroy();
+        $(`table[class~="expensesList"]`).dataTable({
+            "aaData": expensesData,
+            "iDisplayLength": 10,
+            "buttons": ["copy", "print","csvHtml5"],
+            "lengthChange": !1,
+            "dom": "Bfrtip",
+            "columns": [
+               {"data": 'row'},
+               {"data": 'date'},
+               {"data": 'category'},
+               {"data": 'amount'},
+               {"data": 'tax'},
+               {"data": 'payment_type'},
+               {"data": 'description'},
+               {"data": 'action'}
+            ]
+        });
+
+        delI();
+
+        $(`div[class="main-content"]`).on('click', `a[class~="edit-expense"]`, function(e) {
+            let categoryId = $(this).data('id');
+            let expensesData = $(this).data('content');
+            // $(`textarea[name="description"]`).val(categoryData.description);
+            // $(`input[name="name"]`).val(categoryData.name);
+            // $(`input[name="categoryId"]`).val(categoryData.id);
+            // $(`input[name="request"]`).val("update");
+            // $(`div[class~="expensesModal"]`).modal('show');
+        });
+    }
+
+    function listExpenses() {
+        $.ajax({
+            method: "POST",
+            url: `${baseUrl}api/expensesManagement/listExpenses`,
+            data: { listExpenses: true},
+            dataType: "JSON",
+            success: function(resp) {
+                popCatLst(resp.result.list);
+            }, complete: function(data) {
+                hL();
+            }, error: function(err) {
+                hL();
+            }
+        });
+    }
+
+    listExpenses();
+}
 
 if($(`table[class~="expenseCategories"]`).length) {
 
@@ -737,9 +799,8 @@ if($(`table[class~="expenseCategories"]`).length) {
         $(`table[class~="expenseCategories"]`).dataTable({
             "aaData": expensesCategoryData,
             "iDisplayLength": 10,
-            "buttons": ["copy", "print","csvHtml5"],
-            "lengthChange": !1,
             "dom": "Bfrtip",
+            "autoWidth": false,
             "columns": [
                {"data": 'row'},
                {"data": 'name'},
