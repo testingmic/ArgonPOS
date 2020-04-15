@@ -4446,6 +4446,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 					//: predefined user request
 					$postData->userRequest = 'addExpense';
+					$postData->payment_type = 'cash';
 
 					//: confirm if a valid expense id was parsed
 					if(!empty($postData->expenseId)) {
@@ -4465,7 +4466,26 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$expensesObject = load_class('Expenses', 'controllers');
 						$request = $expensesObject->pushExpense($postData);
 
+						// if the request was successful
 						if($request) {
+							
+							//: add the activity log
+							if($postData->userRequest == 'addExpense') {
+								//: get the expense id
+								$itemId = $posClass->lastRowId('expenses');
+								//: log the activity
+								$posClass->userLogs('expenses', $itemId, 'Added a new Expense from the system.');
+
+								$response->clearform = true;
+							} else {
+
+								//: log the user activity
+								$posClass->userLogs('expenses', $postData->expenseId, 'Updated the expense details already recorded.');
+
+								$response->clearform = false;
+							}
+
+							// parse the success response
 							$response->status = 'success';
 							$response->result = 'Expense was successfully recorded';
 						}

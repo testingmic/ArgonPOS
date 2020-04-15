@@ -123,11 +123,11 @@ global $accessObject;
                   </div>
                   <div class="form-group col-lg-12">
                     <label for="Amount">Amount <span class="required">*</span></label>
-                    <input autocomplete="Off" type="text" maxlength="13" placeholder="Select Expense Amount" name="amount" id="amount" onkeypress="return isNumber(event)" class="form-control">
+                    <input autocomplete="Off" type="text" maxlength="13" placeholder="Enter Expense Amount" name="amount" id="amount" onkeypress="return isNumber(event)" class="form-control">
                   </div>
                   <div class="form-group col-lg-12">
-                    <label for="tax">Tax</label>
-                    <input autocomplete="Off" type="text" maxlength="13" placeholder="Select Expense Tax" name="tax" id="tax" onkeypress="return isNumber(event)" class="form-control">
+                    <label for="tax">Tax Amount</label>
+                    <input autocomplete="Off" type="text" maxlength="13" placeholder="Expense Tax Amount" name="tax" id="tax" onkeypress="return isNumber(event)" class="form-control">
                   </div>
                   <div class="form-group col-lg-12">
                     <label for="description">Description</label>

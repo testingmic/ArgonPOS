@@ -695,7 +695,7 @@ function toastError(msg) {
 
 if($(`table[class~="expensesList"]`).length) {
 
-    $(`div[class~="expensesModal"]`).modal('show');
+    // $(`div[class~="expensesModal"]`).modal('show');
 
     $(`div[class="main-content"]`).on('click', `a[class~="add-expense"]`, function(e) {
         $(`div[class~="expensesModal"] form`)[0].reset();
@@ -713,6 +713,10 @@ if($(`table[class~="expensesList"]`).length) {
                 type: resp.status,
                 title: resp.result
             });
+
+            if(resp.clearform == true) {
+                $(`form[class="expenseForm"]`)[0].reset();
+            }
             $(`div[class="form-content-loader"]`).css("display","none");
         }, 'json').catch((err) => {
             toastError('Sorry! Error encountered while processing the form');
@@ -731,12 +735,13 @@ if($(`table[class~="expensesList"]`).length) {
             "dom": "Bfrtip",
             "columns": [
                {"data": 'row'},
-               {"data": 'date'},
+               {"data": 'start_date'},
                {"data": 'category'},
                {"data": 'amount'},
                {"data": 'tax'},
                {"data": 'payment_type'},
                {"data": 'description'},
+               {"data": 'created_by'},
                {"data": 'action'}
             ]
         });
