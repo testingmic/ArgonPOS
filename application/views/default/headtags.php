@@ -102,6 +102,7 @@ if(in_array($SITEURL[0], ["sales", "analytics", "customer-detail"])) {
   <meta property="og:image" content="<?= $config->base_url('assets/images/logo.png') ?>" />
   <meta property="og:site_name" content="<?= config_item('site_name'); ?>" />
   <link rel="icon" href="<?= $baseUrl ?>assets/img/brand/favicon.png" type="image/png">
+  <link href="<?= $baseUrl ?>assets/css/datepicker.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/nucleo/css/nucleo.css" type="text/css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/fortawesome/fontawesome-free/css/all.min.css" type="text/css">
   <link href="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" type="text/css" />
@@ -110,7 +111,6 @@ if(in_array($SITEURL[0], ["sales", "analytics", "customer-detail"])) {
   <link href="<?= $baseUrl ?>assets/vendor/jquery-steps/jquery.steps.css"  rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/datatables.net-select-bs4/css/select.bootstrap4.min.css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/vendor/select2/dist/css/select2.min.css" type="text/css">
-  <link href="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.css" rel="stylesheet" />
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/argon.min9f1e.css?v=1.1.0" type="text/css">
   <link rel="stylesheet" href="<?= $baseUrl ?>assets/css/custom.css" type="text/css">
   <style>

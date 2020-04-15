@@ -686,6 +686,101 @@ if($(`table[class~="productsList"]`).length) {
     listCatLst();
 }
 
+
+if($(`table[class~="expenseCategories"]`).length) {
+
+    $(`div[class="main-content"]`).on('click', `a[class~="add-category"]`, function(e) {
+        $(`input[name="name"]`).val('');
+        $(`input[name="categoryId"]`).val('');
+        $(`input[name="request"]`).val("add");
+        $(`textarea[name="description"]`).val("");
+        $(`div[class~="categoryModal"]`).modal('show');
+    });
+
+    $(`div[class~="categoryModal"] button[type="submit"]`).on('click', function() {
+        let name = $(`input[name="name"]`).val();
+        let description = $(`textarea[name="description"]`).val();
+        let id = $(`input[name="categoryId"]`).val();
+        let request = $(`input[name="request"]`).val();
+
+        $(`div[class="form-content-loader"]`).css("display","none");
+
+        $.post(baseUrl+"api/expensesManagement/saveCategory", {name: name, description:description, id: id, dataset: request}, (res) => {
+            if(res.status == 200){
+                $(`div[class~="categoryModal"]`).modal('hide');
+                Toast.fire({
+                    type: 'success',
+                    title: res.message
+                });
+                $(`div[class="form-content-loader"]`).css("display","none");
+                listCatLst();
+            } else {
+                Toast.fire({
+                    type: 'error',
+                    title: res.message
+                });
+                $(`div[class="form-content-loader"]`).css("display","none");                 
+            }
+        }, 'json')
+        .catch((err) => {
+            Toast.fire({
+                type: 'error',
+                title: "Error Processing Request"
+            })      
+            $(`div[class="form-content-loader"]`).css("display","none");
+        });
+    });
+
+    var popCatLst = (expensesCategoryData) => {
+        hL();
+        $(`table[class~="expenseCategories"]`).dataTable().fnDestroy();
+        $(`table[class~="expenseCategories"]`).dataTable({
+            "aaData": expensesCategoryData,
+            "iDisplayLength": 10,
+            "buttons": ["copy", "print","csvHtml5"],
+            "lengthChange": !1,
+            "dom": "Bfrtip",
+            "columns": [
+               {"data": 'row'},
+               {"data": 'name'},
+               {"data": 'description'},
+               {"data": 'action'}
+            ]
+        });
+
+        delI();
+
+        $(`div[class="main-content"]`).on('click', `a[class~="edit-category"]`, function(e) {
+            let categoryId = $(this).data('id');
+            let categoryData = $(this).data('content');
+            $(`textarea[name="description"]`).val(categoryData.description);
+            $(`input[name="name"]`).val(categoryData.name);
+            $(`input[name="categoryId"]`).val(categoryData.id);
+            $(`input[name="request"]`).val("update");
+            $(`div[class~="categoryModal"]`).modal('show');
+        });
+    }
+
+    function listCatLst() {
+        $.ajax({
+            method: "POST",
+            url: `${baseUrl}api/expensesManagement/listExpenseCategories`,
+            data: { listExpenseCategories: true},
+            dataType: "JSON",
+            success: function(resp) {
+                popCatLst(resp.result);
+            }, complete: function(data) {
+                hL();
+            }, error: function(err) {
+                hL();
+            }
+        });
+    }
+
+    listCatLst();
+}
+
+
 async function listRequests(requestType, tableName) {
 
     sL();

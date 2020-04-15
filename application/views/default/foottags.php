@@ -102,7 +102,7 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
   
-  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'outlets', 'product-types','customers'])) { ?>
+  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'outlets', 'product-types','customers', 'expenses-category'])) { ?>
   <div class="modal fade delete-modal" tabindex="-1" id="deleteData" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">
@@ -237,7 +237,10 @@
 <script src="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.min.js"></script>
 <?php } ?>
 <script type="text/javascript"><?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>Cookies.set("sidenav-state", "unpinned");<?php } else { ?>Cookies.set("sidenav-state", "pinned");<?php } ?></script>
-<script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js?v=1.1.0"></script>
+
+<script src="<?= $baseUrl ?>assets/js/datepicker.min.js"></script>
+
+<script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
 <script src="<?= $baseUrl ?>assets/js/_js.v1.js"></script>
