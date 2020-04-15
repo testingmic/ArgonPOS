@@ -219,6 +219,7 @@ if(!empty($product)) {
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
               </div>
               <div class="modal-body">
+                <div class="card mb-0 p-3">
                   <form id="updateProductForm" autocomplete="Off" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('api/inventoryManagement/editProduct'); ?>">
                       <div class="row">
                           <div class="col-md-4">
@@ -312,7 +313,8 @@ if(!empty($product)) {
                               
                           </div>
                       </div>
-                  </form>  
+                  </form> 
+                </div> 
               </div>
           </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->

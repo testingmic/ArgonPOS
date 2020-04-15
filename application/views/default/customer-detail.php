@@ -53,10 +53,10 @@ if(isset($customerDetails->fullname)) {
       <div class="row" style="width: 100%">
         <div class="col-lg-7 col-md-10">
           <h1 class="display-2 text-white"><?= $customerDetails->fullname ?></h1>
-          <?php if(!$session->accountExpired) { ?>
+          <?php if(!$session->accountExpired && $customerId != 'WalkIn') { ?>
             <?php if($accessObject->hasAccess('update', 'customers')) { ?>
-              <a href="javascript:void(0);" data-value="<?= $customerDetails->id ?>" class="edit-customer btn btn-neutral">Edit Customer</a>
-              <a href="" data-id="<?= $customerDetails->id ?>" data-info='<?= json_encode($customerDetails) ?>'></a>
+              <a href="javascript:void(0);" data-value="<?= $customerDetails->customer_id ?>" class="edit-customer btn btn-neutral">Edit Customer</a>
+              <a href="" data-id="<?= $customerDetails->customer_id ?>" data-info='<?= json_encode($customerDetails) ?>'></a>
             <?php } ?>
           <?php } ?>
         </div>
@@ -312,10 +312,10 @@ $(function() {
         let periodSelected = $(this).val();
         cusPurHis(periodSelected);
     });
-
     $(`select[name="employeeId"`).on('change', function() {
-        window.location.href = `${baseUrl}reports/`+$(this).val();
+        window.location.href = `${baseUrl}customer-detail/`+$(this).val();
     });
+    <?php if(!$session->accountExpired && $customerId != 'WalkIn') { ?>
     $(`div[class="main-content"]`).on('click', `a[class~="edit-customer"]`, function(e) {
         let userId = $(this).data('value');
             userData = $(`a[data-id='${userId}']`).data('info');
@@ -330,7 +330,7 @@ $(function() {
         $(`div[id="newCustomerModal"] input[name="customer_id"]`).val(userId);
         $(`div[id="newCustomerModal"] input[name="request"]`).val('update-record');
     });
-    <?php if($session->accountExpired) { ?>
+    <?php } elseif($session->accountExpired) { ?>
     $(`select[name="periodSelected"]`).prop('disabled', true);
     <?php } ?>
 });

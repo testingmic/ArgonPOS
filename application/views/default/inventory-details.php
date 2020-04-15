@@ -248,7 +248,7 @@ if(isset($branch->branch_name)) {
                   </div>
                   <div class="modal-body update-stock-rows">
 
-                      <div class="row stock-listing" data-row="1">
+                      <div class="row p-3 stock-listing" data-row="1">
                               
                           <div class="col-md-4 mb-3">
                               <div>
@@ -311,6 +311,7 @@ if(isset($branch->branch_name)) {
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
               </div>
               <div class="modal-body">
+                <div class="card mb-0 p-3">
                   <div class="transfer-form-message"></div>
                   <form class="submit-transfer-product" method="POST">
                       <div class="row justify-content-center mb-1">
@@ -346,7 +347,8 @@ if(isset($branch->branch_name)) {
                       <input type="hidden" name="transferProductID" value="null">
                       <input type="hidden" name="transferFrom" value="<?= $transferFrom ?>">
                       <button type="submit" class="btn <?=  $clientData->btn_outline; ?> float-right"><i class="fa fa-share"></i> Transfer</button>  
-                  </form>  
+                  </form> 
+                </div> 
               </div>
           </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
@@ -365,6 +367,7 @@ if(isset($branch->branch_name)) {
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
               </div>
               <div class="modal-body">
+                <div class="card mb-0 p-3">
                   <div class="transfer-bulk-form-message"></div>
                   <form class="submit-bulk-transfer-product" method="POST">
                       <div class="row justify-content-center">
@@ -418,7 +421,8 @@ if(isset($branch->branch_name)) {
                       <input type="hidden" name="transferProductID" value="null">
                       <input type="hidden" name="transferFrom" value="<?= $transferFrom ?>">
                       <button type="submit" class="btn <?=  $clientData->btn_outline; ?> float-right"><i class="fa fa-share"></i> Transfer</button>  
-                  </form>  
+                  </form>
+                </div> 
               </div>
           </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->

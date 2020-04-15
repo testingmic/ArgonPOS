@@ -59,7 +59,7 @@ require_once "headtags.php";
                 </div>
               </div>
           </div>
-      </div>     
+      </div>
 
   </div><!--end row-->
 <?php require_once 'foottags.php'; ?>

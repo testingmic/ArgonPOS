@@ -10,6 +10,7 @@ global $posClass, $baseUrl, $clientData;
 
 $session->reportingCustomerId = null;
 $session->productsLimit = 4;
+$session->limitedData = false;
 ?>	
 <!-- Header -->
 <div class="sales-overview-data"></div>

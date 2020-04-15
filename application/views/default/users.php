@@ -97,103 +97,105 @@ require_once "headtags.php";
 					<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
 				</div>
 				<div class="modal-body">
-					<div class="form-result"></div>
-					<form autocomplete="Off" class="needs-validation submitThisForm" novalidate="" method="post" action="<?= $config->base_url('aj/userManagement/addUserRecord'); ?>">
-						<div class="form-row">
-							<div class="col-md-4 mb-3">
-								<label for="fullName">Full Name *</label>
-								<input type="text" class="form-control" id="fullName" name="fullName" placeholder="Full Name" value="" required="">
-							</div>
-							<div class="col-md-4 mb-3">
-								<label for="access_level">Access Level *</label>
-								<select name="access_level" id="access_level" class="selectpicker form-control">
-									<option value="null">Please select</option>
-									<?php
-									// filters
-									if($accessObject->hasAccess('update', 'users')) {
-										$notIn = "id NOT IN (1)";
-									} else {
-										$notIn = "id NOT IN (1, 2)";
-									}
-									// run the query
-									$stmt = $pos->prepare("SELECT id, access_name FROM `access_levels` WHERE $notIn");
-									$stmt->execute();
-									while($al = $stmt->fetch(PDO::FETCH_OBJ)) {
-										?>
-										<option data-name="<?= $al->access_name; ?>" value="<?= $al->id ?>"><?= $al->access_name; ?></option>
+					<div class="card mb-0 p-3">
+						<div class="form-result"></div>
+						<form autocomplete="Off" class="needs-validation submitThisForm" novalidate="" method="post" action="<?= $config->base_url('api/userManagement/addUserRecord'); ?>">
+							<div class="form-row">
+								<div class="col-md-4 mb-3">
+									<label for="fullName">Full Name *</label>
+									<input type="text" class="form-control" id="fullName" name="fullName" placeholder="Full Name" value="" required="">
+								</div>
+								<div class="col-md-4 mb-3">
+									<label for="access_level">Access Level *</label>
+									<select name="access_level" id="access_level" class="selectpicker form-control">
+										<option value="null">Please select</option>
 										<?php
-									}
-									?>
-								</select>
-							</div>
-							<div class="col-md-4 mb-3">
-								<label for="gender">Gender *</label>
-								<select name="gender" id="gender" class="form-control selectpicker">
-									<option value="null">Please Select</option>
-									<option value="Male">Male</option>
-									<option value="Female">Female</option>
-								</select>
-							</div>
-						</div>
-						
-						<div class="form-row">
-							<div class="col-md-4 mb-3">
-								<label for="phone">Phone *</label>
-								<input type="text" class="form-control" name="phone" id="phone" placeholder="Phone" value="">
-							</div>
-							<div class="col-md-4 mb-3">
-								<label for="email">Email *</label>
-								<input type="email" class="form-control" name="email" id="email" placeholder="Email" value="">
-							</div>
-							<div class="col-md-4 mb-3">
-								<label for="branchId">User Branch</label>
-								<select name="branchId" id="branchId" class="form-control selectpicker">
-									<option value="null">Please select</option>
-									<?php
-									$branches = $pos->prepare("SELECT id, branch_name FROM `branches`");
-									$branches->execute();
-									while($branch = $branches->fetch(PDO::FETCH_OBJ)) {
+										// filters
+										if($accessObject->hasAccess('update', 'users')) {
+											$notIn = "id NOT IN (1)";
+										} else {
+											$notIn = "id NOT IN (1, 2)";
+										}
+										// run the query
+										$stmt = $pos->prepare("SELECT id, access_name FROM `access_levels` WHERE $notIn");
+										$stmt->execute();
+										while($al = $stmt->fetch(PDO::FETCH_OBJ)) {
+											?>
+											<option data-name="<?= $al->access_name; ?>" value="<?= $al->id ?>"><?= $al->access_name; ?></option>
+											<?php
+										}
 										?>
-										<option data-name="<?= $branch->branch_name; ?>" value="<?= $branch->id ?>"><?= $branch->branch_name; ?></option>
+									</select>
+								</div>
+								<div class="col-md-4 mb-3">
+									<label for="gender">Gender *</label>
+									<select name="gender" id="gender" class="form-control selectpicker">
+										<option value="null">Please Select</option>
+										<option value="Male">Male</option>
+										<option value="Female">Female</option>
+									</select>
+								</div>
+							</div>
+							
+							<div class="form-row">
+								<div class="col-md-4 mb-3">
+									<label for="phone">Phone *</label>
+									<input type="text" class="form-control" name="phone" id="phone" placeholder="Phone" value="">
+								</div>
+								<div class="col-md-4 mb-3">
+									<label for="email">Email *</label>
+									<input type="email" class="form-control" name="email" id="email" placeholder="Email" value="">
+								</div>
+								<div class="col-md-4 mb-3">
+									<label for="branchId">User Branch</label>
+									<select name="branchId" id="branchId" class="form-control selectpicker">
+										<option value="null">Please select</option>
 										<?php
-									}
-									?>
-								</select>
+										$branches = $pos->prepare("SELECT id, branch_name FROM `branches`");
+										$branches->execute();
+										while($branch = $branches->fetch(PDO::FETCH_OBJ)) {
+											?>
+											<option data-name="<?= $branch->branch_name; ?>" value="<?= $branch->id ?>"><?= $branch->branch_name; ?></option>
+											<?php
+										}
+										?>
+									</select>
+								</div>
 							</div>
-						</div>
-						<div class="form-row">
-							<div class="col-lg-4 col-md-6">
-								<label for="cost" class="text-primary-light">Daily Target</label>
-                              	<div class="input-group">
-                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
-                                  <input type="number" step="1" value="" class="form-control" name="daily_target">
-                              	</div>
+							<div class="form-row">
+								<div class="col-lg-4 col-md-6">
+									<label for="cost" class="text-primary-light">Daily Target</label>
+	                              	<div class="input-group">
+	                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+	                                  <input type="number" step="1" value="" class="form-control" name="daily_target">
+	                              	</div>
+								</div>
+								<div class="col-lg-4 col-md-6">
+									<label for="cost" class="text-primary-light">Weekly Target</label>
+	                              	<div class="input-group">
+	                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+	                                  <input type="number" step="1" value="" class="form-control" name="weekly_target">
+	                              	</div>
+								</div>
+								<div class="col-lg-4 col-md-6">
+									<label for="cost" class="text-primary-light">Monthly Target</label>
+	                              	<div class="input-group">
+	                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
+	                                  <input type="number" step="1" value="" class="form-control" name="monthly_target">
+	                              	</div>
+								</div>
 							</div>
-							<div class="col-lg-4 col-md-6">
-								<label for="cost" class="text-primary-light">Weekly Target</label>
-                              	<div class="input-group">
-                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
-                                  <input type="number" step="1" value="" class="form-control" name="weekly_target">
-                              	</div>
+							<div class="modal-footer pr-0">
+								<input type="hidden" name="this-form" value="users">
+								<input type="hidden" name="record_type" value="new-record">
+								<input type="hidden" name="userId" value="<?= random_string('alnum', 15) ?>" class="userId">
+								<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+								<button class="btn <?= $clientData->btn_outline; ?> submit-form" type="submit">
+									<i class="fa fa-save"></i> Save Record
+								</button>
 							</div>
-							<div class="col-lg-4 col-md-6">
-								<label for="cost" class="text-primary-light">Monthly Target</label>
-                              	<div class="input-group">
-                                  <div class="input-group-prepend"><span class="input-group-text">GH&cent;</span></div>
-                                  <input type="number" step="1" value="" class="form-control" name="monthly_target">
-                              	</div>
-							</div>
-						</div>
-						<div class="modal-footer pr-0">
-							<input type="hidden" name="this-form" value="users">
-							<input type="hidden" name="record_type" value="new-record">
-							<input type="hidden" name="userId" value="<?= random_string('alnum', 15) ?>" class="userId">
-							<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-							<button class="btn <?= $clientData->btn_outline; ?> submit-form" type="submit">
-								<i class="fa fa-save"></i> Save Record
-							</button>
-						</div>
-					</form>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -216,39 +216,41 @@ $categories = $productsClass->getCategories();
                 </button>
             </div>
             <div class="modal-body">
-                <form autocomplete="Off" class="form py-2" id="newCustomer_form">
-                    <div class="form-row mb-2">
-                        <div class="form-group col-md-2">
-                            <label for="inputState">Title</label>
-                            <select id="newCustomer_title" name="nc_title" class="form-control">
-                                <option value="Mr">Mr.</option>
-                                <option value="Mrs">Mrs.</option>
-                                <option  value="Dr">Dr.</option>
-                                <option  value="Miss">Miss.</option>
-                                <option value="Prof">Prof.</option>
-                                <option value="Hon">Hon.</option>
-                            </select>
+                <div class="card mb-0 p-3">
+                    <form autocomplete="Off" class="form py-2" id="newCustomer_form">
+                        <div class="form-row mb-2">
+                            <div class="form-group col-md-2">
+                                <label for="inputState">Title</label>
+                                <select id="newCustomer_title" name="nc_title" class="form-control">
+                                    <option value="Mr">Mr.</option>
+                                    <option value="Mrs">Mrs.</option>
+                                    <option  value="Dr">Dr.</option>
+                                    <option  value="Miss">Miss.</option>
+                                    <option value="Prof">Prof.</option>
+                                    <option value="Hon">Hon.</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="newCustomer_firstname">First Name</label>
+                                <input type="text" class="form-control" name="nc_firstname" id="newCustomer_firstname" placeholder="First Name">
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="newCustomer_lastname">Last Name</label>
+                                <input type="text" class="form-control" name="nc_lastname" id="newCustomer_lastname" placeholder="Last Name">
+                            </div>
                         </div>
-                        <div class="form-group col-md-5">
-                            <label for="newCustomer_firstname">First Name</label>
-                            <input type="text" class="form-control" name="nc_firstname" id="newCustomer_firstname" placeholder="First Name">
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label for="newCustomer_primarycontact">Primary Phone No.</label>
+                                <input type="text" class="form-control" name="nc_contact" id="newCustomer_primarycontact">
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label for="newCustomer_seccontact">Email Address</label>
+                                <input type="text" class="form-control" name="nc_email" id="newCustomer_seccontact">
+                            </div>
                         </div>
-                        <div class="form-group col-md-5">
-                            <label for="newCustomer_lastname">Last Name</label>
-                            <input type="text" class="form-control" name="nc_lastname" id="newCustomer_lastname" placeholder="Last Name">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <label for="newCustomer_primarycontact">Primary Phone No.</label>
-                            <input type="text" class="form-control" name="nc_contact" id="newCustomer_primarycontact">
-                        </div>
-                        <div class="form-group col-md-12">
-                            <label for="newCustomer_seccontact">Email Address</label>
-                            <input type="text" class="form-control" name="nc_email" id="newCustomer_seccontact">
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

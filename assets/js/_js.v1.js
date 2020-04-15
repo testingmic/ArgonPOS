@@ -1892,10 +1892,12 @@ $(`form[id="updateProductForm"]`).on('submit', function(e) {
 });
 
 $(`button[class~="resend-email-button"]`).on('click', function(evt) {
-    let thisBtn = $(this);
-    let thisEmail = $(`input[name="send_email"]`);
-    let fullname = $(`input[name="fullname"]`).val();
-    let thisRequest = $(`input[name="request_type"]`).val();
+    let thisBtn = $(this),
+        thisEmail = $(`div[class~="sendMailModal"] input[name="send_email"]`),
+        fullname = $(`div[class~="sendMailModal"] input[name="fullname"]`).val(),
+        thisRequest = $(`div[class~="sendMailModal"] input[name="request_type"]`).val(),
+        receiptId = $(`div[class~="sendMailModal"] input[name="receiptId"]`).val(),
+        customerId = $(`div[class~="sendMailModal"] input[name="customerId"]`).val();
 
     if(thisEmail.val().length > 5) {
         thisBtn.prop('disabled', true)
@@ -1905,7 +1907,7 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
         $.ajax({
             url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
             type: `POST`,
-            data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname, thisRequest: thisRequest},
+            data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname, thisRequest: thisRequest, receiptId: receiptId, customerId: customerId},
             dataType: "json",
             success: function(resp) {
                 Toast.fire({
@@ -4022,29 +4024,31 @@ $(function() {
                         ]
                     });
 
-                    $(".total-sales").html(data.message.totalSales.total);
-                    $(".total-sales-trend").html(data.message.totalSales.trend);
-                    
-                    $(".total-served").html(data.message.totalServed.total);
-                    $(".total-served-trend").html(data.message.totalServed.trend);
-                    
-                    $(".average-sales").html(data.message.averageSales.total);
-                    $(".average-sales-trend").html(data.message.averageSales.trend);
+                    if($("span[class~='total-sales']").length) {
+                        $("span[class~='total-sales']").html(data.message.totalSales.total);
+                        $("span[class~='total-sales-trend']").html(data.message.totalSales.trend);
+                        
+                        $("span[class~='total-served']").html(data.message.totalServed.total);
+                        $("span[class~='total-served-trend']").html(data.message.totalServed.trend);
+                        
+                        $("span[class~='average-sales']").html(data.message.averageSales.total);
+                        $("span[class~='average-sales-trend']").html(data.message.averageSales.trend);
 
-                    $(".total-discounts").html(data.message.totalDiscount.total);
-                    $(".total-discounts-trend").html(data.message.totalDiscount.trend);
-                    
-                    $(".total-credit-sales").html(data.message.totalCredit.total);
-                    $(".total-credit-sales-trend").html(data.message.totalCredit.trend);
+                        $("span[class~='total-discounts']").html(data.message.totalDiscount.total);
+                        $("span[class~='total-discounts-trend']").html(data.message.totalDiscount.trend);
+                        
+                        $("span[class~='total-credit-sales']").html(data.message.totalCredit.total);
+                        $("span[class~='total-credit-sales']-trend").html(data.message.totalCredit.trend);
 
-                    $(".total-profit").html(data.message.salesComparison.profit);
-                    $(".total-profit-trend").html(data.message.salesComparison.profit_trend);
+                        $("span[class~='total-profit']").html(data.message.salesComparison.profit);
+                        $("span[class~='total-profit-trend']").html(data.message.salesComparison.profit_trend);
 
-                    $(".total-selling").html(data.message.salesComparison.selling);
-                    $(".total-selling-trend").html(data.message.salesComparison.selling_trend);
+                        $("span[class~='total-selling']").html(data.message.salesComparison.selling);
+                        $("span[class~='total-selling-trend']").html(data.message.salesComparison.selling_trend);
 
-                    $(".total-cost").html(data.message.salesComparison.cost);
-                    $(".total-cost-trend").html(data.message.salesComparison.cost_trend);
+                        $("span[class~='total-cost']").html(data.message.salesComparison.cost);
+                        $("span[class~='total-cost-trend']").html(data.message.salesComparison.cost_trend);
+                    }
                 } else {
                     $(`table[class~="salesLists"]`).dataTable();
                 }
@@ -4058,6 +4062,14 @@ $(function() {
                         `Sales Invoice - Receipt #${orderId}`,
                         `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
                     );
+                });
+                $(`div[class="main-content"]`).on('click', `a[class~="resend-email"]`, function(e) {
+                    $(`div[class~="sendMailModal"] input[name="fullname"]`).val($(this).data('name'));
+                    $(`div[class~="sendMailModal"] input[name="send_email"]`).val($(this).data('email'));
+                    $(`div[class~="sendMailModal"] input[name="receiptId"]`).val($(this).data('sales-id'));
+                    $(`div[class~="sendMailModal"] input[name="request_type"]`).val('invoice');
+                    $(`div[class~="sendMailModal"] input[name="customerId"]`).val($(this).data('customer-id'));
+                    $(`div[class~="sendMailModal"]`).modal('show');
                 });
                 hL();
             }, error: function(err) {

@@ -1,6 +1,6 @@
 <?php 
+// get some global variables
 global $config, $posClass, $accessObject;
-$CSS_ARRAY = [];
 
 // set a common variable
 $baseUrl = $config->base_url();
@@ -26,6 +26,7 @@ $notify->accountNotification();
 $storeTheme = (Object) json_decode($clientData->theme_color);
 $setupInfo = (Object) json_decode($clientData->setup_info);
 
+// set some variables
 $clientData->bg_color = $storeTheme->bg_colors;
 $clientData->bg_color_code = $storeTheme->bg_color_code;
 $clientData->bg_color_light = $storeTheme->bg_color_light;
@@ -44,17 +45,6 @@ function connectionLost($message = "Connection lost. Reconnect to view content")
       </div>';
 }
 
-function nonWorkingDay($message = "Please note that the Point of Sale is Closed for Today.") {
-  global $clientData, $posClass;
-  $openingDays = $clientData->shop_opening_days;
-
-  return '<div class="no-work-placeholder main-body-loader" style="display: flex;">
-          <div class="no-work-content text-center">
-              <p class="alert alert-warning text-white" style="border-radius:0px">'.$message.' Come back on <strong>'.$posClass->stringToArray($openingDays)[0].'</strong></p>
-          </div>
-      </div>';
-}
-
 function form_loader() {
   return '<div class="form-content-loader" style="display: none;">
         <div class="offline-content text-center">
@@ -63,26 +53,29 @@ function form_loader() {
     </div>';
 }
 
-// filters available
-if($setupInfo->type == "alpha") {
-    // alpha account filters
-    $filterPeriod = [
-        "today" => 'Today',
-        "this-week" => "This Week",
-        "last-30-days" => "Last 30 Days",
-        "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
-        "this-month" => "This Month (".date("F").")",
-        "same-month-last-year" => "Same Month Last Year",
-        "this-year" => "This Year (January - December ".date("Y").")",
-        "all-time" => "All Time (".date("jS M Y", strtotime($setupInfo->setup_date))." - till date)",
-    ];
-} else {
-    $filterPeriod = [
-        "today" => 'Today',
-        "this-week" => "This Week",
-        "this-month" => "This Month",
-        "this-year" => "This Year"
-    ];
+// show only on the sales analytics and customer-detail page
+if(in_array($SITEURL[0], ["sales", "analytics", "customer-detail"])) {
+  // filters available
+  if($setupInfo->type == "alpha") {
+      // alpha account filters
+      $filterPeriod = [
+          "today" => 'Today',
+          "this-week" => "This Week",
+          "last-30-days" => "Last 30 Days",
+          "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
+          "this-month" => "This Month (".date("F").")",
+          "same-month-last-year" => "Same Month Last Year",
+          "this-year" => "This Year (January - December ".date("Y").")",
+          "all-time" => "All Time (".date("jS M Y", strtotime($setupInfo->setup_date))." - till date)",
+      ];
+  } else {
+      $filterPeriod = [
+          "today" => 'Today',
+          "this-week" => "This Week",
+          "this-month" => "This Month",
+          "this-year" => "This Year"
+      ];
+  }
 }
 ?>
 <!DOCTYPE html>

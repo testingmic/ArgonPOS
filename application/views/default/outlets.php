@@ -73,47 +73,49 @@ require_once "headtags.php";
           <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
         </div>
         <div class="modal-body">
+          <div class="card mb-0 p-3">
           <div class="form-result"></div>
-          <form autocomplete="Off" class="needs-validation submitThisForm" method="post" action="<?= $config->base_url('api/branchManagment/addBranchRecord'); ?>">
-            <div class="form-row">
-              <div class="col-md-8 mb-3">
-                <label for="branchName">Outlet Name *</label>
-                <input type="text" class="form-control" id="branchName" name="branchName" placeholder="Outlet name" value="" required="">
+            <form autocomplete="Off" class="needs-validation submitThisForm" method="post" action="<?= $config->base_url('api/branchManagment/addBranchRecord'); ?>">
+              <div class="form-row">
+                <div class="col-md-8 mb-3">
+                  <label for="branchName">Outlet Name *</label>
+                  <input type="text" class="form-control" id="branchName" name="branchName" placeholder="Outlet name" value="" required="">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="branchType">Outlet Type *</label>
+                  <select name="branchType" id="branchType" class="form-control">
+                    <option value="Store">Store</option>
+                    <option value="Warehouse">Warehouse</option>
+                  </select>
+                </div>
               </div>
-              <div class="col-md-4 mb-3">
-                <label for="branchType">Outlet Type *</label>
-                <select name="branchType" id="branchType" class="form-control">
-                  <option value="Store">Store</option>
-                  <option value="Warehouse">Warehouse</option>
-                </select>
+              
+              <div class="form-row">
+                <div class="col-md-4 mb-3">
+                  <label for="location">Location</label>
+                  <input type="text" class="form-control" name="location" id="location" placeholder="Location" value="">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="phone">Phone</label>
+                  <input type="text" maxlength="15" class="form-control" name="phone" id="phone" placeholder="Phone" value="">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="">
+                </div>
               </div>
-            </div>
-            
-            <div class="form-row">
-              <div class="col-md-4 mb-3">
-                <label for="location">Location</label>
-                <input type="text" class="form-control" name="location" id="location" placeholder="Location" value="">
+              <div class="modal-footer p-0">
+                <input type="hidden" name="record_type" value="new-record">
+                <input type="hidden" name="branchId" value="null" class="branchId">
+                <input type="hidden" name="status" value="1">
+                <input type="hidden" name="this-form" value="branches">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                <button class="btn <?= $clientData->btn_outline; ?> submit-form" type="submit">
+                  <i class="fa fa-save"></i> Save Record
+                </button>
               </div>
-              <div class="col-md-4 mb-3">
-                <label for="phone">Phone</label>
-                <input type="text" maxlength="15" class="form-control" name="phone" id="phone" placeholder="Phone" value="">
-              </div>
-              <div class="col-md-4 mb-3">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="">
-              </div>
-            </div>
-            <div class="modal-footer p-0">
-              <input type="hidden" name="record_type" value="new-record">
-              <input type="hidden" name="branchId" value="null" class="branchId">
-              <input type="hidden" name="status" value="1">
-              <input type="hidden" name="this-form" value="branches">
-              <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-              <button class="btn <?= $clientData->btn_outline; ?> submit-form" type="submit">
-                <i class="fa fa-save"></i> Save Record
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
     </div>

@@ -73,16 +73,18 @@ global $accessObject;
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           </div>
           <div class="modal-body show-modal-body" style="padding-top: 0px">
-            <div class="form-row">
-              <div class="form-group col-lg-12">
-                <label for="category_name">Name</label>
-                <input type="text" placeholder="Enter Product Type name" name="category_name" id="categoryModal" class="form-control">
-                <input type="hidden" name="request" value="update">
-                <input type="hidden" name="categoryId" class="categoryId">
-              </div>
-              <div class="form-group col-lg-12">
-                <div class="text-right">
-                  <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save</button>
+            <div class="card mb-0 p-3">
+              <div class="form-row">
+                <div class="form-group col-lg-12">
+                  <label for="category_name">Name</label>
+                  <input type="text" placeholder="Enter Product Type name" name="category_name" id="categoryModal" class="form-control">
+                  <input type="hidden" name="request" value="update">
+                  <input type="hidden" name="categoryId" class="categoryId">
+                </div>
+                <div class="form-group col-lg-12">
+                  <div class="text-right">
+                    <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i class="fa fa-save"></i> Save</button>
+                  </div>
                 </div>
               </div>
             </div>

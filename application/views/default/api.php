@@ -149,6 +149,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$sales = $posClass->getAllRows(
 				"sales a LEFT JOIN customers b ON a.customer_id = b.customer_id", 
 				"a.*, b.title, b.firstname, b.lastname, b.phone_1,
+				b.email,
 					(
 						SELECT MAX(b.order_amount_paid) FROM sales b WHERE b.deleted='0' AND 
 						(DATE(b.order_date) >= '{$dateFrom}' && DATE(b.order_date) <= '{$dateTo}') {$branchAccessInner} {$accessLimitInner} {$customerLimitInner} {$clientAccessInner}
@@ -191,13 +192,16 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			$message = [];
 
+			// confirm that the result is not empty
 			if ($sales != false && count($sales) > 0) {
 				$i = 0;
 				$results = [];
 				
+				// loop through the data submitted from the query
 				foreach ($sales as $data) {
 					$i++;
 
+					// format the order date
 					$orderDate = date('jS F Y h:iA', strtotime($data->order_date));
 					$totalOrder= $posClass->toDecimal($data->order_amount_paid, 2, ',');
 
@@ -208,85 +212,110 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						'phone' => $data->phone_1,
 						'date' => $orderDate,
 						'amount' => "{$clientData->default_currency} {$totalOrder}",
-						'action' => " <a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-print\"></i></a> &nbsp; <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$data->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-download\"></i></a>",
+						'action' => "<a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-print\"></i></a> <a data-toggle=\"tooltip\" title=\"Email the Receipt\" href=\"javascript:void(0)\" class=\"btn-outline-info btn btn-sm resend-email\" data-email=\"{$data->email}\" data-name=\"{$data->title} {$data->firstname} {$data->lastname}\" data-customer-id=\"{$data->customer_id}\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-envelope\"></i></a> <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$data->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-download\"></i></a>",
 					];
 
-					$totalDiscount += $data->order_discount;
-					$totalCostPrice += $data->totalCostPrice;
-					$totalSellingPrice += $data->totalSellingPrice;
-					$totalProfit += $data->totalProfitMade;
-					$totalSales += $data->order_amount_paid;
-					$totalServed += 1;
-					$creditTotalProfitMade += $data->creditTotalProfitMade;
-					
-					$totalProductsWorth = 0;
-					$totalCreditSales = $data->totalCreditSales;
+					// run this section if the user wants more details
+					if(!$session->limitedData) {
+
+						// perform some calculations
+						$totalDiscount += $data->order_discount;
+						$totalCostPrice += $data->totalCostPrice;
+						$totalSellingPrice += $data->totalSellingPrice;
+						$totalProfit += $data->totalProfitMade;
+						$totalSales += $data->order_amount_paid;
+						$totalServed += 1;
+						$creditTotalProfitMade += $data->creditTotalProfitMade;
+						
+						$totalProductsWorth = 0;
+						$totalCreditSales = $data->totalCreditSales;
+					}
+
 				}
 				$message = $results;
-			}
-			$averageSalesValue = ($totalSales > 0 && $totalServed > 0) ? ($totalSales / $totalServed) : 0.00;
-
-			$prevSales = $posClass->getAllRows(
-				"sales a", 
-				"
-					COUNT(*) AS totalPrevServed, SUM(a.order_amount_paid) AS totalPrevSales,
-					SUM(a.order_discount) AS totalDiscountGiven,
-					(
-						SELECT MAX(b.order_amount_paid) FROM sales b WHERE b.deleted = '0' &&
-						(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$customerLimitInner}
-						{$accessLimitInner} {$clientAccessInner}
-					) AS highestSalesValue,
-					(
-						SELECT SUM(b.order_amount_paid) FROM sales b WHERE
-						 b.deleted = '0' &&
-						credit_sales = '1' AND
-						(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimitInner} {$customerLimitInner} {$clientAccessInner}
-					) AS totalPrevCreditSales,
-					(
-						SELECT AVG(b.order_amount_paid) FROM sales b WHERE 
-						 b.deleted = '0' &&
-						(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$customerLimitInner}
-						{$accessLimitInner} {$clientAccessInner}
-					) AS averageSalesValue,
-					(
-						SELECT SUM(b.product_cost_price * b.product_quantity) FROM sales_details b WHERE
-						(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimit} {$clientAccessInner}
-					) AS totalCostPrice,
-					(
-						SELECT SUM(b.product_unit_price * b.product_quantity) AS selling_price FROM sales_details b WHERE
-						(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimit} {$clientAccessInner}
-					) AS totalSellingPrice,
-					(
-						SELECT SUM((b.product_unit_price * b.product_quantity)-(b.product_cost_price * b.product_quantity)) AS order_profit FROM sales_details b WHERE
-						(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimit} {$clientAccessInner}
-					) AS totalProfitMade
-				", 
-				"a.order_status = 'confirmed' && a.deleted = '0' {$accessLimit} && DATE(a.order_date) >= '{$datePrevFrom}' && DATE(a.order_date) <= '{$datePrevTo}' {$branchAccess} {$clientAccess}"
-			);
-
-			if ($prevSales != false) {
-				$prevSales = $prevSales[0];
-
-				$totalSellingTrend = $posClass->percentDifference(floatval($totalSellingPrice), floatval($prevSales->totalSellingPrice));
-				$totalCostTrend = $posClass->percentDifference(floatval($prevSales->totalCostPrice), floatval($totalCostPrice));
-				$totalProfitTrend = $posClass->percentDifference(floatval($totalProfit-$totalDiscount), floatval($prevSales->totalProfitMade-$prevSales->totalDiscountGiven));
-				$totalServedTrend = $posClass->percentDifference(floatval($totalServed), floatval($prevSales->totalPrevServed));
-				$totalSalesTrend = $posClass->percentDifference(floatval($totalSales), floatval($prevSales->totalPrevSales));
-				$totalCreditTrend = $posClass->percentDifference(floatval($totalCreditSales), floatval($prevSales->totalPrevCreditSales));
-				$totalPercent = (!empty($totalCreditSales) && !empty($totalSales)) ? round(($totalCreditSales/$totalSales)*100, 2) : 0.00;
-				$averageSalesTrend = $posClass->percentDifference(floatval($averageSalesValue), floatval($prevSales->averageSalesValue));
-				$totalDiscountTrend = $posClass->percentDifference(floatval($totalDiscount), floatval($prevSales->totalDiscountGiven));
-
 				$status = true;
 			}
 
-			//: additional calculations
-			$creditProfitPercentage = ($creditTotalProfitMade > 0) ? (($creditTotalProfitMade / $totalProfit) * 100) : 0;
-			$creditProfitPercentage = number_format($creditProfitPercentage, 2);
+			$averageSalesValue = ($totalSales > 0 && $totalServed > 0) ? ($totalSales / $totalServed) : 0.00;
+
+			// run this section if the user wants more details
+			if(!$session->limitedData) {
+
+				// query the previous period data sets
+				$prevSales = $posClass->getAllRows(
+					"sales a", 
+					"
+						COUNT(*) AS totalPrevServed, SUM(a.order_amount_paid) AS totalPrevSales,
+						SUM(a.order_discount) AS totalDiscountGiven,
+						(
+							SELECT MAX(b.order_amount_paid) FROM sales b WHERE b.deleted = '0' &&
+							(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$customerLimitInner}
+							{$accessLimitInner} {$clientAccessInner}
+						) AS highestSalesValue,
+						(
+							SELECT SUM(b.order_amount_paid) FROM sales b WHERE
+							 b.deleted = '0' &&
+							credit_sales = '1' AND
+							(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimitInner} {$customerLimitInner} {$clientAccessInner}
+						) AS totalPrevCreditSales,
+						(
+							SELECT AVG(b.order_amount_paid) FROM sales b WHERE 
+							 b.deleted = '0' &&
+							(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$customerLimitInner}
+							{$accessLimitInner} {$clientAccessInner}
+						) AS averageSalesValue,
+						(
+							SELECT SUM(b.product_cost_price * b.product_quantity) FROM sales_details b WHERE
+							(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimit} {$clientAccessInner}
+						) AS totalCostPrice,
+						(
+							SELECT SUM(b.product_unit_price * b.product_quantity) AS selling_price FROM sales_details b WHERE
+							(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimit} {$clientAccessInner}
+						) AS totalSellingPrice,
+						(
+							SELECT SUM((b.product_unit_price * b.product_quantity)-(b.product_cost_price * b.product_quantity)) AS order_profit FROM sales_details b WHERE
+							(DATE(b.order_date) >= '{$datePrevFrom}' && DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$accessLimit} {$clientAccessInner}
+						) AS totalProfitMade
+					", 
+					"a.order_status = 'confirmed' && a.deleted = '0' {$accessLimit} && DATE(a.order_date) >= '{$datePrevFrom}' && DATE(a.order_date) <= '{$datePrevTo}' {$branchAccess} {$clientAccess}"
+				);
+				
+				// if the previous sales query is not false
+				if ($prevSales != false) {
+					$prevSales = $prevSales[0];
+
+					$totalSellingTrend = $posClass->percentDifference(floatval($totalSellingPrice), floatval($prevSales->totalSellingPrice));
+					$totalCostTrend = $posClass->percentDifference(floatval($prevSales->totalCostPrice), floatval($totalCostPrice));
+					$totalProfitTrend = $posClass->percentDifference(floatval($totalProfit-$totalDiscount), floatval($prevSales->totalProfitMade-$prevSales->totalDiscountGiven));
+					$totalServedTrend = $posClass->percentDifference(floatval($totalServed), floatval($prevSales->totalPrevServed));
+					$totalSalesTrend = $posClass->percentDifference(floatval($totalSales), floatval($prevSales->totalPrevSales));
+					$totalCreditTrend = $posClass->percentDifference(floatval($totalCreditSales), floatval($prevSales->totalPrevCreditSales));
+					$totalPercent = (!empty($totalCreditSales) && !empty($totalSales)) ? round(($totalCreditSales/$totalSales)*100, 2) : 0.00;
+					$averageSalesTrend = $posClass->percentDifference(floatval($averageSalesValue), floatval($prevSales->averageSalesValue));
+					$totalDiscountTrend = $posClass->percentDifference(floatval($totalDiscount), floatval($prevSales->totalDiscountGiven));
+
+					$status = true;
+				}
+			
+				//: additional calculations
+				$creditProfitPercentage = ($creditTotalProfitMade > 0) ? (($creditTotalProfitMade / $totalProfit) * 100) : 0;
+				$creditProfitPercentage = number_format($creditProfitPercentage, 2);
+			}
+			
 			//: print the result
-			echo json_encode([
+			$response = [
 				"message" => [
-					"table" => $message, 
+					"table" => $message
+				],
+				"status"  => $status
+			];
+
+			//: if the user requested for more records then push this as well
+			if(!$session->limitedData) {
+
+				// set the new response to be parsed
+				$response["message"] = [ 
+					"table" => $message,
 					"totalSales" => [
 						"total" => $clientData->default_currency . $posClass->toDecimal($totalSales, 2, ','), 
 						"trend" => $totalSalesTrend ." ". $display
@@ -315,42 +344,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						"cost" => $clientData->default_currency . $posClass->toDecimal($totalCostPrice, 2, ','),
 						"cost_trend" =>  $totalCostTrend ." ". $display
 					]
-				],
-				"status"  => $status
-			]);
-			exit;
+				];
 
-		} else if (isset($_POST['request']) && $_POST['request'] == "fetchInventoryRecords") {
-
-			$query = $posClass->getAllRows(
-				"inventory a INNER JOIN products b ON a.product_id = b.product_id LEFT JOIN users c ON a.recorded_by = c.user_id", 
-				"a.*, b.product_title, c.name AS recordedBy", 
-				"1 {$branchAccess} {$clientAccess} ORDER BY a.log_date DESC"
-			);
-
-			if ($query != false) {
-				$i = 0;
-				
-				foreach ($query as $data) {
-					$i++;
-
-					$orderDate = date('jS F Y', strtotime($data->log_date));
-
-					$results[] = [
-						'row' => "$i.",
-						'product' => "$data->product_title",
-						'quantity' => $data->quantity,
-						'price' => "{$clientData->default_currency} $data->selling_price",
-						'recordedBy' => $data->recordedBy,
-						'orderDate' => $orderDate
-					];
-				}
-
-				$message = $results;
-
-				$status = true;
 			}
-
+			
 		} else if (isset($_POST['getSalesDetails']) && confirm_url_id(2, "getSalesDetails")) {
 
 			if (!empty($_POST['salesID'])) {
@@ -444,44 +441,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				}
 
 			}
-		}  else if (isset($_POST['request']) && $_POST['request'] == "getProductThresholds") {
-
-			$postData = (OBJECT) array_map("xss_clean", $_POST);
-
-			$query = $posClass->getAllRows(
-				"products a", 
-				"a.product_title, a.quantity", 
-				" a.status = '1' && 
-					a.threshold >= quantity 
-					{$branchAccess} {$clientAccess}
-					ORDER BY a.id
-				"
-			);
-
-			if ($query != false) {
-
-				$i = 0;
-				foreach ($query as $data) {
-					$i++;
-
-					$results[] = [
-						'row' => "$i.",
-						'product' => "$data->product_title",
-						'quantity' => "<span class=\"badge badge-danger\">{$data->quantity} left</span>"
-					];
-
-				}
-				$message = $results;
-				$status = true;
-
-			}
 		}
 
-		echo json_encode([
-			"message" => $message,
-			"status" => $status
-		]);
-		exit;
 	}
 
 	//: reporting
@@ -1865,7 +1826,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				// validate the data submitted by the user
 				if(!filter_var($email->thisEmail, FILTER_VALIDATE_EMAIL)) {
 					$response->message = "Please enter a valid email address";
-				} elseif(strlen($session->_oid_Generated) < 12) {
+				} elseif(strlen($email->receiptId) < 12) {
 					$response->message = "An invalid Order ID was submitted";
 				}
 				else {
@@ -1873,7 +1834,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					// additional data
 					$email->branchId = (isset($email->branchId)) ? $email->branchId : $loggedUserBranchId;
 					$email->template_type = (isset($email->thisRequest)) ? $email->thisRequest : "invoice";
-					$email->itemId = $session->_oid_Generated;
+					$email->itemId = $email->receiptId;
 					$email->fullname = (isset($email->fullname)) ? str_replace(["\t", "\n"], "", trim($email->fullname)) : null;
 
 					// generate the recipient list
@@ -1882,7 +1843,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							[
 								"fullname" => $email->fullname,
 								"email" => $email->thisEmail,
-								"customer_id" => $session->_uid_Generated,
+								"customer_id" => $email->customerId,
 								"branchId" => $loggedUserBranchId
 							]
 						]

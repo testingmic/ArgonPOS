@@ -3,6 +3,8 @@ $PAGETITLE = "Sales History";
 
 // include the important files
 require_once "headtags.php";
+
+$session->limitedData = true;
 ?>
 <!-- Page Content-->
 <!-- Header -->
@@ -28,20 +30,6 @@ require_once "headtags.php";
   <div class="row">
       
       <div class="col-lg-9 col-mb-8"></div>
-      <!-- <div class="col-lg-3 hidden">
-          <div class="form-group">
-              <select class="form-control selectpicker" name="customerBranch">
-                  <?php 
-                  //$stmt = $pos->prepare("SELECT * FROM  branches WHERE clientId = ? ");
-                  //$stmt->execute([$session->clientId]);
-                  // loop through the list
-                  //while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-                     // print "<option ".(($session->branchId == $result->id) ? "selected" : null)." value='{$result->id}''>{$result->branch_name}</option>";
-                  //}
-                  ?>
-              </select>
-          </div>
-      </div> --> <!--end col-->
       <div class="col-lg-3 col-mb-4 mb-2">
           <select class="form-control selectpicker" name="periodSelected">
               <?php foreach($filterPeriod as $key => $value) { ?>
