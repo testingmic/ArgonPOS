@@ -22,7 +22,7 @@ $userData = $userData[0];
 // notification loaders
 $notify = load_class('Notifications', 'controllers', $clientData->id);
 $Notification = $notify->availableNotification();
-$AccountNotice = $notify->accountNotification();
+$notify->accountNotification();
 
 $storeTheme = (Object) json_decode($clientData->theme_color);
 $setupInfo = (Object) json_decode($clientData->setup_info);
@@ -197,7 +197,7 @@ if($setupInfo->type == "alpha") {
             <li class="nav-item blur-content">
               <a class="nav-link <?= (in_array($SITEURL[0], ['point-of-sale'])) ? "active" : null; ?>" href="<?= $baseUrl ?>point-of-sale">
                 <i class="ni ni-ui-04 text-success"></i>
-                <span class="nav-link-text">Sales Register</span>
+                <span class="nav-link-text">Point of Sale</span>
               </a>
             </li>
             <li class="nav-item">

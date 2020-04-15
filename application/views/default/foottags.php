@@ -216,12 +216,23 @@ clock_tick();
 $(async function() {
 <?php
 // check the welcome notice
-if(!empty($Notification)) {  
+if(!empty($Notification)) {
+
   // print the welcome notice
   $Notification = (Object) $Notification;
-  print "$(`div[class='notification-content']`).html(`{$Notification->content}`);\n";
-  print "$(`div[class~='{$Notification->modal}']`).modal({backdrop: 'static', keyboard: false});\n";
-  print "{$Notification->function};\n";
+  
+  // print this information if the current page is within the range of display
+  if(in_array($SITEURL[0], $Notification->section)) {
+    
+    // set the content of the div
+    print "$(`div[class='notification-content']`).html(`{$Notification->content}`);\n";
+    
+    // show the modal content
+    print "$(`div[class~='{$Notification->modal}']`).modal({backdrop: 'static', keyboard: false});\n";
+
+    // print out the function to run this modal notification
+    print "{$Notification->function};\n";
+  }
 }
 ?>
 hL();

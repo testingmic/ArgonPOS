@@ -62,6 +62,7 @@ class Notifications extends Pos {
 				 * @param content (This is the message to show)
 				 **/
 				$this->notice = [
+					'section' => $this->stringToArray($eachNotice->section),
 					'modal' => $eachNotice->modal,
 					'function' => $this->jsFunctions($eachNotice->modal, $eachNotice->modal_function, $eachNotice->uniqueId, $eachNotice->notice_type),
 					'header' => $eachNotice->header,
@@ -91,7 +92,8 @@ class Notifications extends Pos {
 		try {
 
 			$stmt = $this->pos->prepare("
-				SELECT * FROM system_notices 
+				SELECT * 
+				FROM system_notices 
 				WHERE  
 					status = '1' AND (related_to = 'general' OR related_to LIKE '%{$clientId}%')
 				ORDER BY id ASC LIMIT 100
@@ -131,25 +133,23 @@ class Notifications extends Pos {
 
 		switch ($functionName) {
 			case 'generalNoticeHandler':
-				$code = 
-				<<<EOF
-				$(`div[class~="{$modalName}"] button[class="close"]`).on('click', function(e) {
+				$code = "
+				$(`div[class~=\"{$modalName}\"] button[class=\"close\"], div[class~=\"{$modalName}\"] button[data-dismiss=\"modal\"]`).on('click', function(e) {
 					e.preventDefault();
-					$.post(`\${baseUrl}aj/notificationHandler/activeNotice`, {unqID: '{$uniqueId}', noteType: '{$noticeType}'}, function(resp) {
+					$.post(`\${baseUrl}api/notificationHandler/activeNotice`, {unqID: '{$uniqueId}', noteType: '{$noticeType}'}, function(resp) {
 						if(resp.status == 'error') {
 							Toast.fire({
 								type: 'error',
 								title: 'Sorry! There was an error while processing the request. Please try again later'
 							});
 						} else {
-							$(`div[class~="{$modalName}"]`).modal('hide');
+							$(`div[class~=\"{$modalName}\"]`).modal('hide');
 							setTimeout(function(e) {
-								$(`div[class="notification-content"]`).html(``);
+								$(`div[class=\"notification-content\"]`).html(``);
 							}, 2000)
 						}
 					}, 'json');
-				})
-				EOF;
+				})";
 				break;
 			
 			default:
@@ -167,7 +167,7 @@ class Notifications extends Pos {
 	private function notYetSeen($seenList) {
 
 		$seenList = $this->stringToArray($seenList);
-		return (bool) (!in_array($this->curClientId, $seenList));
+		return (bool) !in_array($this->curClientId, $seenList) ? true : false;
 	}
 
 	/**

@@ -16,14 +16,10 @@ $response = (object) [
 //: create a new object
 $apiValidate = load_class('Api', 'models');
 
-// ZW1tYWxsb2I6UDhHUnhFM0NKTW9PVWRUQWdTQmhLcUlwbGFZN2lXY205amVRenJ2Nk5rMGIx
-
 // print base64_encode("emmallob:dj0yJmk9bDg4dWFTaXVyVXFRJmQ9WVdrOWNIaDNUbHBvTTJNbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWFi");
 
 $apiAccessValues = $apiValidate->validateApiKey();
 $expiredAccount = true;
-
-print_r($apiAccessValues);exit;
 
 //: confirm that the user is logged in
 if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
@@ -2077,7 +2073,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		        // check if the user has access to delete this item
 		        if($accessObject->hasAccess('delete', strtolower($eachRequest->request_type.'s'))) {
 		        	// print the delete button
-		        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('aj/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
+		        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('api/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
 		        }
 
 		        $eachRequest->action .= "</div>";
@@ -2196,7 +2192,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							}
 
 							if($accessObject->hasAccess('delete', 'branches')) {
-								$action .= "<button class=\"btn btn-sm ".(($data->status == 1) ? "btn-outline-danger" : "btn-outline-primary")." delete-item\" data-url=\"".$config->base_url('aj/branchManagment/updateStatus')."\" data-state=\"{$data->status}\" data-msg=\"".(($data->status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")."\" data-request=\"branch-status\" data-id=\"{$data->id}\">
+								$action .= "<button class=\"btn btn-sm ".(($data->status == 1) ? "btn-outline-danger" : "btn-outline-primary")." delete-item\" data-url=\"".$config->base_url('api/branchManagment/updateStatus')."\" data-state=\"{$data->status}\" data-msg=\"".(($data->status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")."\" data-request=\"branch-status\" data-id=\"{$data->id}\">
 									<i class=\"fa ".(($data->status == 1) ? "fa-stop" : "fa-play")."\"></i>
 								</button> ";
 							}
@@ -3736,7 +3732,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				        $eachCustomer->action .= "&nbsp;<a href=\"{$config->base_url('customer-detail/'.$eachCustomer->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$eachCustomer->customer_id}\" class=\"customer-orders btn btn-outline-primary btn-sm\" data-name=\"{$eachCustomer->fullname}\"><i class=\"fa fa-chart-bar\"></i></a>";
 
 				        if($accessObject->hasAccess('delete', 'customers')) {
-		                    $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('aj/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";
+		                    $eachCustomer->action .= "&nbsp;<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Customer?\" data-request=\"customer\" data-url=\"{$config->base_url('api/customerManagement/deleteCustomer')}\" data-id=\"{$eachCustomer->id}\"><i class=\"fa fa-trash\"></i></a>";
 		                }
 				        $eachCustomer->action .= "</div>";
 
@@ -3873,7 +3869,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	            	}
 	            	
 	            	if($accessObject->hasAccess('category_delete', 'products')) {
-	            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('aj/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
+	            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('api/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
 	            	}
 
 	            	if(empty($eachCategory->action)) {

@@ -947,7 +947,7 @@ var popPrdLst = (data) => {
 
         var trClass,
         checkbox = `<div class="checkbox checkbox-primary checkbox-single">
-                <input type="checkbox" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-code="${e.product_code}" data-product-price="${e.price}" data-product-img="${e.image}">
+                <input type="checkbox" style="zoom:1.7" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-code="${e.product_code}" data-product-price="${e.price}" data-product-img="${e.image}">
                 <label for="productCheck-${e.product_id}">
                 </label>
             </div>`;
@@ -976,7 +976,7 @@ var popPrdLst = (data) => {
     initPrdSelt();
 }
 
-var ftcPrdList = async () => {
+var ftchPrdList = async () => {
 
     await dOC().then((itResp) => {
         if(itResp == 1) {
@@ -1025,7 +1025,7 @@ var ftcPrdList = async () => {
 }
 
 if($(`tbody[class="pos-products-list"]`).length) {
-    ftcPrdList();
+    ftchPrdList();
 }
 
 var populateUsersList = (usersObject) => {
@@ -2333,7 +2333,7 @@ if($(".make-online-payment").length) {
                             if(storeValues.prt == "yes") {
                                 triggerPrintReceipt();
                             }
-                            ftcPrdList();
+                            ftchPrdList();
                             $(`select[class~="customer-select"]`).val('WalkIn').change();
                         }
 
@@ -2351,7 +2351,7 @@ if($(".make-online-payment").length) {
                             if(storeValues.prt == "yes") {
                                 triggerPrintReceipt();
                             }
-                            ftcPrdList();
+                            ftchPrdList();
                             $(`select[class~="customer-select"]`).val('WalkIn').change();
                             $(".cash-process-loader").removeClass("d-flex");
                         } else {
@@ -2429,8 +2429,8 @@ if($(".make-online-payment").length) {
                         let productName = currentInput.attr('data-name');
 
                         if(selectedQty < 1) { 
-                            selectedQty = 1;
-                            currentInput.val(1); 
+                            selectedQty = 0;
+                            // currentInput.val(1); 
                         }
                         let subtotal = (productPrices[row.productId]*selectedQty).toFixed(2);
                         subTotalBox.text(subtotal);
@@ -2601,7 +2601,7 @@ if($(".make-online-payment").length) {
             <td style="padding-top:20px">${rowData.productName}</td>
             <td style="padding-top:20px">${rowData.productPrice}</td>
             <td>
-            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
+            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pos-form-horizontal" min="0" name="products[${rowData.productId}][qty]"  data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
             <input type="hidden" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
             <td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
             <td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>

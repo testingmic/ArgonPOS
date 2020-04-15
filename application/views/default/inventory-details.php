@@ -100,14 +100,14 @@ if(isset($branch->branch_name)) {
                         <button type="button" class="btn <?= $clientData->btn_outline; ?> waves-effect waves-light transfer-selected-products">
                             <i class="fa fa-share"></i> Transfer
                         </button>
-                        <?php if ($branch->branch_type == "Warehouse") { ?>
+                        <?php // if ($branch->branch_type == "Warehouse") { ?>
                         <button type="button" class="btn btn-outline-success waves-effect waves-light float-right ml-2" data-toggle="modal" data-animation="bounce" data-target="#updateProductModal">
                             <i class="fa fa-upload"></i> Update Stock
                         </button>
                         <button type="button" class="btn btn-outline-primary waves-effect waves-light float-right ml-2 pop-new-modal" data-toggle="modal" data-animation="bounce" data-target="#addProductModal">
                             + Add New
                         </button>
-                        <?php } ?>
+                        <?php // } ?>
                     <?php } ?>
                 </p>
                 <div class="table-responsive">
@@ -133,8 +133,8 @@ if(isset($branch->branch_name)) {
 
   <?php if($accessChecker) { ?>
   <!-- Add Product Modal -->
-  <?php if ($branch->branch_type == "Warehouse") { ?>
-  <form id="addProductForm" autocomplete="Off" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('aj/inventoryManagement/addProduct'); ?>">
+  <?php // if ($branch->branch_type == "Warehouse") { ?>
+  <form id="addProductForm" autocomplete="Off" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('api/inventoryManagement/addProduct'); ?>">
       <div class="modal fade" id="addProductModal">
           <div class="modal-dialog modal-lg">
               <div class="modal-content">
@@ -237,7 +237,7 @@ if(isset($branch->branch_name)) {
           </div>
       </div>
   </form> 
-  <form id="updateWareHouseStock" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('aj/inventoryManagement/updateWareHouseStock'); ?>">
+  <form id="updateWareHouseStock" enctype="multipart/form-data" class="needs-validation" novalidate="" method="post" action="<?= $config->base_url('api/inventoryManagement/updateWareHouseStock'); ?>">
       <div class="modal fade" id="updateProductModal">
           <div class="modal-dialog modal-lg">
               <div class="modal-content">
@@ -301,7 +301,7 @@ if(isset($branch->branch_name)) {
           </div>
       </div>
   </form> 
-  <?php } ?>
+  <?php // } ?>
   
   <div class="modal fade transferProductModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg">

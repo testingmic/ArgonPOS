@@ -32,7 +32,7 @@ if($admin_user->logged_InControlled()) {
   <div class="main-content">
     <!-- Header -->
     <div class="header bg-gradient-primary py-lg-6 pt-lg-7">
-      <div class="container">
+      <div class="container  mt-5">
         <div class="header-body text-center mb-7">
           <div class="row justify-content-center">
             <div class="col-xl-5 col-lg-6 col-md-8 px-5">

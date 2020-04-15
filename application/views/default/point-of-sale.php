@@ -64,13 +64,13 @@ a[href="#finish"] {
       <div class="col-lg-6">
         <div class="card">
           <?= (!$validDate) ? nonWorkingDay() : null; ?>
-          <div class="card-body" style="padding-top: 10px; padding-bottom: 0px">
+          <div class="card-body" style="padding-top: 10px; padding-bottom: 0px; padding-right: 5px; padding-left: 5px">
             <div class="content-loader register-form-loader" style="display: none"><i class="fa fa-3x fa-pulse fa-spinner"></i></div>
             <form id="pos-form-horizontal" class="pos-form-horizontal form-wizard-wrapper register-form" method="POST" action="">
               <h3>Customer</h3>
               <fieldset>
-                <div class="row">
-                  <div class="col-md-12">
+                <div class="row justify-content-center">
+                  <div class="col-md-8">
                     <div class="form-group row">
                       <div class="text-center col-lg-12">
                         Customer
@@ -87,7 +87,7 @@ a[href="#finish"] {
               <h3>Products</h3>
               <fieldset>
                 <div class="row">
-                  <div class="col-4 mr-auto mb-2">
+                  <div class="col-lg-6 col-md-6 mr-auto mb-2">
                     <select class="form-control category-select">
                       <option value="all">All Products</option>
                       <?php if (!empty($categories)): ?>
@@ -97,11 +97,11 @@ a[href="#finish"] {
                       <?php endif ?>
                     </select>
                   </div>  
-                  <div class="col-lg-6 ml-auto mb-2">
+                  <div class="col-lg-6 col-md-6 ml-auto mb-2">
                     <input type="text" id="products-search-input" class="form-control" placeholder="Search / Scan Product">
                   </div>  
                   <div class="col-sm-12">
-                    <dv class="card shadow-none products-table-card slim-scroll" style="max-height: 330px;overflow-y: auto">
+                    <dv class="card shadow-none products-table-card slim-scroll">
                       <?php if($validDate) { ?>
                       <div class="card-body">
                         <table class="table datatables" id="products-table">
@@ -122,11 +122,11 @@ a[href="#finish"] {
               </fieldset><!--end fieldset-->
               <h3>Payment</h3>
               <fieldset>
-                <div class="row">
-                  <div class="col-md-12">
+                <div class="row justify-content-center">
+                  <div class="col-md-12 col-lg-12">
                     <div class="form-group row justify-content-center">
-                      <div class="col-lg-12 text-center">Payment Type</div>
-                      <div class="col-lg-8 text-center">
+                      <div class="col-lg-8 col-md-8 text-center">Payment Option</div>
+                      <div class="col-lg-8  col-md-8 text-center">
                         <?php if($validDate  && !$session->accountExpired) { ?>
                         <select name="payment_type" class="form-control custom-select2 payment-type-select">
                           <option value="0">--Please Select--</option>
@@ -185,7 +185,7 @@ a[href="#finish"] {
                 <?php if($validDate  && !$session->accountExpired) { ?>
                 <div class="p-3">
                   <div class="card-border border-success bg-soft-success card m-auto text-center" style="width: 100%">
-                    <div class="card-body">
+                    <div class="card-body table-responsive">
                       <h5 data-bind-html="customer" class="text-center font-weight-bold"></h5>
                       <span class="font-12"><?= $branchData->branch_name ?></span>
                       <hr style="border:none;border-bottom: 1px dashed #ccc">
