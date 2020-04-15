@@ -77,7 +77,7 @@ global $accessObject;
           </div>
           <div class="modal-body slim-scroll show-modal-body" style="padding-top: 0px; max-height: 650px; overflow: scroll; overflow-x: hidden">
             <div class="card mb-0 p-3">
-              <form action="<?= $baseUrl ?>api/expensesManagement/addExpense" class="expenseForm">
+              <form action="<?= $baseUrl ?>api/expensesManagement/manageExpenses" class="expenseForm" method="POST">
                 <div class="form-row">
                   <?php if($accessObject->hasAccess('monitoring', 'branches')) { ?>
                   <div class="form-group col-lg-12">

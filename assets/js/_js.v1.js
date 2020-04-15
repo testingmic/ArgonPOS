@@ -686,14 +686,38 @@ if($(`table[class~="productsList"]`).length) {
     listCatLst();
 }
 
+function toastError(msg) {
+    Toast.fire({
+        type: 'error',
+        title: msg
+    });
+}
+
 if($(`table[class~="expensesList"]`).length) {
 
     $(`div[class~="expensesModal"]`).modal('show');
-    
+
     $(`div[class="main-content"]`).on('click', `a[class~="add-expense"]`, function(e) {
         $(`div[class~="expensesModal"] form`)[0].reset();
         $(`div[class~="expensesModal"] form select`).val('null').change;
         $(`div[class~="expensesModal"]`).modal('show');
+    });
+
+    $(`form[class="expenseForm"]`).on('submit', function(evt) {
+        evt.preventDefault();
+        let formData = $(this).serialize();
+        $(`div[class="form-content-loader"]`).css("display","flex");
+
+        $.post(`${baseUrl}api/expensesManagement/manageExpenses`, formData, function(resp) {
+            Toast.fire({
+                type: resp.status,
+                title: resp.result
+            });
+            $(`div[class="form-content-loader"]`).css("display","none");
+        }, 'json').catch((err) => {
+            toastError('Sorry! Error encountered while processing the form');
+            $(`div[class="form-content-loader"]`).css("display","none");
+        });
     });
 
     var popCatLst = (expensesData) => {
@@ -2587,8 +2611,7 @@ if($(".make-online-payment").length) {
                         let productName = currentInput.attr('data-name');
 
                         if(selectedQty < 1) { 
-                            selectedQty = 0;
-                            // currentInput.val(1); 
+                            selectedQty = 0; 
                         }
                         let subtotal = (productPrices[row.productId]*selectedQty).toFixed(2);
                         subTotalBox.text(subtotal);
