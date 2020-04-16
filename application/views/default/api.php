@@ -36,6 +36,15 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	$loggedUserBranchId = (isset($apiAccessValues->branchId)) ? xss_clean($apiAccessValues->branchId) : $session->branchId;
 	$loggedUserClientId = (isset($apiAccessValues->clientId)) ? xss_clean($apiAccessValues->clientId) : $session->clientId;
 	$loggedUserId = (isset($apiAccessValues->userId)) ? xss_clean($apiAccessValues->userId) : $session->userId;
+	$insightRequest = (isset($_REQUEST["insightRequest"])) ? xss_clean($_REQUEST["insightRequest"]) : $session->insightRequest;
+
+	// available insight metricts that can be queried
+	$availableInsights = [
+		"paymentOptionsInsight","productCategoryInsight",
+		"productsPerformanceInsight","actualsCreditInsight",
+		"costSellingProfitInsight","customerOrdersInsight",
+		"discountEffectInsight",
+	];
 
 	//: if the user requested the data from the browser
 	$expiredAccount = $session->accountExpired;
@@ -914,7 +923,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			}
 
 			// if the user is querying for the sales overview
-			elseif(in_array($metric, ['salesOverview', 'ordersCount'])) {
+			elseif(in_array($metric, ['salesOverview'])) {
 
 				// payment options processor
 				$paymentOptions = $clientData->payment_options;
@@ -950,128 +959,139 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					"payment_values" => $paymentValues
 				];
 
-				// loop through the products category
-				$category_stmt = $pos->prepare("
-					SELECT
-						a.id, a.category AS category_name,
-						(
-							SELECT 
-					            CASE 
-					                WHEN SUM(c.product_quantity*c.product_unit_price) IS NULL THEN 0.1 
-					            ELSE 
-					                SUM(c.product_quantity*c.product_unit_price)
-					            END
-					        FROM 
-					        	sales_details c
-					        LEFT JOIN products d ON d.id = c.product_id
-					        LEFT JOIN sales b ON b.order_id = c.order_id
-					       	WHERE 
-					        	(DATE(c.order_date) >= '{$dateFrom}' && DATE(c.order_date) <= '{$dateTo}') 
-					        	AND d.category_id=a.category_id AND b.deleted='0' 
-					        	{$branchAccessInner} {$clientAccessInner} {$accessLimitInner}
-						) AS amount
-					FROM
-						products_categories a
-					WHERE 1 {$clientAccess}
-				");
-				$category_stmt->execute();
-
-				// initializing
-				$category_names = [];
-				$category_amount = [];
 				
-				// assign the category sales record
-				while($categorySales = $category_stmt->fetch(PDO::FETCH_OBJ)) {
-					// assign the data set
-					$category_names[] = trim($categorySales->category_name);
-					$category_amount[] = round($categorySales->amount);
+
+				// check if product categories insight is in the insight request array
+				if(in_array("productCategoryInsight", $insightRequest)) {
+
+					// loop through the products category
+					$category_stmt = $pos->prepare("
+						SELECT
+							a.id, a.category AS category_name,
+							(
+								SELECT 
+						            CASE 
+						                WHEN SUM(c.product_quantity*c.product_unit_price) IS NULL THEN 0.1 
+						            ELSE 
+						                SUM(c.product_quantity*c.product_unit_price)
+						            END
+						        FROM 
+						        	sales_details c
+						        LEFT JOIN products d ON d.id = c.product_id
+						        LEFT JOIN sales b ON b.order_id = c.order_id
+						       	WHERE 
+						        	(DATE(c.order_date) >= '{$dateFrom}' && DATE(c.order_date) <= '{$dateTo}') 
+						        	AND d.category_id=a.category_id AND b.deleted='0' 
+						        	{$branchAccessInner} {$clientAccessInner} {$accessLimitInner}
+							) AS amount
+						FROM
+							products_categories a
+						WHERE 1 {$clientAccess}
+					");
+					$category_stmt->execute();
+
+					// initializing
+					$category_names = [];
+					$category_amount = [];
+					
+					// assign the category sales record
+					while($categorySales = $category_stmt->fetch(PDO::FETCH_OBJ)) {
+						// assign the data set
+						$category_names[] = trim($categorySales->category_name);
+						$category_amount[] = round($categorySales->amount);
+					}
+
 				}
 
+				// check if products performance insight is in the insight request array
+				if(in_array("productsPerformanceInsight", $insightRequest)) {
 
-				// products performance query
-				$products_stmt = $pos->prepare("
-					SELECT
-						a.id, a.category_id, a.product_title, b.branch_name,
-						a.product_image,
-						(
-							SELECT 
-								COUNT(c.order_id) 
-							FROM sales_details b
-							LEFT JOIN sales c ON b.order_id = c.order_id
-							WHERE 
-								c.deleted='0' AND b.product_id = a.id AND
-								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
-						) AS orders_count,
-						(
-							SELECT 
-								SUM(b.product_quantity) 
-							FROM sales_details b
-							LEFT JOIN sales c ON b.order_id = c.order_id
-							WHERE 
-								c.deleted='0' AND b.product_id = a.id AND
-								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
-						) AS totalQuantitySold,
-						(
-							SELECT 
-								SUM(b.product_quantity*b.product_cost_price) 
-							FROM sales_details b
-							LEFT JOIN sales c ON b.order_id = c.order_id
-							WHERE 
-								c.deleted='0' AND b.product_id = a.id AND
-								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
-						) AS totalProductsSoldCost,
-						(
-							SELECT 
-								SUM(b.product_quantity*b.product_unit_price) 
-							FROM sales_details b
-							LEFT JOIN sales c ON b.order_id = c.order_id
-							WHERE 
-								c.deleted='0' AND b.product_id = a.id AND
-								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
-						) AS totalProductsRevenue,
-						(
-							SELECT 
-								SUM((b.product_quantity*b.product_unit_price) - (b.product_quantity*b.product_cost_price)) 
-							FROM sales_details b
-							LEFT JOIN sales c ON b.order_id = c.order_id
-							WHERE 
-								c.deleted='0' AND b.product_id = a.id AND
-								(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
-								{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
-						) AS totalProductsProfit
-					FROM 
-						products a
-					LEFT JOIN branches b ON b.id = a.branchId
-					WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT {$productLimit}
+					// products performance query
+					$products_stmt = $pos->prepare("
+						SELECT
+							a.id, a.category_id, a.product_title, b.branch_name,
+							a.product_image,
+							(
+								SELECT 
+									COUNT(c.order_id) 
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+							) AS orders_count,
+							(
+								SELECT 
+									SUM(b.product_quantity) 
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+							) AS totalQuantitySold,
+							(
+								SELECT 
+									SUM(b.product_quantity*b.product_cost_price) 
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+							) AS totalProductsSoldCost,
+							(
+								SELECT 
+									SUM(b.product_quantity*b.product_unit_price) 
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+							) AS totalProductsRevenue,
+							(
+								SELECT 
+									SUM((b.product_quantity*b.product_unit_price) - (b.product_quantity*b.product_cost_price)) 
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+							) AS totalProductsProfit
+						FROM 
+							products a
+						LEFT JOIN branches b ON b.id = a.branchId
+						WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT {$productLimit}
 
-				");
-				$products_stmt->execute();
-				
-				// initializing
-				$productsArray = [];
-				$overallSale = array_sum($paymentValues);
-				$iv = 0;
+					");
+					$products_stmt->execute();
+					
+					// initializing
+					$productsArray = [];
+					$overallSale = array_sum($paymentValues);
+					$iv = 0;
 
-				// loop through the product information that have been fetched
-				while($product_result = $products_stmt->fetch(PDO::FETCH_OBJ)) {
-					$iv++;
-					$productsArray[] = [
-						'row_id' => $iv,
-						'percentage' => ($product_result->totalProductsRevenue > 0) ? number_format(($product_result->totalProductsRevenue/$overallSale)*100) : 0,
-						'product_id' => $product_result->id,
-						'category_id' => $product_result->category_id,
-						'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
-						'product_image' => $product_result->product_image,
-						'orders_count' => $product_result->orders_count,
-						'quantity_sold' => (int) $product_result->totalQuantitySold,
-						'total_selling_cost' => $clientData->default_currency.number_format($product_result->totalProductsSoldCost, 2),
-						'total_selling_revenue' => $clientData->default_currency.number_format($product_result->totalProductsRevenue, 2),
-						'product_profit' => $clientData->default_currency.number_format($product_result->totalProductsProfit, 2)
-					];
+					// loop through the product information that have been fetched
+					while($product_result = $products_stmt->fetch(PDO::FETCH_OBJ)) {
+						$iv++;
+						$productsArray[] = [
+							'row_id' => $iv,
+							'percentage' => ($product_result->totalProductsRevenue > 0) ? number_format(($product_result->totalProductsRevenue/$overallSale)*100) : 0,
+							'product_id' => $product_result->id,
+							'category_id' => $product_result->category_id,
+							'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
+							'product_image' => $product_result->product_image,
+							'orders_count' => $product_result->orders_count,
+							'quantity_sold' => (int) $product_result->totalQuantitySold,
+							'total_selling_cost' => $clientData->default_currency.number_format($product_result->totalProductsSoldCost, 2),
+							'total_selling_revenue' => $clientData->default_currency.number_format($product_result->totalProductsRevenue, 2),
+							'product_profit' => $clientData->default_currency.number_format($product_result->totalProductsProfit, 2)
+						];
+					}
+
 				}
 				
 				// dates range
@@ -1149,19 +1169,20 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				$sales_list->execute();
 
 				// set some array functions
-				$Labeling = array();
-				$amount_discounted = array();
-				$amount_not_discounted = array();
+				$Labeling = [];
+				$amount_discounted = [];
+				$amount_not_discounted = [];
+				$totalOrdersArray = [];
 				$lowestSalesValue = 0;
 				$highestSalesValue = 0;
 				$totalOrdersCount = 0;
-				$creditSales = array();
-				$actualSales = array();
-				$uniqueCustomers = array();
-				$returningCustomers = array();
-				$totalCostPrice = array();
-				$totalSellingPrice = array();
-				$totalProfit = array();
+				$creditSales = [];
+				$actualSales = [];
+				$uniqueCustomers = [];
+				$returningCustomers = [];
+				$totalCostPrice = [];
+				$totalSellingPrice = [];
+				$totalProfit = [];
 
 				// fetch the information
 				while($sales_result = $sales_list->fetch(PDO::FETCH_OBJ)) {
@@ -1174,47 +1195,53 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$Labeling[] = date('Y-m-d', strtotime($sales_result->dates));
 					}
 					// use amount if the sales overview is queried 
-					if($metric == 'salesOverview') {
-						$amount_not_discounted[] = $sales_result->amount_not_discounted;
-						$amount_discounted[] = $sales_result->amount_discounted;
-						$creditSales[] = $sales_result->total_credit_sales;
-						$actualSales[] = $sales_result->total_actual_sales;
+					$amount_not_discounted[] = $sales_result->amount_not_discounted;
+					$amount_discounted[] = $sales_result->amount_discounted;
+						
+					// add these items if the user is on the analytics page
+					$creditSales[] = $sales_result->total_credit_sales;
+					$actualSales[] = $sales_result->total_actual_sales;
 
-						$totalCostPrice[] = $sales_result->total_cost_price;
-						$totalSellingPrice[] = $sales_result->total_selling_price;
-						$totalProfit[] = $sales_result->total_profit_made - $sales_result->total_order_discount;
-					} else {
-						$amount_discounted[] = $sales_result->orders_count;
-					}
+					$totalCostPrice[] = $sales_result->total_cost_price;
+					$totalSellingPrice[] = $sales_result->total_selling_price;
+					$totalProfit[] = $sales_result->total_profit_made - $sales_result->total_order_discount;
+					$totalOrdersArray[] = $sales_result->orders_count;
+					
 					$uniqueCustomers[] = $sales_result->unique_customers;
 					$totalOrdersCount += $sales_result->orders_count;
-					
+				
 					// if the metric is orders count
-					if($metric == "ordersCount") {
-						$returningCustomers[] = ($sales_result->orders_count-$sales_result->unique_customers);
-					}
+					$returningCustomers[] = ($sales_result->orders_count-$sales_result->unique_customers);
 				}
 
-				// fetch the maximum value if the query is for the sales overview
-				if($metric == "salesOverview") {
-					$lowestSalesValue = (!empty($amount_discounted)) ? min($amount_discounted) : 0.00;
-					$highestSalesValue = (!empty($amount_discounted)) ? max($amount_discounted) : 0.00;
+				// not discount amount
+				$amountNotDiscountedData = array_combine($Labeling, $amount_not_discounted);
+				
+				// get the hightest and lowest values
+				$lowestSalesValue = (!empty($amount_discounted)) ? min($amount_discounted) : 0.00;
+				$highestSalesValue = (!empty($amount_discounted)) ? max($amount_discounted) : 0.00;
 
-					$amountNotDiscountedData = array_combine($Labeling, $amount_not_discounted);
+				// check if actuals and credit insight is in the insight request array
+				if(in_array("actualsCreditInsight", $insightRequest)) {
 					$actualSalesData = array_combine($Labeling, $actualSales);
 					$creditSalesData = array_combine($Labeling, $creditSales);
+				}
+
+				// check if cost price, selling and profit insight is in the insight request array
+				if(in_array("costSellingProfitInsight", $insightRequest)) {
 
 					$totalCostData = array_combine($Labeling, $totalCostPrice);
 					$totalSellingData = array_combine($Labeling, $totalSellingPrice);
 					$totalProfitData = array_combine($Labeling, $totalProfit);
 				}
 
-				// run this section if the orders count metric was parsed
-				if($metric == "ordersCount") {
-					// get the list of unique customers
+				// check if customer orders insight is in the insight request array
+				if(in_array("customerOrdersInsight", $insightRequest)) {
+					$totalOrderData = array_combine($Labeling, $totalOrdersArray);
 					$actualUniqueCustomers = array_combine($Labeling, $uniqueCustomers);
 					$actualReturningCustomers = array_combine($Labeling, $returningCustomers);
 				}
+
 				// combine the hour and sales from the database into one set
 				$databaseData = array_combine($Labeling, $amount_discounted);
 
@@ -1229,11 +1256,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$listing = "year-to-months";
 				}
 
-				// if the metric is orders count
-				if($metric == "ordersCount") {
-					$format = "Y-m-d";
-				}
-
 				// replace the empty fields with 0
 				$replaceEmptyField = $dateClass->dataDateComparison($listing, $Labeling, array($dateFrom, $dateTo), $posClass->stringToArray($clientData->shop_opening_days));
 
@@ -1241,15 +1263,20 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				$freshData = array_replace($databaseData, $replaceEmptyField);
 				ksort($freshData);
 
-				// fetch the maximum value if the query is for the sales overview
-				if($metric == "salesOverview") {
+				if(in_array("actualsCreditInsight", $insightRequest)) {
 					$actualSalesRecord = array_replace($actualSalesData, $replaceEmptyField);
 					$creditSalesRecord = array_replace($creditSalesData, $replaceEmptyField);
-					$amountNotDiscounted = array_replace($amountNotDiscountedData, $replaceEmptyField);
-					ksort($actualSalesRecord);
 					ksort($creditSalesRecord);
-					ksort($amountNotDiscounted);
+					ksort($actualSalesRecord);
+				}
 
+				if(in_array("discountEffectInsight", $insightRequest)) {
+					$amountNotDiscounted = array_replace($amountNotDiscountedData, $replaceEmptyField);
+					ksort($amountNotDiscounted);
+				}
+				
+				// check if customer orders insight is in the insight request array
+				if(in_array("costSellingProfitInsight", $insightRequest)) {
 					$totalCostRecord = array_replace($totalCostData, $replaceEmptyField);
 					$totalSellingRecord = array_replace($totalSellingData, $replaceEmptyField);
 					$totalProfitRecord = array_replace($totalProfitData, $replaceEmptyField);
@@ -1258,11 +1285,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					ksort($totalProfitRecord);
 				}
 
-				// if the metric is orders count
-				if($metric == "ordersCount") {
+				// check if customer orders insight is in the insight request array
+				if(in_array("customerOrdersInsight", $insightRequest)) {
 					// fill in the unique customers list
+					$totalOrdersDataRecord = array_replace($totalOrderData, $replaceEmptyField);
 					$actualUniqueCustomersRecord = array_replace($actualUniqueCustomers, $replaceEmptyField);
 					$actualReturningCustomersRecord = array_replace($actualReturningCustomers, $replaceEmptyField);
+					ksort($totalOrdersDataRecord);
 					ksort($actualUniqueCustomersRecord);
 					ksort($actualReturningCustomersRecord);
 				}
@@ -1297,42 +1326,62 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				$resultData["labeling"] = $labels;
 				$resultData["data"] = array_values($freshData);
 
-				// if the metric is orders count
-				if($metric == "ordersCount") {
-					$resultData["count"] = $totalOrdersCount;
-					$resultData["unique_customers"] = array_values($actualUniqueCustomersRecord);
-					$resultData["returning_customers"] = array_values($actualReturningCustomersRecord);
+				if(in_array("customerOrdersInsight", $insightRequest)) {
+					// if the metric is orders count
+					$resultData["orders"] = [
+						"count" => $totalOrdersCount,
+						"totals" => array_values($totalOrdersDataRecord),
+						"unique_customers" => array_values($actualUniqueCustomersRecord),
+						"returning_customers" => array_values($actualReturningCustomersRecord)
+					];
 				}
-				
+
 				// parse the highest sales value
-				if($metric == "salesOverview") {
-					$resultData["sales"] = [
-						'discount_effect' => [
-							'with_discount' => array_values($freshData),
-							'without_discount' => array_values($amountNotDiscounted),
-							'total_sale' => $clientData->default_currency . number_format(array_sum(array_values($amountNotDiscounted)), 2),
-							'discounted_sale' => $clientData->default_currency . number_format(array_sum(array_values($freshData)), 2)
-						],
-						'highest' => $clientData->default_currency . number_format($highestSalesValue, 2),
-						'lowest' => $clientData->default_currency . number_format($lowestSalesValue, 2),
-						'actuals' => array_values($actualSalesRecord),
-						'credit' => array_values($creditSalesRecord),
-						'comparison' => [
-							'total_sales' => $clientData->default_currency . number_format(array_sum($amount_discounted), 2),
-							'total_actual_sales' => $clientData->default_currency . number_format(array_sum($actualSalesRecord), 2),
-							'total_credit_sales' => $clientData->default_currency . number_format(array_sum($creditSalesRecord), 2),
-						],
-						'revenue' => [
-							'cost' => array_values($totalCostRecord),
-							'selling' => array_values($totalSellingRecord),
-							'profit' => array_values($totalProfitRecord),
-						],
-						'payment_options' => $paymentBreakdown,
-						'products_performance' => $productsArray,
-						'category_sales' => [
-							'labels' => $category_names,
-							'data' => $category_amount
-						]
+				$resultData["sales"] = [
+					'highest' => $clientData->default_currency . number_format($highestSalesValue, 2),
+					'lowest' => $clientData->default_currency . number_format($lowestSalesValue, 2)
+				];
+
+				if(in_array("paymentOptionsInsight", $insightRequest)) {
+					$resultData["sales"]['payment_options'] = $paymentBreakdown;
+				}
+
+				if(in_array("productsPerformanceInsight", $insightRequest)) {
+					$resultData["sales"]['products_performance'] = $productsArray;
+				}
+
+				$resultData["sales"]['comparison']['total_sales'] = $clientData->default_currency . number_format(array_sum($amount_discounted), 2);
+
+				if(in_array("actualsCreditInsight", $insightRequest)) {
+					$resultData["sales"]['actuals'] = array_values($actualSalesRecord);
+					$resultData["sales"]['credit'] = array_values($creditSalesRecord);
+					$resultData["sales"]['comparison'] = [
+						'total_actual_sales' => $clientData->default_currency . number_format(array_sum($actualSalesRecord), 2),
+						'total_credit_sales' => $clientData->default_currency . number_format(array_sum($creditSalesRecord), 2),
+					];
+				}
+
+				if(in_array("costSellingProfitInsight", $insightRequest)) {
+					$resultData["sales"]['revenue'] = [
+						'cost' => array_values($totalCostRecord),
+						'selling' => array_values($totalSellingRecord),
+						'profit' => array_values($totalProfitRecord)
+					];
+				}
+
+				if(in_array("productCategoryInsight", $insightRequest)) {
+					$resultData["sales"]['category_sales'] = [
+						'labels' => $category_names,
+						'data' => $category_amount
+					];
+				}
+
+				if(in_array("discountEffectInsight", $insightRequest)) {
+					$resultData["sales"]['discount_effect'] = [
+						'with_discount' => array_values($freshData),
+						'without_discount' => array_values($amountNotDiscounted),
+						'total_sale' => $clientData->default_currency . number_format(array_sum(array_values($amountNotDiscounted)), 2),
+						'discounted_sale' => $clientData->default_currency . number_format(array_sum(array_values($freshData)), 2)
 					];
 				}
 				
@@ -4501,6 +4550,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	}
 
 	$response = (Object) $response;
+
+	$response->metrics = $insightRequest;
 
 	if($expiredAccount) {
 		$response->state = 'Account Expired: Showing Limited Data.';

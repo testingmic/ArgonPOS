@@ -43,6 +43,12 @@ if(confirm_url_id(1)) {
 if(isset($customerDetails->fullname)) {
     // include the important files
     require_once "headtags.php";
+
+    // insight to request for
+    $session->insightRequest = [
+      'discountEffectInsight', 'productsPerformanceInsight',
+      'paymentOptionsInsight'
+    ];
 ?>
 
   <div class="header pb-6 d-flex align-items-center" style="min-height: 350px; background-image: url(<?= $baseUrl ?>assets/img/theme/bg.jpg); background-size: cover; background-position: center top;">

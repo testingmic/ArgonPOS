@@ -11,6 +11,11 @@ global $posClass, $baseUrl, $clientData;
 $session->reportingCustomerId = null;
 $session->productsLimit = 4;
 $session->limitedData = false;
+
+// insight to request for
+$session->insightRequest = [
+  'discountEffectInsight', 'productsPerformanceInsight'
+];
 ?>	
 <!-- Header -->
 <div class="sales-overview-data"></div>

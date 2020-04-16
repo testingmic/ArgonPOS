@@ -9,6 +9,14 @@ global $setupInfo, $clientData, $filterPeriod;
 
 $session->reportingCustomerId = null;
 $session->productsLimit = 50;
+
+// insight to request for
+$session->insightRequest = [
+    "paymentOptionsInsight","productCategoryInsight",
+    "productsPerformanceInsight","actualsCreditInsight",
+    "costSellingProfitInsight","customerOrdersInsight",
+    "discountEffectInsight"
+];
 ?>
 <!-- Page Content-->
 <!-- Header -->
@@ -51,7 +59,7 @@ $session->productsLimit = 50;
         <style>
             .reports-summary .card p, .reports-details .card p {
                 font-size: 12px;
-                color: #fff;
+                /*color: #fff;*/
             }
             .reports-summary .card h3, .reports-details .card h3 {
                 color: #fff;
@@ -259,11 +267,11 @@ $session->productsLimit = 50;
               <div class="card">
                 <?= connectionLost(); ?>
                 <div class="card-body mb-0" style="padding-bottom: 0px" data-report="orders-trend">
-                    <div class="row">                                            
+                    <div class="row">
                         <div class="col-lg-8 align-self-center">
                             <div class="impressions-data">
                                 <h4 class="mt-0 header-title">Orders Trend</h4>
-                                <h3 class="mn-3">0 <small>total orders</small></h3>
+                                <h2 class="mn-3">0 <small>total orders</small></h2>
                             </div>
                         </div>
                         <div class="col-lg-4 text-right orders-loader"></div>
@@ -273,7 +281,7 @@ $session->productsLimit = 50;
                     <div class="d-flex mb-0 h-100">
                         <div class="w-100">
                             <div class="apexchart-wrapper">
-                                <div id="dash_spark_1" class="chart-gutters"></div>
+                                <div id="customer_orders_trend" class="chart-gutters"></div>
                             </div>
                         </div>
                     </div>

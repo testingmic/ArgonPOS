@@ -752,15 +752,15 @@ if($(`table[class~="expensesList"]`).length) {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-                {"data": 'row'},
-                {"data": 'start_date'},
-                {"data": 'category'},
-                {"data": 'amount'},
-                {"data": 'tax'},
-                {"data": 'payment_type'},
-                {"data": 'description'},
-                {"data": 'created_by'},
-                {"data": 'action'}
+            {"data": 'row'},
+            {"data": 'start_date'},
+            {"data": 'category'},
+            {"data": 'amount'},
+            {"data": 'tax'},
+            {"data": 'payment_type'},
+            {"data": 'description'},
+            {"data": 'created_by'},
+            {"data": 'action'}
             ]
         });
 
@@ -1990,7 +1990,7 @@ var trgPrtRpt = (saleId = null) => {
         `${baseUrl}receipt/${thisSaleId}`,
         `Sales Receipt - #${thisSaleId}`,
         `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-    );
+        );
 }
 
 function qPrt() {
@@ -1999,7 +1999,7 @@ function qPrt() {
     var printWn = window.open(
         ``, `Sales Receipt - #${orderId}`, 
         `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-    );
+        );
     printWn.document.write(rcpContent);
     printWn.window.print();
     printWn.window.close();
@@ -2598,571 +2598,571 @@ if($(".make-online-payment").length) {
         }
     });
 
-    $(`a[class~="discard-sale"]`).on('click', function(e) {
-        Toast.fire({
-            type: 'success',
-            title: 'Transaction was successfully discarded'
-        });
-
-        setTimeout(function() {
-            window.location.href = `${baseUrl}point-of-sale`;
-        }, 1500);
+$(`a[class~="discard-sale"]`).on('click', function(e) {
+    Toast.fire({
+        type: 'success',
+        title: 'Transaction was successfully discarded'
     });
 
-    function svReg() {
-        let formData = $("#pwizard.register-form").serialize(),
-            totalToPay = $("[data-order-total]").data("orderTotal"),
-            discountType = $(`input[name="discount_type"]:checked`).val(),
-            discountAmount = $(`input[name="discount_amount"]`).val();
+    setTimeout(function() {
+        window.location.href = `${baseUrl}point-of-sale`;
+    }, 1500);
+});
 
-        formData += `&total_to_pay=${totalToPay}&discountType=${discountType}&discountAmount=${discountAmount}`;
+function svReg() {
+    let formData = $("#pwizard.register-form").serialize(),
+    totalToPay = $("[data-order-total]").data("orderTotal"),
+    discountType = $(`input[name="discount_type"]:checked`).val(),
+    discountAmount = $(`input[name="discount_amount"]`).val();
 
-        return $.post(baseUrl+"api/pointOfSaleProcessor/saveRegister", formData);
+    formData += `&total_to_pay=${totalToPay}&discountType=${discountType}&discountAmount=${discountAmount}`;
+
+    return $.post(baseUrl+"api/pointOfSaleProcessor/saveRegister", formData);
+}
+
+let productPrices = [];
+
+$.expr[':'].Contains = function(a,i,m){
+    return $(a).text().toUpperCase().indexOf(m[3].toUpperCase())>=0;
+};
+
+$("#products-search-input").on('input', function(event) {
+    let input = $(this).val();
+    let selectedCat = $(".category-select").val();
+    $(".temp-row").remove();
+    if(selectedCat == "all" || selectedCat == ""){
+        $(`table[id="products-table"] thead tr`).show();
+        $(`td.product-title-cell`).parent().hide();
+        $(`td.product-title-cell:Contains(${input}), td[data-product-code~="${input}"]`).parent().show();
+        ckEmpTb($("#products-table"));
     }
+    else{
+        $(`table[id="products-table"] thead tr`).show();
+        $(`td.product-title-cell`).parent().hide();
+        $(`td.product-title-cell:Contains(${input})`).parents(`tr[data-category='${selectedCat}']`).show();
+        ckEmpTb($("#products-table"));
+    }
+});
 
-    let productPrices = [];
+var initPrdSelt = () => {
+    $(".product-select").on("change", async function(){
+        if($(this).is(":checked")) {
+            await addProRow($(this).data())
+            .then((row) => {
+                rcalTot();
+                amtPay();
+                let subTotalBox = $(".row-subtotal", $(`tr.products-row[data-row-id='${row.productId}']`));
+                let receipt_subTotal = $(".receipt-row-subtotal", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
+                let receipt_qty = $(".receipt-row-quantity", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
+                $(`.product-quantity[data-row='${row.productId}']`).on("input", function(){
+                    let currentInput = $(this);
+                    let selectedQty = currentInput.val().length ? parseInt(currentInput.val()) : 0;
+                    let maximumQty = parseInt(currentInput.attr('data-max'));
+                    let productName = currentInput.attr('data-name');
 
-    $.expr[':'].Contains = function(a,i,m){
-        return $(a).text().toUpperCase().indexOf(m[3].toUpperCase())>=0;
-    };
-
-    $("#products-search-input").on('input', function(event) {
-        let input = $(this).val();
-        let selectedCat = $(".category-select").val();
-        $(".temp-row").remove();
-        if(selectedCat == "all" || selectedCat == ""){
-            $(`table[id="products-table"] thead tr`).show();
-            $(`td.product-title-cell`).parent().hide();
-            $(`td.product-title-cell:Contains(${input}), td[data-product-code~="${input}"]`).parent().show();
-            ckEmpTb($("#products-table"));
-        }
-        else{
-            $(`table[id="products-table"] thead tr`).show();
-            $(`td.product-title-cell`).parent().hide();
-            $(`td.product-title-cell:Contains(${input})`).parents(`tr[data-category='${selectedCat}']`).show();
-            ckEmpTb($("#products-table"));
-        }
-    });
-
-    var initPrdSelt = () => {
-        $(".product-select").on("change", async function(){
-            if($(this).is(":checked")) {
-                await addProRow($(this).data())
-                .then((row) => {
+                    if(selectedQty < 1) { 
+                        selectedQty = 0; 
+                    }
+                    let subtotal = (productPrices[row.productId]*selectedQty).toFixed(2);
+                    subTotalBox.text(subtotal);
+                    receipt_qty.text(selectedQty);
+                    receipt_subTotal.text(fmtCurr(subtotal));
                     rcalTot();
                     amtPay();
-                    let subTotalBox = $(".row-subtotal", $(`tr.products-row[data-row-id='${row.productId}']`));
-                    let receipt_subTotal = $(".receipt-row-subtotal", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
-                    let receipt_qty = $(".receipt-row-quantity", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
-                    $(`.product-quantity[data-row='${row.productId}']`).on("input", function(){
-                        let currentInput = $(this);
-                        let selectedQty = currentInput.val().length ? parseInt(currentInput.val()) : 0;
-                        let maximumQty = parseInt(currentInput.attr('data-max'));
-                        let productName = currentInput.attr('data-name');
 
-                        if(selectedQty < 1) { 
-                            selectedQty = 0; 
-                        }
-                        let subtotal = (productPrices[row.productId]*selectedQty).toFixed(2);
-                        subTotalBox.text(subtotal);
-                        receipt_qty.text(selectedQty);
-                        receipt_subTotal.text(fmtCurr(subtotal));
-                        rcalTot();
-                        amtPay();
-
-                        if(selectedQty > maximumQty) {
-                            currentInput.val(maximumQty);
-                            Toast.fire({
-                                type: 'error',
-                                title: `Sorry. Maximum number of available ${productName} is ${maximumQty}`
-                            });
-                        }
-                    });
-                    $(`tr[class='products-row']`).on('click', function(e) {
-                        $(`input[name="products[${$(this).data('row-id')}][qty]"]`).focus();
-                    });
-                    $(`.remove-row[data-row='${row.productId}']`).on("click", function(){
-                        rvPtRow(row.productId);
-                        $(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
-                    });
-                    document.getElementById("products-search-input").focus();
+                    if(selectedQty > maximumQty) {
+                        currentInput.val(maximumQty);
+                        Toast.fire({
+                            type: 'error',
+                            title: `Sorry. Maximum number of available ${productName} is ${maximumQty}`
+                        });
+                    }
                 });
-            }
-            else rvPtRow($(this).data("productId"))
-        });
-    }
+                $(`tr[class='products-row']`).on('click', function(e) {
+                    $(`input[name="products[${$(this).data('row-id')}][qty]"]`).focus();
+                });
+                $(`.remove-row[data-row='${row.productId}']`).on("click", function(){
+                    rvPtRow(row.productId);
+                    $(`.product-select[data-product-id='${row.productId}']`).prop({"checked": false})
+                });
+                document.getElementById("products-search-input").focus();
+            });
+        }
+        else rvPtRow($(this).data("productId"))
+    });
+}
 
-    $(".category-select").on("change", function(){
-        let selectedCat = $(this).val();
-        let searchInput = $("#products-search-input").val();
-        $(".temp-row").remove();
-        $(`table[id="products-table"] thead tr`).show();
-        if(selectedCat == "all" || selectedCat == "") {
-            if(searchInput.length){
-                $(`td.product-title-cell`).parent().hide();
-                $(`td.product-title-cell:Contains(${searchInput})`).parent().show();            
-                ckEmpTb($("#products-table"));      
-            }
-            else {
-                $("tr", $("#products-table")).show();
-                ckEmpTb($("#products-table"));
-            }
+$(".category-select").on("change", function(){
+    let selectedCat = $(this).val();
+    let searchInput = $("#products-search-input").val();
+    $(".temp-row").remove();
+    $(`table[id="products-table"] thead tr`).show();
+    if(selectedCat == "all" || selectedCat == "") {
+        if(searchInput.length){
+            $(`td.product-title-cell`).parent().hide();
+            $(`td.product-title-cell:Contains(${searchInput})`).parent().show();            
+            ckEmpTb($("#products-table"));      
+        }
+        else {
+            $("tr", $("#products-table")).show();
+            ckEmpTb($("#products-table"));
+        }
+    }
+    else{
+        if(searchInput.length){
+            $(`td.product-title-cell`).parents(`tr:not([data-category='${selectedCat}'])`).hide();
+            $(`td.product-title-cell:Contains(${searchInput})`).parents(`tr[data-category='${selectedCat}']`).show();   
+            ckEmpTb($("#products-table"));
         }
         else{
-            if(searchInput.length){
-                $(`td.product-title-cell`).parents(`tr:not([data-category='${selectedCat}'])`).hide();
-                $(`td.product-title-cell:Contains(${searchInput})`).parents(`tr[data-category='${selectedCat}']`).show();   
-                ckEmpTb($("#products-table"));
-            }
-            else{
-                $(`tr[data-category='${selectedCat}']`, $("#products-table")).show();
-                $(`tr:not([data-category='${selectedCat}'])`, $("#products-table")).hide();
-                ckEmpTb($("#products-table"));
+            $(`tr[data-category='${selectedCat}']`, $("#products-table")).show();
+            $(`tr:not([data-category='${selectedCat}'])`, $("#products-table")).hide();
+            ckEmpTb($("#products-table"));
+        }
+    }
+    $(`table[id="products-table"] thead tr`).show();
+});
+
+$(".customer-select").on("change", function(){
+    if($(this).val() == "0") $(".selected-customer-name").html("No Customer Selected");
+    else {
+
+        let selectedOption = $(this).children("option:selected");
+        let selectedContact = $(this).children("option:selected").data('contact');
+        let preferredPayment = $(this).children("option:selected").data('prefered-payment');
+
+        if(preferredPayment != null) {    
+            if(preferredPayment.length > 0) {
+                $(`select[name="payment_type"]`).val(preferredPayment)
             }
         }
-        $(`table[id="products-table"] thead tr`).show();
-    });
 
-    $(".customer-select").on("change", function(){
-        if($(this).val() == "0") $(".selected-customer-name").html("No Customer Selected");
-        else {
+        $("[data-bind-html='customer']").html(`
+            ${selectedOption.text()}<br>
+            <span class="text-primary"><small>(${selectedContact})</small>
+            `);
+        $(".selected-customer-name").html(`
+            <h3 class='text-success'>
+            <span class="email-fullname">${selectedOption.text()}</span><br>
+            <span class="customer-contact text-primary"><small>(${selectedContact})</small></span>
+            </h3>`);
+        $("input[id='receipt-email']").val(selectedOption.data("email"));
+    }
+});
 
-            let selectedOption = $(this).children("option:selected");
-            let selectedContact = $(this).children("option:selected").data('contact');
-            let preferredPayment = $(this).children("option:selected").data('prefered-payment');
+$(".payment-type-select").on("change", async function(){
 
-            if(preferredPayment != null) {    
-                if(preferredPayment.length > 0) {
-                    $(`select[name="payment_type"]`).val(preferredPayment)
-                }
-            }
+    var selectedPaymentType = $(this).val();
 
-            $("[data-bind-html='customer']").html(`
-                ${selectedOption.text()}<br>
-                <span class="text-primary"><small>(${selectedContact})</small>
-                `);
-            $(".selected-customer-name").html(`
-                <h3 class='text-success'>
-                <span class="email-fullname">${selectedOption.text()}</span><br>
-                <span class="customer-contact text-primary"><small>(${selectedContact})</small></span>
-                </h3>`);
-            $("input[id='receipt-email']").val(selectedOption.data("email"));
-        }
-    });
+    $(`input[name="amount_paying"]`).prop("value","");
+    $(`input[name="amount_to_pay"]`).attr({"max": $(".total-to-pay-amount").attr("data-order-total"), "value": fmtCurr($(".total-to-pay-amount").attr("data-order-total"))});
+    $(`input[name="amount_balance"]`).prop("value","0.00");
 
-    $(".payment-type-select").on("change", async function(){
+    $("[data-bind-html='payment']").html(fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
+    $("[data-bind-html='balance']").html(selectedPaymentType == 'credit' ? fmtCurr($(".total-to-pay-amount").attr("data-order-total")) : '0.00');
 
-        var selectedPaymentType = $(this).val();
+    if(selectedPaymentType == "0") {
+        $(".selected-payment-type").html("None Selected");
+    }
+    else {
+        $(".selected-payment-type").html(`<h5 class='text-success'>${$(this).children("option:selected").text()}</h5>`);
+    }
+    rcalTot();
 
-        $(`input[name="amount_paying"]`).prop("value","");
-        $(`input[name="amount_to_pay"]`).attr({"max": $(".total-to-pay-amount").attr("data-order-total"), "value": fmtCurr($(".total-to-pay-amount").attr("data-order-total"))});
-        $(`input[name="amount_balance"]`).prop("value","0.00");
+    if (["MoMo", "card", "cash"].includes(selectedPaymentType)) {
 
-        $("[data-bind-html='payment']").html(fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
-        $("[data-bind-html='balance']").html(selectedPaymentType == 'credit' ? fmtCurr($(".total-to-pay-amount").attr("data-order-total")) : '0.00');
+        $("[data-step-action='next']").prop("disabled", true);
 
-        if(selectedPaymentType == "0") {
-            $(".selected-payment-type").html("None Selected");
-        }
-        else {
-            $(".selected-payment-type").html(`<h5 class='text-success'>${$(this).children("option:selected").text()}</h5>`);
-        }
-        rcalTot();
+        var paymentTotal = $(".total-to-pay-amount").attr("data-order-total");
 
-        if (["MoMo", "card", "cash"].includes(selectedPaymentType)) {
-
-            $("[data-step-action='next']").prop("disabled", true);
-
-            var paymentTotal = $(".total-to-pay-amount").attr("data-order-total");
-
-            if(["MoMo", "card"].includes(selectedPaymentType)) {
-                $(".make-online-payment").attr("data-order-total", paymentTotal);
-                $(`div[class~="cash-processing"]`).slideUp('fast');
-                $(".make-online-payment").removeClass("d-none");
-            } else {
-                $(".make-online-payment").addClass("d-none");
-                $(`div[class~="cash-processing"]`).slideDown('fast');
-                $(`input[name="amount_paying"]`).focus();
-            }
-        } else {
-            $(".total-to-pay-amount").attr("data-order-total", fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
+        if(["MoMo", "card"].includes(selectedPaymentType)) {
+            $(".make-online-payment").attr("data-order-total", paymentTotal);
             $(`div[class~="cash-processing"]`).slideUp('fast');
+            $(".make-online-payment").removeClass("d-none");
+        } else {
             $(".make-online-payment").addClass("d-none");
-            $(".make-online-payment").removeAttr("data-order-total");
-            $("[data-step-action='next']").prop("disabled", false);
+            $(`div[class~="cash-processing"]`).slideDown('fast');
+            $(`input[name="amount_paying"]`).focus();
         }
-    });
-
-    function rtRegForm() {
-        let regForm = $(".register-form");
-        let firstTab = $(".register-form ul[role='tablist'] li.first");
-        regForm.trigger("reset");
-        firstTab.removeClass("disabled")
-        $("a", firstTab).trigger("click");
-        $(".receipt-table-body").html('');
-        $(".payment-type-select").trigger("change");
-        $(`input[name="discount_amount"]`).val('');
-        $(`span[class="sub_total"]`).html(`${storeValues.cur} 0.00`);
-        $(".selected-customer-name").html("No Customer Selected");
-        $(`button[class~="discardSale_trigger"]`).css('display', 'none');
-        $(".products-table-body tr:not(.empty-message-row)").remove();
-        $(`input[name="amount_paying"]`).attr({"max": 0, "min": 0});
-        $(`input[name="amount_to_pay"]`).attr({"max": 0, "value": ""});
-        $(`span[class="total-to-pay-amount"]`).attr("data-order-total", "0.00");
-        $(`div[class~="order_discounting"] input`).prop('disabled', false);
-        rcalRowNum();
-        rcalTot();
-        genIds();
+    } else {
+        $(".total-to-pay-amount").attr("data-order-total", fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
+        $(`div[class~="cash-processing"]`).slideUp('fast');
+        $(".make-online-payment").addClass("d-none");
+        $(".make-online-payment").removeAttr("data-order-total");
+        $("[data-step-action='next']").prop("disabled", false);
     }
+});
 
-    function addProRow(rowData) {
+function rtRegForm() {
+    let regForm = $(".register-form");
+    let firstTab = $(".register-form ul[role='tablist'] li.first");
+    regForm.trigger("reset");
+    firstTab.removeClass("disabled")
+    $("a", firstTab).trigger("click");
+    $(".receipt-table-body").html('');
+    $(".payment-type-select").trigger("change");
+    $(`input[name="discount_amount"]`).val('');
+    $(`span[class="sub_total"]`).html(`${storeValues.cur} 0.00`);
+    $(".selected-customer-name").html("No Customer Selected");
+    $(`button[class~="discardSale_trigger"]`).css('display', 'none');
+    $(".products-table-body tr:not(.empty-message-row)").remove();
+    $(`input[name="amount_paying"]`).attr({"max": 0, "min": 0});
+    $(`input[name="amount_to_pay"]`).attr({"max": 0, "value": ""});
+    $(`span[class="total-to-pay-amount"]`).attr("data-order-total", "0.00");
+    $(`div[class~="order_discounting"] input`).prop('disabled', false);
+    rcalRowNum();
+    rcalTot();
+    genIds();
+}
 
-        return new Promise((resolve, reject) => {
+function addProRow(rowData) {
 
-            let qty = 1;
-            let subTotal = parseFloat(rowData.productPrice)*qty;
-            productPrices[rowData.productId] = parseFloat(rowData.productPrice);
-            $(".empty-message-row").hide();
-            let tbody = $(".products-table-body");
-            let rowCount = $("tr.products-row", tbody).length || 0;
-            rowCount++;
+    return new Promise((resolve, reject) => {
 
-            let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
-
-            <td class='products-row-number'>${rowCount}</td>
-            <td style="padding-top:20px">${rowData.productName}</td>
-            <td style="padding-top:20px">${rowData.productPrice}</td>
-            <td>
-            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pwizard" min="0" name="products[${rowData.productId}][qty]"  data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
-            <input type="hidden" data-name="${rowData.productName}" form="pwizard" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
-            <td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
-            <td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
-            </tr>`;
-            let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
-            <td>${rowData.productName}</td>
-            <td class='receipt-row-quantity'>${qty}</td>
-            <td align="right" class="text-right receipt-row-price">${fmtCurr(rowData.productPrice)}</td>
-            <td align="right" class="text-right receipt-row-subtotal">${fmtCurr(subTotal)}</td>
-            </tr>`;
-            tbody.append(tr);
-            $("[data-bind-html='productrow']").append(rr);
-            resolve(rowData)
-        })
-    }
-
-    function rvPtRow(rowId){
+        let qty = 1;
+        let subTotal = parseFloat(rowData.productPrice)*qty;
+        productPrices[rowData.productId] = parseFloat(rowData.productPrice);
+        $(".empty-message-row").hide();
         let tbody = $(".products-table-body");
-        let receipt_tbody = $(".receipt-table-body");
-        $(`tr.receipt-product-row[data-row-id="${rowId}"]`, receipt_tbody).remove();
-        $(`tr.products-row[data-row-id="${rowId}"]`, tbody).remove();
-        document.getElementById("products-search-input").focus();
-        rcalRowNum();
-        rcalTot();
-    }
+        let rowCount = $("tr.products-row", tbody).length || 0;
+        rowCount++;
 
-    var overallSubTotal = 0, totalDiscountDeducted = 0;
+        let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
 
-    function rcalTot(){
-        let totalToPay = 0;
-        overallSubTotal = 0;
+        <td class='products-row-number'>${rowCount}</td>
+        <td style="padding-top:20px">${rowData.productName}</td>
+        <td style="padding-top:20px">${rowData.productPrice}</td>
+        <td>
+        <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pwizard" min="0" name="products[${rowData.productId}][qty]"  data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
+        <input type="hidden" data-name="${rowData.productName}" form="pwizard" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
+        <td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
+        <td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
+        </tr>`;
+        let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
+        <td>${rowData.productName}</td>
+        <td class='receipt-row-quantity'>${qty}</td>
+        <td align="right" class="text-right receipt-row-price">${fmtCurr(rowData.productPrice)}</td>
+        <td align="right" class="text-right receipt-row-subtotal">${fmtCurr(subTotal)}</td>
+        </tr>`;
+        tbody.append(tr);
+        $("[data-bind-html='productrow']").append(rr);
+        resolve(rowData)
+    })
+}
 
-        if($("tr.products-row .row-subtotal").length){
-            let discountAmount;
+function rvPtRow(rowId){
+    let tbody = $(".products-table-body");
+    let receipt_tbody = $(".receipt-table-body");
+    $(`tr.receipt-product-row[data-row-id="${rowId}"]`, receipt_tbody).remove();
+    $(`tr.products-row[data-row-id="${rowId}"]`, tbody).remove();
+    document.getElementById("products-search-input").focus();
+    rcalRowNum();
+    rcalTot();
+}
 
-            let discountType = $(`input[name="discount_type"]:checked`).val();
-            if($(`input[name="discount_amount"]`).val().length > 0) {
-                discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
-            } else {
-                discountAmount = 0;
-            }
+var overallSubTotal = 0, totalDiscountDeducted = 0;
 
-            totalDiscountDeducted = 0;
+function rcalTot(){
+    let totalToPay = 0;
+    overallSubTotal = 0;
 
-            $("tr.products-row .row-subtotal").each(function(){
-                let subtotalVal = parseFloat($(this).text());
-                totalToPay += subtotalVal;
-                overallSubTotal += subtotalVal;
-            });
-            if(discountType == "cash") {
-                totalToPay = totalToPay - discountAmount;
-                totalDiscountDeducted = discountAmount;
-            } else {
-                discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
-                totalToPay = (totalToPay - discountAmount);
-                totalDiscountDeducted = discountAmount;
-            }
-            $(`th[data-bind-html='discount_amount']`).html(`${fmtCurr(discountAmount)}`);  
-        }
+    if($("tr.products-row .row-subtotal").length){
+        let discountAmount;
 
-        let paymentType = $(".payment-type-select").val();
-        $(`span[class="sub_total"]`).html(`${storeValues.cur} ${fmtCurr(overallSubTotal)}`);
-        $("[data-bind-html='totaltopay']").html(fmtCurr(overallSubTotal));
-        $(".total-to-pay-amount").text(fmtCurr(totalToPay));
-        $(".total-to-pay-amount").attr("data-order-total", totalToPay);
-        $(`input[name="amount_paying"]`).attr({"max": totalToPay, "min": 0});
-        $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": fmtCurr(totalToPay)});
-    }
-
-    var amtPay = () => {
-        let max = parseFloat($(`input[name="amount_paying"]`).attr('max'));
-        let value = parseFloat($(`input[name="amount_paying"]`).val());
-        let paymentType = $(".payment-type-select").val();
-        let balance = (value-max);
-
-        if($(`input[name="amount_paying"]`).val().length > 0) {
-            $(`input[name="amount_balance"]`).val(fmtCurr(balance));
-
-            $(".make-online-payment").addClass("d-none");
-            $(".make-online-payment").removeAttr("data-order-total");
-            $("[data-step-action='next']").prop("disabled", false);
-
-            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(value)}`);
-            $("[data-bind-html='payment']").html(`${storeValues.cur} ${fmtCurr(overallSubTotal-totalDiscountDeducted)}`);
-            $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(value)}` : `${storeValues.cur} ${fmtCurr(balance)}`);
+        let discountType = $(`input[name="discount_type"]:checked`).val();
+        if($(`input[name="discount_amount"]`).val().length > 0) {
+            discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
         } else {
-            $(`input[name="amount_balance"]`).val('0.00');
-
-            $(".make-online-payment").addClass("d-none");
-            $(".make-online-payment").attr("data-order-total", max);
-            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} 0.00`);
-            $("[data-bind-html='payment']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
-            $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
+            discountAmount = 0;
         }
+
+        totalDiscountDeducted = 0;
+
+        $("tr.products-row .row-subtotal").each(function(){
+            let subtotalVal = parseFloat($(this).text());
+            totalToPay += subtotalVal;
+            overallSubTotal += subtotalVal;
+        });
+        if(discountType == "cash") {
+            totalToPay = totalToPay - discountAmount;
+            totalDiscountDeducted = discountAmount;
+        } else {
+            discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
+            totalToPay = (totalToPay - discountAmount);
+            totalDiscountDeducted = discountAmount;
+        }
+        $(`th[data-bind-html='discount_amount']`).html(`${fmtCurr(discountAmount)}`);  
     }
 
-    $(`input[name="amount_paying"]`).on('keyup', function() {
-        amtPay();
-    });
+    let paymentType = $(".payment-type-select").val();
+    $(`span[class="sub_total"]`).html(`${storeValues.cur} ${fmtCurr(overallSubTotal)}`);
+    $("[data-bind-html='totaltopay']").html(fmtCurr(overallSubTotal));
+    $(".total-to-pay-amount").text(fmtCurr(totalToPay));
+    $(".total-to-pay-amount").attr("data-order-total", totalToPay);
+    $(`input[name="amount_paying"]`).attr({"max": totalToPay, "min": 0});
+    $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": fmtCurr(totalToPay)});
+}
 
-    $(`input[name="discount_amount"]`).on('keyup', function() {
-        rcalTot();
-        amtPay();
-    });
+var amtPay = () => {
+    let max = parseFloat($(`input[name="amount_paying"]`).attr('max'));
+    let value = parseFloat($(`input[name="amount_paying"]`).val());
+    let paymentType = $(".payment-type-select").val();
+    let balance = (value-max);
 
-    $(`input[name="discount_type"]`).on('change', function() {
-        $(`input[name="discount_amount"]`).trigger('focus');
-        rcalTot();
-        amtPay();
-    });
+    if($(`input[name="amount_paying"]`).val().length > 0) {
+        $(`input[name="amount_balance"]`).val(fmtCurr(balance));
 
-    function rcalRowNum(){
-        if(!$("tr.products-row").length) $(".empty-message-row").show();
-        $("tr.products-row").each(function(index, el){
-            let rowNumber = index +1;
-            $("td:first", $(this)).text(rowNumber)
-        })
+        $(".make-online-payment").addClass("d-none");
+        $(".make-online-payment").removeAttr("data-order-total");
+        $("[data-step-action='next']").prop("disabled", false);
+
+        $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(value)}`);
+        $("[data-bind-html='payment']").html(`${storeValues.cur} ${fmtCurr(overallSubTotal-totalDiscountDeducted)}`);
+        $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(value)}` : `${storeValues.cur} ${fmtCurr(balance)}`);
+    } else {
+        $(`input[name="amount_balance"]`).val('0.00');
+
+        $(".make-online-payment").addClass("d-none");
+        $(".make-online-payment").attr("data-order-total", max);
+        $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} 0.00`);
+        $("[data-bind-html='payment']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
+        $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
     }
+}
 
-    $(`button[class~="send-email"]`).on('click', function(evt) {
-        let thisBtn = $(this);
-        let thisEmail = $(`input[id="receipt-email"]`);
-        let fullname = $(`h6[class~="selected-customer-name"] span[class="email-fullname"]`).html();
+$(`input[name="amount_paying"]`).on('keyup', function() {
+    amtPay();
+});
 
-        if(thisEmail.val().length > 5) {
-            thisBtn.prop('disabled', true)
-            .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
-            thisEmail.prop('disabled', true);
+$(`input[name="discount_amount"]`).on('keyup', function() {
+    rcalTot();
+    amtPay();
+});
 
+$(`input[name="discount_type"]`).on('change', function() {
+    $(`input[name="discount_amount"]`).trigger('focus');
+    rcalTot();
+    amtPay();
+});
+
+function rcalRowNum(){
+    if(!$("tr.products-row").length) $(".empty-message-row").show();
+    $("tr.products-row").each(function(index, el){
+        let rowNumber = index +1;
+        $("td:first", $(this)).text(rowNumber)
+    })
+}
+
+$(`button[class~="send-email"]`).on('click', function(evt) {
+    let thisBtn = $(this);
+    let thisEmail = $(`input[id="receipt-email"]`);
+    let fullname = $(`h6[class~="selected-customer-name"] span[class="email-fullname"]`).html();
+
+    if(thisEmail.val().length > 5) {
+        thisBtn.prop('disabled', true)
+        .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
+        thisEmail.prop('disabled', true);
+
+        $.ajax({
+            url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
+            type: `POST`,
+            data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname},
+            dataType: "json",
+            success: function(resp) {
+                Toast.fire({
+                    type: resp.status,
+                    title: resp.message
+                });
+            }, error: function(err) {
+                Toast.fire({
+                    type: 'error',
+                    title: 'Error processing request!'
+                });
+                thisEmail.prop('disabled', false);
+                thisBtn.prop('disabled', false).html(`Send`);
+            }, complete: function(data) {
+                thisEmail.prop('disabled', false);
+                thisBtn.prop('disabled', false).html(`Send`);
+            }
+        });
+    } else {
+        Toast.fire({
+            type: 'error',
+            title: 'Please enter a valid email address!'
+        });
+        thisEmail.prop('disabled', false);
+        thisBtn.prop('disabled', false).html(`Send`);
+    }
+});
+
+function ckEmpTb(table){
+    let tableCols = table.find("thead tr th").length;
+    let tableRows = table.find("tbody tr:visible").length;
+    if(!tableRows) table.find("tbody").append(`<tr class='temp-row'><td colspan='4' class='text-center'>No Item Found</td></tr>`);
+}
+
+var paymentCheck;
+var paymentWindow;
+
+function printReceipt(e) {
+    e.preventDefault();
+    let orderId = $(`span[class="generated_order"]`).html();
+    window.open(
+        `${baseUrl}receipt/${orderId}`,
+        `Sales Invoice - Receipt #${orderId}`,
+        `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+        );
+}
+
+$(".make-online-payment").on("click", async function(e) {
+    e.preventDefault();
+    await svReg().then(function(res) {
+        if (res.status == "success") {
+            $(`span[class="generated_order"]`).html(res.data._oid);
+            var userEmail = $("input[id='receipt-email']").val();
             $.ajax({
-                url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
-                type: `POST`,
-                data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname},
+                url: baseUrl + "api/pointOfSaleProcessor/processMyPayment",
+                data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
                 dataType: "json",
-                success: function(resp) {
-                    Toast.fire({
-                        type: resp.status,
-                        title: resp.message
-                    });
-                }, error: function(err) {
-                    Toast.fire({
-                        type: 'error',
-                        title: 'Error processing request!'
-                    });
-                    thisEmail.prop('disabled', false);
-                    thisBtn.prop('disabled', false).html(`Send`);
-                }, complete: function(data) {
-                    thisEmail.prop('disabled', false);
-                    thisBtn.prop('disabled', false).html(`Send`);
-                }
-            });
-        } else {
-            Toast.fire({
-                type: 'error',
-                title: 'Please enter a valid email address!'
-            });
-            thisEmail.prop('disabled', false);
-            thisBtn.prop('disabled', false).html(`Send`);
-        }
-    });
+                type: "POST",
+                cache: false,
+                beforeSend: function() {
+                    $(".payment-type-select, [data-step-action='previous']").prop("disabled", true);
+                    $(".make-online-payment").addClass("d-none");
+                    $(".cancel-online-payment").removeClass("d-none");
+                    $(".payment-processing-span").html(`
+                        <span class="fa fa-spinner fa-spin mr-3"></span>
+                        `);
+                },
+                success: function(data) {
+                    if (data.status == true) {
+                        if (data.message.action == true) {
+                            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(res.data.orderTotal)}`);
 
-    function ckEmpTb(table){
-        let tableCols = table.find("thead tr th").length;
-        let tableRows = table.find("tbody tr:visible").length;
-        if(!tableRows) table.find("tbody").append(`<tr class='temp-row'><td colspan='4' class='text-center'>No Item Found</td></tr>`);
-    }
+                            $(`div[class~="payment-backdrop"]`).removeClass('hidden');
+                            paymentWindow = window.open(data.message.msg,
+                                `Payment for #${res.data.orderId}`,
+                                `width=700,height=600,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+                                );
 
-    var paymentCheck;
-    var paymentWindow;
-
-    function printReceipt(e) {
-        e.preventDefault();
-        let orderId = $(`span[class="generated_order"]`).html();
-        window.open(
-            `${baseUrl}receipt/${orderId}`,
-            `Sales Invoice - Receipt #${orderId}`,
-            `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-            );
-    }
-
-    $(".make-online-payment").on("click", async function(e) {
-        e.preventDefault();
-        await svReg().then(function(res) {
-            if (res.status == "success") {
-                $(`span[class="generated_order"]`).html(res.data._oid);
-                var userEmail = $("input[id='receipt-email']").val();
-                $.ajax({
-                    url: baseUrl + "api/pointOfSaleProcessor/processMyPayment",
-                    data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
-                    dataType: "json",
-                    type: "POST",
-                    cache: false,
-                    beforeSend: function() {
-                        $(".payment-type-select, [data-step-action='previous']").prop("disabled", true);
-                        $(".make-online-payment").addClass("d-none");
-                        $(".cancel-online-payment").removeClass("d-none");
-                        $(".payment-processing-span").html(`
-                            <span class="fa fa-spinner fa-spin mr-3"></span>
-                            `);
-                    },
-                    success: function(data) {
-                        if (data.status == true) {
-                            if (data.message.action == true) {
-                                $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(res.data.orderTotal)}`);
-
-                                $(`div[class~="payment-backdrop"]`).removeClass('hidden');
-                                paymentWindow = window.open(data.message.msg,
-                                    `Payment for #${res.data.orderId}`,
-                                    `width=700,height=600,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-                                    );
-
-                                $(`button[class~="return-to-payment-window"]`).on('click', function() {
-                                    paymentWindow.focus();
-                                });
-                                paymentCheck = setInterval(function() {
-                                    ckPayState();
-                                }, 3000);
-                            } else {
-                                $(".payment-processing-span").html(data.message.msg);
-                            }
-                        } else {
-                            Toast.fire({
-                                type: "error",
-                                title: "Payment Failed! Please try again."
+                            $(`button[class~="return-to-payment-window"]`).on('click', function() {
+                                paymentWindow.focus();
                             });
-                            $(`div[class~="payment-backdrop"]`).addClass('hidden');
-                            $(".payment-processing-span").html(``);
-                            $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
-                            $(".make-online-payment").removeClass("d-none");
-                            $(".cancel-online-payment").addClass("d-none");
+                            paymentCheck = setInterval(function() {
+                                ckPayState();
+                            }, 3000);
+                        } else {
+                            $(".payment-processing-span").html(data.message.msg);
                         }
-                    },
-                    error: function() {
+                    } else {
                         Toast.fire({
                             type: "error",
-                            title: "Error Processing Request! Please try again"
+                            title: "Payment Failed! Please try again."
                         });
+                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $(".payment-processing-span").html(``);
                         $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                         $(".make-online-payment").removeClass("d-none");
                         $(".cancel-online-payment").addClass("d-none");
                     }
-                });
-            } else {
-                $(".payment-processing-span").html(`
-                    <p class="text-center text-danger">
-                    Payment Failed To Process Request
-                    </p>
-                    `);
-                $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
-            }
-        });
-    });
-
-    function ckPayState() {
-
-        $.ajax({
-            url: `${baseUrl}api/pointOfSaleProcessor/checkPaymentStatus`,
-            type: "POST",
-            data: { checkPaymentStatus: true },
-            dataType: "json",
-            cache: false,
-            success: function(data) {
-                if (data.status != false) {
-
-                    clearInterval(paymentCheck);
-
-                    let toastType = "error";
-                    let toastMsg = "Payment Cancelled";
-
-                    if (data.status == true) {
-                        $(".payment-processing-span").html(`
-                            <p class="text-center">
-                            <span class="fa fa-check text-success"></span>
-                            </p>
-                            `);
-                        toastMsg = "Payment Successfully Made.";
-                        toastType= "success";
-                        let lastTab = $(".register-form ul[role='tablist'] li.last");
-                        lastTab.removeClass("disabled");
-                        $("a", lastTab).trigger("click");
-                        lastTab.addClass("disabled");
-                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
-                        $("[data-step-action='next']").prop("disabled", false);
-                        $(".payment-type-select").prop("disabled", false);
-                        $(`span[class="payment-processing-span"]`).html(``);
-                    } else {
-                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
-                        $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
-                        $(".make-online-payment").removeClass("d-none");
-                        $(".payment-processing-span").empty();
-                    }
-
+                },
+                error: function() {
                     Toast.fire({
-                        type: toastType,
-                        title: toastMsg
+                        type: "error",
+                        title: "Error Processing Request! Please try again"
                     });
+                    $(".payment-processing-span").html(``);
+                    $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
+                    $(".make-online-payment").removeClass("d-none");
                     $(".cancel-online-payment").addClass("d-none");
                 }
-            }
-        });
-
-    }
-
-    $(".cancel-online-payment, button[class~='cancel-ongoing-payment-activity']").on("click", function() {
-
-        $.post(`${baseUrl}api/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
-            let toastType = "error";
-            let toastMsg  = "Failed To Cancel";
-            if (data.status == 200) {
-                clearInterval(paymentCheck);
-                $(`div[class~="payment-backdrop"]`).addClass('hidden');
-                $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
-                $(".make-online-payment").removeClass("d-none");
-                $(".cancel-online-payment").addClass("d-none");
-                $(".payment-processing-span").empty();
-                if (paymentWindow) {
-                    paymentWindow.close();
-                }
-                toastType = "success";
-                toastMsg  = "Payment Cancelled";
-            }
-
-            Toast.fire({
-                type: toastType,
-                title: toastMsg
             });
-        }, 'json');
+        } else {
+            $(".payment-processing-span").html(`
+                <p class="text-center text-danger">
+                Payment Failed To Process Request
+                </p>
+                `);
+            $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
+        }
     });
+});
+
+function ckPayState() {
+
+    $.ajax({
+        url: `${baseUrl}api/pointOfSaleProcessor/checkPaymentStatus`,
+        type: "POST",
+        data: { checkPaymentStatus: true },
+        dataType: "json",
+        cache: false,
+        success: function(data) {
+            if (data.status != false) {
+
+                clearInterval(paymentCheck);
+
+                let toastType = "error";
+                let toastMsg = "Payment Cancelled";
+
+                if (data.status == true) {
+                    $(".payment-processing-span").html(`
+                        <p class="text-center">
+                        <span class="fa fa-check text-success"></span>
+                        </p>
+                        `);
+                    toastMsg = "Payment Successfully Made.";
+                    toastType= "success";
+                    let lastTab = $(".register-form ul[role='tablist'] li.last");
+                    lastTab.removeClass("disabled");
+                    $("a", lastTab).trigger("click");
+                    lastTab.addClass("disabled");
+                    $(`div[class~="payment-backdrop"]`).addClass('hidden');
+                    $("[data-step-action='next']").prop("disabled", false);
+                    $(".payment-type-select").prop("disabled", false);
+                    $(`span[class="payment-processing-span"]`).html(``);
+                } else {
+                    $(`div[class~="payment-backdrop"]`).addClass('hidden');
+                    $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
+                    $(".make-online-payment").removeClass("d-none");
+                    $(".payment-processing-span").empty();
+                }
+
+                Toast.fire({
+                    type: toastType,
+                    title: toastMsg
+                });
+                $(".cancel-online-payment").addClass("d-none");
+            }
+        }
+    });
+
+}
+
+$(".cancel-online-payment, button[class~='cancel-ongoing-payment-activity']").on("click", function() {
+
+    $.post(`${baseUrl}api/pointOfSaleProcessor/cancelPayment`, {cancelPayment: true}, function(data) {
+        let toastType = "error";
+        let toastMsg  = "Failed To Cancel";
+        if (data.status == 200) {
+            clearInterval(paymentCheck);
+            $(`div[class~="payment-backdrop"]`).addClass('hidden');
+            $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
+            $(".make-online-payment").removeClass("d-none");
+            $(".cancel-online-payment").addClass("d-none");
+            $(".payment-processing-span").empty();
+            if (paymentWindow) {
+                paymentWindow.close();
+            }
+            toastType = "success";
+            toastMsg  = "Payment Cancelled";
+        }
+
+        Toast.fire({
+            type: toastType,
+            title: toastMsg
+        });
+    }, 'json');
+});
 
 }
 
@@ -3523,15 +3523,18 @@ $(function() {
                 $(`div[class="chart-sales"]`).html(``);
                 $(`div[class="chart-sales"]`).html(`<div id="sales-overview-chart" class="apex-charts"></div>`);
 
-                $(`p[data-model="highest-sale"] span`).html(resp.result.sales.highest);
-                $(`p[data-model="lowest-sale"] span`).html(resp.result.sales.lowest);
+                if($(`p[data-model="highest-sale"]`).length) {
+                    
+                    $(`p[data-model="highest-sale"] span`).html(resp.result.sales.highest);
+                    $(`p[data-model="lowest-sale"] span`).html(resp.result.sales.lowest);
 
-                $(`p[data-model="total-sales"] span`).html(resp.result.sales.comparison.total_sales);
-                $(`p[data-model="total-actual-sales"] span`).html(resp.result.sales.comparison.total_actual_sales);
-                $(`p[data-model="total-credit-sales"] span`).html(resp.result.sales.comparison.total_credit_sales);
+                    $(`p[data-model="total-sales"] span`).html(resp.result.sales.comparison.total_sales);
+                    $(`p[data-model="total-actual-sales"] span`).html(resp.result.sales.comparison.total_actual_sales);
+                    $(`p[data-model="total-credit-sales"] span`).html(resp.result.sales.comparison.total_credit_sales);
 
-                $(`p[data-model="sales-with-discount"] span`).html(resp.result.sales.discount_effect.total_sale);
-                $(`p[data-model="sales-without-discount"] span`).html(resp.result.sales.discount_effect.discounted_sale);
+                    $(`p[data-model="sales-with-discount"] span`).html(resp.result.sales.discount_effect.total_sale);
+                    $(`p[data-model="sales-without-discount"] span`).html(resp.result.sales.discount_effect.discounted_sale);
+                }
 
                 populateProductsPerformance(resp.result.sales.products_performance);
 
@@ -3759,6 +3762,7 @@ $(function() {
 
 
                 if($(`div[class="payment-chart"]`).length){
+
                     $(`div[class="payment-chart"]`).html(``);
                     $(`div[class="payment-chart"]`).html(`<div id="payment-options" class="apex-charts"></div>`);
                     var paymentOptions = {
@@ -3812,9 +3816,11 @@ $(function() {
                         paymentOptions
                         );
                     paymentChart.render();
+
                 }
 
                 if($(`div[class="category-chart"]`).length) {
+                    
                     $(`div[class="category-chart"]`).html(``);
                     $(`div[class="category-chart"]`).html(`<div id="category-options" class="apex-charts"></div>`);
                     var productCategoryOptions = {
@@ -3866,14 +3872,16 @@ $(function() {
                     var productCategoryChart = new ApexCharts(
                         document.querySelector("#category-options"),
                         productCategoryOptions
-                        );
+                    );
                     productCategoryChart.render();
+
                 }
 
 
                 $(`div[class="revenue-chart"]`).html(``);
                 $(`div[class="revenue-chart"]`).html(`<div id="revenue-trend" class="apex-charts"></div>`);
                 if($("#revenue-trend").length) {
+
                     var revenueOptions = {
                         chart: {
                             height: 450,
@@ -3979,7 +3987,82 @@ $(function() {
                         revenueOptions
                         );
                     revenueChart.render();
+
                 }
+
+                $(`div[class~="orders-loader"]`).html(``);
+
+
+                if($(`div[id="customer_orders_trend"]`).length) {
+
+                    $(`div[class="apexchart-wrapper"]`).html(``);
+                    $(`div[class="apexchart-wrapper"]`).html(`<div id="customer_orders_trend" class="chart-gutters"></div>`);
+                    $(`div[data-report="orders-trend"] h2[class="mn-3"]`).html(`${resp.result.orders.count} <small>total orders</small>`);
+
+                    var ordersTrend = {
+                        chart: {
+                            type: 'line',
+                            height: 385,
+                            sparkline: {
+                                enabled: false
+                            },
+                            toolbar: {
+                                show: false
+                            },
+                            zoom: false
+                        },
+                        stroke: {
+                            curve: 'smooth',
+                            width: 2
+                        },
+                        fill: {
+                            opacity: [0.45, 0.25, 1]
+                        },
+                        series: [{
+                            name: 'All Orders',
+                            type: 'line',
+                            data: resp.result.orders.totals
+                        }, {
+                            name: 'New Customers',
+                            type: 'line',
+                            data: resp.result.orders.unique_customers
+                        }, {
+                            name: 'Returning Customers',
+                            type: 'line',
+                            data:resp.result.orders.returning_customers
+                        }],
+                        yaxis: {
+                            min: 0
+                        },
+                        xaxis: {
+                            type: 'datetime',
+                            categories: resp.result.labeling,
+                            axisBorder: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                            axisTicks: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                        },
+                        colors: ["#1ecab8", "#ffc107", "#e6c255"],
+                        tooltip: {
+                            shared: true,
+                            intersect: false
+                        },
+                        grid: {
+                            borderColor: '#f1f3fa'
+                        }
+                    }
+
+                    if (periodSelected == 'today') {
+                        delete ordersTrend.xaxis.type;
+                    }
+                    new ApexCharts(document.querySelector("#customer_orders_trend"), ordersTrend).render();
+
+                }
+
                 $(`div[class~="apexcharts-legend"]`).addClass('hidden');
             },
             error: function(err) {
@@ -3991,464 +4074,361 @@ $(function() {
                 }, 1000);
             }
         });
-}
-
-var salesAttendantHistory = () => {
-
-    $(`div[class="main-content"]`).on('click', `a[class~="view-user-sales"]`, function() {
-
-        var userId = $(this).attr('data-value');
-        var fullname = $(this).attr('data-name');
-        var recordType = $(this).attr('data-record');
-
-        if (recordType == "attendant") {
-            $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Sales History`);
-        } else {
-            $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Purchases History`);
-        }
-        $(`div[class~="attendantHistory"]`).modal('show');
-
-        $.ajax({
-            type: "POST",
-            url: `${baseUrl}api/reportsAnalytics/generateReport`,
-            data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
-            dataType: "JSON",
-            beforeSend: function() {
-                $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
-            },
-            success: function(resp) {
-                var trData = `<table width="100%" class="table table-bordered orderHistory">`;
-                trData += `<thead>`;
-                trData += `<tr class="text-uppercase">`;
-                trData += `<td>Order ID</td>`;
-                trData += `<td>Customer Name</td>`;
-                trData += `<td>Order Amount</td>`;
-                trData += `<td>Date</td>`;
-                trData += `<td></td>`;
-                trData += `</tr>`;
-                trData += `</thead>`;
-                var creditBadge = ``;
-                $.each(resp.result, function(i, e) {
-
-                    if (e.payment_type == 'cash') {
-                        creditBadge = `<span class="text-gray">Cash Sale</span>`;
-                    } else if (e.payment_type == 'momo') {
-                        creditBadge = `<span class="text-gray">Mobile Money</span>`;
-                    } else if (e.payment_type == 'card') {
-                        creditBadge = `<span class="text-gray">Card Payment</span>`;
-                    } else if (e.payment_type == 'credit') {
-                        creditBadge = `<span class="text-gray">Credit</span>`;
-                    }
-
-                    trData += `<tr>`;
-                    trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
-                    trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
-                    trData += `<td>${storeValues.cur}${e.order_amount_paid}</td>`;
-                    trData += `<td>${e.order_date}</td>`;
-                    trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
-                    trData += `</tr>`;
-                });
-
-                trData += `</table>`;
-
-                $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(trData);
-
-                $(`table[class~="orderHistory"]`).DataTable();
-
-            },
-            complete: function(data) {
-                $(`a[class~="print-receipt"]`).on('click', function() {
-                    trgPrtRpt($(this).data('sales-id'));
-                });
-            },
-            error: function(err) {
-                $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
-                    <p align="center">No records found.</p>
-                    `);
-            }
-        });
-
-    });
-}
-
-var salesAttendantPerformance = (periodSelected = 'today') => {
-    if ($(`div[id="attendant-performance"]`).length) {
-        $.ajax({
-            type: "POST",
-            url: `${baseUrl}api/reportsAnalytics/generateReport`,
-            data: { generateReport: true, queryMetric: "salesAttendantPerformance", salesPeriod: periodSelected },
-            dataType: "JSON",
-            beforeSend: function() {
-
-            },
-            success: function(resp) {
-
-                populateSalesTeamData(resp.result.list, resp.result.names, resp.result.sales);
-
-            },
-            complete: function(data) {
-                salesAttendantHistory();
-                $(`div[class~="apexcharts-legend"]`).removeClass('center');
-            },
-            error: function(err) {
-            }
-        });
     }
-}
 
-var ordersCount = (periodSelected = 'today') => {
-    $.ajax({
-        type: "POST",
-        url: `${baseUrl}api/reportsAnalytics/generateReport`,
-        data: { generateReport: true, queryMetric: "ordersCount", salesPeriod: periodSelected },
-        dataType: "JSON",
-        beforeSend: function() {
-            $(`div[class~="orders-loader"]`).html(`
-                Loading <i class="fa fa-spin fa-spinner"></i>
-                `);
-        },
-        success: function(resp) {
+    var salesAttendantHistory = () => {
 
-            $(`div[class~="orders-loader"]`).html(``);
+        $(`div[class="main-content"]`).on('click', `a[class~="view-user-sales"]`, function() {
 
-            $(`div[class="apexchart-wrapper"]`).html(``);
-            $(`div[class="apexchart-wrapper"]`).html(`<div id="dash_spark_1" class="chart-gutters"></div>`);
-            $(`div[data-report="orders-trend"] h3[class="mn-3"]`).html(`${resp.result.count} <small>total orders</small>`);
+            var userId = $(this).attr('data-value');
+            var fullname = $(this).attr('data-name');
+            var recordType = $(this).attr('data-record');
 
-            var ordersTrend = {
-                chart: {
-                    type: 'line',
-                    height: 385,
-                    sparkline: {
-                        enabled: false
-                    },
-                    toolbar: {
-                        show: false
-                    },
-                    zoom: false
-                },
-                stroke: {
-                    curve: 'smooth',
-                    width: 2
-                },
-                fill: {
-                    opacity: [0.45, 0.25, 1]
-                },
-                series: [{
-                    name: 'All Orders',
-                    type: 'line',
-                    data: resp.result.data
-                }, {
-                    name: 'New Customers',
-                    type: 'line',
-                    data: resp.result.unique_customers
-                }, {
-                    name: 'Returning Customers',
-                    type: 'line',
-                    data:resp.result.returning_customers
-                }],
-                yaxis: {
-                    min: 0
-                },
-                xaxis: {
-                    type: 'datetime',
-                    categories: resp.result.labeling,
-                    axisBorder: {
-                        show: true,
-                        color: '#bec7e0',
-                    },
-                    axisTicks: {
-                        show: true,
-                        color: '#bec7e0',
-                    },
-                },
-                colors: ["#e6c255", "#1ecab8", "#ffc107"],
-                tooltip: {
-                    shared: true,
-                    intersect: false
-                },
-                grid: {
-                    borderColor: '#f1f3fa'
-                }
-            }
-
-            if (periodSelected == 'today') {
-                delete ordersTrend.xaxis.type;
-            }
-            new ApexCharts(document.querySelector("#dash_spark_1"), ordersTrend).render();
-
-        }, error: function(err) {
-            $(`div[class~="orders-loader"]`).html(``);
-        }, complete: function(data) {
-            $(`div[class~="apexcharts-legend"]`).removeClass('center');
-        }
-    });
-}
-
-var topContactsPerformance = (periodSelected = 'today') => {
-
-    if ($(`table[class~="custPerformance"]`).length) {
-        $.ajax({
-            type: "POST",
-            url: `${baseUrl}api/reportsAnalytics/generateReport`,
-            data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
-            dataType: "JSON",
-            beforeSend: function() {},
-            success: function(resp) {
-                var count = 0,
-                trData = ``;
-
-                $(`table[class~="custPerformance"]`).dataTable().fnDestroy();
-                $(`table[class~="custPerformance"]`).dataTable({
-                    "aaData": resp.result,
-                    "iDisplayLength": 10,
-                    "buttons": ["copy", "print","csvHtml5"],
-                    "lengthChange": !1,
-                    "dom": "Bfrtip",
-                    "columns": [
-                    { "data": 'row_id' },
-                    { "data": 'fullname' },
-                    { "data": 'orders_count' },
-                    { "data": 'total_amount' },
-                    { "data": 'total_balance' },
-                    { "data": 'action' }
-                    ]
-                });
-            },
-            error: function(err) {},
-            complete: function(data) {
-                salesAttendantHistory();
-            }
-        });
-    }
-}
-
-var fetchSalesRecords = () => {
-    var colspan = "7";
-
-    var period = $(`select[name="periodSelected"]`).val();
-
-    $.ajax({
-        url: `${baseUrl}api/dashboardAnalytics/getSales`,
-        type: "POST",
-        dataType: "json",
-        data: { getSales: true, salesPeriod: period },
-        beforeSend: function() {},
-        success: function(data) {
-
-            $(`table[class~="salesLists"]`).dataTable().fnDestroy();
-            if (data.status == true) {
-                $(`table[class~="salesLists"]`).dataTable({
-                    "aaData": data.message.table,
-                    "iDisplayLength": 10,
-                    "buttons": ["copy", "print","csvHtml5"],
-                    "lengthChange": !1,
-                    "dom": "Bfrtip",
-                    "columns": [
-                    { "data": 'row' },
-                    { "data": 'order_id' },
-                    { "data": 'fullname' },
-                    { "data": 'phone' },
-                    { "data": 'date' },
-                    { "data": 'amount' },
-                    { "data": 'action' }
-                    ]
-                });
-
-                if($("span[class~='total-sales']").length) {
-                    $("span[class~='total-sales']").html(data.message.totalSales.total);
-                    $("span[class~='total-sales-trend']").html(data.message.totalSales.trend);
-
-                    $("span[class~='total-served']").html(data.message.totalServed.total);
-                    $("span[class~='total-served-trend']").html(data.message.totalServed.trend);
-
-                    $("span[class~='average-sales']").html(data.message.averageSales.total);
-                    $("span[class~='average-sales-trend']").html(data.message.averageSales.trend);
-
-                    $("span[class~='total-discounts']").html(data.message.totalDiscount.total);
-                    $("span[class~='total-discounts-trend']").html(data.message.totalDiscount.trend);
-
-                    $("span[class~='total-credit-sales']").html(data.message.totalCredit.total);
-                    $("span[class~='total-credit-sales']-trend").html(data.message.totalCredit.trend);
-
-                    $("span[class~='total-profit']").html(data.message.salesComparison.profit);
-                    $("span[class~='total-profit-trend']").html(data.message.salesComparison.profit_trend);
-
-                    $("span[class~='total-selling']").html(data.message.salesComparison.selling);
-                    $("span[class~='total-selling-trend']").html(data.message.salesComparison.selling_trend);
-
-                    $("span[class~='total-cost']").html(data.message.salesComparison.cost);
-                    $("span[class~='total-cost-trend']").html(data.message.salesComparison.cost_trend);
-                }
+            if (recordType == "attendant") {
+                $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Sales History`);
             } else {
-                $(`table[class~="salesLists"]`).dataTable();
+                $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Purchases History`);
             }
+            $(`div[class~="attendantHistory"]`).modal('show');
 
-        },
-        complete: function(data) {
-            $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
-                let orderId = $(this).data('sales-id');
-                window.open(
-                    `${baseUrl}receipt/${orderId}`,
-                    `Sales Invoice - Receipt #${orderId}`,
-                    `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-                    );
+            $.ajax({
+                type: "POST",
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
+                data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
+                dataType: "JSON",
+                beforeSend: function() {
+                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
+                },
+                success: function(resp) {
+                    var trData = `<table width="100%" class="table table-bordered orderHistory">`;
+                    trData += `<thead>`;
+                    trData += `<tr class="text-uppercase">`;
+                    trData += `<td>Order ID</td>`;
+                    trData += `<td>Customer Name</td>`;
+                    trData += `<td>Order Amount</td>`;
+                    trData += `<td>Date</td>`;
+                    trData += `<td></td>`;
+                    trData += `</tr>`;
+                    trData += `</thead>`;
+                    var creditBadge = ``;
+                    $.each(resp.result, function(i, e) {
+
+                        if (e.payment_type == 'cash') {
+                            creditBadge = `<span class="text-gray">Cash Sale</span>`;
+                        } else if (e.payment_type == 'momo') {
+                            creditBadge = `<span class="text-gray">Mobile Money</span>`;
+                        } else if (e.payment_type == 'card') {
+                            creditBadge = `<span class="text-gray">Card Payment</span>`;
+                        } else if (e.payment_type == 'credit') {
+                            creditBadge = `<span class="text-gray">Credit</span>`;
+                        }
+
+                        trData += `<tr>`;
+                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
+                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
+                        trData += `<td>${storeValues.cur}${e.order_amount_paid}</td>`;
+                        trData += `<td>${e.order_date}</td>`;
+                        trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
+                        trData += `</tr>`;
+                    });
+
+                    trData += `</table>`;
+
+                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(trData);
+
+                    $(`table[class~="orderHistory"]`).DataTable();
+
+                },
+                complete: function(data) {
+                    $(`a[class~="print-receipt"]`).on('click', function() {
+                        trgPrtRpt($(this).data('sales-id'));
+                    });
+                },
+                error: function(err) {
+                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
+                        <p align="center">No records found.</p>
+                        `);
+                }
             });
-            $(`div[class="main-content"]`).on('click', `a[class~="resend-email"]`, function(e) {
-                $(`div[class~="sendMailModal"] input[name="fullname"]`).val($(this).data('name'));
-                $(`div[class~="sendMailModal"] input[name="send_email"]`).val($(this).data('email'));
-                $(`div[class~="sendMailModal"] input[name="receiptId"]`).val($(this).data('sales-id'));
-                $(`div[class~="sendMailModal"] input[name="request_type"]`).val('invoice');
-                $(`div[class~="sendMailModal"] input[name="customerId"]`).val($(this).data('customer-id'));
-                $(`div[class~="sendMailModal"]`).modal('show');
+
+        });
+    }
+
+    var salesAttendantPerformance = (periodSelected = 'today') => {
+        if ($(`div[id="attendant-performance"]`).length) {
+            $.ajax({
+                type: "POST",
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
+                data: { generateReport: true, queryMetric: "salesAttendantPerformance", salesPeriod: periodSelected },
+                dataType: "JSON",
+                beforeSend: function() {
+
+                },
+                success: function(resp) {
+
+                    populateSalesTeamData(resp.result.list, resp.result.names, resp.result.sales);
+
+                },
+                complete: function(data) {
+                    salesAttendantHistory();
+                    $(`div[class~="apexcharts-legend"]`).removeClass('center');
+                },
+                error: function(err) {
+                }
             });
-            hL();
-        }, error: function(err) {
         }
-    });
-}
+    }
 
-var fetchInventoryRecords = () => {
+    var topContactsPerformance = (periodSelected = 'today') => {
 
-    if ($(`table[class~="inventoryLists"]`).length) {
+        if ($(`table[class~="custPerformance"]`).length) {
+            $.ajax({
+                type: "POST",
+                url: `${baseUrl}api/reportsAnalytics/generateReport`,
+                data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
+                dataType: "JSON",
+                beforeSend: function() {},
+                success: function(resp) {
+                    var count = 0,
+                    trData = ``;
+
+                    $(`table[class~="custPerformance"]`).dataTable().fnDestroy();
+                    $(`table[class~="custPerformance"]`).dataTable({
+                        "aaData": resp.result,
+                        "iDisplayLength": 10,
+                        "buttons": ["copy", "print","csvHtml5"],
+                        "lengthChange": !1,
+                        "dom": "Bfrtip",
+                        "columns": [
+                        { "data": 'row_id' },
+                        { "data": 'fullname' },
+                        { "data": 'orders_count' },
+                        { "data": 'total_amount' },
+                        { "data": 'total_balance' },
+                        { "data": 'action' }
+                        ]
+                    });
+                },
+                error: function(err) {},
+                complete: function(data) {
+                    salesAttendantHistory();
+                }
+            });
+        }
+    }
+
+    var fetchSalesRecords = () => {
         var colspan = "7";
 
+        var period = $(`select[name="periodSelected"]`).val();
+
         $.ajax({
-            url: `${baseUrl}api/dashboardAnalytics/fetchInventoryRecords`,
+            url: `${baseUrl}api/dashboardAnalytics/getSales`,
             type: "POST",
             dataType: "json",
-            data: { fetchInventoryRecords: true, request: "fetchInventoryRecords" },
+            data: { getSales: true, salesPeriod: period },
+            beforeSend: function() {},
             success: function(data) {
+
+                $(`table[class~="salesLists"]`).dataTable().fnDestroy();
                 if (data.status == true) {
-                    $(`table[class~="inventoryLists"]`).dataTable().fnDestroy();
-                    $(`table[class~="inventoryLists"]`).dataTable({
-                        "aaData": data.message,
+                    $(`table[class~="salesLists"]`).dataTable({
+                        "aaData": data.message.table,
                         "iDisplayLength": 10,
+                        "buttons": ["copy", "print","csvHtml5"],
+                        "lengthChange": !1,
+                        "dom": "Bfrtip",
                         "columns": [
                         { "data": 'row' },
-                        { "data": 'product' },
-                        { "data": 'quantity' },
-                        { "data": 'price' },
-                        { "data": 'recordedBy' },
-                        { "data": 'orderDate' }
+                        { "data": 'order_id' },
+                        { "data": 'fullname' },
+                        { "data": 'phone' },
+                        { "data": 'date' },
+                        { "data": 'amount' },
+                        { "data": 'action' }
                         ]
                     });
+
+                    if($("span[class~='total-sales']").length) {
+                        $("span[class~='total-sales']").html(data.message.totalSales.total);
+                        $("span[class~='total-sales-trend']").html(data.message.totalSales.trend);
+
+                        $("span[class~='total-served']").html(data.message.totalServed.total);
+                        $("span[class~='total-served-trend']").html(data.message.totalServed.trend);
+
+                        $("span[class~='average-sales']").html(data.message.averageSales.total);
+                        $("span[class~='average-sales-trend']").html(data.message.averageSales.trend);
+
+                        $("span[class~='total-discounts']").html(data.message.totalDiscount.total);
+                        $("span[class~='total-discounts-trend']").html(data.message.totalDiscount.trend);
+
+                        $("span[class~='total-credit-sales']").html(data.message.totalCredit.total);
+                        $("span[class~='total-credit-sales']-trend").html(data.message.totalCredit.trend);
+
+                        $("span[class~='total-profit']").html(data.message.salesComparison.profit);
+                        $("span[class~='total-profit-trend']").html(data.message.salesComparison.profit_trend);
+
+                        $("span[class~='total-selling']").html(data.message.salesComparison.selling);
+                        $("span[class~='total-selling-trend']").html(data.message.salesComparison.selling_trend);
+
+                        $("span[class~='total-cost']").html(data.message.salesComparison.cost);
+                        $("span[class~='total-cost-trend']").html(data.message.salesComparison.cost_trend);
+                    }
+                } else {
+                    $(`table[class~="salesLists"]`).dataTable();
                 }
+
             },
-            complete: function() {}
+            complete: function(data) {
+                $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
+                    let orderId = $(this).data('sales-id');
+                    window.open(
+                        `${baseUrl}receipt/${orderId}`,
+                        `Sales Invoice - Receipt #${orderId}`,
+                        `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+                        );
+                });
+                $(`div[class="main-content"]`).on('click', `a[class~="resend-email"]`, function(e) {
+                    $(`div[class~="sendMailModal"] input[name="fullname"]`).val($(this).data('name'));
+                    $(`div[class~="sendMailModal"] input[name="send_email"]`).val($(this).data('email'));
+                    $(`div[class~="sendMailModal"] input[name="receiptId"]`).val($(this).data('sales-id'));
+                    $(`div[class~="sendMailModal"] input[name="request_type"]`).val('invoice');
+                    $(`div[class~="sendMailModal"] input[name="customerId"]`).val($(this).data('customer-id'));
+                    $(`div[class~="sendMailModal"]`).modal('show');
+                });
+                hL();
+            }, error: function(err) {
+            }
         });
     }
-}
 
-var fetchProductThresholds = () => {
-    if ($(`table[class~="thresholdLists"]`).length) {
-        var colspan = "3";
-        $.ajax({
-            url: baseUrl + "api/dashboardAnalytics",
-            type: "POST",
-            dataType: "json",
-            data: { request: "getProductThresholds" },
-            success: function(data) {
-                if (data.status == true) {
-                    $(`table[class~="thresholdLists"]`).dataTable().fnDestroy();
-                    $(`table[class~="thresholdLists"]`).dataTable({
-                        "aaData": data.message,
-                        "iDisplayLength": 10,
-                        "columns": [
-                        { "data": 'row' },
-                        { "data": 'product' },
-                        { "data": 'quantity' }
-                        ]
-                    });
+    var fetchInventoryRecords = () => {
+
+        if ($(`table[class~="inventoryLists"]`).length) {
+            var colspan = "7";
+
+            $.ajax({
+                url: `${baseUrl}api/dashboardAnalytics/fetchInventoryRecords`,
+                type: "POST",
+                dataType: "json",
+                data: { fetchInventoryRecords: true, request: "fetchInventoryRecords" },
+                success: function(data) {
+                    if (data.status == true) {
+                        $(`table[class~="inventoryLists"]`).dataTable().fnDestroy();
+                        $(`table[class~="inventoryLists"]`).dataTable({
+                            "aaData": data.message,
+                            "iDisplayLength": 10,
+                            "columns": [
+                            { "data": 'row' },
+                            { "data": 'product' },
+                            { "data": 'quantity' },
+                            { "data": 'price' },
+                            { "data": 'recordedBy' },
+                            { "data": 'orderDate' }
+                            ]
+                        });
+                    }
+                },
+                complete: function() {}
+            });
+        }
+    }
+
+    async function dashboardAnalitics() {
+
+        async function loadSalesData() {
+            return new Promise((resolve, reject) => {
+                var data = listIDB('sales');
+                resolve(data);
+            });
+        }
+
+        var salesData = await loadSalesData();
+
+        Array.prototype.unique = function() {
+            return this.filter(function(value, index, self) {
+                return self.indexOf(value) === index;
+            });
+        }
+
+        var totals = 0,
+        credits = 0,
+        orders = 0, expectedSellingPrice = 0,
+        productsCostPrice = 0,
+        customers = 0, row = 0;
+        var customerArray = new Array();
+        var salesArray = new Array();
+        var salesFigures = new Array();
+        var creditSalesArray = new Array();
+        var paidSalesArray = new Array();
+
+        var creditBadge = ``, hourAndValue = new Array(), vHours = new Array();
+
+        $.each(salesData, function(i, e) {
+
+            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+                if ((e.branchId == storeValues._clb) && (e.recorded_by == storeValues._ud)) {
+                    orders += 1;
+                    customerArray.push(e.customer_id);
+                    totals += parseFloat(e.order_amount_paid);
+                    productsCostPrice += parseFloat(e.total_cost_price);
+                    expectedSellingPrice += parseFloat(e.total_expected_selling_price);
+                    salesFigures.push(parseFloat(e.order_amount_paid));
+
+                    vHours.push(parseFloat(e.hour_of_day));
+
+                    if(e.credit_sales == 1) {
+                        creditSalesArray.push(parseFloat(e.order_amount_paid));
+                    } else if(e.credit_sales == 0) {
+                        paidSalesArray.push(parseFloat(e.order_amount_paid));
+                    }
                 }
-            },
-            complete: function() {}
-        });
-    }
-}
-
-async function dashboardAnalitics() {
-
-    async function loadSalesData() {
-        return new Promise((resolve, reject) => {
-            var data = listIDB('sales');
-            resolve(data);
-        });
-    }
-
-    var salesData = await loadSalesData();
-
-    Array.prototype.unique = function() {
-        return this.filter(function(value, index, self) {
-            return self.indexOf(value) === index;
-        });
-    }
-
-    var totals = 0,
-    credits = 0,
-    orders = 0, expectedSellingPrice = 0,
-    productsCostPrice = 0,
-    customers = 0, row = 0;
-    var customerArray = new Array();
-    var salesArray = new Array();
-    var salesFigures = new Array();
-    var creditSalesArray = new Array();
-    var paidSalesArray = new Array();
-
-    var creditBadge = ``, hourAndValue = new Array(), vHours = new Array();
-
-    $.each(salesData, function(i, e) {
-
-        if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
-            if ((e.branchId == storeValues._clb) && (e.recorded_by == storeValues._ud)) {
+            } else if((e.clientId == storeValues._cl)) {
                 orders += 1;
-                customerArray.push(e.customer_id);
-                totals += parseFloat(e.order_amount_paid);
-                productsCostPrice += parseFloat(e.total_cost_price);
-                expectedSellingPrice += parseFloat(e.total_expected_selling_price);
-                salesFigures.push(parseFloat(e.order_amount_paid));
-
-                vHours.push(parseFloat(e.hour_of_day));
-
                 if(e.credit_sales == 1) {
                     creditSalesArray.push(parseFloat(e.order_amount_paid));
                 } else if(e.credit_sales == 0) {
                     paidSalesArray.push(parseFloat(e.order_amount_paid));
                 }
+
+                productsCostPrice += parseFloat(e.total_cost_price);
+                customerArray.push(e.customer_id);
+                totals += parseFloat(e.order_amount_paid);
+                salesFigures.push(parseFloat(e.order_amount_paid));
+                expectedSellingPrice += parseFloat(e.total_expected_selling_price);
+
+                vHours.push(parseFloat(e.hour_of_day));
             }
-        } else if((e.clientId == storeValues._cl)) {
-            orders += 1;
-            if(e.credit_sales == 1) {
-                creditSalesArray.push(parseFloat(e.order_amount_paid));
-            } else if(e.credit_sales == 0) {
-                paidSalesArray.push(parseFloat(e.order_amount_paid));
+
+            if ((e.credit_sales == 1) && (e.clientId == storeValues._cl)) {
+                credits += parseFloat(e.order_amount_paid);
             }
 
-            productsCostPrice += parseFloat(e.total_cost_price);
-            customerArray.push(e.customer_id);
-            totals += parseFloat(e.order_amount_paid);
-            salesFigures.push(parseFloat(e.order_amount_paid));
-            expectedSellingPrice += parseFloat(e.total_expected_selling_price);
+            if (e.payment_type == 'cash') {
+                creditBadge = `<span class="text-gray">Cash Sale</span>`;
+            } else if (e.payment_type == 'momo') {
+                creditBadge = `<span class="text-gray">Mobile Money</span>`;
+            } else if (e.payment_type == 'card') {
+                creditBadge = `<span class="text-gray">Card Payment</span>`;
+            } else if (e.payment_type == 'credit') {
+                creditBadge = `<span class="text-gray">Credit</span>`;
+            }
 
-            vHours.push(parseFloat(e.hour_of_day));
-        }
-
-        if ((e.credit_sales == 1) && (e.clientId == storeValues._cl)) {
-            credits += parseFloat(e.order_amount_paid);
-        }
-
-        if (e.payment_type == 'cash') {
-            creditBadge = `<span class="text-gray">Cash Sale</span>`;
-        } else if (e.payment_type == 'momo') {
-            creditBadge = `<span class="text-gray">Mobile Money</span>`;
-        } else if (e.payment_type == 'card') {
-            creditBadge = `<span class="text-gray">Card Payment</span>`;
-        } else if (e.payment_type == 'credit') {
-            creditBadge = `<span class="text-gray">Credit</span>`;
-        }
-
-        if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
-            if (e.recorded_by == storeValues._ud) {
+            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+                if (e.recorded_by == storeValues._ud) {
+                    salesArray.push({
+                        row: orders,
+                        order_id: `${e.order_id} <br> ${creditBadge}`,
+                        fullname: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">${e.customer_fullname}</a>`,
+                        phone: e.customer_contact,
+                        date: e.order_date,
+                        amount: e.order_amount_paid,
+                        action: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">
+                        <i class="fa fa-eye"></i>
+                        </a>`
+                    });
+                }
+            } else if((e.clientId == storeValues._cl)) {
                 salesArray.push({
                     row: orders,
                     order_id: `${e.order_id} <br> ${creditBadge}`,
@@ -4461,357 +4441,319 @@ async function dashboardAnalitics() {
                     </a>`
                 });
             }
-        } else if((e.clientId == storeValues._cl)) {
-            salesArray.push({
-                row: orders,
-                order_id: `${e.order_id} <br> ${creditBadge}`,
-                fullname: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">${e.customer_fullname}</a>`,
-                phone: e.customer_contact,
-                date: e.order_date,
-                amount: e.order_amount_paid,
-                action: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">
-                <i class="fa fa-eye"></i>
-                </a>`
-            });
-        }
-    });
+        });
 
-    var lowestSale = `${storeValues.cur} ${fmtCurr(Math.min(...salesFigures))}`;
-    var highestSale = `${storeValues.cur} ${fmtCurr(Math.max(...salesFigures))}`;
-    var totalDiscount = `${storeValues.cur} (${fmtCurr(expectedSellingPrice - totals)})`;
-    var creditTotal = `${storeValues.cur} ${fmtCurr(credits)}`;
-    var salesTotal = `${storeValues.cur} ${fmtCurr(totals)}`;
-    var totalCost = `${storeValues.cur} ${fmtCurr(productsCostPrice)}`;
-    var totalProfit = `${storeValues.cur} ${fmtCurr(totals-productsCostPrice)}`;
-    var creditPercent = `<span class='text-danger'>${storeValues.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
-    var average = `${storeValues.cur} ${fmtCurr(totals/orders)}`;
+        var lowestSale = `${storeValues.cur} ${fmtCurr(Math.min(...salesFigures))}`;
+        var highestSale = `${storeValues.cur} ${fmtCurr(Math.max(...salesFigures))}`;
+        var totalDiscount = `${storeValues.cur} (${fmtCurr(expectedSellingPrice - totals)})`;
+        var creditTotal = `${storeValues.cur} ${fmtCurr(credits)}`;
+        var salesTotal = `${storeValues.cur} ${fmtCurr(totals)}`;
+        var totalCost = `${storeValues.cur} ${fmtCurr(productsCostPrice)}`;
+        var totalProfit = `${storeValues.cur} ${fmtCurr(totals-productsCostPrice)}`;
+        var creditPercent = `<span class='text-danger'>${storeValues.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
+        var average = `${storeValues.cur} ${fmtCurr(totals/orders)}`;
 
-    var hValues = new Array();
-    for(var i = 0; i < vHours.length; i++) {
-        if(hValues[vHours[i]] !== undefined) {
-            hValues[vHours[i]] += parseFloat(salesFigures[i]);
-        } else if(typeof vHours[i] !== undefined) {
-            hValues[vHours[i]] = parseFloat(salesFigures[i]);
+        var hValues = new Array();
+        for(var i = 0; i < vHours.length; i++) {
+            if(hValues[vHours[i]] !== undefined) {
+                hValues[vHours[i]] += parseFloat(salesFigures[i]);
+            } else if(typeof vHours[i] !== undefined) {
+                hValues[vHours[i]] = parseFloat(salesFigures[i]);
+            }
         }
+
+        var hourOfTheDay = {0:"12AM",1:"1AM",2:"2AM",3:"3AM",4:"4AM",5:"5AM",6:"6AM",7:"7AM",8:"8AM",9:"9AM",10:"10AM",11:"11AM",12:"12PM",13:"1PM",14:"2PM",15:"3PM",16:"4PM",17:"5PM",18:"6PM",19:"7PM",20:"8PM",21:"9PM",22:"10PM",23:"11PM"};
+
+        var goodHour = new Array(), goodValues = new Array();
+        $.each(hValues, function(i, e) {
+            if(e != undefined) {
+                goodValues.push(e);
+                goodHour.push(hourOfTheDay[i]);
+            }
+        });
+
+        var data = {
+            total: salesTotal,
+            credit: creditTotal,
+            orders: orders,
+            customers: customerArray.unique(),
+            creditPercent: creditPercent,
+            salesHistory: salesArray,
+            averageSale: average,
+            profit: totalProfit,
+            selling: salesTotal,
+            cost: totalCost,
+            highest: highestSale,
+            lowest: lowestSale,
+            analitics: {
+                hourValues: goodValues,
+                goodHour: goodHour
+            }
+        };
+
+        return data;
     }
 
-    var hourOfTheDay = {0:"12AM",1:"1AM",2:"2AM",3:"3AM",4:"4AM",5:"5AM",6:"6AM",7:"7AM",8:"8AM",9:"9AM",10:"10AM",11:"11AM",12:"12PM",13:"1PM",14:"2PM",15:"3PM",16:"4PM",17:"5PM",18:"6PM",19:"7PM",20:"8PM",21:"9PM",22:"10PM",23:"11PM"};
+    if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"], div[class~="pos-reporting"]`).length) {
 
-    var goodHour = new Array(), goodValues = new Array();
-    $.each(hValues, function(i, e) {
-        if(e != undefined) {
-            goodValues.push(e);
-            goodHour.push(hourOfTheDay[i]);
-        }
-    });
+        var offline = true;
 
-    var data = {
-        total: salesTotal,
-        credit: creditTotal,
-        orders: orders,
-        customers: customerArray.unique(),
-        creditPercent: creditPercent,
-        salesHistory: salesArray,
-        averageSale: average,
-        profit: totalProfit,
-        selling: salesTotal,
-        cost: totalCost,
-        highest: highestSale,
-        lowest: lowestSale,
-        analitics: {
-            hourValues: goodValues,
-            goodHour: goodHour
-        }
-    };
+        async function loadDashboardInformation() {
 
-    return data;
-}
-
-$(`span[class~="switch-button"]`).on('click', async function(e) {
-
-    let show = $(this).attr('data-show-content');
-    let hide = $(this).attr('data-hide-content');
-
-    $(`div[class~="${show}"]`).removeClass('hidden').fadeIn('slow');
-    $(`div[class~="${hide}"]`).addClass('hidden').fadeOut('slow');
-
-    await $.ajax({
-        url: `${baseUrl}api/branchManagment/saveReportsRecord`,
-        data: { saveReportsRecord: true, attendantPerformance: show },
-        type: "POST",
-        dataType: "JSON",
-        success: function(resp) {
-        }
-    });
-});
-
-if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"], div[class~="pos-reporting"]`).length) {
-
-    var offline = true;
-
-    async function loadDashboardInformation() {
-
-        await dOC().then((itResp) => {
-            if (itResp == 1) {
-                offline = false;
-                $(`div[class="connection"]`).css('display', 'none');
-                $(`div[class~="offline-placeholder"]`).css('display','none');
-            } else {
+            await dOC().then((itResp) => {
+                if (itResp == 1) {
+                    offline = false;
+                    $(`div[class="connection"]`).css('display', 'none');
+                    $(`div[class~="offline-placeholder"]`).css('display','none');
+                } else {
+                    offline = true;
+                    $(`div[class="connection"]`).css('display', 'block');
+                    $(`div[class~="offline-placeholder"]`).css('display','flex');
+                    $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+                    $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+                }
+            }).catch((err) => {
                 offline = true;
                 $(`div[class="connection"]`).css('display', 'block');
                 $(`div[class~="offline-placeholder"]`).css('display','flex');
-                $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
-                $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
-            }
-        }).catch((err) => {
-            offline = true;
-            $(`div[class="connection"]`).css('display', 'block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-        });
-
-        if(offline) {
-
-            $(`select[name="periodSelected"]`).prop('disabled', true);
-            $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
-            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
-            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
-            dashboardAnalitics().then(async (dashboardInsights) => {
-
-                if($(`table[class~="salesLists"]`).length) {
-
-                    $(`table[class~="salesLists"]`).dataTable().fnDestroy();
-
-                    $(`table[class~="salesLists"]`).dataTable({
-                        "aaData": dashboardInsights.salesHistory,
-                        "iDisplayLength": 10,
-                        "columns": [
-                        { "data": 'row' },
-                        { "data": 'order_id' },
-                        { "data": 'fullname' },
-                        { "data": 'phone' },
-                        { "data": 'date' },
-                        { "data": 'amount' },
-                        { "data": 'action' }
-                        ]
-                    });
-
-
-                }
-
-                if ($(`div[class~="dashboard-reports"]`).length) {
-                    $(".total-sales").html(dashboardInsights.total);
-                    $(".total-sales-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
-                    $(".total-served").html(dashboardInsights.orders);
-                    $(".total-served-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Customers Served</span>`);
-                    $(".total-products").html(dashboardInsights.averageSale);
-                    $(".total-products-worth").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Sold today</span>`);
-                    $(".total-credit-sales").html(dashboardInsights.credit);
-                    $(".total-credit-sales-trend").html(dashboardInsights.creditPercent);
-
-                    $(".total-profit").html(dashboardInsights.profit);
-                    $(".total-profit-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Profits made from sale</span>`);
-
-                    $(".total-selling").html(dashboardInsights.selling);
-                    $(".total-selling-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Revenue less Discount</span>`);
-
-                    $(".total-cost").html(dashboardInsights.cost);
-                    $(".total-cost-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Costs of Items sold</span>`);
-                }
-
-                if($(`div[class~="pos-reporting"]`).length) {
-
-                    await gIDBR('reports', "branch_performance").then((branchInsight) => {
-                        delete branchInsight.reports_id;
-                        var branchData = new Array();
-                        populateBranchData(Object.values(branchInsight));
-                    }).then((resp) => {
-                        gIDBR('reports', "sales_attendant_performance").then((attendantInsight) => {
-                            populateSalesTeamData(Object.values(attendantInsight.list), Object.values(attendantInsight.names), Object.values(attendantInsight.sales))
-                        });
-                    }).then((res) => {
-                        gIDBR('reports', "products_performance").then((productsInsight) => {
-                            delete productsInsight.reports_id;
-                            populateProductsPerformance(Object.values(productsInsight));
-                        });
-                    });
-
-                    $(`p[data-model="highest-sale"] span`).html(dashboardInsights.highest);
-                    $(`p[data-model="lowest-sale"] span`).html(dashboardInsights.lowest);
-
-                    $(`div[data-report="total-sales"] h3[class="my-3"]`).html(dashboardInsights.total);
-                    $(`div[data-report="total-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
-
-                    $(`div[data-report="average-sales"] h3[class="my-3"]`).html(dashboardInsights.averageSale);
-                    $(`div[data-report="average-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Average Sales Today</span>`);
-
-                    $(`div[data-report="highest-sales"] h3[class="my-3"]`).html(dashboardInsights.highest);
-                    $(`div[data-report="highest-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> highest Sales Today</span>`);
-
-                    $(`div[data-report="total-orders"] h3[class="my-3"]`).html(dashboardInsights.orders);
-                    $(`div[data-report="total-orders"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
-
-                    var thisOpts = {
-                        chart: {
-                            height: 374,
-                            type: 'line',
-                            shadow: {
-                                enabled: false,
-                                color: '#bbb',
-                                top: 3,
-                                left: 2,
-                                blur: 3,
-                                opacity: 1
-                            },
-                        },
-                        stroke: {
-                            width: 5,
-                            curve: 'smooth'
-                        },
-                        series: [{
-                            name: 'Total Sales',
-                            data: dashboardInsights.analitics.hourValues
-                        }],
-                        xaxis: {
-                            type: 'datetime',
-                            categories: dashboardInsights.analitics.goodHour,
-                            axisBorder: {
-                                show: true,
-                                color: '#bec7e0',
-                            },
-                            axisTicks: {
-                                show: true,
-                                color: '#bec7e0',
-                            },
-                        },
-                        fill: {
-                            type: 'gradient',
-                            gradient: {
-                                shade: 'dark',
-                                gradientToColors: ['#43cea2'],
-                                shadeIntensity: 1,
-                                type: 'horizontal',
-                                opacityFrom: 1,
-                                opacityTo: 1,
-                                stops: [0, 100, 100, 100]
-                            },
-                        },
-                        markers: {
-                            size: 4,
-                            opacity: 0.9,
-                            colors: ["#ffbc00"],
-                            strokeColor: "#fff",
-                            strokeWidth: 2,
-                            style: 'hollow',
-                            hover: {
-                                size: 7,
-                            }
-                        },
-                        yaxis: {
-                            title: {
-                                text: 'Sales Values',
-                            },
-                        },
-                        tooltip: {
-                            shared: true,
-                            intersect: false,
-                            y: {
-                                formatter: function(y) {
-                                    if (typeof y !== "undefined") {
-                                        return storeValues.cur + fmtCurr(y);
-                                    }
-                                    return y;
-
-                                }
-                            }
-                        },
-                        grid: {
-                            row: {
-                                colors: ['transparent', 'transparent'],
-                                opacity: 0.2
-                            },
-                            borderColor: '#185a9d'
-                        },
-                        responsive: [{
-                            breakpoint: 600,
-                            options: {
-                                chart: {
-                                    toolbar: {
-                                        show: false
-                                    }
-                                },
-                                legend: {
-                                    show: false
-                                },
-                            }
-                        }]
-                    }
-
-                    delete thisOpts.xaxis.type;
-
-                    var chart = new ApexCharts(
-                        document.querySelector("#sales-overview-chart"),
-                        thisOpts
-                        );
-
-                    chart.render();
-
-                }
             });
 
-hL();
+            if(offline) {
 
-return false;
-}
+                $(`select[name="periodSelected"]`).prop('disabled', true);
+                $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
+                $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+                $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+                dashboardAnalitics().then(async (dashboardInsights) => {
 
-$(`div[class~="offline-placeholder"]`).css({ 'display': 'none' });
-$(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
+                    if($(`table[class~="salesLists"]`).length) {
 
-if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"]`).length) {
-    fetchSalesRecords();
-    salesAttendantPerformance(period);
+                        $(`table[class~="salesLists"]`).dataTable().fnDestroy();
 
-    if($(`div[class~="sales-overview-data"]`).length) {
-        salesOverview('this-week');
-    }
+                        $(`table[class~="salesLists"]`).dataTable({
+                            "aaData": dashboardInsights.salesHistory,
+                            "iDisplayLength": 10,
+                            "columns": [
+                            { "data": 'row' },
+                            { "data": 'order_id' },
+                            { "data": 'fullname' },
+                            { "data": 'phone' },
+                            { "data": 'date' },
+                            { "data": 'amount' },
+                            { "data": 'action' }
+                            ]
+                        });
 
-} else if($(`div[class~="pos-reporting"]`).length) {
 
-    var period = $(`select[name="periodSelected"]`).val();
+                    }
 
-    if ($(`div[class~="reports-summary"]`).length) {
-        summaryItems(period);
-        salesOverview(period);
-        salesAttendantPerformance(period);
-        if($(`div[id="dash_spark_1"]`).length) {
-            ordersCount(period);
+                    if ($(`div[class~="dashboard-reports"]`).length) {
+                        $(".total-sales").html(dashboardInsights.total);
+                        $(".total-sales-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
+                        $(".total-served").html(dashboardInsights.orders);
+                        $(".total-served-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Customers Served</span>`);
+                        $(".total-products").html(dashboardInsights.averageSale);
+                        $(".total-products-worth").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Sold today</span>`);
+                        $(".total-credit-sales").html(dashboardInsights.credit);
+                        $(".total-credit-sales-trend").html(dashboardInsights.creditPercent);
+
+                        $(".total-profit").html(dashboardInsights.profit);
+                        $(".total-profit-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Profits made from sale</span>`);
+
+                        $(".total-selling").html(dashboardInsights.selling);
+                        $(".total-selling-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Revenue less Discount</span>`);
+
+                        $(".total-cost").html(dashboardInsights.cost);
+                        $(".total-cost-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Costs of Items sold</span>`);
+                    }
+
+                    if($(`div[class~="pos-reporting"]`).length) {
+
+                        await gIDBR('reports', "branch_performance").then((branchInsight) => {
+                            delete branchInsight.reports_id;
+                            var branchData = new Array();
+                            populateBranchData(Object.values(branchInsight));
+                        }).then((resp) => {
+                            gIDBR('reports', "sales_attendant_performance").then((attendantInsight) => {
+                                populateSalesTeamData(Object.values(attendantInsight.list), Object.values(attendantInsight.names), Object.values(attendantInsight.sales))
+                            });
+                        }).then((res) => {
+                            gIDBR('reports', "products_performance").then((productsInsight) => {
+                                delete productsInsight.reports_id;
+                                populateProductsPerformance(Object.values(productsInsight));
+                            });
+                        });
+
+                        $(`p[data-model="highest-sale"] span`).html(dashboardInsights.highest);
+                        $(`p[data-model="lowest-sale"] span`).html(dashboardInsights.lowest);
+
+                        $(`div[data-report="total-sales"] h3[class="my-3"]`).html(dashboardInsights.total);
+                        $(`div[data-report="total-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
+
+                        $(`div[data-report="average-sales"] h3[class="my-3"]`).html(dashboardInsights.averageSale);
+                        $(`div[data-report="average-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Average Sales Today</span>`);
+
+                        $(`div[data-report="highest-sales"] h3[class="my-3"]`).html(dashboardInsights.highest);
+                        $(`div[data-report="highest-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> highest Sales Today</span>`);
+
+                        $(`div[data-report="total-orders"] h3[class="my-3"]`).html(dashboardInsights.orders);
+                        $(`div[data-report="total-orders"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
+
+                        var thisOpts = {
+                            chart: {
+                                height: 374,
+                                type: 'line',
+                                shadow: {
+                                    enabled: false,
+                                    color: '#bbb',
+                                    top: 3,
+                                    left: 2,
+                                    blur: 3,
+                                    opacity: 1
+                                },
+                            },
+                            stroke: {
+                                width: 5,
+                                curve: 'smooth'
+                            },
+                            series: [{
+                                name: 'Total Sales',
+                                data: dashboardInsights.analitics.hourValues
+                            }],
+                            xaxis: {
+                                type: 'datetime',
+                                categories: dashboardInsights.analitics.goodHour,
+                                axisBorder: {
+                                    show: true,
+                                    color: '#bec7e0',
+                                },
+                                axisTicks: {
+                                    show: true,
+                                    color: '#bec7e0',
+                                },
+                            },
+                            fill: {
+                                type: 'gradient',
+                                gradient: {
+                                    shade: 'dark',
+                                    gradientToColors: ['#43cea2'],
+                                    shadeIntensity: 1,
+                                    type: 'horizontal',
+                                    opacityFrom: 1,
+                                    opacityTo: 1,
+                                    stops: [0, 100, 100, 100]
+                                },
+                            },
+                            markers: {
+                                size: 4,
+                                opacity: 0.9,
+                                colors: ["#ffbc00"],
+                                strokeColor: "#fff",
+                                strokeWidth: 2,
+                                style: 'hollow',
+                                hover: {
+                                    size: 7,
+                                }
+                            },
+                            yaxis: {
+                                title: {
+                                    text: 'Sales Values',
+                                },
+                            },
+                            tooltip: {
+                                shared: true,
+                                intersect: false,
+                                y: {
+                                    formatter: function(y) {
+                                        if (typeof y !== "undefined") {
+                                            return storeValues.cur + fmtCurr(y);
+                                        }
+                                        return y;
+
+                                    }
+                                }
+                            },
+                            grid: {
+                                row: {
+                                    colors: ['transparent', 'transparent'],
+                                    opacity: 0.2
+                                },
+                                borderColor: '#185a9d'
+                            },
+                            responsive: [{
+                                breakpoint: 600,
+                                options: {
+                                    chart: {
+                                        toolbar: {
+                                            show: false
+                                        }
+                                    },
+                                    legend: {
+                                        show: false
+                                    },
+                                }
+                            }]
+                        }
+
+                        delete thisOpts.xaxis.type;
+
+                        var chart = new ApexCharts(
+                            document.querySelector("#sales-overview-chart"),
+                            thisOpts
+                        );
+
+                        chart.render();
+                    }
+                });
+
+                hL();
+
+                return false;
+            }
+
+            $(`div[class~="offline-placeholder"]`).css({ 'display': 'none' });
+            $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
+
+            if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"]`).length) {
+                fetchSalesRecords();
+                salesAttendantPerformance(period);
+
+                if($(`div[class~="sales-overview-data"]`).length) {
+                    salesOverview('this-week');
+                }
+
+            } else if($(`div[class~="pos-reporting"]`).length) {
+
+                var period = $(`select[name="periodSelected"]`).val();
+
+                if ($(`div[class~="reports-summary"]`).length) {
+                    summaryItems(period);
+                    salesOverview(period);
+                    salesAttendantPerformance(period);
+                    topContactsPerformance(period);
+                    branchPerformance(period);
+                }
+
+                $(`select[name="periodSelected"]`).on('change', function() {
+                    sL();
+                    var periodSelected = $(this).val();
+                    summaryItems(periodSelected);
+                    salesOverview(periodSelected);
+                    salesAttendantPerformance(periodSelected);
+                    topContactsPerformance(periodSelected);
+                    branchPerformance(periodSelected);
+                });
+
+            }
+
+            $(`select[name="periodSelected"]`).on('change', function() {
+                fetchSalesRecords();
+            });
+
         }
-        topContactsPerformance(period);
-        branchPerformance(period);
+
+        loadDashboardInformation();
     }
-
-    $(`select[name="periodSelected"]`).on('change', function() {
-        sL();
-        var periodSelected = $(this).val();
-        summaryItems(periodSelected);
-        salesOverview(periodSelected);
-        if($(`div[id="dash_spark_1"]`).length) {
-            ordersCount(periodSelected);
-        }
-        salesAttendantPerformance(periodSelected);
-        topContactsPerformance(periodSelected);
-        branchPerformance(periodSelected);
-    });
-
-}
-
-$(`select[name="periodSelected"]`).on('change', function() {
-    fetchSalesRecords();
-});
-
-}
-
-loadDashboardInformation();
-}
 
 });
 
