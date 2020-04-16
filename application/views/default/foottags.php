@@ -104,7 +104,7 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
   
-  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'outlets', 'product-types','customers', 'expenses-category'])) { ?>
+  <?php if(in_array($SITEURL[0], ['orders', 'quotes', 'outlets', 'product-types','customers', 'expenses-category', 'expenses'])) { ?>
   <div class="modal fade delete-modal" tabindex="-1" id="deleteData" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">

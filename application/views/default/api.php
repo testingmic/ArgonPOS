@@ -3898,13 +3898,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			elseif(isset($_POST["name"], $_POST["dataset"]) && confirm_url_id(2, 'saveCategory')) {
 				$postData = (Object) array_map("xss_clean", $_POST);
 
-				//: initializing
-				$response = (Object) [
-					'status' => 'error', 
-					'message' => 'Error Processing Request',
-					'branchId' => $loggedUserBranchId
-				];
-
 				if(empty($postData->name)) {
 					$response->message = "Category name cannot be empty";
 				} else {
@@ -3944,13 +3937,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			elseif(isset($_POST["itemId"], $_POST["itemToDelete"]) && confirm_url_id(2, 'deleteCategory')) {
 				$postData = (Object) array_map("xss_clean", $_POST);
-
-				//: initializing
-				$response = (Object) [
-					'status' => 'error', 
-					'message' => 'Error Processing Request',
-					'branchId' => $loggedUserBranchId
-				];
 
 				if(empty($postData->itemId)) {
 					$response->message = "Error processing request";
@@ -4320,13 +4306,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			elseif(isset($_POST["name"], $_POST["dataset"], $_POST["description"]) && confirm_url_id(2, 'saveCategory')) {
 				$postData = (Object) array_map("xss_clean", $_POST);
 
-				//: initializing
-				$response = (Object) [
-					'status' => 'error', 
-					'message' => 'Error Processing Request',
-					'branchId' => $loggedUserBranchId
-				];
-
 				if(empty($postData->name)) {
 					$response->message = "Category name cannot be empty";
 				} else {
@@ -4384,13 +4363,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			elseif(isset($_POST["itemId"], $_POST["itemToDelete"]) && confirm_url_id(2, 'deleteCategory')) {
 				$postData = (Object) array_map("xss_clean", $_POST);
-
-				//: initializing
-				$response = (Object) [
-					'status' => 'error', 
-					'message' => 'Error Processing Request',
-					'branchId' => $loggedUserBranchId
-				];
 
 				if(empty($postData->itemId)) {
 					$response->message = "Error processing request";
@@ -4543,6 +4515,29 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 				}
 
+			}
+
+			elseif(isset($_POST["itemId"], $_POST["itemToDelete"]) && confirm_url_id(2, 'deleteExpense')) {
+				$postData = (Object) array_map("xss_clean", $_POST);
+
+				if(empty($postData->itemId)) {
+					$response->message = "Error processing request";
+				} else {
+
+					// delete the product type from the system
+					$query = $pos->prepare("UPDATE expenses SET status='0' WHERE id='{$postData->itemId}' AND clientId='{$loggedUserClientId}'");
+					
+					// if it was successfully executed
+					if($query->execute()) {
+						// set the response data
+						$response->reload = true;
+						$response->status = true;
+						$response->message = "Expenses successfully deleted";
+						
+						// Record user activity
+						$posClass->userLogs('expenses', $postData->itemId, 'Deleted the Expenses Category from the system.');
+					}
+				}
 			}
 
 		}

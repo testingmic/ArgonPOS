@@ -752,15 +752,15 @@ if($(`table[class~="expensesList"]`).length) {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-            {"data": 'row'},
-            {"data": 'start_date'},
-            {"data": 'category'},
-            {"data": 'amount'},
-            {"data": 'tax'},
-            {"data": 'payment_type'},
-            {"data": 'description'},
-            {"data": 'created_by'},
-            {"data": 'action'}
+                {"data": 'row'},
+                {"data": 'start_date'},
+                {"data": 'category'},
+                {"data": 'amount'},
+                {"data": 'tax'},
+                {"data": 'payment_type'},
+                {"data": 'description'},
+                {"data": 'created_by'},
+                {"data": 'action'}
             ]
         });
 
@@ -1390,6 +1390,9 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                     }
                     if($(`table[class~="customersList"]`).length) {
                         listCustomers();
+                    }
+                    if($(`table[class~="expensesList"]`).length) {
+                        listExpenses();
                     }
                     if((data.thisRequest == 'Quote') || (data.thisRequest == 'Order')) {
                         listRequests(data.thisRequest, data.tableName);
