@@ -5,7 +5,7 @@ var storeValues = $.parseJSON($(`link[rel="prc"]`).attr('_cl'));
 $(".overlay").css('display', 'block');
 
 const menuItems = $('.left-sidenav ul.metismenu'),
-        menuItemsPlaceholder = $('.menu-items-placeholder');
+menuItemsPlaceholder = $('.menu-items-placeholder');
 menuItemsPlaceholder.show();
 
 $(() => {
@@ -115,12 +115,12 @@ function upIDB(sN, obDet) {
             } catch (e) {
                 if (e.name == 'DataCloneError') {}
             }
-            req.onsuccess = function(evt) {
-                resolve(200);
-            };
-            req.onerror = function() {};
+        req.onsuccess = function(evt) {
+            resolve(200);
         };
-    });
+        req.onerror = function() {};
+    };
+});
 }
 
 function aIDB(sN, obDet) {
@@ -139,12 +139,12 @@ function aIDB(sN, obDet) {
             } catch (e) {
                 if (e.name == 'DataCloneError') {}
             }
-            req.onsuccess = function(evt) {
-                resolve(200);
-            };
-            req.onerror = function() {};
+        req.onsuccess = function(evt) {
+            resolve(200);
         };
-    });
+        req.onerror = function() {};
+    };
+});
 }
 
 function clearDBStore(sN) {
@@ -160,7 +160,7 @@ function clearDBStore(sN) {
                 req = store.clear();
             } catch (e) {
                 if (e.name == 'DataCloneError') {}
-                throw e;
+                    throw e;
             }
             req.onsuccess = function(evt) {
                 resolve(200);
@@ -195,21 +195,24 @@ function sPIDB() {
 
         var response = new Array();
         var status = 'error', disAmt = 0,
-            result, amtP, credit = 0,
-            amountBalance = 0;
+        result, amtP, credit = 0,
+        amountBalance = 0;
 
         var log_date = jsDate();
         var discountAmt = 0.00;
-        var transactionId = rndInt(13);
         var sales_type = "Sales";
-        var orderId = `INV${rndInt(13)}`;
+        var trancId = $(`div[class="default-variables"]`).data('transaction-id');
+        var orderId = $(`div[class="default-variables"]`).data('receipt-id');
+        var uniqueId = $(`div[class="default-variables"]`).data('unique-id');
+
         var customerId = $(`select[name="customer"]`).val();
         var paidAmount = parseFloat($(`input[name="amount_paying"]`).val());
         var totalToPay = parseFloat($(`span[class="total-to-pay-amount"]`).attr("data-order-total")).toFixed(2);
         var amountToBePaid = parseFloat($(`span[class="total-to-pay-amount"]`).attr("data-order-total"));
         var paymentType = $(`select[name="payment_type"]`).val();
-        var customerName = $(`h6[class~="selected-customer-name"] h3`).text();
-        
+        var customerName = $(`h6[class~="selected-customer-name"] span[class="email-fullname"]`).text();
+        var customerContact = $(`h6[class~="selected-customer-name"] span[class="customer-contact"]`).text();
+
         var discountType = $(`input[name="discount_type"]:checked`).val();
         if($(`input[name="discount_amount"]`).val().length > 0) {
             disAmt = parseFloat($(`input[name="discount_amount"]`).val());
@@ -273,35 +276,40 @@ function sPIDB() {
 
         var mainSalesDetails = [{
             clientId: clientId,
-            source: "Evelyn",
+            source: "Argon",
             branchId: branchId,
+            saleItems: regItems,
+            unique_id: uniqueId,
+            ordered_by_id: customerId,
+            recorded_by: userId,
+            sale_team_name: userName,
+            credit_sales: credit,
+            state: 'MODIFIED',
+            hour_of_day: jsDate('hour'),
+            order_amount_paid: paidAmount,
+            order_date: log_date,
+            total_expected_selling_price: (amountToBePaid + disAmt),
             mode: "offline",
             order_id: orderId,
             customer_id: customerId,
             customer_name: customerName,
             customer_fullname: customerName,
-            customer_contact: '',
-            saleItems: regItems,
-            ordered_by_id: customerId,
-            recorded_by: userId,
-            sale_team_name: userName,
-            credit_sales: credit,
-            order_amount_paid: paidAmount,
+            customer_contact: customerContact,
+            total_cost_price: recalculatedValue,
+            order_status: 'confirmed',
             overall_order_amount: (amountToBePaid + disAmt),
             order_amount_balance: amountBalance,
             order_discount: disAmt,
-            order_date: log_date,
-            total_expected_selling_price: (amountToBePaid + disAmt),
-            total_cost_price: recalculatedValue,
-            order_status: 'confirmed',
             payment_type: paymentType,
-            transaction_id: transactionId
+            transaction_id: trancId
         }];
-        
+
         if (regItems.length < 1) {
             result = 'Sorry! You have not selected any products.';
         } else {
-           
+
+            console.log(mainSalesDetails)
+
             var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
 
             var open = indexedDB.open(iName, iVer);
@@ -320,21 +328,21 @@ function sPIDB() {
                 } catch (e) {
                     if (e.name == 'DataCloneError') {}
                 }
-                req.onsuccess = function(evt) {
-                    result = 'Payment Recorded';
-                    status = 'success';
+            req.onsuccess = function(evt) {
+                result = 'Payment Recorded';
+                status = 'success';
 
-                    response = { status: status, result: result, orderId: orderId };
-                    resolve(response);
-                };
-                req.onerror = function() {
-                    result = 'Error processing request';
-                    response = { status: status, result: result };
-                    resolve(response);
-                };
+                response = { status: status, result: result, orderId: orderId };
+                resolve(response);
             };
-        }
-    });
+            req.onerror = function() {
+                result = 'Error processing request';
+                response = { status: status, result: result };
+                resolve(response);
+            };
+        };
+    }
+});
 }
 
 function gIDBR(sN, recordId) {
@@ -421,14 +429,20 @@ function rConInt() {
         $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
         clearInterval(recon);
     });
-    
+
 }
 rConInt();
 
 var syncOfflineData = async (dataToSync) => {
     await listIDB(dataToSync).then((resp) => {
+        let data = [];
         if(resp.length > 0) {
-            $.post(baseUrl + `doprocess_db/sync/${dataToSync}`, {syncData: resp}, function(data) {
+            for(var i = 0; i < resp.length; i++) {
+                if(resp[i].state == 'MODIFIED') {
+                    data.push(resp[i]);
+                }
+            }
+            $.post(baseUrl + `doprocess_db/sync/${dataToSync}`, {syncData: data}, function(data) {
                 if(data.status == 200) {}
             }, 'json');
         }
@@ -464,7 +478,7 @@ function show_modal(modalDiv) {
     $("#owner_div").css('display', 'none');
     $("#account_owner").val('');
     $(".form-result").html('');
-    
+
     $(`#${modalDiv}`).modal('show');
 }
 
@@ -518,7 +532,7 @@ function dismissModal(sessionName, modalWindow) {
         if ($(`#${modalDiv} form`).length) {
             $(`#${modalDiv} form`)[0].reset();
         }
-        
+
         $(`div[class="form-result"]`).html('');
 
         if(modalDiv == 'productsListModalWindow') {
@@ -539,14 +553,14 @@ var popReqLst = (requestsData, tableName) => {
         "lengthChange": !1,
         "dom": "Bfrtip",
         "columns": [
-           {"data": 'row_id'},
-           {"data": 'request_id'},
-           {"data": 'branch_name'},
-           {"data": 'customer_name'},
-           {"data": 'quote_value'},
-           {"data": 'recorded_by'},
-           {"data": 'request_date'},
-           {"data": 'action'}
+        {"data": 'row_id'},
+        {"data": 'request_id'},
+        {"data": 'branch_name'},
+        {"data": 'customer_name'},
+        {"data": 'quote_value'},
+        {"data": 'recorded_by'},
+        {"data": 'request_date'},
+        {"data": 'action'}
         ]
     });
 
@@ -564,7 +578,7 @@ var discountCalculator = () => {
         let discount = $(this).val();
         let discountType = $(`input[name="discount_type"]:checked`).val();
         let subTotal = parseFloat($(`span[class="subtotal-total"]`).attr('data-subtotal'));
-        
+
         let discount_amt = 0;
 
         if(discount.length > 0) {
@@ -585,11 +599,11 @@ var discountCalculator = () => {
 
         let overallTotal = parseFloat(subTotal - discount_amt).toFixed();
         $(`span[class="discount_total"]`)
-            .attr('data-discount_total', discount_amt)
-            .html(discount_amt.toFixed(2));
+        .attr('data-discount_total', discount_amt)
+        .html(discount_amt.toFixed(2));
         $(`span[class="overalltotal"]`)
-            .attr('data-overalltotal', overallTotal)
-            .html(fmtCurr(overallTotal));
+        .attr('data-overalltotal', overallTotal)
+        .html(fmtCurr(overallTotal));
         $(`td[data-overalltotal]`).attr('data-overalltotal', overallTotal);
     });
 }
@@ -647,11 +661,11 @@ if($(`table[class~="productsList"]`).length) {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-               {"data": 'row'},
-               {"data": 'category_id'},
-               {"data": 'category'},
-               {"data": 'products_count'},
-               {"data": 'action'}
+            {"data": 'row'},
+            {"data": 'category_id'},
+            {"data": 'category'},
+            {"data": 'products_count'},
+            {"data": 'action'}
             ]
         });
 
@@ -693,9 +707,13 @@ function toastError(msg) {
     });
 }
 
-if($(`table[class~="expensesList"]`).length) {
+function genIds() {
+    $(`div[class="default-variables"]`).attr('data-transaction-id', rndInt(13));
+    $(`div[class="default-variables"]`).attr('data-receipt-id', `INV${rndInt(13)}`);
+    $(`div[class="default-variables"]`).attr('data-unique-id', unqStr(55));
+}
 
-    // $(`div[class~="expensesModal"]`).modal('show');
+if($(`table[class~="expensesList"]`).length) {
 
     $(`div[class="main-content"]`).on('click', `a[class~="add-expense"]`, function(e) {
         $(`div[class~="expensesModal"] form`)[0].reset();
@@ -734,15 +752,15 @@ if($(`table[class~="expensesList"]`).length) {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-               {"data": 'row'},
-               {"data": 'start_date'},
-               {"data": 'category'},
-               {"data": 'amount'},
-               {"data": 'tax'},
-               {"data": 'payment_type'},
-               {"data": 'description'},
-               {"data": 'created_by'},
-               {"data": 'action'}
+                {"data": 'row'},
+                {"data": 'start_date'},
+                {"data": 'category'},
+                {"data": 'amount'},
+                {"data": 'tax'},
+                {"data": 'payment_type'},
+                {"data": 'description'},
+                {"data": 'created_by'},
+                {"data": 'action'}
             ]
         });
 
@@ -751,11 +769,6 @@ if($(`table[class~="expensesList"]`).length) {
         $(`div[class="main-content"]`).on('click', `a[class~="edit-expense"]`, function(e) {
             let categoryId = $(this).data('id');
             let expensesData = $(this).data('content');
-            // $(`textarea[name="description"]`).val(categoryData.description);
-            // $(`input[name="name"]`).val(categoryData.name);
-            // $(`input[name="categoryId"]`).val(categoryData.id);
-            // $(`input[name="request"]`).val("update");
-            // $(`div[class~="expensesModal"]`).modal('show');
         });
     }
 
@@ -831,10 +844,10 @@ if($(`table[class~="expenseCategories"]`).length) {
             "dom": "Bfrtip",
             "autoWidth": false,
             "columns": [
-               {"data": 'row'},
-               {"data": 'name'},
-               {"data": 'description'},
-               {"data": 'action'}
+            {"data": 'row'},
+            {"data": 'name'},
+            {"data": 'description'},
+            {"data": 'action'}
             ]
         });
 
@@ -933,7 +946,7 @@ function removeItem(sessionName) {
 }
 
 function serealizeSelects(select) {
-    
+
     var array = [];
     select.each(function() {
         array.push($(this).val())
@@ -952,33 +965,43 @@ function fmtCurr(total) {
 }
 
 function rndInt(length = 10) {
-   var result           = '';
-   var characters       = '0123456789';
-   var charactersLength = characters.length;
-   for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-   }
-   return result;
+    var result           = '';
+    var characters       = '0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 function rndStr(length) {
-   var result           = '';
-   var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   var charactersLength = characters.length;
-   for ( var i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-   }
-   return result;
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+function unqStr(length) {
+    var result           = '';
+    var characters       = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 function jsDate(dateType = 'datetime') {
     var d = new Date(),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear(),
-        hour = d.getHours(),
-        minute = d.getMinutes(),
-        seconds = d.getSeconds();
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear(),
+    hour = d.getHours(),
+    minute = d.getMinutes(),
+    seconds = d.getSeconds();
 
     if (month.length < 2) 
         month = '0' + month;
@@ -989,6 +1012,8 @@ function jsDate(dateType = 'datetime') {
         return [year, month, day].join('-') + " " + [hour, minute, seconds].join(':'); 
     } else if(dateType == 'fulldate') {
         return [year, month, day].join('-'); 
+    } else if(dataType == 'hour') {
+        return hour; 
     }
 }
 
@@ -1132,10 +1157,10 @@ var popPrdLst = (data) => {
 
         var trClass,
         checkbox = `<div class="checkbox checkbox-primary checkbox-single">
-                <input type="checkbox" style="zoom:1.7" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-code="${e.product_code}" data-product-price="${e.price}" data-product-img="${e.image}">
-                <label for="productCheck-${e.product_id}">
-                </label>
-            </div>`;
+        <input type="checkbox" style="zoom:1.7" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-code="${e.product_code}" data-product-price="${e.price}" data-product-img="${e.image}">
+        <label for="productCheck-${e.product_id}">
+        </label>
+        </div>`;
 
         if(e.product_quantity < 1) {
             checkbox = ``;
@@ -1145,12 +1170,12 @@ var popPrdLst = (data) => {
         }
 
         htmlData += `<tr ${trClass} data-toggle="tooltip" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-code="${e.product_code}" data-product-name="${e.product_title}" data-product-price="${e.price}" data-product-img="${e.image}" style="transition: all 0.8s ease" data-category="${e.category_id}" data-product_max="${e.product_quantity}">
-            <td data-product-code="${e.product_code}">
-                ${checkbox}
-            </td>
-            <td><img class="product-title-cell" src="${e.image}" width="24px"></td>
-            <td class="product-title-cell" style="cursor:pointer">${e.product_title}</td>
-            <td>${e.price}</td>
+        <td data-product-code="${e.product_code}">
+        ${checkbox}
+        </td>
+        <td><img class="product-title-cell" src="${e.image}" width="24px"></td>
+        <td class="product-title-cell" style="cursor:pointer">${e.product_title}</td>
+        <td>${e.price}</td>
         </tr>`;
     });
 
@@ -1214,7 +1239,7 @@ if($(`tbody[class="pos-products-list"]`).length) {
 }
 
 var populateUsersList = (usersObject) => {
-    
+
     $(`table[class~="usersAccounts"]`).dataTable().fnDestroy();
     $(`table[class~="usersAccounts"]`).dataTable({
         "aaData": usersObject,
@@ -1223,14 +1248,14 @@ var populateUsersList = (usersObject) => {
         "lengthChange": !1,
         "dom": "Bfrtip",
         "columns": [
-           {"data": 'row_id'},
-           {"data": 'fullname'},
-           {"data": 'branch_name'},
-           {"data": 'access_level'},
-           {"data": 'contact'},
-           {"data": 'email'},
-           {"data": 'registered_date'},
-           {"data": 'action'}
+        {"data": 'row_id'},
+        {"data": 'fullname'},
+        {"data": 'branch_name'},
+        {"data": 'access_level'},
+        {"data": 'contact'},
+        {"data": 'email'},
+        {"data": 'registered_date'},
+        {"data": 'action'}
         ]
     });
 
@@ -1241,7 +1266,7 @@ var populateUsersList = (usersObject) => {
 }
 
 var fetchUsersLists = async () => {
-    
+
     if ($("table[class~='usersAccounts']").length) {
 
         $.ajax({
@@ -1257,10 +1282,10 @@ var fetchUsersLists = async () => {
                 populateUsersList(data.message);
             },
             error: function() {
-                
+
             },
             complete: function() {
-                
+
             }
         });
 
@@ -1308,7 +1333,7 @@ async function deleteMyItem(itemId, page, callBack = "") {
             beforeSend: function() {
                 $(".show-delete-msg").html(`
                     <p class="text-center"><span class="fa fa-spinner fa-spin"></span><br>Please Wait...</p>
-                `);
+                    `);
                 $(".confirm-delete-btn").hide();
             },
             success: function(data) {
@@ -1511,10 +1536,10 @@ var editUserAccessLevel = () => {
 
                             displayPermission += `
                             <div class="col-md-4 col-sm-6">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="mt-0">${key[0].toUpperCase() + key.slice(1)}</h5>
-                                        <div class="general-label">`;
+                            <div class="card">
+                            <div class="card-body">
+                            <h5 class="mt-0">${key[0].toUpperCase() + key.slice(1)}</h5>
+                            <div class="general-label">`;
                             var ii = 0;
                             $.each(page, function(roleKey, roleValue) {
                                 ii++;
@@ -1522,14 +1547,14 @@ var editUserAccessLevel = () => {
 
                                 displayPermission += `
                                 <div class="form-group row">
-                                    <div class="col-12">
-                                        <div class="checkbox my-2">
-                                            <div class="custom-control custom-checkbox">
-                                                <input data-value="${roleValue}" data-name="${key.toString().toLowerCase()},${roleKey.toString().toLowerCase()}" ${permitted} type="checkbox" class="custom-control-input user-access-levels" id="customCheck_${key}_${ii}" data-parsley-multiple="groups" data-parsley-mincheck="2">
-                                                <label class="custom-control-label" for="customCheck_${key}_${ii}">${roleKey[0].toUpperCase() + roleKey.slice(1)}</label>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="col-12">
+                                <div class="checkbox my-2">
+                                <div class="custom-control custom-checkbox">
+                                <input data-value="${roleValue}" data-name="${key.toString().toLowerCase()},${roleKey.toString().toLowerCase()}" ${permitted} type="checkbox" class="custom-control-input user-access-levels" id="customCheck_${key}_${ii}" data-parsley-multiple="groups" data-parsley-mincheck="2">
+                                <label class="custom-control-label" for="customCheck_${key}_${ii}">${roleKey[0].toUpperCase() + roleKey.slice(1)}</label>
+                                </div>
+                                </div>
+                                </div>
                                 </div>`;
 
                             });
@@ -1541,9 +1566,9 @@ var editUserAccessLevel = () => {
                         displayPermission += `
                         </div>
                         <div class="col-12 mb-3">
-                            <button data-user-id="${user_id}" class="btn btn-primary float-right access-level-submit-btn">
-                                Save Settings
-                            </button>
+                        <button data-user-id="${user_id}" class="btn btn-primary float-right access-level-submit-btn">
+                        Save Settings
+                        </button>
                         </div>
                         `;
 
@@ -1603,15 +1628,15 @@ $(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e)
 
             $(`.permissions-row`).html(`
                 <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="text-center">
-                                <span class="fa fa-spinner fa-spin"></span>
-                            </p>
-                        </div>
-                    </div>
+                <div class="card">
+                <div class="card-body">
+                <p class="text-center">
+                <span class="fa fa-spinner fa-spin"></span>
+                </p>
                 </div>
-            `);
+                </div>
+                </div>
+                `);
         },
         success: function(data) {
 
@@ -1625,10 +1650,10 @@ $(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e)
 
                     displayPermission += `
                     <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="mt-0">${key[0].toUpperCase() + key.slice(1)}</h5>
-                                <div class="general-label">`;
+                    <div class="card">
+                    <div class="card-body">
+                    <h5 class="mt-0">${key[0].toUpperCase() + key.slice(1)}</h5>
+                    <div class="general-label">`;
                     var ii = 0;
                     $.each(page, function(roleKey, roleValue) {
                         ii++;
@@ -1636,31 +1661,31 @@ $(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e)
 
                         displayPermission += `
                         <div class="form-group row">
-                            <div class="col-12">
-                                <div class="checkbox my-2">
-                                    <div class="custom-control custom-checkbox">
-                                        <input data-value="${roleValue}" data-name="${key.toString().toLowerCase()},${roleKey.toString().toLowerCase()}" ${permitted} type="checkbox" class="custom-control-input user-access-levels" id="customCheck_${key}_${ii}" data-parsley-multiple="groups" data-parsley-mincheck="2">
-                                        <label class="custom-control-label" for="customCheck_${key}_${ii}">${roleKey[0].toUpperCase() + roleKey.slice(1)}</label>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-12">
+                        <div class="checkbox my-2">
+                        <div class="custom-control custom-checkbox">
+                        <input data-value="${roleValue}" data-name="${key.toString().toLowerCase()},${roleKey.toString().toLowerCase()}" ${permitted} type="checkbox" class="custom-control-input user-access-levels" id="customCheck_${key}_${ii}" data-parsley-multiple="groups" data-parsley-mincheck="2">
+                        <label class="custom-control-label" for="customCheck_${key}_${ii}">${roleKey[0].toUpperCase() + roleKey.slice(1)}</label>
+                        </div>
+                        </div>
+                        </div>
                         </div>`;
 
                     });
 
                     displayPermission += `
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+                    </div>
+                    </div>
                     </div>`;
 
                 });
 
                 displayPermission += `
                 <div class="col-12 mb-3">
-                    <button class="btn btn-primary float-right access-level-submit-btn">
-                        Save Settings
-                    </button>
+                <button class="btn btn-primary float-right access-level-submit-btn">
+                Save Settings
+                </button>
                 </div>
                 `;
                 $(`.permissions-row`).html(displayPermission);
@@ -1668,20 +1693,20 @@ $(`div[class="main-content"]`).on("change", `[name="access_level"]`, function(e)
             } else {
                 $(`.permissions-row`).html(`
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-body">
-                                <p class="alert alert-danger">${data.message}</p>
-                            </div>
-                        </div>
+                    <div class="card">
+                    <div class="card-body">
+                    <p class="alert alert-danger">${data.message}</p>
                     </div>
-                `);
+                    </div>
+                    </div>
+                    `);
             }
 
         },
         error: function() {
             $(".settings-form-msg").html(`
                 <p class="alert alert-danger">Error Processing Request</p>
-            `);
+                `);
         },
         complete: function() {
             setTimeout(function() {
@@ -1723,15 +1748,15 @@ var saveAccessLevelSettings = () => {
                 beforeSend: function() {
                     $(`.settings-form-msg`).html(`
                         <div class="col-12">
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="text-center">
-                                        <span class="fa fa-spinner fa-spin"></span>
-                                    </p>
-                                </div>
-                            </div>
+                        <div class="card">
+                        <div class="card-body">
+                        <p class="text-center">
+                        <span class="fa fa-spinner fa-spin"></span>
+                        </p>
                         </div>
-                    `);
+                        </div>
+                        </div>
+                        `);
                     $("*", ".settings-form-a").prop("disabled", true);
                     $("*", ".permissions-row").prop("disabled", true);
                 },
@@ -1777,7 +1802,7 @@ var saveAccessLevelSettings = () => {
 $(`button[class~="add-new-modal"], a[class~="add-new-modal"]`).on('click', function(e) {
     $(`[name="record_type"]`).val("new-record");
     $("div[id='newModalWindow'] form")[0].reset();
-    
+
     if($(`select[name="branchType"]`).length) {
         $(`div[id='newModalWindow'] form select[name="branchType"]`).val('Store').change();
         $(`div[id='newModalWindow'] form select[name="status"]`).val('Active').change();
@@ -1868,13 +1893,13 @@ var populateBranchesList = (data) => {
         "lengthChange": !1,
         "dom": "Bfrtip",
         "columns": [
-           {"data": 'row_id'},
-           {"data": 'branch_name'},
-           {"data": 'location'},
-           {"data": 'contact'},
-           {"data": 'email'},
-           {"data": 'status'},
-           {"data": 'action'}
+        {"data": 'row_id'},
+        {"data": 'branch_name'},
+        {"data": 'location'},
+        {"data": 'contact'},
+        {"data": 'email'},
+        {"data": 'status'},
+        {"data": 'action'}
         ]
     });
 
@@ -1885,7 +1910,7 @@ var populateBranchesList = (data) => {
 }
 
 async function fetchBranchLists() {
-    
+
     if ($(`table[class~="branchesLists"]`).length) {
 
         var selector = "list-all-branches";
@@ -1927,12 +1952,12 @@ async function fetchBranchLists() {
                 populateBranchesList(newResults);
 
             });
-            
+
             hL();
 
             return false;
         }
-            
+
         $.ajax({
             url: baseUrl + "api/branchManagment/fetchBranchesLists",
             type: "POST",
@@ -1954,8 +1979,8 @@ async function fetchBranchLists() {
 }
 fetchBranchLists();
 
-var triggerPrintReceipt = (saleId = null) => {
-    
+var trgPrtRpt = (saleId = null) => {
+
     let thisSaleId = saleId;
 
     if(saleId == null) {
@@ -1963,14 +1988,25 @@ var triggerPrintReceipt = (saleId = null) => {
     }
     window.open(
         `${baseUrl}receipt/${thisSaleId}`,
-        `Sales Invoice - Receipt #${thisSaleId}`,
+        `Sales Receipt - #${thisSaleId}`,
         `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
     );
+}
 
+function qPrt() {
+    let orderId = $(`span[class="generated_order"]`).html();
+    let rcpContent = $(`div[class="pwizard-fieldset"]`).html();
+    var printWn = window.open(
+        ``, `Sales Receipt - #${orderId}`, 
+        `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+    );
+    printWn.document.write(rcpContent);
+    printWn.window.print();
+    printWn.window.close();
 }
 
 function cusPurHis() {
-                    
+
     let userId = $(`a[class="view-user-sales"]`).attr('data-value');
     let fullname = $(`a[class="view-user-sales"]`).attr('data-name');
     var recordType = $(`a[class="view-user-sales"]`).attr('data-record');           
@@ -1984,16 +2020,16 @@ function cusPurHis() {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
         }, success: function(resp) {
             var trData = `<div class="table-responsive"><table width="100%" class="table  orderHistory">`;
-                trData += `<thead>`;
-                trData += `<tr class="text-uppercase">`;
-                trData += `<td>#</td>`;
-                trData += `<td>Order ID</td>`;
-                trData += `<td>Order Amount</td>`;
-                trData += `<td>Date</td>`;
-                trData += `<td>Payment Mode</td>`;
-                trData += `<td></td>`;
-                trData += `</tr>`;
-                trData += `</thead>`;
+            trData += `<thead>`;
+            trData += `<tr class="text-uppercase">`;
+            trData += `<td>#</td>`;
+            trData += `<td>Order ID</td>`;
+            trData += `<td>Order Amount</td>`;
+            trData += `<td>Date</td>`;
+            trData += `<td>Payment Mode</td>`;
+            trData += `<td></td>`;
+            trData += `</tr>`;
+            trData += `</thead>`;
             var creditBadge = ``, count=0;
             $.each(resp.result, function(i, e) {
 
@@ -2032,19 +2068,19 @@ function cusPurHis() {
 
         }, complete: function(data) {
             $(`a[class~="print-receipt"]`).on('click', function() {
-                triggerPrintReceipt($(this).data('sales-id'));
+                trgPrtRpt($(this).data('sales-id'));
             });
         }, error: function(err) {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                 <p align="center">No records found.</p>
-            `);
+                `);
         }
     });
-    
+
 }
 
 $(`form[id="updateProductForm"]`).on('submit', function(e) {
-        
+
     e.preventDefault();
     $.ajax({
         type: 'POST',
@@ -2078,15 +2114,15 @@ $(`form[id="updateProductForm"]`).on('submit', function(e) {
 
 $(`button[class~="resend-email-button"]`).on('click', function(evt) {
     let thisBtn = $(this),
-        thisEmail = $(`div[class~="sendMailModal"] input[name="send_email"]`),
-        fullname = $(`div[class~="sendMailModal"] input[name="fullname"]`).val(),
-        thisRequest = $(`div[class~="sendMailModal"] input[name="request_type"]`).val(),
-        receiptId = $(`div[class~="sendMailModal"] input[name="receiptId"]`).val(),
-        customerId = $(`div[class~="sendMailModal"] input[name="customerId"]`).val();
+    thisEmail = $(`div[class~="sendMailModal"] input[name="send_email"]`),
+    fullname = $(`div[class~="sendMailModal"] input[name="fullname"]`).val(),
+    thisRequest = $(`div[class~="sendMailModal"] input[name="request_type"]`).val(),
+    receiptId = $(`div[class~="sendMailModal"] input[name="receiptId"]`).val(),
+    customerId = $(`div[class~="sendMailModal"] input[name="customerId"]`).val();
 
     if(thisEmail.val().length > 5) {
         thisBtn.prop('disabled', true)
-                .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
+        .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
         thisEmail.prop('disabled', true);
 
         $.ajax({
@@ -2127,7 +2163,7 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
 if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
 
     $("#updateCustomerForm").on("submit", async function(event) {
-    
+
         event.preventDefault();
         let formData = $(this).serialize();
 
@@ -2139,7 +2175,7 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
                 });
                 if($(`span[class~="customersList"]`).length) {
                     setTimeout(() => {
-                        // window.location.href = '';
+
                     }, 1200);
                 } else  {
                     listCustomers();
@@ -2174,7 +2210,7 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
 
     $(`div[class="main-content"]`).on('click', `a[class~="edit-customer"]`, function(e) {
         let userId = $(this).data('value');
-            userData = $(`a[data-id='${userId}']`).data('info');
+        userData = $(`a[data-id='${userId}']`).data('info');
 
         $(`div[id="newCustomerModal"]`).modal('show');
         $(`div[id="newCustomerModal"] h5[class="modal-title"]`).html('Update Customer');
@@ -2198,12 +2234,12 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-               {"data": 'row_id'},
-               {"data": 'fullname'},
-               {"data": 'email'},
-               {"data": 'phone_1'},
-               {"data": 'date_log'},
-               {"data": 'action'}
+            {"data": 'row_id'},
+            {"data": 'fullname'},
+            {"data": 'email'},
+            {"data": 'phone_1'},
+            {"data": 'date_log'},
+            {"data": 'action'}
             ]
         });
 
@@ -2236,7 +2272,7 @@ $("#newCustomer_form").on("submit", async function(event) {
     event.preventDefault();
     let formData = $(this).serialize();
     $(".content-loader", $("#newCustomerModal")).css({display: "flex"});
-    
+
     await dOC().then((itResp) => {
         if(itResp == 1) {
             noInternet = false;
@@ -2365,16 +2401,16 @@ if($(".make-online-payment").length) {
 
     const customerIndex = 0, productsIndex = 1, paymentIndex = 2, completeIndex = 3;
     var labels = [
-        "Customer",
-        "Products",
-        "Payment",
-        "Complete"
+    "Customer",
+    "Products",
+    "Payment",
+    "Complete"
     ];
     const leftArrow = "<i class='fa fa-arrow-circle-left font-12 mr-1'></i>";
     const rightArrow = "<i class='fa fa-arrow-circle-right font-12 ml-1'></i>";
     $(`button[class~="discardSale_trigger"]`).css('display', 'none');
-    
-    $("#pos-form-horizontal").steps({
+
+    $("#pwizard").steps({
         headerTag: "h3",
         bodyTag: "fieldset",
         transitionEffect: "slide",
@@ -2423,11 +2459,11 @@ if($(".make-online-payment").length) {
             }
 
             if(newIndex == paymentIndex) {
-            let preferredPayment = $(`select[class~="customer-select"]`).children("option:selected").data('prefered-payment');
-            
+                let preferredPayment = $(`select[class~="customer-select"]`).children("option:selected").data('prefered-payment');
+
                 if(preferredPayment != null) {  
                     if(preferredPayment.length > 0) {
-                      $(`select[name="payment_type"]`).val(preferredPayment).change();
+                        $(`select[name="payment_type"]`).val(preferredPayment).change();
                     }
                 }
             }
@@ -2461,122 +2497,131 @@ if($(".make-online-payment").length) {
                 return false;
             }
             else {
-            
-            $("[data-step-action='previous']").html(leftArrow + (labels[newIndex-1] || labels[0]));
-            $("[data-step-action='next']").html(labels[newIndex+1] + rightArrow);
-            $("[data-step-action='previous']").prop("disabled", newIndex == customerIndex);
 
-            if(newIndex == productsIndex) $("[data-step-action='next']").prop("disabled", false);
-            $(".newCustomer_trigger").toggle(newIndex == customerIndex);
-            
-            if(newIndex != customerIndex) {
-                $(`button[class~="discardSale_trigger"]`).css('display', 'block');
-            } else {
-                $(`button[class~="discardSale_trigger"]`).css('display', 'none');
-            }
+                $("[data-step-action='previous']").html(leftArrow + (labels[newIndex-1] || labels[0]));
+                $("[data-step-action='next']").html(labels[newIndex+1] + rightArrow);
+                $("[data-step-action='previous']").prop("disabled", newIndex == customerIndex);
 
-            if(newIndex == 3) {
-                $(`button[class~="discardSale_trigger"]`).css('display', 'none');   
-            }
-            $("[data-step-action='next'], [data-step-action='previous']").toggle(newIndex !== completeIndex);
-            $("[data-step-action='finish']").toggle(newIndex == completeIndex);
-            $(".print-receipt").toggle(newIndex == completeIndex);
-            $("button.remove-row").prop("disabled", newIndex == completeIndex).addClass("text-muted");
-            $("input.product-quantity").prop("readonly", newIndex == completeIndex);
-            $(`div[class~="order_discounting"] input`).prop('disabled', newIndex == completeIndex);
+                if(newIndex == productsIndex) $("[data-step-action='next']").prop("disabled", false);
+                $(".newCustomer_trigger").toggle(newIndex == customerIndex);
 
-            if(newIndex == completeIndex){
-                
-                dOC().then((itResp) => {
-                    if(itResp == 1) {
-                        noInternet = false;
-                        $(`div[class="connection"]`).css('display','none');
-                    } else {
+                if(newIndex != customerIndex) {
+                    $(`button[class~="discardSale_trigger"]`).css('display', 'block');
+                } else {
+                    $(`button[class~="discardSale_trigger"]`).css('display', 'none');
+                }
+
+                if(newIndex == 3) {
+                    $(`button[class~="discardSale_trigger"]`).css('display', 'none');   
+                }
+                $("[data-step-action='next'], [data-step-action='previous']").toggle(newIndex !== completeIndex);
+                $("[data-step-action='finish']").toggle(newIndex == completeIndex);
+                $(".print-receipt").toggle(newIndex == completeIndex);
+                $("button.remove-row").prop("disabled", newIndex == completeIndex).addClass("text-muted");
+                $("input.product-quantity").prop("readonly", newIndex == completeIndex);
+                $(`div[class~="order_discounting"] input`).prop('disabled', newIndex == completeIndex);
+
+                if(newIndex == completeIndex){
+
+                    dOC().then((itResp) => {
+                        if(itResp == 1) {
+                            noInternet = false;
+                            $(`div[class="connection"]`).css('display','none');
+                        } else {
+                            noInternet = true;
+                            $(`div[class="connection"]`).css('display','block');
+                        }
+                    }).catch((err) => {
                         noInternet = true;
                         $(`div[class="connection"]`).css('display','block');
-                    }
-                }).catch((err) => {
-                    noInternet = true;
-                    $(`div[class="connection"]`).css('display','block');
-                });
-
-                if(noInternet) {
-
-                    sPIDB().then((resp) => {
-                        
-                        if(resp.status == 'error') {
-                            Toast.fire({
-                                type: 'error',
-                                title: resp.result
-                            });
-                        } else {
-                            $("[data-bind-html='orderId']").html(resp.orderId);
-                            $(`span[class="generated_order"]`).html(resp.orderId);
-                            Toast.fire({
-                                type: 'success',
-                                title: "Payment Successfully Recorded"
-                            });
-                            $(".cash-process-loader").removeClass("d-flex");
-                            if(storeValues.prt == "yes") {
-                                triggerPrintReceipt();
-                            }
-                            ftchPrdList();
-                            $(`select[class~="customer-select"]`).val('WalkIn').change();
-                        }
-
                     });
 
-                } else {
-                    svReg().then((res) => {
-                        if(res.status == "success") {
-                            $("[data-bind-html='orderId']").html(res.data._oid);
-                            $(`span[class="generated_order"]`).html(res.data._oid);
-                            Toast.fire({
-                                type: 'success',
-                                title: "Payment Successfully Recorded"
-                            });
-                            if(storeValues.prt == "yes") {
-                                triggerPrintReceipt();
+                    if(noInternet) {
+
+                        sPIDB().then((resp) => {
+                            if(resp.status == 'error') {
+                                Toast.fire({
+                                    type: 'error',
+                                    title: resp.result
+                                });
+                            } else {
+                                $("[data-bind-html='orderId']").html(resp.orderId);
+                                $(`span[class="generated_order"]`).html(resp.orderId);
+                                $(`div[class="svon"]`).attr('data-value', 0);
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: "Payment Successfully Recorded"
+                                });
+                                $(".cash-process-loader").removeClass("d-flex");
+                                if(storeValues.prt == "yes") {
+                                    qPrt();
+                                }
+                                ftcPrdList();
+                                $(`select[class~="customer-select"]`).val('WalkIn').change();
                             }
-                            ftchPrdList();
-                            $(`select[class~="customer-select"]`).val('WalkIn').change();
-                            $(".cash-process-loader").removeClass("d-flex");
-                        } else {
+
+                        }).catch((err) => {
                             Toast.fire({
                                 type: 'error',
                                 title: "Error processing the Sale Record."
                             });
-                        }
-                    });
+                        });
+
+                    } else {
+                        svReg().then((res) => {
+                            if(res.status == "success") {
+                                $("[data-bind-html='orderId']").html(res.data._oid);
+                                $(`span[class="generated_order"]`).html(res.data._oid);
+                                Toast.fire({
+                                    type: 'success',
+                                    title: "Payment Successfully Recorded"
+                                });
+                                if(storeValues.prt == "yes") {
+                                    qPrt();
+                                }
+                                ftchPrdList();
+                                $(`div[class="svon"]`).attr('data-value', 1);
+                                $(`select[class~="customer-select"]`).val('WalkIn').change();
+                                $(".cash-process-loader").removeClass("d-flex");
+                            } else {
+                                Toast.fire({
+                                    type: 'error',
+                                    title: "Error processing the Sale Record."
+                                });
+                            }
+                        });
+                    }
                 }
+                return true;
             }
-            return true;
-        }
         }
     });
 
     $(`a[class~="discard-sale"]`).on('click', function(e) {
         Toast.fire({
-        type: 'success',
-        title: 'Transaction was successfully discarded'
-    });
-    
-    setTimeout(function() {
-        window.location.href = `${baseUrl}point-of-sale`;
-    }, 1500);
+            type: 'success',
+            title: 'Transaction was successfully discarded'
+        });
+
+        setTimeout(function() {
+            window.location.href = `${baseUrl}point-of-sale`;
+        }, 1500);
     });
 
     function svReg() {
-        let formData = $("#pos-form-horizontal.register-form").serialize();
-        let totalToPay = $("[data-order-total]").data("orderTotal");
-        let discountType = $(`input[name="discount_type"]:checked`).val();
-        let discountAmount = $(`input[name="discount_amount"]`).val();
+        let formData = $("#pwizard.register-form").serialize(),
+            totalToPay = $("[data-order-total]").data("orderTotal"),
+            discountType = $(`input[name="discount_type"]:checked`).val(),
+            discountAmount = $(`input[name="discount_amount"]`).val();
+
         formData += `&total_to_pay=${totalToPay}&discountType=${discountType}&discountAmount=${discountAmount}`;
-        return $.post(baseUrl+"api/pointOfSaleProcessor/saveRegister", formData)
+
+        return $.post(baseUrl+"api/pointOfSaleProcessor/saveRegister", formData);
     }
 
     let productPrices = [];
-    
+
     $.expr[':'].Contains = function(a,i,m){
         return $(a).text().toUpperCase().indexOf(m[3].toUpperCase())>=0;
     };
@@ -2602,7 +2647,7 @@ if($(".make-online-payment").length) {
     var initPrdSelt = () => {
         $(".product-select").on("change", async function(){
             if($(this).is(":checked")) {
-                await adProR($(this).data())
+                await addProRow($(this).data())
                 .then((row) => {
                     rcalTot();
                     amtPay();
@@ -2624,7 +2669,7 @@ if($(".make-online-payment").length) {
                         receipt_subTotal.text(fmtCurr(subtotal));
                         rcalTot();
                         amtPay();
-                        
+
                         if(selectedQty > maximumQty) {
                             currentInput.val(maximumQty);
                             Toast.fire({
@@ -2681,25 +2726,25 @@ if($(".make-online-payment").length) {
     $(".customer-select").on("change", function(){
         if($(this).val() == "0") $(".selected-customer-name").html("No Customer Selected");
         else {
-            
+
             let selectedOption = $(this).children("option:selected");
             let selectedContact = $(this).children("option:selected").data('contact');
-      let preferredPayment = $(this).children("option:selected").data('prefered-payment');
+            let preferredPayment = $(this).children("option:selected").data('prefered-payment');
 
-      if(preferredPayment != null) {    
-          if(preferredPayment.length > 0) {
-            $(`select[name="payment_type"]`).val(preferredPayment)
-          }
-      }
+            if(preferredPayment != null) {    
+                if(preferredPayment.length > 0) {
+                    $(`select[name="payment_type"]`).val(preferredPayment)
+                }
+            }
 
-        $("[data-bind-html='customer']").html(`
-            ${selectedOption.text()}<br>
+            $("[data-bind-html='customer']").html(`
+                ${selectedOption.text()}<br>
                 <span class="text-primary"><small>(${selectedContact})</small>
-        `);
+                `);
             $(".selected-customer-name").html(`
                 <h3 class='text-success'>
-                    <span class="email-fullname">${selectedOption.text()}</span><br>
-                    <span class="text-primary"><small>(${selectedContact})</small></span>
+                <span class="email-fullname">${selectedOption.text()}</span><br>
+                <span class="customer-contact text-primary"><small>(${selectedContact})</small></span>
                 </h3>`);
             $("input[id='receipt-email']").val(selectedOption.data("email"));
         }
@@ -2723,29 +2768,29 @@ if($(".make-online-payment").length) {
             $(".selected-payment-type").html(`<h5 class='text-success'>${$(this).children("option:selected").text()}</h5>`);
         }
         rcalTot();
-        
+
         if (["MoMo", "card", "cash"].includes(selectedPaymentType)) {
 
-        $("[data-step-action='next']").prop("disabled", true);
+            $("[data-step-action='next']").prop("disabled", true);
 
-        var paymentTotal = $(".total-to-pay-amount").attr("data-order-total");
+            var paymentTotal = $(".total-to-pay-amount").attr("data-order-total");
 
-        if(["MoMo", "card"].includes(selectedPaymentType)) {
-            $(".make-online-payment").attr("data-order-total", paymentTotal);
-            $(`div[class~="cash-processing"]`).slideUp('fast');
-            $(".make-online-payment").removeClass("d-none");
+            if(["MoMo", "card"].includes(selectedPaymentType)) {
+                $(".make-online-payment").attr("data-order-total", paymentTotal);
+                $(`div[class~="cash-processing"]`).slideUp('fast');
+                $(".make-online-payment").removeClass("d-none");
+            } else {
+                $(".make-online-payment").addClass("d-none");
+                $(`div[class~="cash-processing"]`).slideDown('fast');
+                $(`input[name="amount_paying"]`).focus();
+            }
         } else {
+            $(".total-to-pay-amount").attr("data-order-total", fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
+            $(`div[class~="cash-processing"]`).slideUp('fast');
             $(".make-online-payment").addClass("d-none");
-            $(`div[class~="cash-processing"]`).slideDown('fast');
-            $(`input[name="amount_paying"]`).focus();
+            $(".make-online-payment").removeAttr("data-order-total");
+            $("[data-step-action='next']").prop("disabled", false);
         }
-    } else {
-        $(".total-to-pay-amount").attr("data-order-total", fmtCurr($(".total-to-pay-amount").attr("data-order-total")));
-        $(`div[class~="cash-processing"]`).slideUp('fast');
-        $(".make-online-payment").addClass("d-none");
-        $(".make-online-payment").removeAttr("data-order-total");
-        $("[data-step-action='next']").prop("disabled", false);
-    }
     });
 
     function rtRegForm() {
@@ -2755,6 +2800,7 @@ if($(".make-online-payment").length) {
         firstTab.removeClass("disabled")
         $("a", firstTab).trigger("click");
         $(".receipt-table-body").html('');
+        $(".payment-type-select").trigger("change");
         $(`input[name="discount_amount"]`).val('');
         $(`span[class="sub_total"]`).html(`${storeValues.cur} 0.00`);
         $(".selected-customer-name").html("No Customer Selected");
@@ -2765,11 +2811,11 @@ if($(".make-online-payment").length) {
         $(`span[class="total-to-pay-amount"]`).attr("data-order-total", "0.00");
         $(`div[class~="order_discounting"] input`).prop('disabled', false);
         rcalRowNum();
-        $(".payment-type-select").trigger("change")
         rcalTot();
+        genIds();
     }
 
-    function adProR(rowData) {
+    function addProRow(rowData) {
 
         return new Promise((resolve, reject) => {
 
@@ -2782,20 +2828,21 @@ if($(".make-online-payment").length) {
             rowCount++;
 
             let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
-            
+
             <td class='products-row-number'>${rowCount}</td>
             <td style="padding-top:20px">${rowData.productName}</td>
             <td style="padding-top:20px">${rowData.productPrice}</td>
             <td>
-            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pos-form-horizontal" min="0" name="products[${rowData.productId}][qty]"  data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
-            <input type="hidden" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
+            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pwizard" min="0" name="products[${rowData.productId}][qty]"  data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
+            <input type="hidden" data-name="${rowData.productName}" form="pwizard" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
             <td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
             <td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
             </tr>`;
             let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
-                <td>${rowData.productName}</td>
-                <td class='receipt-row-quantity'>${qty}</td>
-                <td class="text-right receipt-row-subtotal">${fmtCurr(subTotal)}</td>
+            <td>${rowData.productName}</td>
+            <td class='receipt-row-quantity'>${qty}</td>
+            <td align="right" class="text-right receipt-row-price">${fmtCurr(rowData.productPrice)}</td>
+            <td align="right" class="text-right receipt-row-subtotal">${fmtCurr(subTotal)}</td>
             </tr>`;
             tbody.append(tr);
             $("[data-bind-html='productrow']").append(rr);
@@ -2815,72 +2862,72 @@ if($(".make-online-payment").length) {
 
     var overallSubTotal = 0, totalDiscountDeducted = 0;
 
-        function rcalTot(){
-            let totalToPay = 0;
-                overallSubTotal = 0;
+    function rcalTot(){
+        let totalToPay = 0;
+        overallSubTotal = 0;
 
-            if($("tr.products-row .row-subtotal").length){
-                let discountAmount;
+        if($("tr.products-row .row-subtotal").length){
+            let discountAmount;
 
-                let discountType = $(`input[name="discount_type"]:checked`).val();
-                if($(`input[name="discount_amount"]`).val().length > 0) {
-                    discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
-                } else {
-                    discountAmount = 0;
-                }
-                
-                totalDiscountDeducted = 0;
-
-                $("tr.products-row .row-subtotal").each(function(){
-                    let subtotalVal = parseFloat($(this).text());
-                    totalToPay += subtotalVal;
-                    overallSubTotal += subtotalVal;
-                });
-                if(discountType == "cash") {
-                    totalToPay = totalToPay - discountAmount;
-                    totalDiscountDeducted = discountAmount;
-                } else {
-                    discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
-                    totalToPay = (totalToPay - discountAmount);
-                    totalDiscountDeducted = discountAmount;
-                }
-                $(`th[data-bind-html='discount_amount']`).html(`${fmtCurr(discountAmount)}`);  
+            let discountType = $(`input[name="discount_type"]:checked`).val();
+            if($(`input[name="discount_amount"]`).val().length > 0) {
+                discountAmount = parseFloat($(`input[name="discount_amount"]`).val());
+            } else {
+                discountAmount = 0;
             }
 
-            let paymentType = $(".payment-type-select").val();
-            $(`span[class="sub_total"]`).html(`${storeValues.cur} ${fmtCurr(overallSubTotal)}`);
-            $("[data-bind-html='totaltopay']").html(fmtCurr(overallSubTotal));
-            $(".total-to-pay-amount").text(fmtCurr(totalToPay));
-            $(".total-to-pay-amount").attr("data-order-total", totalToPay);
-            $(`input[name="amount_paying"]`).attr({"max": totalToPay, "min": 0});
-            $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": fmtCurr(totalToPay)});
+            totalDiscountDeducted = 0;
+
+            $("tr.products-row .row-subtotal").each(function(){
+                let subtotalVal = parseFloat($(this).text());
+                totalToPay += subtotalVal;
+                overallSubTotal += subtotalVal;
+            });
+            if(discountType == "cash") {
+                totalToPay = totalToPay - discountAmount;
+                totalDiscountDeducted = discountAmount;
+            } else {
+                discountAmount = parseFloat((discountAmount/100)*totalToPay).toFixed(2);
+                totalToPay = (totalToPay - discountAmount);
+                totalDiscountDeducted = discountAmount;
+            }
+            $(`th[data-bind-html='discount_amount']`).html(`${fmtCurr(discountAmount)}`);  
         }
 
-        var amtPay = () => {
-            let max = parseFloat($(`input[name="amount_paying"]`).attr('max'));
-            let value = parseFloat($(`input[name="amount_paying"]`).val());
-            let paymentType = $(".payment-type-select").val();
-            let balance = (value-max);
+        let paymentType = $(".payment-type-select").val();
+        $(`span[class="sub_total"]`).html(`${storeValues.cur} ${fmtCurr(overallSubTotal)}`);
+        $("[data-bind-html='totaltopay']").html(fmtCurr(overallSubTotal));
+        $(".total-to-pay-amount").text(fmtCurr(totalToPay));
+        $(".total-to-pay-amount").attr("data-order-total", totalToPay);
+        $(`input[name="amount_paying"]`).attr({"max": totalToPay, "min": 0});
+        $(`input[name="amount_to_pay"]`).attr({"max": totalToPay, "value": fmtCurr(totalToPay)});
+    }
 
-            if($(`input[name="amount_paying"]`).val().length > 0) {
-                $(`input[name="amount_balance"]`).val(fmtCurr(balance));
+    var amtPay = () => {
+        let max = parseFloat($(`input[name="amount_paying"]`).attr('max'));
+        let value = parseFloat($(`input[name="amount_paying"]`).val());
+        let paymentType = $(".payment-type-select").val();
+        let balance = (value-max);
 
-                $(".make-online-payment").addClass("d-none");
+        if($(`input[name="amount_paying"]`).val().length > 0) {
+            $(`input[name="amount_balance"]`).val(fmtCurr(balance));
+
+            $(".make-online-payment").addClass("d-none");
             $(".make-online-payment").removeAttr("data-order-total");
             $("[data-step-action='next']").prop("disabled", false);
 
             $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(value)}`);
             $("[data-bind-html='payment']").html(`${storeValues.cur} ${fmtCurr(overallSubTotal-totalDiscountDeducted)}`);
-                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(value)}` : `${storeValues.cur} ${fmtCurr(balance)}`);
-            } else {
-                $(`input[name="amount_balance"]`).val('0.00');
+            $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(value)}` : `${storeValues.cur} ${fmtCurr(balance)}`);
+        } else {
+            $(`input[name="amount_balance"]`).val('0.00');
 
-                $(".make-online-payment").addClass("d-none");
+            $(".make-online-payment").addClass("d-none");
             $(".make-online-payment").attr("data-order-total", max);
             $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} 0.00`);
             $("[data-bind-html='payment']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
-                $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
-            }
+            $("[data-bind-html='balance']").html(paymentType == 'credit' ? `${storeValues.cur} ${fmtCurr(max)}` : "${storeValues.cur} 0.00");
+        }
     }
 
     $(`input[name="amount_paying"]`).on('keyup', function() {
@@ -2893,7 +2940,7 @@ if($(".make-online-payment").length) {
     });
 
     $(`input[name="discount_type"]`).on('change', function() {
-    $(`input[name="discount_amount"]`).trigger('focus');
+        $(`input[name="discount_amount"]`).trigger('focus');
         rcalTot();
         amtPay();
     });
@@ -2913,7 +2960,7 @@ if($(".make-online-payment").length) {
 
         if(thisEmail.val().length > 5) {
             thisBtn.prop('disabled', true)
-                    .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
+            .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
             thisEmail.prop('disabled', true);
 
             $.ajax({
@@ -2928,24 +2975,24 @@ if($(".make-online-payment").length) {
                     });
                 }, error: function(err) {
                     Toast.fire({
-                    type: 'error',
-                    title: 'Error processing request!'
-                });
-                thisEmail.prop('disabled', false);
-                thisBtn.prop('disabled', false).html(`Send`);
-            }, complete: function(data) {
-                thisEmail.prop('disabled', false);
-                thisBtn.prop('disabled', false).html(`Send`);
-            }
+                        type: 'error',
+                        title: 'Error processing request!'
+                    });
+                    thisEmail.prop('disabled', false);
+                    thisBtn.prop('disabled', false).html(`Send`);
+                }, complete: function(data) {
+                    thisEmail.prop('disabled', false);
+                    thisBtn.prop('disabled', false).html(`Send`);
+                }
             });
         } else {
             Toast.fire({
-            type: 'error',
-            title: 'Please enter a valid email address!'
-        });
-        thisEmail.prop('disabled', false);
-        thisBtn.prop('disabled', false).html(`Send`);
-    }
+                type: 'error',
+                title: 'Please enter a valid email address!'
+            });
+            thisEmail.prop('disabled', false);
+            thisBtn.prop('disabled', false).html(`Send`);
+        }
     });
 
     function ckEmpTb(table){
@@ -2964,85 +3011,85 @@ if($(".make-online-payment").length) {
             `${baseUrl}receipt/${orderId}`,
             `Sales Invoice - Receipt #${orderId}`,
             `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-        );
+            );
     }
 
     $(".make-online-payment").on("click", async function(e) {
         e.preventDefault();
         await svReg().then(function(res) {
-        if (res.status == "success") {
-            $(`span[class="generated_order"]`).html(res.data._oid);
-            var userEmail = $("input[id='receipt-email']").val();
-            $.ajax({
-                url: baseUrl + "api/pointOfSaleProcessor/processMyPayment",
-                data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
-                dataType: "json",
-                type: "POST",
-                cache: false,
-                beforeSend: function() {
-                    $(".payment-type-select, [data-step-action='previous']").prop("disabled", true);
-                    $(".make-online-payment").addClass("d-none");
-                    $(".cancel-online-payment").removeClass("d-none");
-                    $(".payment-processing-span").html(`
-                        <span class="fa fa-spinner fa-spin mr-3"></span>
-                    `);
-                },
-                success: function(data) {
-                    if (data.status == true) {
-                        if (data.message.action == true) {
-                            $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(res.data.orderTotal)}`);
-                            
-                            $(`div[class~="payment-backdrop"]`).removeClass('hidden');
-                            paymentWindow = window.open(data.message.msg,
-                                `Payment for #${res.data.orderId}`,
-                                `width=700,height=600,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-                            );
+            if (res.status == "success") {
+                $(`span[class="generated_order"]`).html(res.data._oid);
+                var userEmail = $("input[id='receipt-email']").val();
+                $.ajax({
+                    url: baseUrl + "api/pointOfSaleProcessor/processMyPayment",
+                    data: { processMyPayment: true, orderId: res.data.orderId, orderTotal: res.data.orderTotal, userEmail: userEmail },
+                    dataType: "json",
+                    type: "POST",
+                    cache: false,
+                    beforeSend: function() {
+                        $(".payment-type-select, [data-step-action='previous']").prop("disabled", true);
+                        $(".make-online-payment").addClass("d-none");
+                        $(".cancel-online-payment").removeClass("d-none");
+                        $(".payment-processing-span").html(`
+                            <span class="fa fa-spinner fa-spin mr-3"></span>
+                            `);
+                    },
+                    success: function(data) {
+                        if (data.status == true) {
+                            if (data.message.action == true) {
+                                $(`[data-bind-html='amount_paid']`).html(`${storeValues.cur} ${fmtCurr(res.data.orderTotal)}`);
 
-                            $(`button[class~="return-to-payment-window"]`).on('click', function() {
-                                paymentWindow.focus();
-                            });
-                            paymentCheck = setInterval(function() {
-                                ckPayState();
-                            }, 3000);
+                                $(`div[class~="payment-backdrop"]`).removeClass('hidden');
+                                paymentWindow = window.open(data.message.msg,
+                                    `Payment for #${res.data.orderId}`,
+                                    `width=700,height=600,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+                                    );
+
+                                $(`button[class~="return-to-payment-window"]`).on('click', function() {
+                                    paymentWindow.focus();
+                                });
+                                paymentCheck = setInterval(function() {
+                                    ckPayState();
+                                }, 3000);
+                            } else {
+                                $(".payment-processing-span").html(data.message.msg);
+                            }
                         } else {
-                            $(".payment-processing-span").html(data.message.msg);
+                            Toast.fire({
+                                type: "error",
+                                title: "Payment Failed! Please try again."
+                            });
+                            $(`div[class~="payment-backdrop"]`).addClass('hidden');
+                            $(".payment-processing-span").html(``);
+                            $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
+                            $(".make-online-payment").removeClass("d-none");
+                            $(".cancel-online-payment").addClass("d-none");
                         }
-                    } else {
+                    },
+                    error: function() {
                         Toast.fire({
                             type: "error",
-                            title: "Payment Failed! Please try again."
+                            title: "Error Processing Request! Please try again"
                         });
-                        $(`div[class~="payment-backdrop"]`).addClass('hidden');
                         $(".payment-processing-span").html(``);
                         $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
                         $(".make-online-payment").removeClass("d-none");
                         $(".cancel-online-payment").addClass("d-none");
                     }
-                },
-                error: function() {
-                    Toast.fire({
-                        type: "error",
-                        title: "Error Processing Request! Please try again"
-                    });
-                    $(".payment-processing-span").html(``);
-                    $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
-                    $(".make-online-payment").removeClass("d-none");
-                    $(".cancel-online-payment").addClass("d-none");
-                }
-            });
-        } else {
-            $(".payment-processing-span").html(`
+                });
+            } else {
+                $(".payment-processing-span").html(`
                     <p class="text-center text-danger">
-                        Payment Failed To Process Request
+                    Payment Failed To Process Request
                     </p>
-                `);
+                    `);
                 $(".payment-type-select, [data-step-action='previous']").prop("disabled", false);
-        }
+            }
         });
     });
 
     function ckPayState() {
-        
+
         $.ajax({
             url: `${baseUrl}api/pointOfSaleProcessor/checkPaymentStatus`,
             type: "POST",
@@ -3062,7 +3109,7 @@ if($(".make-online-payment").length) {
                             <p class="text-center">
                             <span class="fa fa-check text-success"></span>
                             </p>
-                        `);
+                            `);
                         toastMsg = "Payment Successfully Made.";
                         toastType= "success";
                         let lastTab = $(".register-form ul[role='tablist'] li.last");
@@ -3128,7 +3175,7 @@ async function getSalesDetails(salesID) {
 
     $(".show-modal-title").html("Sale Details");
     $(`div[class="form-content-loader"]`).css("display","flex");
-    
+
     $(".launchModal").modal("show");
 
     await dOC().then((itResp) => {
@@ -3150,81 +3197,81 @@ async function getSalesDetails(salesID) {
     if (offline) {
 
         var trData = `
-            <div class="row table-responsive">`;
+        <div class="row table-responsive">`;
 
         var salesInfo = await gIDBR('sales', salesID).then((salesResult) => {
 
             trData += `<table class="table table-bordered">
-                    <tr>
-                        <td colspan='2' class='text-center'>
-                            <strong>Served By: </strong> ${salesResult.recorded_by}<br>
-                            <strong>Point of Sale: </strong> ${storeValues._clbn}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><strong>Customer Name</strong>: ${salesResult.customer_fullname}</td>
-                        <td align='left'><strong>Transaction ID:</strong>: ${salesResult.order_id}</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Contact</strong>: ${salesResult.customer_contact}</td>
-                        <td align='left'><strong>Transaction Date</strong>: ${salesResult.order_date}</td>
-                    </tr>
-                </table>`;
+            <tr>
+            <td colspan='2' class='text-center'>
+            <strong>Served By: </strong> ${salesResult.recorded_by}<br>
+            <strong>Point of Sale: </strong> ${storeValues._clbn}
+            </td>
+            </tr>
+            <tr>
+            <td><strong>Customer Name</strong>: ${salesResult.customer_fullname}</td>
+            <td align='left'><strong>Transaction ID:</strong>: ${salesResult.order_id}</td>
+            </tr>
+            <tr>
+            <td><strong>Contact</strong>: ${salesResult.customer_contact}</td>
+            <td align='left'><strong>Transaction Date</strong>: ${salesResult.order_date}</td>
+            </tr>
+            </table>`;
 
             trData += `<table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <td class="text-left">Product</td>
-                            <td class="text-left">Quantity</td>
-                            <td class="text-right">Unit Price</td>
-                            <td class="text-right">Total</td>
-                        </tr>
-                    </thead>
-                    <tbody>`;
+            <thead>
+            <tr>
+            <td class="text-left">Product</td>
+            <td class="text-left">Quantity</td>
+            <td class="text-right">Unit Price</td>
+            <td class="text-right">Total</td>
+            </tr>
+            </thead>
+            <tbody>`;
 
             var subTotal = 0,
-                discount = salesResult.order_discount;
+            discount = salesResult.order_discount;
 
             $.each(salesResult.saleItems, function(i, e) {
                 trData += `
-                    <tr>
-                        <td>${e.product_title}</td>
-                        <td>${e.product_quantity}</td>
-                        <td class=\"text-right\">${storeValues.cur} ${e.product_unit_price}</td>
-                        <td class=\"text-right\">${storeValues.cur} ${e.product_total}</td>
-                    </tr>`;
+                <tr>
+                <td>${e.product_title}</td>
+                <td>${e.product_quantity}</td>
+                <td class=\"text-right\">${storeValues.cur} ${e.product_unit_price}</td>
+                <td class=\"text-right\">${storeValues.cur} ${e.product_total}</td>
+                </tr>`;
                 subTotal += parseFloat(e.product_total);
             });
 
             var overall = subTotal - discount;
 
             trData += `<tr>
-                    <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Subtotal</td>
-                    <td style="font-weight:bolder;text-transform:uppercase" class="text-right">
-                        ${storeValues.cur} ${fmtCurr(subTotal)}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight:;text-transform:uppercase" colspan="3" class="text-right">Discount</td>
-                    <td style="font-weight:;text-transform:uppercase" class="text-right">${storeValues.cur} ${discount}</td>
-                </tr>
-                <tr>
-                    <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Overall Total</td>
-                    <td style="font-weight:bolder;text-transform:uppercase" class="text-right">${storeValues.cur} ${fmtCurr(overall)}</td>
-                </tr>
+            <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Subtotal</td>
+            <td style="font-weight:bolder;text-transform:uppercase" class="text-right">
+            ${storeValues.cur} ${fmtCurr(subTotal)}
+            </td>
+            </tr>
+            <tr>
+            <td style="font-weight:;text-transform:uppercase" colspan="3" class="text-right">Discount</td>
+            <td style="font-weight:;text-transform:uppercase" class="text-right">${storeValues.cur} ${discount}</td>
+            </tr>
+            <tr>
+            <td style="font-weight:bolder;text-transform:uppercase" colspan="3" class="text-right">Overall Total</td>
+            <td style="font-weight:bolder;text-transform:uppercase" class="text-right">${storeValues.cur} ${fmtCurr(overall)}</td>
+            </tr>
 
-                </tbody>
-                </table>
+            </tbody>
+            </table>
             </div>
             <div class="card">
-                <div class="row">
-                    <div class="offline-placeholder main-body-loader" style="display: flex">
-                        <div class="offline-content text-center">
-                            <p>You are offline</p>
-                            <button type="button" class="btn cursor btn-warning">Reconnect</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="row">
+            <div class="offline-placeholder main-body-loader" style="display: flex">
+            <div class="offline-content text-center">
+            <p>You are offline</p>
+            <button type="button" class="btn cursor btn-warning">Reconnect</button>
+            </div>
+            </div>
+            </div>
             </div>`;
 
             $(".show-modal-body").html(trData);
@@ -3250,7 +3297,7 @@ async function getSalesDetails(salesID) {
             } else {
                 $(".show-modal-body").html(`
                     <p class="alert alert-danger text-white text-center">No sales records found</p>
-                `);
+                    `);
             }
         },
         complete: function() {
@@ -3259,7 +3306,7 @@ async function getSalesDetails(salesID) {
             $(`div[class="form-content-loader"]`).css("display","none");
         }
     });
-    
+
 }
 
 $(function() {
@@ -3273,13 +3320,13 @@ $(function() {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-                { "data": 'branch_name' },
-                { "data": 'total_sales' },
-                { "data": 'highest_sales' },
-                { "data": 'lowest_sales' },
-                { "data": 'average_sales' },
-                { "data": 'orders_count'},
-                { "data": 'square_feet_sales'}
+            { "data": 'branch_name' },
+            { "data": 'total_sales' },
+            { "data": 'highest_sales' },
+            { "data": 'lowest_sales' },
+            { "data": 'average_sales' },
+            { "data": 'orders_count'},
+            { "data": 'square_feet_sales'}
             ]
         });
     }
@@ -3297,14 +3344,14 @@ $(function() {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-                {"data":'fullname'},
-                {"data":'sales.amount'},
-                {"data":'sales.orders'},
-                {"data":'sales.average_sale'},
-                {"data":'targets.target_amount'},
-                {"data":'targets.target_percent'},
-                {"data":'items.total_items_sold'},
-                {"data":'items.average_items_sold'}
+            {"data":'fullname'},
+            {"data":'sales.amount'},
+            {"data":'sales.orders'},
+            {"data":'sales.average_sale'},
+            {"data":'targets.target_amount'},
+            {"data":'targets.target_percent'},
+            {"data":'items.total_items_sold'},
+            {"data":'items.average_items_sold'}
             ]
         });
 
@@ -3368,7 +3415,7 @@ $(function() {
         var apex_bar1_branch = new ApexCharts(
             document.querySelector("#attendant-performance"),
             options2
-        );
+            );
 
         apex_bar1_branch.render();
     }
@@ -3378,27 +3425,27 @@ $(function() {
         if($(`ul[class~="most-performing-products"]`).length) {
             var productsArray = ``;
 
-                $.each(productsInfo, function(i, e) {
-                    productsArray += `<li class="list-group-item px-0">
-                      <div class="row align-items-center">
-                        <div class="col-auto">
-                          <a href="${baseUrl}products/${e.id}" class="avatar rounded-circle">
-                            <img alt="" src="${baseUrl}${e.product_image}">
-                          </a>
-                        </div>
-                        <div class="col">
-                          <h5>${e.product_title}</h5>
-                          <div class="progress progress-xs mb-0">
-                            <div class="progress-bar bg-orange" role="progressbar" aria-valuenow="${e.percentage}" aria-valuemin="0" aria-valuemax="100" style="width: ${e.percentage}%;"></div>
-                          </div>
-                          <div class="row justify-content-between">
-                            <div class="pl-2"><strong>Sold:</strong> ${e.quantity_sold}</div>
-                            <div class="pr-3"><strong>Revenue:</strong> ${e.total_selling_revenue}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </li>`;
-                });
+            $.each(productsInfo, function(i, e) {
+                productsArray += `<li class="list-group-item px-0">
+                <div class="row align-items-center">
+                <div class="col-auto">
+                <a href="${baseUrl}products/${e.id}" class="avatar rounded-circle">
+                <img alt="" src="${baseUrl}${e.product_image}">
+                </a>
+                </div>
+                <div class="col">
+                <h5>${e.product_title}</h5>
+                <div class="progress progress-xs mb-0">
+                <div class="progress-bar bg-orange" role="progressbar" aria-valuenow="${e.percentage}" aria-valuemin="0" aria-valuemax="100" style="width: ${e.percentage}%;"></div>
+                </div>
+                <div class="row justify-content-between">
+                <div class="pl-2"><strong>Sold:</strong> ${e.quantity_sold}</div>
+                <div class="pr-3"><strong>Revenue:</strong> ${e.total_selling_revenue}</div>
+                </div>
+                </div>
+                </div>
+                </li>`;
+            });
 
             $(`ul[class~="most-performing-products"]`).html(productsArray);
 
@@ -3411,13 +3458,13 @@ $(function() {
                 "lengthChange": !1,
                 "dom": "Bfrtip",
                 "columns": [
-                    { "data": 'row_id'},
-                    { "data": 'product_title'},
-                    { "data": 'orders_count'},
-                    { "data": 'quantity_sold'},
-                    { "data": 'total_selling_cost'},
-                    { "data": 'total_selling_revenue'},
-                    { "data": 'product_profit'}
+                { "data": 'row_id'},
+                { "data": 'product_title'},
+                { "data": 'orders_count'},
+                { "data": 'quantity_sold'},
+                { "data": 'total_selling_cost'},
+                { "data": 'total_selling_revenue'},
+                { "data": 'product_profit'}
                 ]
             });
         }
@@ -3451,7 +3498,7 @@ $(function() {
                 sL();
                 $(`div[data-report] p[class~="text-truncate"]`).html(`
                     Loading <i class="fa fa-spin fa-spinner"></i>
-                `);
+                    `);
             },
             success: function(resp) {
                 $.each(resp.result, function(i, e) {
@@ -3489,7 +3536,7 @@ $(function() {
                 populateProductsPerformance(resp.result.sales.products_performance);
 
                 if ($("#sales-overview-chart").length) {
-                    
+
                     var thisOpts = {
                         chart: {
                             height: 374,
@@ -3504,7 +3551,7 @@ $(function() {
                             },
                             zoom: false
                         },
-                       
+
                         plotOptions: {
                             bar: {
                                 columnWidth: '30%'
@@ -3553,15 +3600,15 @@ $(function() {
                             },
                         },
                         fill: {
-                          type: 'gradient',
-                          gradient: {
-                            gradientToColors: ['#f1646c'],
-                            shadeIntensity: 0.1,
-                            type: 'horizontal',
-                            opacityFrom: 0.7,
-                            opacityTo: 1,
-                            stops: [0, 100, 100, 100]
-                          },
+                            type: 'gradient',
+                            gradient: {
+                                gradientToColors: ['#f1646c'],
+                                shadeIntensity: 0.1,
+                                type: 'horizontal',
+                                opacityFrom: 0.7,
+                                opacityTo: 1,
+                                stops: [0, 100, 100, 100]
+                            },
                         },
                         tooltip: {
                             shared: true,
@@ -3577,11 +3624,11 @@ $(function() {
                             }
                         },
                         grid: {
-                          row: {
-                            colors: ['transparent', 'transparent'], 
-                            opacity: 0.2
-                          },
-                          borderColor: '#185a9d'
+                            row: {
+                                colors: ['transparent', 'transparent'], 
+                                opacity: 0.2
+                            },
+                            borderColor: '#185a9d'
                         }
                     }
 
@@ -3592,7 +3639,7 @@ $(function() {
                     var chart = new ApexCharts(
                         document.querySelector("#sales-overview-chart"),
                         thisOpts
-                    );
+                        );
 
                     chart.render();
 
@@ -3600,7 +3647,7 @@ $(function() {
 
 
                 if($(`div[class="chart-comparison"]`).length){
-                   
+
                     $(`div[class="chart-comparison"]`).html(``);
                     $(`div[class="chart-comparison"]`).html(`<div id="sales-comparison" class="apex-charts"></div>`);
                     var compareSales = {
@@ -3706,7 +3753,7 @@ $(function() {
                     var compareChart = new ApexCharts(
                         document.querySelector("#sales-comparison"),
                         compareSales
-                    );
+                        );
                     compareChart.render();
                 }
 
@@ -3715,55 +3762,55 @@ $(function() {
                     $(`div[class="payment-chart"]`).html(``);
                     $(`div[class="payment-chart"]`).html(`<div id="payment-options" class="apex-charts"></div>`);
                     var paymentOptions = {
-                      chart: {
-                          height: 380,
-                          type: 'donut',
-                      }, 
-                      series: resp.result.sales.payment_options.payment_values,
-                      legend: {
-                          show: true,
-                          position: 'bottom',
-                          horizontalAlign: 'center',
-                          verticalAlign: 'middle',
-                          floating: false,
-                          fontSize: '14px',
-                          offsetX: 0,
-                          offsetY: -10
-                      },
-                      tooltip: {
-                        shared: true,
-                        intersect: false,
-                        y: {
-                            formatter: function(y) {
-                                if (typeof y !== "undefined") {
-                                    return storeValues.cur + fmtCurr(y);
-                                }
-                                return y;
+                        chart: {
+                            height: 380,
+                            type: 'donut',
+                        }, 
+                        series: resp.result.sales.payment_options.payment_values,
+                        legend: {
+                            show: true,
+                            position: 'bottom',
+                            horizontalAlign: 'center',
+                            verticalAlign: 'middle',
+                            floating: false,
+                            fontSize: '14px',
+                            offsetX: 0,
+                            offsetY: -10
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function(y) {
+                                    if (typeof y !== "undefined") {
+                                        return storeValues.cur + fmtCurr(y);
+                                    }
+                                    return y;
 
+                                }
                             }
+                        },
+                        labels: resp.result.sales.payment_options.payment_option,
+                        colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
+                        responsive: [{
+                            breakpoint: 600,
+                            options: {
+                                chart: {
+                                    height: 270
+                                },
+                                legend: {
+                                    show: true
+                                },
+                            }
+                        }],
+                        fill: {
+                            type: 'gradient'
                         }
-                      },
-                      labels: resp.result.sales.payment_options.payment_option,
-                      colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
-                      responsive: [{
-                          breakpoint: 600,
-                          options: {
-                              chart: {
-                                  height: 270
-                              },
-                              legend: {
-                                  show: true
-                              },
-                          }
-                      }],
-                      fill: {
-                          type: 'gradient'
-                      }
                     }
                     var paymentChart = new ApexCharts(
                         document.querySelector("#payment-options"),
                         paymentOptions
-                    );
+                        );
                     paymentChart.render();
                 }
 
@@ -3771,55 +3818,55 @@ $(function() {
                     $(`div[class="category-chart"]`).html(``);
                     $(`div[class="category-chart"]`).html(`<div id="category-options" class="apex-charts"></div>`);
                     var productCategoryOptions = {
-                      chart: {
-                          height: 450,
-                          type: 'donut',
-                      }, 
-                      series: resp.result.sales.category_sales.data,
-                      legend: {
-                          show: true,
-                          position: 'bottom',
-                          horizontalAlign: 'center',
-                          verticalAlign: 'middle',
-                          floating: false,
-                          fontSize: '14px',
-                          offsetX: 0,
-                          offsetY: -10
-                      },
-                      tooltip: {
-                        shared: true,
-                        intersect: false,
-                        y: {
-                            formatter: function(y) {
-                                if (typeof y !== "undefined") {
-                                    return storeValues.cur + fmtCurr(y);
-                                }
-                                return y;
+                        chart: {
+                            height: 450,
+                            type: 'donut',
+                        }, 
+                        series: resp.result.sales.category_sales.data,
+                        legend: {
+                            show: true,
+                            position: 'bottom',
+                            horizontalAlign: 'center',
+                            verticalAlign: 'middle',
+                            floating: false,
+                            fontSize: '14px',
+                            offsetX: 0,
+                            offsetY: -10
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function(y) {
+                                    if (typeof y !== "undefined") {
+                                        return storeValues.cur + fmtCurr(y);
+                                    }
+                                    return y;
 
+                                }
                             }
+                        },
+                        labels: resp.result.sales.category_sales.labels,
+                        colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
+                        responsive: [{
+                            breakpoint: 600,
+                            options: {
+                                chart: {
+                                    height: 270
+                                },
+                                legend: {
+                                    show: true
+                                },
+                            }
+                        }],
+                        fill: {
+                            type: 'gradient'
                         }
-                      },
-                      labels: resp.result.sales.category_sales.labels,
-                      colors: ["#08aeb0", "#232f5b","#f06a6c", "#f1e299", "#08aeb0"],
-                      responsive: [{
-                          breakpoint: 600,
-                          options: {
-                              chart: {
-                                  height: 270
-                              },
-                              legend: {
-                                  show: true
-                              },
-                          }
-                      }],
-                      fill: {
-                          type: 'gradient'
-                      }
                     }
                     var productCategoryChart = new ApexCharts(
                         document.querySelector("#category-options"),
                         productCategoryOptions
-                    );
+                        );
                     productCategoryChart.render();
                 }
 
@@ -3828,101 +3875,101 @@ $(function() {
                 $(`div[class="revenue-chart"]`).html(`<div id="revenue-trend" class="apex-charts"></div>`);
                 if($("#revenue-trend").length) {
                     var revenueOptions = {
-                      chart: {
-                          height: 450,
-                          type: 'line',
-                          stacked: false,
-                          zoom: false,
-                          toolbar: {
-                              show: false
-                          }
-                      },
-                      dataLabels: {
-                          enabled: false
-                      },
-                      stroke: {
-                          width: [0, 0, 2]
-                      },
-                      plotOptions: {
-                        bar: {
-                            columnWidth: '40%'
-                        }
-                      },
-                      series: [{
-                          name: 'Products Cost Price',
-                          type: 'column',
-                          data: resp.result.sales.revenue.cost
-                      }, {
-                          name: 'Products Selling Price',
-                          type: 'column',
-                          data: resp.result.sales.revenue.selling
-                      }, {
-                          name: 'Profit Generated',
-                          type: 'line',
-                          data: resp.result.sales.revenue.profit
-                      }],
-                      colors: ["#fa5c7c", "#20016c", "#77d0ba"],
-                      xaxis: {
-                          type: 'datetime',
-                          categories: resp.result.labeling,
-                          axisBorder: {
-                            show: true,
-                            color: '#bec7e0',
-                          },  
-                          axisTicks: {
-                            show: true,
-                            color: '#bec7e0',
-                        }, 
-                      },
-                      yaxis: [
-                          {
-                              opposite: true,
-                              axisTicks: {
-                                  show: true,
-                              },
-                              axisBorder: {
-                                  show: true,
-                                  color: '#77d0ba'
-                              },
-                              labels: {
-                                  style: {
-                                      color: '#77d0ba',
-                                  }
-                              },
-                              title: {
-                                  text: "Products Cost, Selling & Revenue Generated"
-                              }
-                          },
+                        chart: {
+                            height: 450,
+                            type: 'line',
+                            stacked: false,
+                            zoom: false,
+                            toolbar: {
+                                show: false
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            width: [0, 0, 2]
+                        },
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '40%'
+                            }
+                        },
+                        series: [{
+                            name: 'Products Cost Price',
+                            type: 'column',
+                            data: resp.result.sales.revenue.cost
+                        }, {
+                            name: 'Products Selling Price',
+                            type: 'column',
+                            data: resp.result.sales.revenue.selling
+                        }, {
+                            name: 'Profit Generated',
+                            type: 'line',
+                            data: resp.result.sales.revenue.profit
+                        }],
+                        colors: ["#fa5c7c", "#20016c", "#77d0ba"],
+                        xaxis: {
+                            type: 'datetime',
+                            categories: resp.result.labeling,
+                            axisBorder: {
+                                show: true,
+                                color: '#bec7e0',
+                            },  
+                            axisTicks: {
+                                show: true,
+                                color: '#bec7e0',
+                            }, 
+                        },
+                        yaxis: [
+                        {
+                            opposite: true,
+                            axisTicks: {
+                                show: true,
+                            },
+                            axisBorder: {
+                                show: true,
+                                color: '#77d0ba'
+                            },
+                            labels: {
+                                style: {
+                                    color: '#77d0ba',
+                                }
+                            },
+                            title: {
+                                text: "Products Cost, Selling & Revenue Generated"
+                            }
+                        },
 
-                      ],
-                      tooltip: {
-                          followCursor: true,
-                          y: {
-                              formatter: function (y) {
-                                  if (typeof y !== "undefined") {
-                                      return storeValues.cur + fmtCurr(y);
-                                  }
-                                  return y;
-                              }
-                          }
-                      },
-                      grid: {
-                          borderColor: '#f1f3fa'
-                      },
-                      legend: {
-                          offsetY: -10,
-                      },
-                      responsive: [{
-                          breakpoint: 600,
-                          options: {
-                              yaxis: {
-                                  show: false
-                              },
-                              legend: {
-                                  show: false
-                              }
-                          }
-                      }]
+                        ],
+                        tooltip: {
+                            followCursor: true,
+                            y: {
+                                formatter: function (y) {
+                                    if (typeof y !== "undefined") {
+                                        return storeValues.cur + fmtCurr(y);
+                                    }
+                                    return y;
+                                }
+                            }
+                        },
+                        grid: {
+                            borderColor: '#f1f3fa'
+                        },
+                        legend: {
+                            offsetY: -10,
+                        },
+                        responsive: [{
+                            breakpoint: 600,
+                            options: {
+                                yaxis: {
+                                    show: false
+                                },
+                                legend: {
+                                    show: false
+                                }
+                            }
+                        }]
                     }
                     if (periodSelected == 'today') {
                         delete revenueOptions.xaxis.type;
@@ -3930,7 +3977,7 @@ $(function() {
                     var revenueChart = new ApexCharts(
                         document.querySelector("#revenue-trend"),
                         revenueOptions
-                    );
+                        );
                     revenueChart.render();
                 }
                 $(`div[class~="apexcharts-legend"]`).addClass('hidden');
@@ -3944,477 +3991,464 @@ $(function() {
                 }, 1000);
             }
         });
-    }
+}
 
-    var salesAttendantHistory = () => {
+var salesAttendantHistory = () => {
 
-        $(`div[class="main-content"]`).on('click', `a[class~="view-user-sales"]`, function() {
+    $(`div[class="main-content"]`).on('click', `a[class~="view-user-sales"]`, function() {
 
-            var userId = $(this).attr('data-value');
-            var fullname = $(this).attr('data-name');
-            var recordType = $(this).attr('data-record');
+        var userId = $(this).attr('data-value');
+        var fullname = $(this).attr('data-name');
+        var recordType = $(this).attr('data-record');
 
-            if (recordType == "attendant") {
-                $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Sales History`);
-            } else {
-                $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Purchases History`);
-            }
-            $(`div[class~="attendantHistory"]`).modal('show');
-
-            $.ajax({
-                type: "POST",
-                url: `${baseUrl}api/reportsAnalytics/generateReport`,
-                data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
-                dataType: "JSON",
-                beforeSend: function() {
-                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
-                },
-                success: function(resp) {
-                    var trData = `<table width="100%" class="table table-bordered orderHistory">`;
-                    trData += `<thead>`;
-                    trData += `<tr class="text-uppercase">`;
-                    trData += `<td>Order ID</td>`;
-                    trData += `<td>Customer Name</td>`;
-                    trData += `<td>Order Amount</td>`;
-                    trData += `<td>Date</td>`;
-                    trData += `<td></td>`;
-                    trData += `</tr>`;
-                    trData += `</thead>`;
-                    var creditBadge = ``;
-                    $.each(resp.result, function(i, e) {
-
-                        if (e.payment_type == 'cash') {
-                            creditBadge = `<span class="text-gray">Cash Sale</span>`;
-                        } else if (e.payment_type == 'momo') {
-                            creditBadge = `<span class="text-gray">Mobile Money</span>`;
-                        } else if (e.payment_type == 'card') {
-                            creditBadge = `<span class="text-gray">Card Payment</span>`;
-                        } else if (e.payment_type == 'credit') {
-                            creditBadge = `<span class="text-gray">Credit</span>`;
-                        }
-
-                        trData += `<tr>`;
-                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
-                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
-                        trData += `<td>${storeValues.cur}${e.order_amount_paid}</td>`;
-                        trData += `<td>${e.order_date}</td>`;
-                        trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
-                        trData += `</tr>`;
-                    });
-
-                    trData += `</table>`;
-
-                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(trData);
-
-                    $(`table[class~="orderHistory"]`).DataTable();
-
-                },
-                complete: function(data) {
-                    $(`a[class~="print-receipt"]`).on('click', function() {
-                        triggerPrintReceipt($(this).data('sales-id'));
-                    });
-                },
-                error: function(err) {
-                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
-                        <p align="center">No records found.</p>
-                    `);
-                }
-            });
-
-        });
-    }
-
-    var salesAttendantPerformance = (periodSelected = 'today') => {
-        if ($(`div[id="attendant-performance"]`).length) {
-            $.ajax({
-                type: "POST",
-                url: `${baseUrl}api/reportsAnalytics/generateReport`,
-                data: { generateReport: true, queryMetric: "salesAttendantPerformance", salesPeriod: periodSelected },
-                dataType: "JSON",
-                beforeSend: function() {
-
-                },
-                success: function(resp) {
-
-                    populateSalesTeamData(resp.result.list, resp.result.names, resp.result.sales);
-
-                },
-                complete: function(data) {
-                    salesAttendantHistory();
-                    $(`div[class~="apexcharts-legend"]`).removeClass('center');
-                },
-                error: function(err) {
-                }
-            });
+        if (recordType == "attendant") {
+            $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Sales History`);
+        } else {
+            $(`div[class~="attendantHistory"] h5`).html(`${fullname}'s Purchases History`);
         }
-    }
+        $(`div[class~="attendantHistory"]`).modal('show');
 
-    var ordersCount = (periodSelected = 'today') => {
         $.ajax({
             type: "POST",
             url: `${baseUrl}api/reportsAnalytics/generateReport`,
-            data: { generateReport: true, queryMetric: "ordersCount", salesPeriod: periodSelected },
+            data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
             dataType: "JSON",
             beforeSend: function() {
-                $(`div[class~="orders-loader"]`).html(`
-                    Loading <i class="fa fa-spin fa-spinner"></i>
-                `);
+                $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
             },
             success: function(resp) {
+                var trData = `<table width="100%" class="table table-bordered orderHistory">`;
+                trData += `<thead>`;
+                trData += `<tr class="text-uppercase">`;
+                trData += `<td>Order ID</td>`;
+                trData += `<td>Customer Name</td>`;
+                trData += `<td>Order Amount</td>`;
+                trData += `<td>Date</td>`;
+                trData += `<td></td>`;
+                trData += `</tr>`;
+                trData += `</thead>`;
+                var creditBadge = ``;
+                $.each(resp.result, function(i, e) {
 
-                $(`div[class~="orders-loader"]`).html(``);
-
-                $(`div[class="apexchart-wrapper"]`).html(``);
-                $(`div[class="apexchart-wrapper"]`).html(`<div id="dash_spark_1" class="chart-gutters"></div>`);
-                $(`div[data-report="orders-trend"] h3[class="mn-3"]`).html(`${resp.result.count} <small>total orders</small>`);
-
-                var ordersTrend = {
-                    chart: {
-                        type: 'line',
-                        height: 385,
-                        sparkline: {
-                            enabled: false
-                        },
-                        toolbar: {
-                            show: false
-                        },
-                        zoom: false
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2
-                    },
-                    fill: {
-                        opacity: [0.45, 0.25, 1]
-                    },
-                    series: [{
-                        name: 'All Orders',
-                        type: 'line',
-                        data: resp.result.data
-                    }, {
-                        name: 'New Customers',
-                        type: 'line',
-                        data: resp.result.unique_customers
-                    }, {
-                        name: 'Returning Customers',
-                        type: 'line',
-                        data:resp.result.returning_customers
-                    }],
-                    yaxis: {
-                        min: 0
-                    },
-                    xaxis: {
-                        type: 'datetime',
-                        categories: resp.result.labeling,
-                        axisBorder: {
-                            show: true,
-                            color: '#bec7e0',
-                        },
-                        axisTicks: {
-                            show: true,
-                            color: '#bec7e0',
-                        },
-                    },
-                    colors: ["#e6c255", "#1ecab8", "#ffc107"],
-                    tooltip: {
-                        shared: true,
-                        intersect: false
-                    },
-                    grid: {
-                        borderColor: '#f1f3fa'
+                    if (e.payment_type == 'cash') {
+                        creditBadge = `<span class="text-gray">Cash Sale</span>`;
+                    } else if (e.payment_type == 'momo') {
+                        creditBadge = `<span class="text-gray">Mobile Money</span>`;
+                    } else if (e.payment_type == 'card') {
+                        creditBadge = `<span class="text-gray">Card Payment</span>`;
+                    } else if (e.payment_type == 'credit') {
+                        creditBadge = `<span class="text-gray">Credit</span>`;
                     }
-                }
 
-                if (periodSelected == 'today') {
-                    delete ordersTrend.xaxis.type;
-                }
-                new ApexCharts(document.querySelector("#dash_spark_1"), ordersTrend).render();
+                    trData += `<tr>`;
+                    trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
+                    trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
+                    trData += `<td>${storeValues.cur}${e.order_amount_paid}</td>`;
+                    trData += `<td>${e.order_date}</td>`;
+                    trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
+                    trData += `</tr>`;
+                });
 
-            }, error: function(err) {
-                $(`div[class~="orders-loader"]`).html(``);
-            }, complete: function(data) {
-                $(`div[class~="apexcharts-legend"]`).removeClass('center');
-            }
-        });
-    }
+                trData += `</table>`;
 
-    var topContactsPerformance = (periodSelected = 'today') => {
+                $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(trData);
 
-        if ($(`table[class~="custPerformance"]`).length) {
-            $.ajax({
-                type: "POST",
-                url: `${baseUrl}api/reportsAnalytics/generateReport`,
-                data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
-                dataType: "JSON",
-                beforeSend: function() {},
-                success: function(resp) {
-                    var count = 0,
-                        trData = ``;
-
-                    $(`table[class~="custPerformance"]`).dataTable().fnDestroy();
-                    $(`table[class~="custPerformance"]`).dataTable({
-                        "aaData": resp.result,
-                        "iDisplayLength": 10,
-                        "buttons": ["copy", "print","csvHtml5"],
-                        "lengthChange": !1,
-                        "dom": "Bfrtip",
-                        "columns": [
-                            { "data": 'row_id' },
-                            { "data": 'fullname' },
-                            { "data": 'orders_count' },
-                            { "data": 'total_amount' },
-                            { "data": 'total_balance' },
-                            { "data": 'action' }
-                        ]
-                    });
-                },
-                error: function(err) {},
-                complete: function(data) {
-                    salesAttendantHistory();
-                }
-            });
-        }
-    }
-
-    var fetchSalesRecords = () => {
-        var colspan = "7";
-
-        var period = $(`select[name="periodSelected"]`).val();
-
-        $.ajax({
-            url: `${baseUrl}api/dashboardAnalytics/getSales`,
-            type: "POST",
-            dataType: "json",
-            data: { getSales: true, salesPeriod: period },
-            beforeSend: function() {},
-            success: function(data) {
-
-                $(`table[class~="salesLists"]`).dataTable().fnDestroy();
-                if (data.status == true) {
-                    $(`table[class~="salesLists"]`).dataTable({
-                        "aaData": data.message.table,
-                        "iDisplayLength": 10,
-                        "buttons": ["copy", "print","csvHtml5"],
-                        "lengthChange": !1,
-                        "dom": "Bfrtip",
-                        "columns": [
-                            { "data": 'row' },
-                            { "data": 'order_id' },
-                            { "data": 'fullname' },
-                            { "data": 'phone' },
-                            { "data": 'date' },
-                            { "data": 'amount' },
-                            { "data": 'action' }
-                        ]
-                    });
-
-                    if($("span[class~='total-sales']").length) {
-                        $("span[class~='total-sales']").html(data.message.totalSales.total);
-                        $("span[class~='total-sales-trend']").html(data.message.totalSales.trend);
-                        
-                        $("span[class~='total-served']").html(data.message.totalServed.total);
-                        $("span[class~='total-served-trend']").html(data.message.totalServed.trend);
-                        
-                        $("span[class~='average-sales']").html(data.message.averageSales.total);
-                        $("span[class~='average-sales-trend']").html(data.message.averageSales.trend);
-
-                        $("span[class~='total-discounts']").html(data.message.totalDiscount.total);
-                        $("span[class~='total-discounts-trend']").html(data.message.totalDiscount.trend);
-                        
-                        $("span[class~='total-credit-sales']").html(data.message.totalCredit.total);
-                        $("span[class~='total-credit-sales']-trend").html(data.message.totalCredit.trend);
-
-                        $("span[class~='total-profit']").html(data.message.salesComparison.profit);
-                        $("span[class~='total-profit-trend']").html(data.message.salesComparison.profit_trend);
-
-                        $("span[class~='total-selling']").html(data.message.salesComparison.selling);
-                        $("span[class~='total-selling-trend']").html(data.message.salesComparison.selling_trend);
-
-                        $("span[class~='total-cost']").html(data.message.salesComparison.cost);
-                        $("span[class~='total-cost-trend']").html(data.message.salesComparison.cost_trend);
-                    }
-                } else {
-                    $(`table[class~="salesLists"]`).dataTable();
-                }
+                $(`table[class~="orderHistory"]`).DataTable();
 
             },
             complete: function(data) {
-                $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
-                    let orderId = $(this).data('sales-id');
-                    window.open(
-                        `${baseUrl}receipt/${orderId}`,
-                        `Sales Invoice - Receipt #${orderId}`,
-                        `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-                    );
+                $(`a[class~="print-receipt"]`).on('click', function() {
+                    trgPrtRpt($(this).data('sales-id'));
                 });
-                $(`div[class="main-content"]`).on('click', `a[class~="resend-email"]`, function(e) {
-                    $(`div[class~="sendMailModal"] input[name="fullname"]`).val($(this).data('name'));
-                    $(`div[class~="sendMailModal"] input[name="send_email"]`).val($(this).data('email'));
-                    $(`div[class~="sendMailModal"] input[name="receiptId"]`).val($(this).data('sales-id'));
-                    $(`div[class~="sendMailModal"] input[name="request_type"]`).val('invoice');
-                    $(`div[class~="sendMailModal"] input[name="customerId"]`).val($(this).data('customer-id'));
-                    $(`div[class~="sendMailModal"]`).modal('show');
-                });
-                hL();
-            }, error: function(err) {
+            },
+            error: function(err) {
+                $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
+                    <p align="center">No records found.</p>
+                    `);
+            }
+        });
+
+    });
+}
+
+var salesAttendantPerformance = (periodSelected = 'today') => {
+    if ($(`div[id="attendant-performance"]`).length) {
+        $.ajax({
+            type: "POST",
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
+            data: { generateReport: true, queryMetric: "salesAttendantPerformance", salesPeriod: periodSelected },
+            dataType: "JSON",
+            beforeSend: function() {
+
+            },
+            success: function(resp) {
+
+                populateSalesTeamData(resp.result.list, resp.result.names, resp.result.sales);
+
+            },
+            complete: function(data) {
+                salesAttendantHistory();
+                $(`div[class~="apexcharts-legend"]`).removeClass('center');
+            },
+            error: function(err) {
             }
         });
     }
+}
 
-    var fetchInventoryRecords = () => {
+var ordersCount = (periodSelected = 'today') => {
+    $.ajax({
+        type: "POST",
+        url: `${baseUrl}api/reportsAnalytics/generateReport`,
+        data: { generateReport: true, queryMetric: "ordersCount", salesPeriod: periodSelected },
+        dataType: "JSON",
+        beforeSend: function() {
+            $(`div[class~="orders-loader"]`).html(`
+                Loading <i class="fa fa-spin fa-spinner"></i>
+                `);
+        },
+        success: function(resp) {
 
-        if ($(`table[class~="inventoryLists"]`).length) {
-            var colspan = "7";
+            $(`div[class~="orders-loader"]`).html(``);
 
-            $.ajax({
-                url: `${baseUrl}api/dashboardAnalytics/fetchInventoryRecords`,
-                type: "POST",
-                dataType: "json",
-                data: { fetchInventoryRecords: true, request: "fetchInventoryRecords" },
-                success: function(data) {
-                    if (data.status == true) {
-                        $(`table[class~="inventoryLists"]`).dataTable().fnDestroy();
-                        $(`table[class~="inventoryLists"]`).dataTable({
-                            "aaData": data.message,
-                            "iDisplayLength": 10,
-                            "columns": [
-                                { "data": 'row' },
-                                { "data": 'product' },
-                                { "data": 'quantity' },
-                                { "data": 'price' },
-                                { "data": 'recordedBy' },
-                                { "data": 'orderDate' }
-                            ]
-                        });
-                    }
+            $(`div[class="apexchart-wrapper"]`).html(``);
+            $(`div[class="apexchart-wrapper"]`).html(`<div id="dash_spark_1" class="chart-gutters"></div>`);
+            $(`div[data-report="orders-trend"] h3[class="mn-3"]`).html(`${resp.result.count} <small>total orders</small>`);
+
+            var ordersTrend = {
+                chart: {
+                    type: 'line',
+                    height: 385,
+                    sparkline: {
+                        enabled: false
+                    },
+                    toolbar: {
+                        show: false
+                    },
+                    zoom: false
                 },
-                complete: function() {}
-            });
-        }
-    }
-
-    var fetchProductThresholds = () => {
-        if ($(`table[class~="thresholdLists"]`).length) {
-            var colspan = "3";
-            $.ajax({
-                url: baseUrl + "api/dashboardAnalytics",
-                type: "POST",
-                dataType: "json",
-                data: { request: "getProductThresholds" },
-                success: function(data) {
-                    if (data.status == true) {
-                        $(`table[class~="thresholdLists"]`).dataTable().fnDestroy();
-                        $(`table[class~="thresholdLists"]`).dataTable({
-                            "aaData": data.message,
-                            "iDisplayLength": 10,
-                            "columns": [
-                                { "data": 'row' },
-                                { "data": 'product' },
-                                { "data": 'quantity' }
-                            ]
-                        });
-                    }
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
                 },
-                complete: function() {}
-            });
-        }
-    }
-
-    async function dashboardAnalitics() {
-
-        async function loadSalesData() {
-            return new Promise((resolve, reject) => {
-                var data = listIDB('sales');
-                resolve(data);
-            });
-        }
-
-        var salesData = await loadSalesData();
-
-        Array.prototype.unique = function() {
-            return this.filter(function(value, index, self) {
-                return self.indexOf(value) === index;
-            });
-        }
-
-        var totals = 0,
-            credits = 0,
-            orders = 0, expectedSellingPrice = 0,
-            productsCostPrice = 0,
-            customers = 0, row = 0;
-        var customerArray = new Array();
-        var salesArray = new Array();
-        var salesFigures = new Array();
-        var creditSalesArray = new Array();
-        var paidSalesArray = new Array();
-
-        var creditBadge = ``, hourAndValue = new Array(), vHours = new Array();
-
-        $.each(salesData, function(i, e) {
-
-            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
-                if ((e.branchId == storeValues._clb) && (e.recorded_by == storeValues._ud)) {
-                    orders += 1;
-                    customerArray.push(e.customer_id);
-                    totals += parseFloat(e.order_amount_paid);
-                    productsCostPrice += parseFloat(e.total_cost_price);
-                    expectedSellingPrice += parseFloat(e.total_expected_selling_price);
-                    salesFigures.push(parseFloat(e.order_amount_paid));
-                    
-                    vHours.push(parseFloat(e.hour_of_day));
-
-                    if(e.credit_sales == 1) {
-                        creditSalesArray.push(parseFloat(e.order_amount_paid));
-                    } else if(e.credit_sales == 0) {
-                        paidSalesArray.push(parseFloat(e.order_amount_paid));
-                    }
+                fill: {
+                    opacity: [0.45, 0.25, 1]
+                },
+                series: [{
+                    name: 'All Orders',
+                    type: 'line',
+                    data: resp.result.data
+                }, {
+                    name: 'New Customers',
+                    type: 'line',
+                    data: resp.result.unique_customers
+                }, {
+                    name: 'Returning Customers',
+                    type: 'line',
+                    data:resp.result.returning_customers
+                }],
+                yaxis: {
+                    min: 0
+                },
+                xaxis: {
+                    type: 'datetime',
+                    categories: resp.result.labeling,
+                    axisBorder: {
+                        show: true,
+                        color: '#bec7e0',
+                    },
+                    axisTicks: {
+                        show: true,
+                        color: '#bec7e0',
+                    },
+                },
+                colors: ["#e6c255", "#1ecab8", "#ffc107"],
+                tooltip: {
+                    shared: true,
+                    intersect: false
+                },
+                grid: {
+                    borderColor: '#f1f3fa'
                 }
-            } else if((e.clientId == storeValues._cl)) {
+            }
+
+            if (periodSelected == 'today') {
+                delete ordersTrend.xaxis.type;
+            }
+            new ApexCharts(document.querySelector("#dash_spark_1"), ordersTrend).render();
+
+        }, error: function(err) {
+            $(`div[class~="orders-loader"]`).html(``);
+        }, complete: function(data) {
+            $(`div[class~="apexcharts-legend"]`).removeClass('center');
+        }
+    });
+}
+
+var topContactsPerformance = (periodSelected = 'today') => {
+
+    if ($(`table[class~="custPerformance"]`).length) {
+        $.ajax({
+            type: "POST",
+            url: `${baseUrl}api/reportsAnalytics/generateReport`,
+            data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
+            dataType: "JSON",
+            beforeSend: function() {},
+            success: function(resp) {
+                var count = 0,
+                trData = ``;
+
+                $(`table[class~="custPerformance"]`).dataTable().fnDestroy();
+                $(`table[class~="custPerformance"]`).dataTable({
+                    "aaData": resp.result,
+                    "iDisplayLength": 10,
+                    "buttons": ["copy", "print","csvHtml5"],
+                    "lengthChange": !1,
+                    "dom": "Bfrtip",
+                    "columns": [
+                    { "data": 'row_id' },
+                    { "data": 'fullname' },
+                    { "data": 'orders_count' },
+                    { "data": 'total_amount' },
+                    { "data": 'total_balance' },
+                    { "data": 'action' }
+                    ]
+                });
+            },
+            error: function(err) {},
+            complete: function(data) {
+                salesAttendantHistory();
+            }
+        });
+    }
+}
+
+var fetchSalesRecords = () => {
+    var colspan = "7";
+
+    var period = $(`select[name="periodSelected"]`).val();
+
+    $.ajax({
+        url: `${baseUrl}api/dashboardAnalytics/getSales`,
+        type: "POST",
+        dataType: "json",
+        data: { getSales: true, salesPeriod: period },
+        beforeSend: function() {},
+        success: function(data) {
+
+            $(`table[class~="salesLists"]`).dataTable().fnDestroy();
+            if (data.status == true) {
+                $(`table[class~="salesLists"]`).dataTable({
+                    "aaData": data.message.table,
+                    "iDisplayLength": 10,
+                    "buttons": ["copy", "print","csvHtml5"],
+                    "lengthChange": !1,
+                    "dom": "Bfrtip",
+                    "columns": [
+                    { "data": 'row' },
+                    { "data": 'order_id' },
+                    { "data": 'fullname' },
+                    { "data": 'phone' },
+                    { "data": 'date' },
+                    { "data": 'amount' },
+                    { "data": 'action' }
+                    ]
+                });
+
+                if($("span[class~='total-sales']").length) {
+                    $("span[class~='total-sales']").html(data.message.totalSales.total);
+                    $("span[class~='total-sales-trend']").html(data.message.totalSales.trend);
+
+                    $("span[class~='total-served']").html(data.message.totalServed.total);
+                    $("span[class~='total-served-trend']").html(data.message.totalServed.trend);
+
+                    $("span[class~='average-sales']").html(data.message.averageSales.total);
+                    $("span[class~='average-sales-trend']").html(data.message.averageSales.trend);
+
+                    $("span[class~='total-discounts']").html(data.message.totalDiscount.total);
+                    $("span[class~='total-discounts-trend']").html(data.message.totalDiscount.trend);
+
+                    $("span[class~='total-credit-sales']").html(data.message.totalCredit.total);
+                    $("span[class~='total-credit-sales']-trend").html(data.message.totalCredit.trend);
+
+                    $("span[class~='total-profit']").html(data.message.salesComparison.profit);
+                    $("span[class~='total-profit-trend']").html(data.message.salesComparison.profit_trend);
+
+                    $("span[class~='total-selling']").html(data.message.salesComparison.selling);
+                    $("span[class~='total-selling-trend']").html(data.message.salesComparison.selling_trend);
+
+                    $("span[class~='total-cost']").html(data.message.salesComparison.cost);
+                    $("span[class~='total-cost-trend']").html(data.message.salesComparison.cost_trend);
+                }
+            } else {
+                $(`table[class~="salesLists"]`).dataTable();
+            }
+
+        },
+        complete: function(data) {
+            $(`div[class="main-content"]`).on('click', `a[class~="print-receipt"]`, function(e) {
+                let orderId = $(this).data('sales-id');
+                window.open(
+                    `${baseUrl}receipt/${orderId}`,
+                    `Sales Invoice - Receipt #${orderId}`,
+                    `width=650,height=750,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
+                    );
+            });
+            $(`div[class="main-content"]`).on('click', `a[class~="resend-email"]`, function(e) {
+                $(`div[class~="sendMailModal"] input[name="fullname"]`).val($(this).data('name'));
+                $(`div[class~="sendMailModal"] input[name="send_email"]`).val($(this).data('email'));
+                $(`div[class~="sendMailModal"] input[name="receiptId"]`).val($(this).data('sales-id'));
+                $(`div[class~="sendMailModal"] input[name="request_type"]`).val('invoice');
+                $(`div[class~="sendMailModal"] input[name="customerId"]`).val($(this).data('customer-id'));
+                $(`div[class~="sendMailModal"]`).modal('show');
+            });
+            hL();
+        }, error: function(err) {
+        }
+    });
+}
+
+var fetchInventoryRecords = () => {
+
+    if ($(`table[class~="inventoryLists"]`).length) {
+        var colspan = "7";
+
+        $.ajax({
+            url: `${baseUrl}api/dashboardAnalytics/fetchInventoryRecords`,
+            type: "POST",
+            dataType: "json",
+            data: { fetchInventoryRecords: true, request: "fetchInventoryRecords" },
+            success: function(data) {
+                if (data.status == true) {
+                    $(`table[class~="inventoryLists"]`).dataTable().fnDestroy();
+                    $(`table[class~="inventoryLists"]`).dataTable({
+                        "aaData": data.message,
+                        "iDisplayLength": 10,
+                        "columns": [
+                        { "data": 'row' },
+                        { "data": 'product' },
+                        { "data": 'quantity' },
+                        { "data": 'price' },
+                        { "data": 'recordedBy' },
+                        { "data": 'orderDate' }
+                        ]
+                    });
+                }
+            },
+            complete: function() {}
+        });
+    }
+}
+
+var fetchProductThresholds = () => {
+    if ($(`table[class~="thresholdLists"]`).length) {
+        var colspan = "3";
+        $.ajax({
+            url: baseUrl + "api/dashboardAnalytics",
+            type: "POST",
+            dataType: "json",
+            data: { request: "getProductThresholds" },
+            success: function(data) {
+                if (data.status == true) {
+                    $(`table[class~="thresholdLists"]`).dataTable().fnDestroy();
+                    $(`table[class~="thresholdLists"]`).dataTable({
+                        "aaData": data.message,
+                        "iDisplayLength": 10,
+                        "columns": [
+                        { "data": 'row' },
+                        { "data": 'product' },
+                        { "data": 'quantity' }
+                        ]
+                    });
+                }
+            },
+            complete: function() {}
+        });
+    }
+}
+
+async function dashboardAnalitics() {
+
+    async function loadSalesData() {
+        return new Promise((resolve, reject) => {
+            var data = listIDB('sales');
+            resolve(data);
+        });
+    }
+
+    var salesData = await loadSalesData();
+
+    Array.prototype.unique = function() {
+        return this.filter(function(value, index, self) {
+            return self.indexOf(value) === index;
+        });
+    }
+
+    var totals = 0,
+    credits = 0,
+    orders = 0, expectedSellingPrice = 0,
+    productsCostPrice = 0,
+    customers = 0, row = 0;
+    var customerArray = new Array();
+    var salesArray = new Array();
+    var salesFigures = new Array();
+    var creditSalesArray = new Array();
+    var paidSalesArray = new Array();
+
+    var creditBadge = ``, hourAndValue = new Array(), vHours = new Array();
+
+    $.each(salesData, function(i, e) {
+
+        if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+            if ((e.branchId == storeValues._clb) && (e.recorded_by == storeValues._ud)) {
                 orders += 1;
+                customerArray.push(e.customer_id);
+                totals += parseFloat(e.order_amount_paid);
+                productsCostPrice += parseFloat(e.total_cost_price);
+                expectedSellingPrice += parseFloat(e.total_expected_selling_price);
+                salesFigures.push(parseFloat(e.order_amount_paid));
+
+                vHours.push(parseFloat(e.hour_of_day));
+
                 if(e.credit_sales == 1) {
                     creditSalesArray.push(parseFloat(e.order_amount_paid));
                 } else if(e.credit_sales == 0) {
                     paidSalesArray.push(parseFloat(e.order_amount_paid));
                 }
-               
-                productsCostPrice += parseFloat(e.total_cost_price);
-                customerArray.push(e.customer_id);
-                totals += parseFloat(e.order_amount_paid);
-                salesFigures.push(parseFloat(e.order_amount_paid));
-                expectedSellingPrice += parseFloat(e.total_expected_selling_price);
-
-                vHours.push(parseFloat(e.hour_of_day));
+            }
+        } else if((e.clientId == storeValues._cl)) {
+            orders += 1;
+            if(e.credit_sales == 1) {
+                creditSalesArray.push(parseFloat(e.order_amount_paid));
+            } else if(e.credit_sales == 0) {
+                paidSalesArray.push(parseFloat(e.order_amount_paid));
             }
 
-            if ((e.credit_sales == 1) && (e.clientId == storeValues._cl)) {
-                credits += parseFloat(e.order_amount_paid);
-            }
+            productsCostPrice += parseFloat(e.total_cost_price);
+            customerArray.push(e.customer_id);
+            totals += parseFloat(e.order_amount_paid);
+            salesFigures.push(parseFloat(e.order_amount_paid));
+            expectedSellingPrice += parseFloat(e.total_expected_selling_price);
 
-            if (e.payment_type == 'cash') {
-                creditBadge = `<span class="text-gray">Cash Sale</span>`;
-            } else if (e.payment_type == 'momo') {
-                creditBadge = `<span class="text-gray">Mobile Money</span>`;
-            } else if (e.payment_type == 'card') {
-                creditBadge = `<span class="text-gray">Card Payment</span>`;
-            } else if (e.payment_type == 'credit') {
-                creditBadge = `<span class="text-gray">Credit</span>`;
-            }
+            vHours.push(parseFloat(e.hour_of_day));
+        }
 
-            if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
-                if (e.recorded_by == storeValues._ud) {
-                    salesArray.push({
-                        row: orders,
-                        order_id: `${e.order_id} <br> ${creditBadge}`,
-                        fullname: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">${e.customer_fullname}</a>`,
-                        phone: e.customer_contact,
-                        date: e.order_date,
-                        amount: e.order_amount_paid,
-                        action: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">
-                            <i class="fa fa-eye"></i>
-                        </a>`
-                    });
-                }
-            } else if((e.clientId == storeValues._cl)) {
+        if ((e.credit_sales == 1) && (e.clientId == storeValues._cl)) {
+            credits += parseFloat(e.order_amount_paid);
+        }
+
+        if (e.payment_type == 'cash') {
+            creditBadge = `<span class="text-gray">Cash Sale</span>`;
+        } else if (e.payment_type == 'momo') {
+            creditBadge = `<span class="text-gray">Mobile Money</span>`;
+        } else if (e.payment_type == 'card') {
+            creditBadge = `<span class="text-gray">Card Payment</span>`;
+        } else if (e.payment_type == 'credit') {
+            creditBadge = `<span class="text-gray">Credit</span>`;
+        }
+
+        if ((storeValues._hi != 1) && (e.clientId == storeValues._cl)) {
+            if (e.recorded_by == storeValues._ud) {
                 salesArray.push({
                     row: orders,
                     order_id: `${e.order_id} <br> ${creditBadge}`,
@@ -4423,354 +4457,367 @@ $(function() {
                     date: e.order_date,
                     amount: e.order_amount_paid,
                     action: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">
-                        <i class="fa fa-eye"></i>
+                    <i class="fa fa-eye"></i>
                     </a>`
                 });
             }
-        });
-
-        var lowestSale = `${storeValues.cur} ${fmtCurr(Math.min(...salesFigures))}`;
-        var highestSale = `${storeValues.cur} ${fmtCurr(Math.max(...salesFigures))}`;
-        var totalDiscount = `${storeValues.cur} (${fmtCurr(expectedSellingPrice - totals)})`;
-        var creditTotal = `${storeValues.cur} ${fmtCurr(credits)}`;
-        var salesTotal = `${storeValues.cur} ${fmtCurr(totals)}`;
-        var totalCost = `${storeValues.cur} ${fmtCurr(productsCostPrice)}`;
-        var totalProfit = `${storeValues.cur} ${fmtCurr(totals-productsCostPrice)}`;
-        var creditPercent = `<span class='text-danger'>${storeValues.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
-        var average = `${storeValues.cur} ${fmtCurr(totals/orders)}`;
-
-        var hValues = new Array();
-        for(var i = 0; i < vHours.length; i++) {
-            if(hValues[vHours[i]] !== undefined) {
-                hValues[vHours[i]] += parseFloat(salesFigures[i]);
-            } else if(typeof vHours[i] !== undefined) {
-                hValues[vHours[i]] = parseFloat(salesFigures[i]);
-            }
+        } else if((e.clientId == storeValues._cl)) {
+            salesArray.push({
+                row: orders,
+                order_id: `${e.order_id} <br> ${creditBadge}`,
+                fullname: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">${e.customer_fullname}</a>`,
+                phone: e.customer_contact,
+                date: e.order_date,
+                amount: e.order_amount_paid,
+                action: `<a href="javascript:void(0)" type="button" class="get-sales-details text-success" data-sales-id="${e.order_id}" onclick="return getSalesDetails('${e.order_id}')">
+                <i class="fa fa-eye"></i>
+                </a>`
+            });
         }
-
-        var hourOfTheDay = {0:"12AM",1:"1AM",2:"2AM",3:"3AM",4:"4AM",5:"5AM",6:"6AM",7:"7AM",8:"8AM",9:"9AM",10:"10AM",11:"11AM",12:"12PM",13:"1PM",14:"2PM",15:"3PM",16:"4PM",17:"5PM",18:"6PM",19:"7PM",20:"8PM",21:"9PM",22:"10PM",23:"11PM"};
-
-        var goodHour = new Array(), goodValues = new Array();
-        $.each(hValues, function(i, e) {
-            if(e != undefined) {
-                goodValues.push(e);
-                goodHour.push(hourOfTheDay[i]);
-            }
-        });
-
-        var data = {
-            total: salesTotal,
-            credit: creditTotal,
-            orders: orders,
-            customers: customerArray.unique(),
-            creditPercent: creditPercent,
-            salesHistory: salesArray,
-            averageSale: average,
-            profit: totalProfit,
-            selling: salesTotal,
-            cost: totalCost,
-            highest: highestSale,
-            lowest: lowestSale,
-            analitics: {
-                hourValues: goodValues,
-                goodHour: goodHour
-            }
-        };
-
-        return data;
-    }
-
-    $(`span[class~="switch-button"]`).on('click', async function(e) {
-
-        let show = $(this).attr('data-show-content');
-        let hide = $(this).attr('data-hide-content');
-
-        $(`div[class~="${show}"]`).removeClass('hidden').fadeIn('slow');
-        $(`div[class~="${hide}"]`).addClass('hidden').fadeOut('slow');
-
-        await $.ajax({
-            url: `${baseUrl}api/branchManagment/saveReportsRecord`,
-            data: { saveReportsRecord: true, attendantPerformance: show },
-            type: "POST",
-            dataType: "JSON",
-            success: function(resp) {
-            }
-        });
     });
 
-    if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"], div[class~="pos-reporting"]`).length) {
+    var lowestSale = `${storeValues.cur} ${fmtCurr(Math.min(...salesFigures))}`;
+    var highestSale = `${storeValues.cur} ${fmtCurr(Math.max(...salesFigures))}`;
+    var totalDiscount = `${storeValues.cur} (${fmtCurr(expectedSellingPrice - totals)})`;
+    var creditTotal = `${storeValues.cur} ${fmtCurr(credits)}`;
+    var salesTotal = `${storeValues.cur} ${fmtCurr(totals)}`;
+    var totalCost = `${storeValues.cur} ${fmtCurr(productsCostPrice)}`;
+    var totalProfit = `${storeValues.cur} ${fmtCurr(totals-productsCostPrice)}`;
+    var creditPercent = `<span class='text-danger'>${storeValues.cur} ${parseFloat((credits/totals)*100).toFixed(2)}% of Total Sales</span>`;
+    var average = `${storeValues.cur} ${fmtCurr(totals/orders)}`;
 
-        var offline = true;
+    var hValues = new Array();
+    for(var i = 0; i < vHours.length; i++) {
+        if(hValues[vHours[i]] !== undefined) {
+            hValues[vHours[i]] += parseFloat(salesFigures[i]);
+        } else if(typeof vHours[i] !== undefined) {
+            hValues[vHours[i]] = parseFloat(salesFigures[i]);
+        }
+    }
 
-        async function loadDashboardInformation() {
+    var hourOfTheDay = {0:"12AM",1:"1AM",2:"2AM",3:"3AM",4:"4AM",5:"5AM",6:"6AM",7:"7AM",8:"8AM",9:"9AM",10:"10AM",11:"11AM",12:"12PM",13:"1PM",14:"2PM",15:"3PM",16:"4PM",17:"5PM",18:"6PM",19:"7PM",20:"8PM",21:"9PM",22:"10PM",23:"11PM"};
 
-            await dOC().then((itResp) => {
-                if (itResp == 1) {
-                    offline = false;
-                    $(`div[class="connection"]`).css('display', 'none');
-                    $(`div[class~="offline-placeholder"]`).css('display','none');
-                } else {
-                    offline = true;
-                    $(`div[class="connection"]`).css('display', 'block');
-                    $(`div[class~="offline-placeholder"]`).css('display','flex');
-                    $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
-                    $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
-                }
-            }).catch((err) => {
+    var goodHour = new Array(), goodValues = new Array();
+    $.each(hValues, function(i, e) {
+        if(e != undefined) {
+            goodValues.push(e);
+            goodHour.push(hourOfTheDay[i]);
+        }
+    });
+
+    var data = {
+        total: salesTotal,
+        credit: creditTotal,
+        orders: orders,
+        customers: customerArray.unique(),
+        creditPercent: creditPercent,
+        salesHistory: salesArray,
+        averageSale: average,
+        profit: totalProfit,
+        selling: salesTotal,
+        cost: totalCost,
+        highest: highestSale,
+        lowest: lowestSale,
+        analitics: {
+            hourValues: goodValues,
+            goodHour: goodHour
+        }
+    };
+
+    return data;
+}
+
+$(`span[class~="switch-button"]`).on('click', async function(e) {
+
+    let show = $(this).attr('data-show-content');
+    let hide = $(this).attr('data-hide-content');
+
+    $(`div[class~="${show}"]`).removeClass('hidden').fadeIn('slow');
+    $(`div[class~="${hide}"]`).addClass('hidden').fadeOut('slow');
+
+    await $.ajax({
+        url: `${baseUrl}api/branchManagment/saveReportsRecord`,
+        data: { saveReportsRecord: true, attendantPerformance: show },
+        type: "POST",
+        dataType: "JSON",
+        success: function(resp) {
+        }
+    });
+});
+
+if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"], div[class~="pos-reporting"]`).length) {
+
+    var offline = true;
+
+    async function loadDashboardInformation() {
+
+        await dOC().then((itResp) => {
+            if (itResp == 1) {
+                offline = false;
+                $(`div[class="connection"]`).css('display', 'none');
+                $(`div[class~="offline-placeholder"]`).css('display','none');
+            } else {
                 offline = true;
                 $(`div[class="connection"]`).css('display', 'block');
                 $(`div[class~="offline-placeholder"]`).css('display','flex');
-            });
-
-            if(offline) {
-
-                $(`select[name="periodSelected"]`).prop('disabled', true);
-                $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
                 $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
                 $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
-                dashboardAnalitics().then(async (dashboardInsights) => {
+            }
+        }).catch((err) => {
+            offline = true;
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display','flex');
+        });
 
-                    if($(`table[class~="salesLists"]`).length) {
-                        
-                        $(`table[class~="salesLists"]`).dataTable().fnDestroy();
+        if(offline) {
 
-                        $(`table[class~="salesLists"]`).dataTable({
-                            "aaData": dashboardInsights.salesHistory,
-                            "iDisplayLength": 10,
-                            "columns": [
-                                { "data": 'row' },
-                                { "data": 'order_id' },
-                                { "data": 'fullname' },
-                                { "data": 'phone' },
-                                { "data": 'date' },
-                                { "data": 'amount' },
-                                { "data": 'action' }
-                            ]
+            $(`select[name="periodSelected"]`).prop('disabled', true);
+            $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
+            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
+            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+            dashboardAnalitics().then(async (dashboardInsights) => {
+
+                if($(`table[class~="salesLists"]`).length) {
+
+                    $(`table[class~="salesLists"]`).dataTable().fnDestroy();
+
+                    $(`table[class~="salesLists"]`).dataTable({
+                        "aaData": dashboardInsights.salesHistory,
+                        "iDisplayLength": 10,
+                        "columns": [
+                        { "data": 'row' },
+                        { "data": 'order_id' },
+                        { "data": 'fullname' },
+                        { "data": 'phone' },
+                        { "data": 'date' },
+                        { "data": 'amount' },
+                        { "data": 'action' }
+                        ]
+                    });
+
+
+                }
+
+                if ($(`div[class~="dashboard-reports"]`).length) {
+                    $(".total-sales").html(dashboardInsights.total);
+                    $(".total-sales-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
+                    $(".total-served").html(dashboardInsights.orders);
+                    $(".total-served-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Customers Served</span>`);
+                    $(".total-products").html(dashboardInsights.averageSale);
+                    $(".total-products-worth").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Sold today</span>`);
+                    $(".total-credit-sales").html(dashboardInsights.credit);
+                    $(".total-credit-sales-trend").html(dashboardInsights.creditPercent);
+
+                    $(".total-profit").html(dashboardInsights.profit);
+                    $(".total-profit-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Profits made from sale</span>`);
+
+                    $(".total-selling").html(dashboardInsights.selling);
+                    $(".total-selling-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Revenue less Discount</span>`);
+
+                    $(".total-cost").html(dashboardInsights.cost);
+                    $(".total-cost-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Costs of Items sold</span>`);
+                }
+
+                if($(`div[class~="pos-reporting"]`).length) {
+
+                    await gIDBR('reports', "branch_performance").then((branchInsight) => {
+                        delete branchInsight.reports_id;
+                        var branchData = new Array();
+                        populateBranchData(Object.values(branchInsight));
+                    }).then((resp) => {
+                        gIDBR('reports', "sales_attendant_performance").then((attendantInsight) => {
+                            populateSalesTeamData(Object.values(attendantInsight.list), Object.values(attendantInsight.names), Object.values(attendantInsight.sales))
                         });
-
-
-                    }
-
-                    if ($(`div[class~="dashboard-reports"]`).length) {
-                        $(".total-sales").html(dashboardInsights.total);
-                        $(".total-sales-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
-                        $(".total-served").html(dashboardInsights.orders);
-                        $(".total-served-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Customers Served</span>`);
-                        $(".total-products").html(dashboardInsights.averageSale);
-                        $(".total-products-worth").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Sold today</span>`);
-                        $(".total-credit-sales").html(dashboardInsights.credit);
-                        $(".total-credit-sales-trend").html(dashboardInsights.creditPercent);
-
-                        $(".total-profit").html(dashboardInsights.profit);
-                        $(".total-profit-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Profits made from sale</span>`);
-
-                        $(".total-selling").html(dashboardInsights.selling);
-                        $(".total-selling-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Revenue less Discount</span>`);
-
-                        $(".total-cost").html(dashboardInsights.cost);
-                        $(".total-cost-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Costs of Items sold</span>`);
-                    }
-
-                    if($(`div[class~="pos-reporting"]`).length) {
-
-                        await gIDBR('reports', "branch_performance").then((branchInsight) => {
-                            delete branchInsight.reports_id;
-                            var branchData = new Array();
-                            populateBranchData(Object.values(branchInsight));
-                        }).then((resp) => {
-                            gIDBR('reports', "sales_attendant_performance").then((attendantInsight) => {
-                                populateSalesTeamData(Object.values(attendantInsight.list), Object.values(attendantInsight.names), Object.values(attendantInsight.sales))
-                            });
-                        }).then((res) => {
-                            gIDBR('reports', "products_performance").then((productsInsight) => {
-                                delete productsInsight.reports_id;
-                                populateProductsPerformance(Object.values(productsInsight));
-                            });
+                    }).then((res) => {
+                        gIDBR('reports', "products_performance").then((productsInsight) => {
+                            delete productsInsight.reports_id;
+                            populateProductsPerformance(Object.values(productsInsight));
                         });
+                    });
 
-                        $(`p[data-model="highest-sale"] span`).html(dashboardInsights.highest);
-                        $(`p[data-model="lowest-sale"] span`).html(dashboardInsights.lowest);
-                       
-                        $(`div[data-report="total-sales"] h3[class="my-3"]`).html(dashboardInsights.total);
-                        $(`div[data-report="total-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
+                    $(`p[data-model="highest-sale"] span`).html(dashboardInsights.highest);
+                    $(`p[data-model="lowest-sale"] span`).html(dashboardInsights.lowest);
 
-                        $(`div[data-report="average-sales"] h3[class="my-3"]`).html(dashboardInsights.averageSale);
-                        $(`div[data-report="average-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Average Sales Today</span>`);
+                    $(`div[data-report="total-sales"] h3[class="my-3"]`).html(dashboardInsights.total);
+                    $(`div[data-report="total-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
 
-                        $(`div[data-report="highest-sales"] h3[class="my-3"]`).html(dashboardInsights.highest);
-                        $(`div[data-report="highest-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> highest Sales Today</span>`);
+                    $(`div[data-report="average-sales"] h3[class="my-3"]`).html(dashboardInsights.averageSale);
+                    $(`div[data-report="average-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Average Sales Today</span>`);
 
-                        $(`div[data-report="total-orders"] h3[class="my-3"]`).html(dashboardInsights.orders);
-                        $(`div[data-report="total-orders"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
+                    $(`div[data-report="highest-sales"] h3[class="my-3"]`).html(dashboardInsights.highest);
+                    $(`div[data-report="highest-sales"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> highest Sales Today</span>`);
 
-                        var thisOpts = {
-                            chart: {
-                                height: 374,
-                                type: 'line',
-                                shadow: {
-                                    enabled: false,
-                                    color: '#bbb',
-                                    top: 3,
-                                    left: 2,
-                                    blur: 3,
-                                    opacity: 1
-                                },
-                            },
-                            stroke: {
-                                width: 5,
-                                curve: 'smooth'
-                            },
-                            series: [{
-                                name: 'Total Sales',
-                                data: dashboardInsights.analitics.hourValues
-                            }],
-                            xaxis: {
-                                type: 'datetime',
-                                categories: dashboardInsights.analitics.goodHour,
-                                axisBorder: {
-                                    show: true,
-                                    color: '#bec7e0',
-                                },
-                                axisTicks: {
-                                    show: true,
-                                    color: '#bec7e0',
-                                },
-                            },
-                            fill: {
-                                type: 'gradient',
-                                gradient: {
-                                    shade: 'dark',
-                                    gradientToColors: ['#43cea2'],
-                                    shadeIntensity: 1,
-                                    type: 'horizontal',
-                                    opacityFrom: 1,
-                                    opacityTo: 1,
-                                    stops: [0, 100, 100, 100]
-                                },
-                            },
-                            markers: {
-                                size: 4,
-                                opacity: 0.9,
-                                colors: ["#ffbc00"],
-                                strokeColor: "#fff",
-                                strokeWidth: 2,
-                                style: 'hollow',
-                                hover: {
-                                    size: 7,
-                                }
-                            },
-                            yaxis: {
-                                title: {
-                                    text: 'Sales Values',
-                                },
-                            },
-                            tooltip: {
-                                shared: true,
-                                intersect: false,
-                                y: {
-                                    formatter: function(y) {
-                                        if (typeof y !== "undefined") {
-                                            return storeValues.cur + fmtCurr(y);
-                                        }
-                                        return y;
+                    $(`div[data-report="total-orders"] h3[class="my-3"]`).html(dashboardInsights.orders);
+                    $(`div[data-report="total-orders"] p[class~="text-truncate"]`).html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
 
+                    var thisOpts = {
+                        chart: {
+                            height: 374,
+                            type: 'line',
+                            shadow: {
+                                enabled: false,
+                                color: '#bbb',
+                                top: 3,
+                                left: 2,
+                                blur: 3,
+                                opacity: 1
+                            },
+                        },
+                        stroke: {
+                            width: 5,
+                            curve: 'smooth'
+                        },
+                        series: [{
+                            name: 'Total Sales',
+                            data: dashboardInsights.analitics.hourValues
+                        }],
+                        xaxis: {
+                            type: 'datetime',
+                            categories: dashboardInsights.analitics.goodHour,
+                            axisBorder: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                            axisTicks: {
+                                show: true,
+                                color: '#bec7e0',
+                            },
+                        },
+                        fill: {
+                            type: 'gradient',
+                            gradient: {
+                                shade: 'dark',
+                                gradientToColors: ['#43cea2'],
+                                shadeIntensity: 1,
+                                type: 'horizontal',
+                                opacityFrom: 1,
+                                opacityTo: 1,
+                                stops: [0, 100, 100, 100]
+                            },
+                        },
+                        markers: {
+                            size: 4,
+                            opacity: 0.9,
+                            colors: ["#ffbc00"],
+                            strokeColor: "#fff",
+                            strokeWidth: 2,
+                            style: 'hollow',
+                            hover: {
+                                size: 7,
+                            }
+                        },
+                        yaxis: {
+                            title: {
+                                text: 'Sales Values',
+                            },
+                        },
+                        tooltip: {
+                            shared: true,
+                            intersect: false,
+                            y: {
+                                formatter: function(y) {
+                                    if (typeof y !== "undefined") {
+                                        return storeValues.cur + fmtCurr(y);
                                     }
-                                }
-                            },
-                            grid: {
-                                row: {
-                                    colors: ['transparent', 'transparent'],
-                                    opacity: 0.2
-                                },
-                                borderColor: '#185a9d'
-                            },
-                            responsive: [{
-                                breakpoint: 600,
-                                options: {
-                                    chart: {
-                                        toolbar: {
-                                            show: false
-                                        }
-                                    },
-                                    legend: {
-                                        show: false
-                                    },
-                                }
-                            }]
-                        }
+                                    return y;
 
-                        delete thisOpts.xaxis.type;
-                        
-                        var chart = new ApexCharts(
-                            document.querySelector("#sales-overview-chart"),
-                            thisOpts
+                                }
+                            }
+                        },
+                        grid: {
+                            row: {
+                                colors: ['transparent', 'transparent'],
+                                opacity: 0.2
+                            },
+                            borderColor: '#185a9d'
+                        },
+                        responsive: [{
+                            breakpoint: 600,
+                            options: {
+                                chart: {
+                                    toolbar: {
+                                        show: false
+                                    }
+                                },
+                                legend: {
+                                    show: false
+                                },
+                            }
+                        }]
+                    }
+
+                    delete thisOpts.xaxis.type;
+
+                    var chart = new ApexCharts(
+                        document.querySelector("#sales-overview-chart"),
+                        thisOpts
                         );
 
-                        chart.render();
-                       
-                    }
-                });
-                
-                hL();
+                    chart.render();
 
-                return false;
-            }
-
-            $(`div[class~="offline-placeholder"]`).css({ 'display': 'none' });
-            $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
-
-            if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"]`).length) {
-                fetchSalesRecords();
-                salesAttendantPerformance(period);
-
-                if($(`div[class~="sales-overview-data"]`).length) {
-                    salesOverview('this-week');
                 }
-
-            } else if($(`div[class~="pos-reporting"]`).length) {
-
-                var period = $(`select[name="periodSelected"]`).val();
-                
-                if ($(`div[class~="reports-summary"]`).length) {
-                    summaryItems(period);
-                    salesOverview(period);
-                    salesAttendantPerformance(period);
-                    if($(`div[id="dash_spark_1"]`).length) {
-                        ordersCount(period);
-                    }
-                    topContactsPerformance(period);
-                    branchPerformance(period);
-                }
-
-                $(`select[name="periodSelected"]`).on('change', function() {
-                    sL();
-                    var periodSelected = $(this).val();
-                    summaryItems(periodSelected);
-                    salesOverview(periodSelected);
-                    if($(`div[id="dash_spark_1"]`).length) {
-                        ordersCount(periodSelected);
-                    }
-                    salesAttendantPerformance(periodSelected);
-                    topContactsPerformance(periodSelected);
-                    branchPerformance(periodSelected);
-                });
-
-            }
-
-            $(`select[name="periodSelected"]`).on('change', function() {
-                fetchSalesRecords();
             });
 
-        }
+hL();
 
-        loadDashboardInformation();
+return false;
+}
+
+$(`div[class~="offline-placeholder"]`).css({ 'display': 'none' });
+$(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
+
+if ($(`div[class~="dashboard-reports"], div[class~="overallSalesHistory"]`).length) {
+    fetchSalesRecords();
+    salesAttendantPerformance(period);
+
+    if($(`div[class~="sales-overview-data"]`).length) {
+        salesOverview('this-week');
     }
+
+} else if($(`div[class~="pos-reporting"]`).length) {
+
+    var period = $(`select[name="periodSelected"]`).val();
+
+    if ($(`div[class~="reports-summary"]`).length) {
+        summaryItems(period);
+        salesOverview(period);
+        salesAttendantPerformance(period);
+        if($(`div[id="dash_spark_1"]`).length) {
+            ordersCount(period);
+        }
+        topContactsPerformance(period);
+        branchPerformance(period);
+    }
+
+    $(`select[name="periodSelected"]`).on('change', function() {
+        sL();
+        var periodSelected = $(this).val();
+        summaryItems(periodSelected);
+        salesOverview(periodSelected);
+        if($(`div[id="dash_spark_1"]`).length) {
+            ordersCount(periodSelected);
+        }
+        salesAttendantPerformance(periodSelected);
+        topContactsPerformance(periodSelected);
+        branchPerformance(periodSelected);
+    });
+
+}
+
+$(`select[name="periodSelected"]`).on('change', function() {
+    fetchSalesRecords();
+});
+
+}
+
+loadDashboardInformation();
+}
 
 });
 
 
 if($(`div[class~="request-form"]`).length) {
-    
+
     let productPrices = [];
 
     var overallSubTotal = 0, totalDiscountDeducted = 0;
@@ -4921,7 +4968,7 @@ if($(`div[class~="request-form"]`).length) {
             rowCount++;
 
             let tr = `<tr class='products-row' data-row-id='${rowData.productId}'>
-            
+
             <td class='products-row-number' style='padding-top: 30px;'>
             <td style="padding-top: 30px;">${rowData.productName}</td>
             <td><input type="number" min="1" onkeypress="return isNumber(event)" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" class="form-control product-price" style="width:110px" value="${rowData.productPrice}"></td>
@@ -4932,9 +4979,9 @@ if($(`div[class~="request-form"]`).length) {
             <td class='p-0'><button class='btn mt-4 btn-sm btn-outline-danger mb-1 remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>
             </tr>`;
             let rr = `<tr class='receipt-product-row' data-row-id='${rowData.productId}'>
-                <td>${rowData.productName}</td>
-                <td class='receipt-row-quantity'>${qty}</td>
-                <td class="text-right receipt-row-subtotal">${subTotal}</td>
+            <td>${rowData.productName}</td>
+            <td class='receipt-row-quantity'>${qty}</td>
+            <td class="text-right receipt-row-subtotal">${subTotal}</td>
             </tr>`;
             tbody.append(tr);
             $("[data-bind-html='productrow']").append(rr);
@@ -4975,12 +5022,12 @@ if($(`div[class~="request-form"]`).length) {
                             }
                             subtotal = (value*selectedQty).toFixed(2);
                         }
-                        
+
                         subTotalBox.text(subtotal);
                         receipt_qty.text(selectedQty);
                         receipt_subTotal.text(fmtCurr(subtotal));
                         recalculateTotalToPay();
-                        
+
                         if((sessionName == "OrdersList") && currentInput.hasClass('product-quantity')) {
                             let maximumQty = parseInt(selQuantityInput.attr('data-max'));
                             if(selectedQty > maximumQty) {
@@ -5004,115 +5051,115 @@ if($(`div[class~="request-form"]`).length) {
 
     $(`div[class~="request-form"] button[class~="save-request"]`).on('click', function() {
         var btnClicked = $(this),
-            buttonClicked = $(this).attr('data-request'),
-            requestId = rndInt(12);
-            customerId = $(`select[name="customer"]`).val();
-            discountType = $(`input[name="discount_type"]:checked`).val();
-            request = $(`span[class="hide-walk-in-customer"]`).data('request');
-            discountAmt = $(`input[name="discount_amount"]`).val(),
-            selectedProducts = new Array(),
-            thisProductTotal = 0,
-            productSubTotal = 0;
+        buttonClicked = $(this).attr('data-request'),
+        requestId = rndInt(12);
+        customerId = $(`select[name="customer"]`).val();
+        discountType = $(`input[name="discount_type"]:checked`).val();
+        request = $(`span[class="hide-walk-in-customer"]`).data('request');
+        discountAmt = $(`input[name="discount_amount"]`).val(),
+        selectedProducts = new Array(),
+        thisProductTotal = 0,
+        productSubTotal = 0;
 
-            $(`div[class="form-content-loader"]`).css("display","flex");
+        $(`div[class="form-content-loader"]`).css("display","flex");
 
-            $.each($(`tbody[class="products-table-body"] tr[class="products-row"]`), function(i, e) {
-                let productId = $(this).data("row-id");
-                    productQuantity = parseFloat($(`input[name="products[${productId}][qty]"]`).val());
-                    productPrice = parseFloat($(`input[name="products[${productId}][price]"]`).val());
-                    thisProductTotal = (productQuantity * productPrice);
-                    productSubTotal += thisProductTotal;
+        $.each($(`tbody[class="products-table-body"] tr[class="products-row"]`), function(i, e) {
+            let productId = $(this).data("row-id");
+            productQuantity = parseFloat($(`input[name="products[${productId}][qty]"]`).val());
+            productPrice = parseFloat($(`input[name="products[${productId}][price]"]`).val());
+            thisProductTotal = (productQuantity * productPrice);
+            productSubTotal += thisProductTotal;
 
-                selectedProducts.push({productId,productQuantity,productPrice,thisProductTotal});
-            });
+            selectedProducts.push({productId,productQuantity,productPrice,thisProductTotal});
+        });
 
-            let discountAmount = 0;
+        let discountAmount = 0;
 
-            if(discountAmt.length > 0) {
-                if(discountType == "cash") {
-                    if(discountAmt > productSubTotal) {
-                        discountAmt = productSubTotal;
-                        $(`input[name="discount_amount"]`).val(productSubTotal);
-                    }
-                    discountAmount = parseFloat(discountAmt);
-                } else if(discountType == "percentage") {
-                    if(discountAmt > 100) {
-                        discountAmt = 100;
-                        $(`input[name="discount_amount"]`).val(100);
-                    }
-                    discountAmount = (parseFloat(discountAmt)/100)*productSubTotal;
+        if(discountAmt.length > 0) {
+            if(discountType == "cash") {
+                if(discountAmt > productSubTotal) {
+                    discountAmt = productSubTotal;
+                    $(`input[name="discount_amount"]`).val(productSubTotal);
                 }
+                discountAmount = parseFloat(discountAmt);
+            } else if(discountType == "percentage") {
+                if(discountAmt > 100) {
+                    discountAmt = 100;
+                    $(`input[name="discount_amount"]`).val(100);
+                }
+                discountAmount = (parseFloat(discountAmt)/100)*productSubTotal;
             }
+        }
 
-            let overallTotal = parseFloat(productSubTotal - discountAmount).toFixed();
+        let overallTotal = parseFloat(productSubTotal - discountAmount).toFixed();
 
-            if(customerId == "null") {
-                Toast({
-                    type: "error",
-                    title: "Please select customer to continue!"
-                });
-                $(`div[class="form-content-loader"]`).css("display","none");
-                return false;
-            }
+        if(customerId == "null") {
+            Toast({
+                type: "error",
+                title: "Please select customer to continue!"
+            });
+            $(`div[class="form-content-loader"]`).css("display","none");
+            return false;
+        }
 
-            if(selectedProducts.length < 1) {
-                Toast({
-                    type: "error",
-                    title: "Please select at least one product!"
-                });
-                $(`div[class="form-content-loader"]`).css("display","none");
-                return false;   
-            }
+        if(selectedProducts.length < 1) {
+            Toast({
+                type: "error",
+                title: "Please select at least one product!"
+            });
+            $(`div[class="form-content-loader"]`).css("display","none");
+            return false;   
+        }
 
-            if(confirm("Are you sure you want to complete this transaction?")) {
-                $.post(`${baseUrl}api/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
-                    
-                    if(resp.status != 200) {
-                        Toast({
-                            type: "error",
-                            title: resp.result
-                        });
-                        $(`div[class="form-content-loader"]`).css("display","none");
-                    } else {
+        if(confirm("Are you sure you want to complete this transaction?")) {
+            $.post(`${baseUrl}api/pushRequest`, {selectedProducts, customerId, request, discountAmt, discountType}, function(resp) {
 
-                        $(`div[class="form-content-loader"]`).css("display","none");
-                        
-                        Toast({
-                            type: "success",
-                            title: resp.result.message
-                        });
-
-                        if(buttonClicked == "save-invoice") {
-                            setTimeout(function() {
-                                window.location.href = `${baseUrl}export/${resp.result.invoiceNumber}`;
-                            }, 500);
-                        } else {
-                            setTimeout(function() {
-                                window.location.href = `${baseUrl}requests/${resp.result.requestType}`;
-                            }, 1000);
-                        }
-                    }
-                }, "json").catch((err) => {
-                    $(`div[class="form-content-loader"]`).css("display","none");
+                if(resp.status != 200) {
                     Toast({
                         type: "error",
-                        title: "Sorry! Error processing request."
+                        title: resp.result
                     });
+                    $(`div[class="form-content-loader"]`).css("display","none");
+                } else {
+
+                    $(`div[class="form-content-loader"]`).css("display","none");
+
+                    Toast({
+                        type: "success",
+                        title: resp.result.message
+                    });
+
+                    if(buttonClicked == "save-invoice") {
+                        setTimeout(function() {
+                            window.location.href = `${baseUrl}export/${resp.result.invoiceNumber}`;
+                        }, 500);
+                    } else {
+                        setTimeout(function() {
+                            window.location.href = `${baseUrl}requests/${resp.result.requestType}`;
+                        }, 1000);
+                    }
+                }
+            }, "json").catch((err) => {
+                $(`div[class="form-content-loader"]`).css("display","none");
+                Toast({
+                    type: "error",
+                    title: "Sorry! Error processing request."
                 });
-            }
+            });
+        }
     });
 
 }
 
 
 $(() => {
-    
+
     $(`a[class~="read-instructions"]`).on('click', function() {
         $(`div[class~="instructionsModal"]`).modal('show');
     });
 
     var foundArrayList = new Array(),
-        csvContent = new Array();
+    csvContent = new Array();
 
     $(`div[class~="upload-buttons"] button[type="cancel"]`).on('click', function(evt) {
         if(confirm("Are you sure you want to cancel?")) {
@@ -5129,15 +5176,15 @@ $(() => {
 
     $(`div[class~="upload-buttons"] button[type="submit"]`).on('click', function(evt) {
         var btnClick = $(this);
-            btnClick.prop({
-                'disabled': true, 'title': 'Processing content'
-            }).html(`<i class="fa fa-spin fa-spinner"></i> Processing Content`);
+        btnClick.prop({
+            'disabled': true, 'title': 'Processing content'
+        }).html(`<i class="fa fa-spin fa-spinner"></i> Processing Content`);
 
         $(`div[class="form-content-loader"]`).css("display","flex");
         $.each($(`div[class~="csv-rows-content"] select`), function(id, key) {
             var selId = $(this).data('id'),
-                selName = $(this).attr('data-name');
-                csvContent[selName] = new Array();
+            selName = $(this).attr('data-name');
+            csvContent[selName] = new Array();
             $.each($(`div[class~="csv-row-data-${selId}"] p`), function(i, e) {
                 var pgText = $(this).text();
                 csvContent[selName].push(pgText);
@@ -5187,9 +5234,9 @@ $(() => {
     });
 
     var fileCheckerText = () => {
-        
+
         var selectValues = new Array(),
-            dataCount = 0;
+        dataCount = 0;
         $.each($(`div[class~="csv-rows-content"] select`), function(i, e) {
             selectValues.push($(this).val());
         });
@@ -5223,16 +5270,16 @@ $(() => {
     }
 
     var changeSelectInfo = (id, value) => {
-        
+
         if ($.inArray(value, acceptedArray) !== -1) {
             $(`div[data-row="${id}"] div[class="text-center"]`)
-                .html(`<h3 class="text-success"><i class="fa fa-check-circle"></i> Valid Column</h3>`);
-                $(`select[name="first_col_${id}"]`).val(value).change();
+            .html(`<h3 class="text-success"><i class="fa fa-check-circle"></i> Valid Column</h3>`);
+            $(`select[name="first_col_${id}"]`).val(value).change();
 
             foundArrayList.push(value);
         } else {
             $(`div[data-row="${id}"] div[class="text-center"]`)
-                .html(`<h3 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Unmatched Column</h3>`);
+            .html(`<h3 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Unmatched Column</h3>`);
         }
 
     }
@@ -5242,62 +5289,62 @@ $(() => {
         $(`div[class~="csv-rows-content"] select`).on('change', function(i, e) {
 
             var thisKey = $(this);
-                thisValue = thisKey.val(),
-                thisId = thisKey.data('id');
+            thisValue = thisKey.val(),
+            thisId = thisKey.data('id');
 
             if(($.inArray(thisValue, foundArrayList) === -1) && ($.inArray(thisValue, acceptedArray) !== -1)) {
-                
+
                 $(`div[data-row="${thisId}"] div[class="text-center"]`)
-                    .html(`<h3 class="text-success"><i class="fa fa-check-circle"></i> Valid Column</h3>`);
+                .html(`<h3 class="text-success"><i class="fa fa-check-circle"></i> Valid Column</h3>`);
                 $(`div[data-row="${thisId}"] select`).attr('data-name', thisValue);
-                
+
                 foundArrayList.push(thisValue);
 
             } else if(($.inArray(thisValue, foundArrayList) !== -1)) {
                 var otherKey = $(`select[data-name="${thisValue}"]`),
-                    otherId = otherKey.data('id');
+                otherId = otherKey.data('id');
 
                 $(`div[data-row="${thisId}"] select`).attr('data-name', thisValue);
 
                 $(`div[data-row="${thisId}"] div[class="text-center"]`)
-                    .html(`<h3 class="text-success"><i class="fa fa-check-circle"></i> Valid Column</h3>`);
+                .html(`<h3 class="text-success"><i class="fa fa-check-circle"></i> Valid Column</h3>`);
                 $(`div[data-row="${otherId}"] div[class="text-center"]`)
-                    .html(`<h3 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Unmatched Column</h3>`);
+                .html(`<h3 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Unmatched Column</h3>`);
 
                 otherKey.val('null').change();
 
             } else if(($.inArray(thisValue, foundArrayList) === -1) && ($.inArray(thisValue, acceptedArray) === -1)) {
                 $(`div[data-row="${thisId}"] select`).attr('data-name', 'null');
                 $(`div[data-row="${thisId}"] div[class="text-center"]`)
-                    .html(`<h3 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Unmatched Column</h3>`);
+                .html(`<h3 class="text-danger"><i class="fa fa-exclamation-triangle"></i> Unmatched Column</h3>`);
             }
-            
+
             fileCheckerText();
         });
 
     }
 
     var populateSelect = (headerData, mainContent) => {
-        
+
         var htmlData = '',
-            selectData = $(`div[class~="csv-rows-content"] div[class="form-row"] select`).html(),
-            iv = 0;
-            
-            $(`div[class~="csv-rows-content"]`).html(``);
+        selectData = $(`div[class~="csv-rows-content"] div[class="form-row"] select`).html(),
+        iv = 0;
+
+        $(`div[class~="csv-rows-content"]`).html(``);
 
         $.each(headerData, async function(i, e) {
             htmlData = `<div class="col-md-6 col-sm-12 col-lg-3" style="min-width:250px" data-row="${iv}">
-                <div class="form-row">
-                    <div class="text-center" style="width:100%"></div>
-                    <select data-name="${e}" data-id="${i}" name="first_col_${iv}" id="first_col_${iv}" class="form-control selectpicker">
-                        ${selectData}
-                    </select>
-                    <div style="width:100%; background:#fff; border-radius:5px; padding-top:10px; margin-top: 5px" class="csv-row-data-${iv} mb-3"></div>
-                </div>
+            <div class="form-row">
+            <div class="text-center" style="width:100%"></div>
+            <select data-name="${e}" data-id="${i}" name="first_col_${iv}" id="first_col_${iv}" class="form-control selectpicker">
+            ${selectData}
+            </select>
+            <div style="width:100%; background:#fff; border-radius:5px; padding-top:10px; margin-top: 5px" class="csv-row-data-${iv} mb-3"></div>
+            </div>
             </div>`;
             $(`div[class~="csv-rows-content"]`).append(htmlData);
             iv++;
-            
+
             await changeSelectInfo(i, e);
         });
 
@@ -5373,7 +5420,7 @@ $(`button[class~="pop-new-modal"]`).on('click', function() {
 
 var formControls = () => {
     $(`div[class~="update-stock-rows"] select[name^="product_id_"]`).on('change', function() {
-        
+
         let cost_price = $(this).children('option:selected').data('cost-price');
         let retail_price = $(this).children('option:selected').data('retail-price');
         let threshold = $(this).children('option:selected').data('threshold');
@@ -5418,7 +5465,7 @@ var transferProduct = (productId) => {
 
 $(`select[class~="selectpicker"]`).select2();
 var submitTransferProduct = () => {
-    
+
     $("form[class~='submit-transfer-product']").on("submit", function(e) {
         e.preventDefault();
 
@@ -5450,7 +5497,7 @@ var submitTransferProduct = () => {
                             title: 'Product Successfully Transfered'
                         });
                         $(".submit-transfer-product")[0].reset();
-                        
+
                         clearAllRows();
                         fetchAllProducts(branchID);
                         setTimeout(function() {
@@ -5466,7 +5513,7 @@ var submitTransferProduct = () => {
                 error: function() {
                     msg.html(`
                         <p class="alert alert-danger"></p>
-                    `);
+                        `);
                     Toast.fire({
                         type: 'error',
                         title: 'Error Processing Request'
@@ -5489,7 +5536,7 @@ submitTransferProduct();
 
 
 var fetchAllProducts = (branchID = null, location = branch_type) => {
-    
+
     $.ajax({
         url: baseUrl + "api/inventoryManagement/getAllProducts",
         type: "POST",
@@ -5507,25 +5554,25 @@ var fetchAllProducts = (branchID = null, location = branch_type) => {
                 "lengthChange": !1,
                 "dom": "Bfrtip",
                 "columns": [
-                   {"data": 'row_id'},
-                   {"data": 'product_name'},
-                   {"data": 'category'},
-                   {"data": 'price'},
-                   {"data": 'quantity'},
-                   {"data": 'indicator'},
-                   {"data": 'action'}
+                {"data": 'row_id'},
+                {"data": 'product_name'},
+                {"data": 'category'},
+                {"data": 'price'},
+                {"data": 'quantity'},
+                {"data": 'indicator'},
+                {"data": 'action'}
                 ]
             });
         },
         complete: function(data) {
-            
+
         }
     });
 
 }
 
 $(`form[id="addProductForm"]`).on('submit', function(e) {
-    
+
     e.preventDefault();
     $.ajax({
         type: 'POST',
@@ -5591,7 +5638,7 @@ $(`form[id="updateWareHouseStock"]`).on('submit', function(e) {
             title: 'Please select at least one item to continue.'
         });
     } else if(confirm("Do you confirm updating the stock levels?")) {
-        
+
         var stockQuantities = productsList.join(",");
 
         $.ajax({
@@ -5718,23 +5765,23 @@ $(`button[class~="topup-products"]`).on('click', function(e) {
 
     $(`div[class~="bulk-products-list"] [data-row]:last`).after(`
         <div class="products-listing mb-2" data-row="${lastRowId}">
-            <div class="row">
-                <div class="col-sm-6">
-                    <select name="products[]" id="s_product_${lastRowId}" class="form-control selectpicker">
-                        ${htmlData}
-                    </select>
-                </div>
-                <div class="col-sm-5">
-                    <input value="0" type="number" id="i_product_${lastRowId}" class="form-control" min="1" placeholder="Product Quantity" name="transferProductQuantity" required="">
-                </div>
-                <div class="col-sm-1">
-                    <div class="text-center">
-                        <span class="remove-row" style="font-weight:bold; font-size:16px; line-height:2.5rem; color:brown; cursor:pointer" data-value="${lastRowId}">X</span>
-                    </div>
-                </div>
-            </div>
+        <div class="row">
+        <div class="col-sm-6">
+        <select name="products[]" id="s_product_${lastRowId}" class="form-control selectpicker">
+        ${htmlData}
+        </select>
         </div>
-    `);
+        <div class="col-sm-5">
+        <input value="0" type="number" id="i_product_${lastRowId}" class="form-control" min="1" placeholder="Product Quantity" name="transferProductQuantity" required="">
+        </div>
+        <div class="col-sm-1">
+        <div class="text-center">
+        <span class="remove-row" style="font-weight:bold; font-size:16px; line-height:2.5rem; color:brown; cursor:pointer" data-value="${lastRowId}">X</span>
+        </div>
+        </div>
+        </div>
+        </div>
+        `);
 
     $('.selectpicker').select2();
     removeRow();
@@ -5745,7 +5792,7 @@ maximumValue();
 
 
 $(`div[class~="update-stock-rows"] button[class~="append-row"]`).on('click', function(e) {
-    
+
     let htmlData = $('div[class~="update-stock-rows"] div[data-row]:last select').html();
     var lastRowId = $(`div[class~="update-stock-rows"] div[data-row]`).length;
 
@@ -5759,36 +5806,36 @@ $(`div[class~="update-stock-rows"] button[class~="append-row"]`).on('click', fun
 
     $(`div[class~="update-stock-rows"] div[data-row]:last`).after(`
         <div class="row stock-listing" data-row="${lastRowId}">
-            <div class="col-md-4 mb-3">
-                <div>
-                    <select data-row="${lastRowId}" name="product_id_${lastRowId}" id="product_id_${lastRowId}" class="form-control selectpicker">
-                            ${htmlData}
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-2 mb-3">
-                <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
-                    <input type="number" step="0.1" value="0.00" class="form-control" name="cost_${lastRowId}">
-                </div>
-            </div>
-            <div class="col-md-2 mb-3">
-                <div class="input-group">
-                    <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
-                    <input type="number" step="0.1" value="0.00" class="form-control" name="price_${lastRowId}">
-                </div>
-            </div>
-            <div class="col-md-2 mb-3">
-                <input type="number" step="1" value="0" class="form-control" min="1" name="quantity_${lastRowId}">
-            </div>
-            <div class="col-md-1 mb-3">
-                <input type="number" step="1" value="0" class="form-control" min="1" name="threshold_${lastRowId}">
-            </div>
-            <div class="col-md-1 text-center">
-                <span class="remove-this-row" style="font-weight:bold; font-size:16px; line-height:2.5rem; color:brown; cursor:pointer" data-value="${lastRowId}">X</span>
-            </div>                        
+        <div class="col-md-4 mb-3">
+        <div>
+        <select data-row="${lastRowId}" name="product_id_${lastRowId}" id="product_id_${lastRowId}" class="form-control selectpicker">
+        ${htmlData}
+        </select>
         </div>
-    `);
+        </div>
+        <div class="col-md-2 mb-3">
+        <div class="input-group">
+        <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
+        <input type="number" step="0.1" value="0.00" class="form-control" name="cost_${lastRowId}">
+        </div>
+        </div>
+        <div class="col-md-2 mb-3">
+        <div class="input-group">
+        <div class="input-group-prepend"><span class="input-group-text">${storeValues.cur}</span></div>
+        <input type="number" step="0.1" value="0.00" class="form-control" name="price_${lastRowId}">
+        </div>
+        </div>
+        <div class="col-md-2 mb-3">
+        <input type="number" step="1" value="0" class="form-control" min="1" name="quantity_${lastRowId}">
+        </div>
+        <div class="col-md-1 mb-3">
+        <input type="number" step="1" value="0" class="form-control" min="1" name="threshold_${lastRowId}">
+        </div>
+        <div class="col-md-1 text-center">
+        <span class="remove-this-row" style="font-weight:bold; font-size:16px; line-height:2.5rem; color:brown; cursor:pointer" data-value="${lastRowId}">X</span>
+        </div>                        
+        </div>
+        `);
 
     $(`select[class~="selectpicker"]`).select2();
     removeAppendRow();
@@ -5871,41 +5918,41 @@ $("form[class~='submit-bulk-transfer-product']").on("submit", function(e) {
         }
 
     }
-    
+
 });
 if($(`div[id="payment_options"]`).length) {
     function loadPaymentOptions() {       
-      $.ajax({
-        url: `${baseUrl}api/branchManagment/loadPaymentOptions`,
-        data: { loadPaymentOptions: true },
-        type: "POST",
-        dataType: "JSON",
-        success: function(resp) {
-          if(resp.status == 200) {
-            var paymentOptions = resp.message;
-            $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
-              if(($.inArray($(this).attr(`data-module`), paymentOptions) !== -1) && ($(this).attr('data-value') == 'checked')) {
-                $(this).attr('checked', true);
-                $(this).parent('label').addClass('active');
-              } else if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
-                $(this).attr('checked', true);
-                $(this).parent('label').addClass('active');
-              }
-            });
-          } else {
-            $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
-              if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
-                $(this).attr('checked', true);
-                $(this).parent('label').addClass('active');
-              }
-            });
-          }
-        }, complete: function(data) {
-          $(`div[class="form-content-loader"]`).css("display","none");
-        }, error: function(err) {
-          $(`div[class="form-content-loader"]`).css("display","none");
-        }
-      })
+        $.ajax({
+            url: `${baseUrl}api/branchManagment/loadPaymentOptions`,
+            data: { loadPaymentOptions: true },
+            type: "POST",
+            dataType: "JSON",
+            success: function(resp) {
+                if(resp.status == 200) {
+                    var paymentOptions = resp.message;
+                    $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
+                        if(($.inArray($(this).attr(`data-module`), paymentOptions) !== -1) && ($(this).attr('data-value') == 'checked')) {
+                            $(this).attr('checked', true);
+                            $(this).parent('label').addClass('active');
+                        } else if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
+                            $(this).attr('checked', true);
+                            $(this).parent('label').addClass('active');
+                        }
+                    });
+                } else {
+                    $.each($(`div[id="payment_options"] div[class="col-lg-4"] input`), function(i, e) {
+                        if(($.inArray($(this).attr(`data-module`), paymentOptions) === -1) && ($(this).attr('data-value') == 'unchecked')) {
+                            $(this).attr('checked', true);
+                            $(this).parent('label').addClass('active');
+                        }
+                    });
+                }
+            }, complete: function(data) {
+                $(`div[class="form-content-loader"]`).css("display","none");
+            }, error: function(err) {
+                $(`div[class="form-content-loader"]`).css("display","none");
+            }
+        })
     }
     loadPaymentOptions();
 }

@@ -134,7 +134,7 @@ if(!$found) {
 <head>
 	<title>EvelynPOS_Invoice_<?= $orderId ?></title>
 </head>
-<body style="background: #1cdcca">
+<body>
 	<div style="margin: auto auto; width: 610px; background: #fff; border-radius: 5px; box-shadow: 0px 1px 2px #000;">
 		<table width="600px" cellpadding="0" style="min-height: 400px; margin: auto auto;" cellspacing="0">
 			<tr style="padding: 5px; border-bottom: solid 1px #ccc;">

@@ -357,12 +357,7 @@ if($admin_user->logged_InControlled()) {
 						'threshold' => $results->threshold,
 						'cost_price' => $results->cost_price,
 						'date_added' => $results->date_added,
-						'product_quantity' => $results->quantity,
-						'product_price' => "<input class='form-control input_ctrl' style='width:100px' data-row-value=\"{$results->id}\" data-product-id='{$results->id}' name=\"product_price\" value=\"".$results->product_price."\" id=\"product_price_{$results->id}\" type='number' min='1'>",
-						'quantity' => "<input data-row-value=\"{$results->id}\" class='form-control input_ctrl' style='width:100px' data-product-id='{$results->id}' value='1' name=\"product_quantity\" id=\"product_quantity_{$results->id}\" type='number' min='1'>",
-						'overall' => "<span data-row-value=\"{$results->id}\" id=\"product_overall_price\">".number_format($results->product_price, 0)."</span>",
-		                "action" => "<button data-image=\"{$results->product_image}\" type=\"button\" class=\"btn btn-success atc-btn\" data-row-value=\"{$results->id}\" data-name=\"{$results->product_title}\"><i class=\"ion-ios-cart\"></i> Add</button>"
-
+						'product_quantity' => $results->quantity
 					];
 				}
 			}
@@ -379,7 +374,7 @@ if($admin_user->logged_InControlled()) {
 					SELECT 
 						a.id, a.clientId, a.branchId, a.mode, a.order_id, a.customer_id,
 						a.recorded_by, a.order_amount_paid, a.order_discount, 
-						a.order_amount_balance, a.overall_order_amount, a.log_date,
+						a.order_amount_balance, a.overall_order_amount, a.log_date, a.state,
 						a.payment_type, a.transaction_id, a.payment_date,
 						a.order_date, a.source, a.ordered_by_id,
 						a.credit_sales, a.order_status, DATE(a.order_date) AS today_date,

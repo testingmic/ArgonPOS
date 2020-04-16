@@ -93,11 +93,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <?= form_loader(); ?>
+          <div class="card mb-0 p-3">
             <div class="modal-header">
                 <h5 class="modal-title mt-0 show-modal-title" id="myLargeModalLabel"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body show-modal-body" style="min-height: 250px; padding-top: 0px"></div>
+          </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
@@ -201,6 +203,7 @@
     <button class="btn btn-danger cancel-ongoing-payment-activity">Cancel</button>
   </div>
 </div>
+<div class="svon" data-value="1"></div>
 <!-- Core -->
 <script src="<?= $baseUrl ?>assets/vendor/jquery/dist/jquery.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -237,9 +240,7 @@
 <script src="<?= $baseUrl ?>assets/vendor/summernote/summernote-bs4.min.js"></script>
 <?php } ?>
 <script type="text/javascript"><?php if(in_array($SITEURL[0], ["point-of-sale", "requests"])) { ?>Cookies.set("sidenav-state", "unpinned");<?php } else { ?>Cookies.set("sidenav-state", "pinned");<?php } ?></script>
-
 <script src="<?= $baseUrl ?>assets/js/datepicker.min.js"></script>
-
 <script src="<?= $baseUrl ?>assets/js/argon.min9f1e.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/sweetalert2/dist/sweetalert2.min.js"></script>
 <script type="text/javascript">var baseUrl = '<?= $baseUrl; ?>';</script>
@@ -284,7 +285,9 @@ hL();
   }
   identifyCurrentBranch();
 <?php } ?>
+genIds();
 <?php if(confirm_url_id(0, 'dashboard')) { ?>
+  // 
   await dOC().then((itResp) => {
     if (itResp == 1) {
       syncOfflineData('sales').then((resp) => {

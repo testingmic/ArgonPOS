@@ -78,7 +78,7 @@ a[href="#finish"] {
           <?= (!$validDate) ? nonWorkingDay() : null; ?>
           <div class="card-body" style="padding-top: 10px; padding-bottom: 0px; padding-right: 5px; padding-left: 5px">
             <div class="content-loader register-form-loader" style="display: none"><i class="fa fa-3x fa-pulse fa-spinner"></i></div>
-            <form id="pos-form-horizontal" class="pos-form-horizontal form-wizard-wrapper register-form" method="POST" action="">
+            <form id="pwizard" class="pos-form-horizontal form-wizard-wrapper register-form" method="POST" action="">
               <h3>Customer</h3>
               <fieldset>
                 <div class="row justify-content-center">
@@ -195,64 +195,79 @@ a[href="#finish"] {
               <h3>Complete</h3>
               <fieldset>
                 <?php if($validDate  && !$session->accountExpired) { ?>
-                <div class="p-3">
-                  <div class="card-border border-success bg-soft-success card m-auto text-center" style="width: 100%">
-                    <div class="card-body table-responsive">
-                      <h5 data-bind-html="customer" class="text-center font-weight-bold"></h5>
-                      <span class="font-12"><?= $branchData->branch_name ?></span>
-                      <hr style="border:none;border-bottom: 1px dashed #ccc">
-                      <div><strong>Order #<span class="generated_order"></span></strong></div>
-                      <hr style="border:none;border-bottom: 1px dashed #ccc" class="mb-3">
-                      <table class="mt-5 table text-left">
-                        <thead>
-                          <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th class="text-right">Subtotal</th>
-                          </tr>
-                        </thead>
-                        <tbody data-bind-html="productrow" class="receipt-table-body">
-                        </tbody>
-                        <tfoot>
-                          <tr><td></td></tr>
-                          <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
-                            <td></td>
-                            <td class="font-weight-bold">Sub Total</td>
-                            <th class="text-right font-weight-bold font-18" data-bind-html='totaltopay'>0.00</th>
-                          </tr>
-                          <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
-                            <td></td>
-                            <td>Discount</td>
-                            <th class="text-right" data-bind-html='discount_amount'>0.00</th>
-                          </tr>
-                          <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
-                            <td></td>
-                            <td>Amount to Pay</td>
-                            <th class="text-right font-weight-bold font-18" data-bind-html='payment'>0.00</th>
-                          </tr>
-                          <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
-                            <th></th>
-                            <td class="font-weight-bold">Amount Paid</td>
-                            <th class="text-right font-weight-bold" data-bind-html='amount_paid'>0.00</th>
-                          </tr>
-                          <tr style="border-top: 0; border-bottom: 2px solid #ccc">
-                            <th></th>
-                            <td>Balance</td>
-                            <th class="text-right font-weight-bold font-18" data-bind-html='balance'>0.00</th>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  </div>
-                  <div class="form-group mt-5">
+                <div class="pwizard-fieldset" style="margin: auto auto; padding:10px; background: #fff; border-radius: 5px; box-shadow: 0px 1px 2px #000;">
+                  <table width="600px" cellpadding="5px" style="min-height: 400px; margin: auto auto;" cellspacing="5px">
+                    <tr style="padding: 5px; border-bottom: solid 1px #ccc;">
+                      <td colspan="4" align="center" style="padding: 10px">
+                        <h1 style="margin-bottom: 0px; margin-top:0px"><?= strtoupper($clientData->client_name); ?></h1>
+                        <?= $branchData->branch_name ?><br>
+                        Served by: <?= $userData->name ?>
+                        <hr style="border: dashed 1px #ccc;">
+                          <div style="font-family: Calibri Light; font-size: 16px">
+                            Receipt #: <strong data-bind-html='orderId' class="generated-order-id"></strong>
+                            <br><span class="generated-time"><?= date("M d Y h:ia") ?></span></div>
+                        <hr style="border: dashed 1px #ccc;">
+                      </td>
+                    </tr>
+                    <tr style="padding: 5px;">
+                      <td colspan="4" align="center" style="padding-bottom: 10px; font-family: Calibri Light;">
+                        <h5 data-bind-html="customer" class="text-center font-weight-bold"></h5>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff;"><strong>Product</strong></td>
+                      <td style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff"><strong>Quantity</strong></td>
+                      <td align="right" style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff"><strong>Unit Price</strong></td>
+                      <td align="right" style="padding: 5px; font-family: Calibri Light; text-transform: uppercase; background: <?= $clientData->bg_color_code ?>; color: #fff"><strong>Subtotal</strong></td>
+                    </tr>
+                    <tbody data-bind-html="productrow" class="receipt-table-body"></tbody>
+                    <tfoot>
+                      <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
+                        <td></td>
+                        <td colspan="2" align="right" class="font-weight-bold">Sub Total</td>
+                        <th align="right" class="text-right font-weight-bold font-18" data-bind-html='totaltopay'>0.00</th>
+                      </tr>
+                      <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
+                        <td></td>
+                        <td colspan="2" align="right">Discount</td>
+                        <th align="right" class="text-right" data-bind-html='discount_amount'>0.00</th>
+                      </tr>
+                      <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
+                        <td></td>
+                        <td colspan="2" align="right">Amount to Pay</td>
+                        <th align="right" class="text-right font-weight-bold font-18" data-bind-html='payment'>0.00</th>
+                      </tr>
+                      <tr style="border:none;border-top: 2px solid rgba(0,0,0,0.2)">
+                        <th></th>
+                        <td colspan="2" align="right" class="font-weight-bold">Amount Paid</td>
+                        <th align="right" class="text-right font-weight-bold" data-bind-html='amount_paid'>0.00</th>
+                      </tr>
+                      <tr style="border-top: 0; border-bottom: 2px solid #ccc">
+                        <th></th>
+                        <td colspan="2" align="right">Balance</td>
+                        <th align="right" class="text-right font-weight-bold font-18" data-bind-html='balance'>0.00</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                  <table width="100%" align="center">
+                    <tbody style="text-align: center;">
+                      <tr>
+                        <td colspan="4">
+                          <hr style="border: dashed 1px #ccc; text-align: center;">
+                          <img width="150px" src="<?= $config->base_url('assets/images/logo.png'); ?>"  alt="logo-small" class="logo-sm">
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="form-group email-container mt-5">
                     <label class="font-weight-bold my-2">Email Receipt</label>
                     <div class="input-group">
                       <input type="email" name="email" id="receipt-email" placeholder="Email Address" class="form-control">
                       <div class="input-group-addon">
-                        <button type="button" class="btn send-email <?= $clientData->bg_color ?>">Send</button>
+                        <button type="button" class="btn send-email btn-primary">Send</button>
                       </div>
                     </div>
-                  </div>
                 </div>
                 <?php } ?>
               </fieldset><!--end fieldset-->
@@ -261,7 +276,7 @@ a[href="#finish"] {
               <?php if($validDate  && !$session->accountExpired) { ?>
               <button type="button" data-toggle="modal" data-target="#newCustomerModal" class="btn mb-2 btn-sm <?=  $clientData->btn_outline; ?> newCustomer_trigger"><i class="fa fa-user"></i> New Customer</button>
               <button type="button" data-toggle="modal" data-target="#discardModal" class="btn mb-2 btn-outline-danger discardSale_trigger"><i class="fa fa-trash"></i> Discard</button>
-              <button onclick="return triggerPrintReceipt();" class="btn <?= $clientData->bg_color ?> print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
+              <button onclick="return quickPrt();" class="btn <?= $clientData->bg_color ?> print-receipt" type="button"><i class="fa fa-print"></i> Print Receipt</button>
               <?php } ?>
               <?php if($validDate  && !$session->accountExpired) { ?>
               <div class="float-right">
@@ -409,6 +424,7 @@ a[href="#finish"] {
     </div>
 </div>
 <?php } ?>
+<div class="default-variables"></div>
 <div class="payment_check" data-value="1"></div>
 <?php require_once 'foottags.php'; ?>
 </body>
