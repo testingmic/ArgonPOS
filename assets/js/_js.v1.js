@@ -718,6 +718,8 @@ if($(`table[class~="expensesList"]`).length) {
     $(`div[class="main-content"]`).on('click', `a[class~="add-expense"]`, function(e) {
         $(`div[class~="expensesModal"] form`)[0].reset();
         $(`div[class~="expensesModal"] form select`).val('null').change;
+        $(`div[class~="expensesModal"] input[name="expenseId"]`).val('');
+        $(`div[class~="expensesModal"] div[class="modal-header"] h3`).html('Add Expense');
         $(`div[class~="expensesModal"]`).modal('show');
     });
 
@@ -735,6 +737,7 @@ if($(`table[class~="expensesList"]`).length) {
             if(resp.clearform == true) {
                 $(`form[class="expenseForm"]`)[0].reset();
             }
+            listExpenses();
             $(`div[class="form-content-loader"]`).css("display","none");
         }, 'json').catch((err) => {
             toastError('Sorry! Error encountered while processing the form');
@@ -768,7 +771,17 @@ if($(`table[class~="expensesList"]`).length) {
 
         $(`div[class="main-content"]`).on('click', `a[class~="edit-expense"]`, function(e) {
             let categoryId = $(this).data('id');
-            let expensesData = $(this).data('content');
+            let exData = $(this).data('content');
+
+            $(`div[class~="expensesModal"] div[class="modal-header"] h3`).html('Update Expense');
+            $(`div[class~="expensesModal"] select[name="outletId"]`).val(exData.branchId).change();
+            $(`div[class~="expensesModal"] select[name="category"]`).val(exData.category_id).change();
+            $(`div[class~="expensesModal"] input[name="date"]`).val(exData.start_date);
+            $(`div[class~="expensesModal"] input[name="amount"]`).val(exData.amount);
+            $(`div[class~="expensesModal"] input[name="tax"]`).val(exData.tax);
+            $(`div[class~="expensesModal"] textarea[name="description"]`).val(exData.description);
+            $(`div[class~="expensesModal"] input[name="expenseId"]`).val(exData.id);
+            $(`div[class~="expensesModal"]`).modal('show');
         });
     }
 

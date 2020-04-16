@@ -72,7 +72,7 @@ global $accessObject;
       <div class="modal-content">
         <?= form_loader(); ?>
           <div class="modal-header">
-              <h5 class="modal-title mt-0 show-modal-title" id="myLargeModalLabel">Expense </h5>
+              <h5 class="modal-title mt-0" id="myLargeModalLabel">Expense </h5>
               <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
           </div>
           <div class="modal-body slim-scroll show-modal-body" style="padding-top: 0px; max-height: 650px; overflow: scroll; overflow-x: hidden">
