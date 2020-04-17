@@ -5451,13 +5451,13 @@ var submitTransferProduct = () => {
 submitTransferProduct();
 
 
-var fetchAllProducts = (branchID = null, location = branch_type) => {
+var fetchAllProducts = (branchId = null, location = branch_type) => {
 
     $.ajax({
         url: baseUrl + "api/inventoryManagement/getAllProducts",
         type: "POST",
         dataType: "json",
-        data: { request: true, getAllProducts: true, branchID: branchID, location: location },
+        data: { request: true, getAllProducts: true, branchId: branchId, location: location },
         cache: false,
         beforeSend: function() {},
         success: function(data) {

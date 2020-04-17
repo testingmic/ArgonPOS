@@ -70,13 +70,20 @@ class Products extends Pos {
 
 	public function all($returnCount = false, $branchId = null) {
 
-		$condition = (empty($branchId)) ? null : " WHERE p.branchId = '{$branchId}'";
+		$condition = (empty($branchId)) ? null : " &&  p.branchId = '{$branchId}'";
 
-		$sql = "SELECT *, p.id AS pid, IF(source = 'Vend', product_image, CONCAT('', '', IFNULL(product_image, '$this->defaultImg'))) AS image, product_image FROM products p
-		LEFT JOIN products_categories pc ON p.category_id = pc.category_id {$condition}";
-
-		$stmt = $this->db->query($sql);
+		$stmt = $this->db->query("
+			SELECT *, p.id AS pid, 
+				IF(source = 'Vend', product_image, 
+				CONCAT('', '', IFNULL(product_image, '$this->defaultImg'))) AS image, 
+				product_image 
+			FROM products p
+			LEFT JOIN products_categories pc ON p.category_id = pc.category_id 
+			WHERE p.clientId = '{$this->clientId}' {$condition}
+		");
+		
 		if($returnCount) return $stmt->rowCount();
+
 		return $stmt->fetchAll(PDO::FETCH_OBJ);
 	}
 
@@ -156,15 +163,15 @@ class Products extends Pos {
 
 		$params = [
 			$product->productId,
-			'db', $this->session->currentBranchId, 
-			$this->clientId,
+			'db', $product->branchId, 
+			$product->clientId,
 			$product->category,
 			$product->title,
 			$product->description,
 			$product->price,
 			$product->cost,
 			$product->image,
-			$this->session->userId,
+			$product->userId,
 			(isset($product->threshold)) ? $product->threshold : null,
 			$product->quantity,
 			$product->expiry_date
@@ -186,12 +193,12 @@ class Products extends Pos {
 		// record the stock quantity of the products
 		$stockInput = $this->db->prepare("
 			INSERT INTO products_stocks 
-			SET clientId = '{$this->clientId}', 
-				branchId='{$this->session->currentBranchId}', 
+			SET clientId = '{$product->clientId}', 
+				branchId='{$product->branchId}', 
 				auto_id='{$product->autoId}', product_id='{$productId}', 
 				cost_price='{$product->cost}', retail_price='{$product->price}', 
 				quantity='{$product->quantity}', total_quantity='{$product->quantity}',
-				threshold='{$product->threshold}', recorded_by='{$this->session->userId}'
+				threshold='{$product->threshold}', recorded_by='{$product->userId}'
 		");
 		return $stockInput->execute();
 	}

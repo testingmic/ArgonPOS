@@ -14,17 +14,11 @@ $response = (object) [
 	"message" => "Error Processing The Request"
 ];
 
-
-// print_r($_SERVER); exit;
 //: create a new object
 $apiValidate = load_class('Api', 'models');
 
-// print base64_encode("emmallob:dj0yJmk9bDg4dWFTaXVyVXFRJmQ9WVdrOWNIaDNUbHBvTTJNbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWFi");
-
 $apiAccessValues = $apiValidate->validateApiKey();
 $expiredAccount = true;
-
-// print_r($apiAccessValues);exit;
 
 //: confirm that the user is logged in
 if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
@@ -2954,22 +2948,23 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			//: process inventories
 			if (isset($_POST['request'])) {
 
-				if (isset($_POST['branchID'], $_POST['request']) && confirm_url_id(2, "getAllProducts")) {
+				if (isset($_POST['request']) && confirm_url_id(2, "getAllProducts")) {
 
-					$branchID = (!empty($_POST['branchID'])) ? xss_clean($_POST['branchID']) : null;
+					$branchID = (!empty($_POST['branchId'])) ? xss_clean($_POST['branchId']) : null;
 
 					$allProducts = $productsClass->all(false, $branchID);
 					$session->set_userdata("invSelectedCard", $branchID);
 
 					if (!empty($allProducts)) {
 						$i = 0;
-						
+							
 						$message = [];
 
 						foreach ($allProducts as $product) {
 
 							// request through api access
 							if($rawJSON) {
+								unset($product->id);
 								$message[] = $product;
 							} else {
 								// request from site
@@ -3018,12 +3013,15 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				        }
 				        $status = true;
 				    }
+
+				    $response->message = $message;
+				    $response->status = $status;
 				
 				} else if (isset($_POST['transferProductQuantity'], $_POST['branchId']) && confirm_url_id(2, "submitTransferProduct")) {
 
 					// if the session parsed does not match the id sent 
 					// disallow the user to continue with the process
-					if($session->currentBranchId != ($_POST["transferFrom"])) {
+					if(!$rawJSON && ($session->currentBranchId != $_POST["transferFrom"])) {
 						echo json_encode([
 							"message" => "Sorry! Please refresh the page to try again.",
 							"status" => "error",
@@ -3043,7 +3041,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						// check if the product quantity parsed is more than the available
 						if($postData->transferProductQuantity > $product->quantity) {
 							// print error message
-							$message = "Sorry! You have entered a quantity higher than what's available";
+							$response->message = "Sorry! You have entered a quantity higher than what's available";
 						} else {
 
 							// Check If Product Exists In Receiving Branch
@@ -3085,13 +3083,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 								$status = true;
 							} else {
-								$message = "Transfer Failed";
+								$response->message = "Transfer Failed";
 							}
 
 						}
 
 					} else {
-						$message = "Please Check All Fields Are Required";
+						$response->message = "Please Check All Fields Are Required";
 					}
 
 				}
@@ -3101,7 +3099,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 					// if the session parsed does not match the id sent 
 					// disallow the user to continue with the process
-					if($session->currentBranchId != ($_POST["transferFrom"])) {
+					if(!$rawJSON && ($session->currentBranchId != $_POST["transferFrom"])) {
 						echo json_encode([
 							"message" => "Sorry! Please refresh the page to try again.",
 							"status" => "error",
@@ -3133,9 +3131,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						}
 
 						if($error_state) {
-							
-							$message = "Ensure no item has the quantity of 0";
-							
+							$response->message = "Ensure no item has the quantity of 0";
 							echo json_encode([
 								"message" => $message,
 								"status" => $status
@@ -3198,10 +3194,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									$postData->selling_price = $sellPrice;
 									$productsClass->addToInventory($postData);
 
-									$status = true;
-									$message = "Products Successfully Transfered";
+									$response->status = true;
+									$response->message = "Products Successfully Transfered";
 								} else {
-									$message = "Transfer Failed";
+									$response->message = "Transfer Failed";
 								}
 							}
 
@@ -3209,12 +3205,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					}
 
 				}
-
-				echo json_encode([
-					"message" => $message,
-					"status" => $status
-				]);
-				exit();
 
 			}
 
@@ -3234,7 +3224,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 				if(empty($stockLevels)) {
 					echo json_encode([
-						"message" => "Please at least one item to continue",
+						"message" => "Please select at least one item to continue",
 						"status" => $status
 					]);
 					exit;
@@ -3275,19 +3265,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				
 				//: if the result is true
 				if($queryString) {
-					$status = "success";
-					$message = "Products stock was successfully updated.";
+					$response->status = "success";
+					$response->message = "Products stock was successfully updated.";
 				}
-
-				echo json_encode([
-					"message" => $message,
-					"status" => $status
-				]);
-				exit;
 
 			} else {
 				
-				$res = (Object) [
+				$response = (Object) [
 					'status' => 'error', 
 					'message' => 'Error Processing Request',
 					'branchId' => $loggedUserBranchId
@@ -3299,40 +3283,63 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 					// check the product code 
 					if(!empty($_POST["product_code"]) && ($posClass->countRows("products", "product_id='".xss_clean($_POST["product_code"])."' AND branchId='{$loggedUserBranchId}'") > 0)) {
-						$res->message = "A duplicate product is been added to the same branch.";
+						$response->message = "A duplicate product is been added to the same branch.";
 					}
 					// start the validation process
-					else if(($_POST["product_type"] == "New") && (empty($_POST['category']) || ($_POST['category'] == "null"))) {
-						$res->message = "Please select product's category";
+					else if(empty($_POST['category']) || ($_POST['category'] == "null")) {
+						$response->message = "Please select product's category";
 					}
 					elseif(empty($_POST['title'])) {
-						$res->message = "Please enter product's title";
+						$response->message = "Please enter product's title";
 					}
 					elseif(empty($_POST['cost'])) {
-						$res->message = "Please enter product's cost price";
+						$response->message = "Please enter product's cost price";
+					}
+					elseif(!preg_match("/^[0-9.]+$/", $_POST["cost"])) {
+						$response->message = "Enter a valid product's cost price";	
 					}
 					elseif(empty($_POST['price'])) {
-						$res->message = "Please enter product's retail price";
+						$response->message = "Please enter product's retail price";
 					}
-					elseif(empty($_POST['quantity']) || ($_POST['quantity'] < 1)) {
-						$res->message = "Please enter product's quantity";
+					elseif(!preg_match("/^[0-9.]+$/", $_POST["price"])) {
+						$response->message = "Enter a valid product's retail price";	
+					}
+					elseif(empty($_POST['quantity'])) {
+						$response->message = "Please enter product's quantity";
+					}
+					elseif(!preg_match("/^[0-9]+$/", $_POST["quantity"])) {
+						$response->message = "Please enter a valid product quantity.";
 					}
 					else{
+
+						// process the file image parsed
 						$postData = (Object) array_map("xss_clean", $_POST);
 						$uploadDir = 'assets/images/products/';
+						$fileName = "default.png";
 
 						// File path config 
-			            $fileName = basename($_FILES["product_image"]["name"]); 
-			            $targetFilePath = $uploadDir . $fileName; 
-			            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+						if(isset($_FILES["product_image"])) {
+				            $fileName = basename($_FILES["product_image"]["name"]); 
+				        }
 
-			            $fileName = (empty($fileName)) ? "default.png" : $fileName;
+				        // set the product image to be used
+				        $targetFilePath = $uploadDir . $fileName; 
+				        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+
+			            // if the query was made by an api call and the 
+			            $postData->branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId;
+
+			            // assign some few more variables
+			            $postData->clientId = $loggedUserClientId;
+			            $postData->userId = $loggedUserId;
+			            $postData->description = (isset($postData->description)) ? nl2br($postData->description) : null;
+			            $postData->expiry_date = (isset($postData->expiry_date)) ? nl2br($postData->expiry_date) : null;
 
 			            // Allow certain file formats 
 			            $allowTypes = array('jpg', 'png', 'jpeg'); 
 			            
 			            // check if its a valid image
-			            if(!empty($fileName) && in_array($fileType, $allowTypes)){
+			            if(!empty($fileName) && in_array($fileType, $allowTypes) && isset($_FILES["product_image"])) {
 			            	
 			               	// set a new filename
 			               	$fileName = random_string('alnum', 25).'.'.$fileType;
@@ -3343,9 +3350,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			                    $uploadStatus = 1; 
 			                } else { 
 			                    $uploadStatus = 0; 
-			                    $res->message = '<div class="alert alert-danger">Sorry, JPG, JPEG, & PNG files are accepted.</div>';
+			                    $response->message = '<div class="alert alert-danger">Sorry, JPG, JPEG, & PNG files are accepted.</div>';
 			                }
-
 			            } else { 
 			                $uploadStatus = 0;
 			            }
@@ -3360,9 +3366,9 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			            // add the new product
 						if($productsClass->addProduct($postData)){
-							$res->status = "success";
-							$res->message = "Product Successfully Added";
-							$res->branchId = $session->currentBranchId;
+							$response->status = "success";
+							$response->message = "Product width code {$postData->productId} was successfully Added";
+							$response->branchId = $postData->branchId;
 						}
 					}
 				}
@@ -3371,33 +3377,37 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				elseif(isset($_POST['editProduct']) && confirm_url_id(2, 'editProduct')){
 					// validate the user data
 					if((empty($_POST['category']) || ($_POST['category'] == "null"))) {
-						$res->message = "Please select product's category";
+						$response->message = "Please select product's category";
 					}
 					elseif(empty($_POST['title'])) {
-						$res->message = "Please enter product's title";
+						$response->message = "Please enter product's title";
 					}
 					elseif(empty($_POST['cost'])) {
-						$res->message = "Please enter product's cost price";
+						$response->message = "Please enter product's cost price";
 					}
 					elseif(empty($_POST['price'])) {
-						$res->message = "Please enter product's retail price";
+						$response->message = "Please enter product's retail price";
 					}
 					else {
+						// process the file image parsed
 						$postData = (Object) array_map("xss_clean", $_POST);
 						$uploadDir = 'assets/images/products/';
+						$fileName = "default.png";
 
 						// File path config 
-			            $fileName = basename($_FILES["product_image"]["name"]); 
-			            $targetFilePath = $uploadDir . $fileName; 
-			            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+						if(isset($_FILES["product_image"])) {
+				            $fileName = basename($_FILES["product_image"]["name"]); 
+				        }
 
-			            $fileName = (empty($fileName)) ? "default.png" : $fileName;
+				        // set the product image to be used
+				        $targetFilePath = $uploadDir . $fileName; 
+				        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
 			            // Allow certain file formats 
 			            $allowTypes = array('jpg', 'png', 'jpeg'); 
 
 			            // check if its a valid image
-			            if(!empty($fileName) && in_array($fileType, $allowTypes)){
+			            if(!empty($fileName) && in_array($fileType, $allowTypes) && isset($_FILES["product_image"])){
 			            	
 			               	// set a new filename
 			               	$fileName = random_string('alnum', 25).'.'.$fileType;
@@ -3407,7 +3417,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			                    $uploadedFile = $uploadDir .$fileName;
 			                } else { 
 			                    $uploadStatus = 0; 
-			                    $res->message = '<div class="alert alert-danger">Sorry, JPG, JPEG, & PNG files are accepted.</div>';
+			                    $response->message = '<div class="alert alert-danger">Sorry, JPG, JPEG, & PNG files are accepted.</div>';
 			                }
 			                
 			            } else { 
@@ -3426,8 +3436,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			            // update the product information
 			            if($productsClass->updateProduct($postData)){
 			            	// print success message
-							$res->status = "success";
-							$res->message = [
+							$response->status = "success";
+							$response->message = [
 								"result" => "Product Successfully Updated",
 								"productId" => $postData->productId
 							];
@@ -3438,8 +3448,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				elseif(isset($_POST['removeProduct'])){
 						$productId = xss_clean($_POST['productId']);
 						if($productsClass->removeProduct($productId)){
-							$res->status = "success";
-							$res->message = "Product has been removed";
+							$response->status = "success";
+							$response->message = "Product has been removed";
 						}
 				}
 
@@ -3449,10 +3459,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$categories = $productsClass->getCategories();
 
 					if(!empty($product) && !empty($categories)){
-						$res->status = "success";
-						$res->categories = $categories;
-						$res->product = $product;
-						$res->branchId = $_POST['transferFrom'];
+						$response->status = "success";
+						$response->categories = $categories;
+						$response->product = $product;
+						$response->branchId = $_POST['transferFrom'];
 					}
 				}
 
@@ -3465,15 +3475,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$categories = $productsClass->getCategories();
 
 					if(!empty($product) && !empty($categories)){
-						$res->status = "success";
-						$res->message = "Displaying product content";
-						$res->categories = $categories;
-						$res->product = $product;			
+						$response->status = "success";
+						$response->message = "Displaying product content";
+						$response->categories = $categories;
+						$response->product = $product;			
 					}
 				}
 
-				echo json_encode($res);
-				exit;
 			}
 		}
 
