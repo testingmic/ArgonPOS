@@ -2157,7 +2157,7 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
         event.preventDefault();
         let formData = $(this).serialize();
 
-        $.post(baseUrl+"api/customerManagement/updateCustomerDetails", formData, (res) => {
+        $.post(baseUrl+"api/customerManagement/manageCustomers", formData, (res) => {
             if(res.status == 200){
                 Toast.fire({
                     type: 'success',

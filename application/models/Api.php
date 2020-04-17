@@ -10,14 +10,18 @@ class Api extends Pos {
 
 		/** get the user full request headers **/
 		$headers = apache_request_headers();
+		$authHeader = null;
 
-		// print_r($headers);exit;
-		
+		// get teh redirect http authorization headers
+		if(isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION']) && $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] != "") {
+            $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        }
+
 		/** authenticate the headers that have been parsed **/
-		if(isset($headers["Auth-Xkey"])){
+		if(isset($headers["Authorization"]) && ($headers["Authorization"] == $authHeader)){
 			
 			/** Split the Authorization Code **/
-			$authorizationToken = base64_decode(str_ireplace("Basic", "", $headers['Auth-Xkey']));
+			$authorizationToken = base64_decode(str_ireplace("Bearer", "", $headers['Authorization']));
 
 			$splitAuthInfo = explode(":", $authorizationToken);
 			$userName = xss_clean(
@@ -56,14 +60,13 @@ class Api extends Pos {
 		/** Return error if database connection fails **/
 		$stmt = $this->pos->prepare("
 			SELECT 
-				a.username, a.access_token,
-				a.userId, b.clientId, b.branchId,
-				a.expiry_date
+				a.username, a.userId, b.clientId, 
+				b.branchId, a.expiry_date, a.access_token
 			FROM 
 				api_keys a
 			LEFT JOIN users b ON b.user_id = a.userId
 			WHERE 
-				a.username = ? 
+				a.username = ?  AND DATE(a.expiry_date) >= CURDATE()
 			LIMIT 1
 		");
 		$stmt->execute([$username]);
@@ -71,7 +74,7 @@ class Api extends Pos {
 		while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
 			// verify the access token that has been parsed
 			if(password_verify($accessToken, $result->access_token)) {
-				$result->access_token = $accessToken;
+				unset($result->access_token);
 				return $result;
 			}
 		}

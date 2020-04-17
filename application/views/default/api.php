@@ -1,11 +1,12 @@
 <?php
 //: call global variables
 global $session, $pos, $admin_user, $accessObject, $posClass;
+
 //: set the page header type
-header('Content-Type: application/json; charset=utf-8');
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Methods: OPTIONS,GET,POST,PUT,DELETE");
 header("Access-Control-Max-Age: 3600");
-header("Cache-Control: no-cache");
 
 //: initializing
 $response = (object) [
@@ -13,6 +14,8 @@ $response = (object) [
 	"message" => "Error Processing The Request"
 ];
 
+
+// print_r($_SERVER); exit;
 //: create a new object
 $apiValidate = load_class('Api', 'models');
 
@@ -20,6 +23,8 @@ $apiValidate = load_class('Api', 'models');
 
 $apiAccessValues = $apiValidate->validateApiKey();
 $expiredAccount = true;
+
+// print_r($apiAccessValues);exit;
 
 //: confirm that the user is logged in
 if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
@@ -52,60 +57,64 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		$_POST = [];
 		$bugs = false;
 
-		// loop through the list and set it as a post data
-		foreach($apiCallData as $postKey => $postData) {
-			// confirm that the postdata is not an array
-			if(!is_array($postData)) {
-				// add the user parsed data into the post super global array
-				$_POST[$postKey] = xss_clean($postData);
-			}
-			// run this section if it is an array
-			elseif(is_array($postData)) {
-				// loop through the list
-				foreach($postData as $hKey => $hValue) {
-					// add the data to the array list
-					$_POST[$postKey][$hKey] = $hValue;
+		// confirm that an array was parsed as the payload
+		if(!is_array($apiCallData)) {
+			$bugs = true;
+			$response->message = "Sorry! Please ensure that valid data has been parsed as payload.";
+		} else {
+			// loop through the list and set it as a post data
+			foreach($apiCallData as $postKey => $postData) {
+				// confirm that the postdata is not an array
+				if(!is_array($postData)) {
+					// add the user parsed data into the post super global array
+					$_POST[$postKey] = xss_clean($postData);
 				}
-			}
-		}
-
-		// if the reportsanalytics endpoint was parsed
-		if(confirm_url_id(1, "reportsAnalytics") && confirm_url_id(2, "generateReport")) {
-
-			// confirm if query metric was not parsed
-			if(!isset($_POST["queryMetric"])) {
-				// set a bug
-				$bugs = true;
-				// set the message
-				$response->message = "Sorry! The metric parsed is invalid. The metric can be one or all of the following: ".implode(", ", $availableQueryMetrics);
-			} elseif((isset($_POST["queryMetric"]) && $_POST["queryMetric"] != "salesOverview") && isset($_POST["insightRequest"])) {
-				// set a bug
-				$bugs = true;
-				// set the message
-				$response->message = "Sorry! The 'insightRequest' parameter can only be used with the 'queryMetric' has the value 'salesOverview'";
-			} else {
-				// assign the request insight metric 
-				$_POST["insightRequest"] = (isset($_POST["insightRequest"]) && !empty($_POST["insightRequest"])) ? $_POST["insightRequest"] : ["salesOverview"];
-
-				// check if the insight is not an array
-				if(!is_array($_POST["insightRequest"])) {
-					// convert the string to an array
-					$_POST["insightRequest"] = $posClass->stringToArray($_POST["insightRequest"]);
-				}
-
-				// check if an invalid metric was supplied
-				if(isset($_POST["productsLimit"])) {
-					// check if the insight metric contains product performance
-					if(!in_array("productsPerformanceInsight", $_POST["insightRequest"])) {
-						// set the bugs to true
-						$bugs = true;
-						// set the error message
-						$response->message = "Sorry! The parameter 'productsLimit' should be parsed with the metric 'productsPerformanceInsight'";
+				// run this section if it is an array
+				elseif(is_array($postData)) {
+					// loop through the list
+					foreach($postData as $hKey => $hValue) {
+						// add the data to the array list
+						$_POST[$postKey][$hKey] = $hValue;
 					}
 				}
 			}
 
-			// if(isset($_POST[""]))
+			// if the reportsanalytics endpoint was parsed
+			if(confirm_url_id(1, "reportsAnalytics") && confirm_url_id(2, "generateReport")) {
+
+				// confirm if query metric was not parsed
+				if(!isset($_POST["queryMetric"])) {
+					// set a bug
+					$bugs = true;
+					// set the message
+					$response->message = "Sorry! The metric parsed is invalid. The metric can be one or all of the following: ".implode(", ", $availableQueryMetrics);
+				} elseif((isset($_POST["queryMetric"]) && $_POST["queryMetric"] != "salesOverview") && isset($_POST["insightRequest"])) {
+					// set a bug
+					$bugs = true;
+					// set the message
+					$response->message = "Sorry! The 'insightRequest' parameter can only be used with the 'queryMetric' has the value 'salesOverview'";
+				} else {
+					// assign the request insight metric 
+					$_POST["insightRequest"] = (isset($_POST["insightRequest"]) && !empty($_POST["insightRequest"])) ? $_POST["insightRequest"] : ["salesOverview"];
+
+					// check if the insight is not an array
+					if(!is_array($_POST["insightRequest"])) {
+						// convert the string to an array
+						$_POST["insightRequest"] = $posClass->stringToArray($_POST["insightRequest"]);
+					}
+
+					// check if an invalid metric was supplied
+					if(isset($_POST["productsLimit"])) {
+						// check if the insight metric contains product performance
+						if(!in_array("productsPerformanceInsight", $_POST["insightRequest"])) {
+							// set the bugs to true
+							$bugs = true;
+							// set the error message
+							$response->message = "Sorry! The parameter 'productsLimit' should be parsed with the metric 'productsPerformanceInsight'";
+						}
+					}
+				}
+			}
 		}
 
 		// confirm that a bug was found
@@ -124,6 +133,11 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	$loggedUserId = (isset($apiAccessValues->userId)) ? xss_clean($apiAccessValues->userId) : $session->userId;
 	$insightRequest = (isset($_POST["insightRequest"])) ? $_POST["insightRequest"] : $session->insightRequest;
 	$limit = (isset($_POST["limit"])) ? (int) $_POST["limit"] : 100000;
+
+	// set the general id
+	$session->userId = $loggedUserId;
+	$session->clientId = $loggedUserClientId;
+	$session->branchId = $loggedUserBranchId;
 
 	//: if the user requested the data from the browser
 	$expiredAccount = $session->accountExpired;
@@ -448,6 +462,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			if (!empty($_POST['salesID'])) {
 
+				$ordersObj = load_class('Orders', 'controllers');
+
 				$postData = (OBJECT) array_map("xss_clean", $_POST);
 
 				$query = $posClass->getAllRows(
@@ -468,75 +484,80 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 				if ($query != false) {
 
-					$subTotal = 0;
+					if($rawJSON) {
+						$response->message = [];
+						$response->result = $ordersObj->saleDetails($query[0]->order_id, $loggedUserClientId, $loggedUserBranchId, $loggedUserId);
+					} else {
+						$subTotal = 0;
 
-					$message = "
-					<div class=\"row table-responsive\">
-						<table class=\"table table-bordered\">
+						$message = "
+						<div class=\"row table-responsive\">
+							<table class=\"table table-bordered\">
+								<tr>
+									<td colspan='2' class='text-center'>
+										<strong>Served By: </strong> {$query[0]->sales_person}<br>
+										<strong>Point of Sale: </strong> {$query[0]->branch_name}
+									</td>
+								</tr>
+								<tr>
+									<td><strong>Customer Name</strong>: {$query[0]->fullname}</td>
+									<td align='left'><strong>Transaction ID:</strong>: {$postData->salesID}</td>
+								</tr>
+								<tr>
+									<td><strong>Contact</strong>: {$query[0]->contact}</td>
+									<td align='left'><strong>Transaction Date</strong>: {$query[0]->order_date}</td>
+								</tr>
+							</table>
+			                <table class=\"table table-bordered\">
+								<thead>
+									<tr>
+										<td class=\"text-left\">Product</td>
+										<td class=\"text-left\">Quantity</td>
+										<td class=\"text-right\">Unit Price</td>
+										<td class=\"text-right\">Total</td>
+									</tr>
+								</thead>
+								<tbody>";
+
+						foreach ($query as $data) {
+							$productTotal = $posClass->toDecimal($data->product_total, 2, ',');
+							$message .= "
+								<tr>
+									<td>{$data->product_title}</td>
+									<td>{$data->product_quantity}</td>
+									<td class=\"text-right\">{$clientData->default_currency} {$data->product_unit_price}</td>
+									<td class=\"text-right\">{$clientData->default_currency} {$productTotal}</td>
+								</tr>";
+
+							$subTotal += $data->product_total;
+							$discount = $posClass->toDecimal($data->order_discount, 2, ',');
+						}
+						$overall = $posClass->toDecimal($subTotal - $discount, 2, ',');
+						$message .= "
 							<tr>
-								<td colspan='2' class='text-center'>
-									<strong>Served By: </strong> {$query[0]->sales_person}<br>
-									<strong>Point of Sale: </strong> {$query[0]->branch_name}
+								<td style=\"font-weight:bolder;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Subtotal</td>
+								<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">
+									{$clientData->default_currency} ".$posClass->toDecimal($subTotal, 2, ',')."
 								</td>
 							</tr>
 							<tr>
-								<td><strong>Customer Name</strong>: {$query[0]->fullname}</td>
-								<td align='left'><strong>Transaction ID:</strong>: {$postData->salesID}</td>
+								<td style=\"font-weight:;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Discount</td>
+								<td style=\"font-weight:;text-transform:uppercase\" class=\"text-right\">{$clientData->default_currency} {$discount}</td>
 							</tr>
 							<tr>
-								<td><strong>Contact</strong>: {$query[0]->contact}</td>
-								<td align='left'><strong>Transaction Date</strong>: {$query[0]->order_date}</td>
+								<td style=\"font-weight:bolder;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Overall Total</td>
+								<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">{$clientData->default_currency} {$overall}</td>
 							</tr>
-						</table>
-		                <table class=\"table table-bordered\">
-							<thead>
-								<tr>
-									<td class=\"text-left\">Product</td>
-									<td class=\"text-left\">Quantity</td>
-									<td class=\"text-right\">Unit Price</td>
-									<td class=\"text-right\">Total</td>
-								</tr>
-							</thead>
-							<tbody>";
+						";
 
-					foreach ($query as $data) {
-						$productTotal = $posClass->toDecimal($data->product_total, 2, ',');
-						$message .= "
-							<tr>
-								<td>{$data->product_title}</td>
-								<td>{$data->product_quantity}</td>
-								<td class=\"text-right\">{$clientData->default_currency} {$data->product_unit_price}</td>
-								<td class=\"text-right\">{$clientData->default_currency} {$productTotal}</td>
-							</tr>";
+						$message .= "</tbody>
+							</table>
+						</div>";
 
-						$subTotal += $data->product_total;
-						$discount = $posClass->toDecimal($data->order_discount, 2, ',');
+						$response->result = $message;
 					}
-					$overall = $posClass->toDecimal($subTotal - $discount, 2, ',');
-					$message .= "
-						<tr>
-							<td style=\"font-weight:bolder;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Subtotal</td>
-							<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">
-								{$clientData->default_currency} ".$posClass->toDecimal($subTotal, 2, ',')."
-							</td>
-						</tr>
-						<tr>
-							<td style=\"font-weight:;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Discount</td>
-							<td style=\"font-weight:;text-transform:uppercase\" class=\"text-right\">{$clientData->default_currency} {$discount}</td>
-						</tr>
-						<tr>
-							<td style=\"font-weight:bolder;text-transform:uppercase\" colspan=\"3\" class=\"text-right\">Overall Total</td>
-							<td style=\"font-weight:bolder;text-transform:uppercase\" class=\"text-right\">{$clientData->default_currency} {$overall}</td>
-						</tr>
-					";
-
-					$message .= "</tbody>
-						</table>
-					</div>";
 
 					$response->status = true;
-					$response->result = $message;
-
 				}
 
 			}
@@ -2264,7 +2285,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 				if($rawJSON) {
 					$eachRequest->itemLines = $ordersObj->requestDetails($eachRequest->request_id, $loggedUserClientId, $loggedUserBranchId, $loggedUserId);
-
+					unset($eachRequest->id);
 					$results[] = $eachRequest;
 				} else {
 
@@ -2390,6 +2411,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							$i++;
 
 							if($rawJSON) {
+								$data->branch_id = $data->id;
+								unset($data->id);
 								$message[] = $data;
 							} else {
 								$branch_type = "<br><span class='badge text-white ".(($data->branch_type == 'Store') ? "badge-dark" : "badge-primary")."'>{$data->branch_type}</span>";
@@ -3878,7 +3901,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				
 				//: query for the list of all customers
 				$customersClass = load_class("Customers", "controllers", $loggedUserClientId);
-				$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, b.branch_name", "AND a.customer_id != 'WalkIn' {$branchAccess}",
+				$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, a.postal_address, b.branch_name", 
+					"AND a.customer_id != 'WalkIn' {$branchAccess}",
 					"LEFT JOIN branches b ON b.id = a.branchId", $limit
 				);
 
@@ -3889,7 +3913,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				foreach($customersList as $eachCustomer) {
 
 					//: If the request is from the website
-					if(!$rawJSON) {
+					if($rawJSON) {
+						unset($eachCustomer->id);
+						$customers[] = $eachCustomer;
+					} else {
 						$row_id++;
 						// set the action button
 						$eachCustomer->row_id = $row_id;
@@ -3907,9 +3934,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				        $eachCustomer->action .= "</div>";
 
 				        $eachCustomer->fullname = "<a data-id=\"{$eachCustomer->customer_id}\" data-info='".json_encode($eachCustomer)."'>{$eachCustomer->title} {$eachCustomer->fullname}<br><span style='background-color: #9ba7ca;' class='badge badge-default'>{$eachCustomer->branch_name}</span></a>";
+
+				        //append to the list
+						$customers[] = $eachCustomer;
 			    	}
-					//append to the list
-					$customers[] = $eachCustomer;
 				}
 
 				$response = [
@@ -3919,7 +3947,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			}
 
 			//: update the customer information
-			elseif(isset($_POST["nc_firstname"], $_POST["customer_id"]) && confirm_url_id(2, "updateCustomerDetails")) {
+			elseif(isset($_POST["nc_firstname"]) && confirm_url_id(2, "manageCustomers")) {
 				//: update the information
 				$postData = (Object) array_map('xss_clean', $_POST);
 
@@ -3935,32 +3963,59 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$response->message = "Please enter a valid contact number";
 				}
 				else{
+					// set additioal variables
+					$postData->userId = $loggedUserId;
+					$postData->clientId = $loggedUserClientId;
+					$postData->branchId = (isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId;
+					$postData->nc_lastname = (isset($postData->nc_lastname)) ? $postData->nc_lastname : null;
+					$postData->nc_title = (isset($postData->nc_title)) ? $postData->nc_title : null;
+					$postData->residence = (isset($postData->residence)) ? $postData->residence : null;
+					$postData->n_contact2 = (isset($postData->phone_2)) ? $postData->phone_2 : null;
+					
+					
 					// update the customer information
 	                if($postData->request == "update-record") {
 
 	                	// save the previous data set
-						$prevData = $posClass->getAllRows("customers", "*", "clientId='{$loggedUserClientId}' AND customer_id='{$postData->customer_id}'")[0];
+						$prevData = $posClass->getAllRows("customers", "*", "clientId='{$loggedUserClientId}' AND customer_id='{$postData->customer_id}'");
 
-						/* Record the initial data before updating the record */
-						$posClass->dataMonitoring('customers', $postData->customer_id, json_encode($prevData));
+						if(!empty($prevData)) {
 
-	                	// update the customer details
-	                    $updateCustomer = $customersObj->quickUpdate($postData);
+							/* Record the initial data before updating the record */
+							$posClass->dataMonitoring('customers', $postData->customer_id, json_encode($prevData[0]));
 
-	                    // print success message
-	                    if(!empty($updateCustomer)){
-	                        $response->status = 200;
-	                        $response->message = "Customer data successfully updated";
-	                    }
+		                	// update the customer details
+		                    $updateCustomer = $customersObj->quickUpdate($postData);
+
+		                    // print success message
+		                    if(!empty($updateCustomer)){
+		                        $response->status = 200;
+		                        $response->message = "Customer data successfully updated";
+		                    }
+		                } else {
+		                	$response->message = "Sorry! An invalid customer id was submitted";
+		                }
 	                } else {
-	                    // add the customer information
-	                    $addCustomer = $customersObj->quickAdd($postData);
+	                	$prevData = null;
 
-	                    // print success message
-	                    if(!empty($addCustomer)){
-	                        $response->status = 200;
-	                        $response->message = "Customer data successfully inserted";
-	                    }
+	                	// check the customer id
+	                	if(isset($postData->customer_id)) {
+	                		$prevData = $posClass->getAllRows("customers", "COUNT(*) as customerFound", "clientId='{$loggedUserClientId}' AND customer_id='{$postData->customer_id}'"
+	                		)[0];
+	                	}
+
+	                	if(!empty($prevData) and ($prevData->customerFound != 0)) {
+	                		$response->message = "Duplicate customer id has been parsed";
+	                	} else {
+		                    // add the customer information
+		                    $addCustomer = $customersObj->quickAdd($postData);
+
+		                    // print success message
+		                    if(!empty($addCustomer)){
+		                        $response->status = 200;
+		                        $response->message = "Customer data successfully inserted";
+		                    }
+		                }
 	                }
 				}
 			}
@@ -4031,6 +4086,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	            	$i++;
 	            	
 	            	if($rawJSON) {
+	            		unset($eachCategory->id);
 	            		$categories[] = $eachCategory;
 	            	} else {
 		            	$eachCategory->row = $i;
@@ -4440,6 +4496,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	            	$i++;
 
 	            	if($rawJSON) {
+	            		unset($eachCategory->id);
 	            		$categories[] = $eachCategory;
 	            	} else {	            	
 		            	$eachCategory->row = $i;
@@ -4577,6 +4634,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		            $tax += $eachExpense->tax;
 		            
 		            if($rawJSON) {
+		            	unset($eachExpense->id);
 		            	$expenses[] = $eachExpense;
 		            } else {
 		            	$i++;
@@ -4716,10 +4774,16 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 	}
 
+	// convert the response to an object to allow extension
 	$response = (Object) $response;
 
 	if(!empty($insightRequest)) {
 		$response->metrics = $insightRequest;
+	}
+
+	// unset unwanted items from the response
+	if(empty($response->message)) {
+		unset($response->message);
 	}
 
 	if($expiredAccount) {

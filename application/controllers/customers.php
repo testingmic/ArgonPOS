@@ -28,9 +28,9 @@ class Customers extends Pos {
 			if(!empty($postData)) {
 
 				// insert user organization details first
-				$customer_id = "POS".random_string('nozero', 12);
+				$customer_id = (empty($postData->customer_id)) ? "POS".random_string('nozero', 12) : $postData->customer_id;
 								
-				$stmt = $this->db->prepare("INSERT INTO customers SET customer_id=?, firstname=?, lastname=?, phone_1=?, title=?, owner_id=?, email=?, branchId = ?, clientId = ?, residence = ?");
+				$stmt = $this->db->prepare("INSERT INTO customers SET customer_id=?, firstname=?, lastname=?, phone_1=?, title=?, owner_id=?, email=?, branchId = ?, clientId = ?, phone_2 = ?, residence = ?, postal_address =?");
 				
 				if($stmt->execute([
 					$customer_id, 
@@ -38,11 +38,13 @@ class Customers extends Pos {
 					$postData->nc_lastname, 
 					$postData->nc_contact,
 					$postData->nc_title, 
-					$this->session->userId,
+					$postData->userId,
 					$postData->nc_email,
-					$this->session->branchId,
-					$this->clientId,
-					(isset($postData->residence)) ? $postData->residence : null
+					$postData->branchId,
+					$postData->clientId,
+					(isset($postData->n_contact2)) ? $postData->n_contact2 : null,
+					(isset($postData->residence)) ? $postData->residence : null,
+					(isset($postData->postal_address)) ? $postData->postal_address : null
 				])) {
 					$this->userLogs('customer', $customer_id, 'Added a new Customer');
 					return (object)[
@@ -50,7 +52,7 @@ class Customers extends Pos {
 						$postData->nc_firstname, 
 						$postData->nc_lastname,
 						$postData->nc_email,
-						$postData->nc_contact
+						$postData->nc_contact,
 					];
 				}
 				return false;
@@ -66,7 +68,10 @@ class Customers extends Pos {
 			if(!empty($postData)) {
 
 				// insert user organization details first				
-				$stmt = $this->db->prepare("UPDATE customers SET residence = ?, firstname=?, lastname=?, phone_1=?, title=?, email=? WHERE clientId = ? AND customer_id = ?");
+				$stmt = $this->db->prepare("
+					UPDATE customers SET residence = ?, firstname=?, lastname=?, phone_1=?, title=?, email=?, postal_address = ?, phone_2 = ?
+					WHERE clientId = ? AND customer_id = ?
+				");
 				
 				if($stmt->execute([
 					$postData->residence, 
@@ -75,7 +80,9 @@ class Customers extends Pos {
 					$postData->nc_contact,
 					$postData->nc_title, 
 					$postData->nc_email,
-					$this->clientId,
+					(isset($postData->postal_address)) ? $postData->postal_address : null,
+					(isset($postData->n_contact2)) ? $postData->n_contact2 : null,
+					$postData->clientId,
 					$postData->customer_id
 				])) {
 					$this->userLogs('customer', $postData->customer_id, 'Updated the customer details');

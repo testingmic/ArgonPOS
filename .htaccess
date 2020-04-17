@@ -4,5 +4,6 @@ RewriteCond $1 !^(index\.php|assets|robots\.txt)
 RewriteRule ^test($|/) - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
 RewriteRule ^(.*)$ index.php/$1 [L,QSA]
 RewriteRule !\.(txt|xml|docx|gif|jpg|JPG|png|cur|css|js|ico|pdf|woff2|woff|svg|eot|ttf|jpeg|csv|map|json)$ index.php

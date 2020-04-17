@@ -28,7 +28,6 @@ class Pos {
 		$this->platform = $this->ur->platform();
 		$this->browser = $this->ur->browser();
 
-		// $this->clientId = $this->thisClient();
 		$this->clientId = $session->clientId;
 	}
 

@@ -191,7 +191,7 @@ class Orders extends Pos {
 		//: search for the product details
 		$stmt = $this->pos->prepare("
 			SELECT 
-				a.id, a.clientId, a.branchId, a.mode, a.order_id, a.customer_id,
+				a.clientId, a.branchId, a.mode, a.order_id, a.customer_id,
 				a.recorded_by, a.order_amount_paid, a.order_discount, 
 				a.order_amount_balance, a.overall_order_amount, a.log_date,
 				a.payment_type, a.transaction_id, a.payment_date,
@@ -214,7 +214,7 @@ class Orders extends Pos {
 
 		$data = [];
 		while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-			$result->saleItems = $this->getAllRows("sales_details a LEFT JOIN products b ON b.id=a.product_id", "a.*, b.product_title", "a.order_id='{$result->order_id}'");
+			$result->saleItems = $this->getAllRows("sales_details a LEFT JOIN products b ON b.id=a.product_id", "a.product_id, a.product_quantity, a.product_cost_price, a.product_unit_price, a.product_total, a.product_returns_count, a.product_returns_total, b.product_title", "a.order_id='{$result->order_id}'");
 			$data[] = $result;
 		}
 
@@ -247,7 +247,7 @@ class Orders extends Pos {
 		//: search for the product details
 		$stmt = $this->pos->prepare("
 			SELECT 
-				a.id, a.clientId, a.branchId, a.request_id, a.customer_id,
+				a.clientId, a.branchId, a.request_id, a.customer_id,
 				a.recorded_by, a.request_discount,
 				a.request_total, a.request_overall, a.request_date,
 				a.request_status, DATE(a.request_date) AS today_date,
@@ -266,7 +266,7 @@ class Orders extends Pos {
 
 		$data = [];
 		while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
-			$result->saleItems = $this->getAllRows("requests_details a LEFT JOIN products b ON b.id=a.product_id", "a.*, b.product_title", "a.request_id='{$result->request_id}'");
+			$result->saleItems = $this->getAllRows("requests_details a LEFT JOIN products b ON b.id=a.product_id", "a.auto_id, a.request_id, a.product_id, a.product_quantity, a.product_price, a.product_total, a.request_date, b.product_title", "a.request_id='{$result->request_id}'");
 			$data[] = $result;
 		}
 

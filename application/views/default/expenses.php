@@ -10,6 +10,7 @@ if($session->accountExpired) {
 // include the important files
 require_once "headtags.php";
 
+$session->insightRequest = [];
 global $accessObject;
 ?>
 <!-- Page Content-->
