@@ -299,7 +299,7 @@ if(isset($customerDetails->fullname)) {
                   <div class="modal-header">
                       <h5 class="mt-0">Most Purchased Products</h5>
                   </div>
-                  <div class="table-responsive">
+                  <div class="table-responsive slim-scroll">
                     <table width="100%" class="table mb-0 products-performance">
                         <thead class="thead-light">
                         <tr>
