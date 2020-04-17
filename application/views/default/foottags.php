@@ -287,27 +287,29 @@ hL();
 <?php } ?>
 genIds();
 <?php if(confirm_url_id(0, 'dashboard')) { ?>
-  // 
   await dOC().then((itResp) => {
     if (itResp == 1) {
-      syncOfflineData('sales').then((resp) => {
-          dPv('sales').then((res) => {
-              preloadData('sales').then((res) => {
-                  preloadData('reports');
-              });
+      let cSt = Cookies.get('offlineSales');
+      if(cSt == 'available') {
+        syncOfflineData('sales').then((resp) => {
+          preloadData('sales').then((res) => {
+              preloadData('reports');
+              Cookies.set('offlineSales', 'unavailable');
           });
-      });
+        });
+      }
     }
   });
+  //dPv('sales').then((res) => {
 <?php } ?>
 <?php if(confirm_url_id(0, 'settings')) { ?>
-$('textarea[name="terms_and_conditions"]').summernote({
-  width: 600,
-  height: 150,
-  minHeight: 120,
-  maxHeight: 200,
-  focus: false
-});
+// $('textarea[name="terms_and_conditions"]').summernote({
+//   // width: 600,
+//   // height: 150,
+//   // minHeight: 120,
+//   // maxHeight: 200,
+//   // focus: false
+// });
 <?php } ?>
 });
 if ('serviceWorker' in navigator) {

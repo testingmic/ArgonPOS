@@ -106,7 +106,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			$period = (isset($_POST['salesPeriod'])) ? xss_clean($_POST['salesPeriod']) : "today";
 
-			$session->set_userdata("dashboardPeriod", $period);
+			$session->set_userdata("reportPeriod", $period);
 
 			$period = ($expiredAccount) ? "this-week" : $period;
 
@@ -1740,7 +1740,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			// fetch the data
 			$customersClass = load_class("Customers", "controllers");
-			$customers = $customersClass->fetch("id, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, branchId, phone_1, phone_2, email, residence", "AND customer_id != 'WalkIn'");
+			$customers = $customersClass->fetch("id, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, branchId, phone_1, state, phone_2, email, residence", "AND customer_id != 'WalkIn'");
 
 			// fetch the data
 			$customers_list = [];
@@ -2796,6 +2796,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 								// request from site
 								$i++;
 								$price = $posClass->toDecimal($product->product_price, 2, ',');
+								$cost_price = $posClass->toDecimal($product->cost_price, 2, ',');
 
 								// Check Indicator
 								$calcA = (0.5 * $product->quantity) + $product->quantity;
@@ -2828,6 +2829,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									",
 					                'category' => $product->category,
 					                'price' => "{$clientData->default_currency} {$price}",
+					                'cost_price' => "{$clientData->default_currency} {$cost_price}",
 					                'quantity' => "<div class='text-center'>{$product->quantity}</div>",
 					                'indicator' => "<div class='text-center'><span style=\"font-size: 9px;\" class=\"fa fa-circle text-{$indicator}\"></span></div>",
 					                'action' => $action

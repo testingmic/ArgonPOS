@@ -89,36 +89,34 @@ if(isset($branch->branch_name)) {
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <p class="text-muted mb-4 font-13">
-                    All available products in <?= strtolower($PAGETITLE) ?>.
-                </p>
                 <p>
                     <a href="<?= $config->base_url('inventory') ?>" class="btn btn-neutral waves-light">
                         <i class="fa fa-arrow-left"></i> Back
                     </a>
                     <?php if($accessChecker) { ?>
                         <button type="button" class="btn <?= $clientData->btn_outline; ?> waves-effect waves-light transfer-selected-products">
-                            <i class="fa fa-share"></i> Transfer
+                            <i class="fa fa-share"></i> Move
                         </button>
                         <?php // if ($branch->branch_type == "Warehouse") { ?>
                         <button type="button" class="btn btn-outline-success waves-effect waves-light float-right ml-2" data-toggle="modal" data-animation="bounce" data-target="#updateProductModal">
-                            <i class="fa fa-upload"></i> Update Stock
+                            <i class="fa fa-upload"></i> Update
                         </button>
                         <button type="button" class="btn btn-outline-primary waves-effect waves-light float-right ml-2 pop-new-modal" data-toggle="modal" data-animation="bounce" data-target="#addProductModal">
-                            + Add New
+                            + Add
                         </button>
                         <?php // } ?>
                     <?php } ?>
                 </p>
                 <div class="table-responsive">
-                    <table id="allProducts" class="table nowrap datatable-buttons">
+                    <table class="table nowrap inventoryProductsList datatable-buttons">
                         <thead>
                         <tr>
                             <th class="text-center"></th>
                             <th>Item Name</th>
                             <th>Category</th>
-                            <th>Price</th>
-                            <th class="text-center">Stock</th>
+                            <th>Purchase Price</th>
+                            <th>Selling Price</th>
+                            <th class="text-center">Available Stock</th>
                             <th class="text-center"></th>
                             <th class="text-center"></th>
                         </tr>

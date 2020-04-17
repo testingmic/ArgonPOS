@@ -308,8 +308,6 @@ function sPIDB() {
             result = 'Sorry! You have not selected any products.';
         } else {
 
-            console.log(mainSalesDetails)
-
             var indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB
 
             var open = indexedDB.open(iName, iVer);
@@ -709,7 +707,7 @@ function toastError(msg) {
 
 function genIds() {
     $(`div[class="default-variables"]`).attr('data-transaction-id', rndInt(13));
-    $(`div[class="default-variables"]`).attr('data-receipt-id', `INV${rndInt(13)}`);
+    $(`div[class="default-variables"]`).attr('data-receipt-id', `POS${rndInt(13)}`);
     $(`div[class="default-variables"]`).attr('data-unique-id', unqStr(55));
 }
 
@@ -1025,7 +1023,7 @@ function jsDate(dateType = 'datetime') {
         return [year, month, day].join('-') + " " + [hour, minute, seconds].join(':'); 
     } else if(dateType == 'fulldate') {
         return [year, month, day].join('-'); 
-    } else if(dataType == 'hour') {
+    } else if(dateType == 'hour') {
         return hour; 
     }
 }
@@ -2317,6 +2315,7 @@ $("#newCustomer_form").on("submit", async function(event) {
             phone_1: $(`input[name="nc_contact"]`).val(),
             email: $(`input[name="nc_email"]`).val(),
             clientId: storeValues.clientId,
+            state: 'MODIFIED',
             branchId: storeValues.branchId,
             fullname: $(`input[name="nc_firstname"]`).val() + ' ' + $(`input[name="nc_lastname"]`).val() 
         }];
@@ -2552,7 +2551,7 @@ if($(".make-online-payment").length) {
                         $(`div[class="connection"]`).css('display','block');
                     });
 
-                    if(noInternet) {
+                    if(!noInternet) {
 
                         sPIDB().then((resp) => {
                             if(resp.status == 'error') {
@@ -2564,7 +2563,6 @@ if($(".make-online-payment").length) {
                                 $("[data-bind-html='orderId']").html(resp.orderId);
                                 $(`span[class="generated_order"]`).html(resp.orderId);
                                 $(`div[class="svon"]`).attr('data-value', 0);
-
                                 Toast.fire({
                                     type: 'success',
                                     title: "Payment Successfully Recorded"
@@ -2573,15 +2571,10 @@ if($(".make-online-payment").length) {
                                 if(storeValues.prt == "yes") {
                                     qPrt();
                                 }
-                                ftcPrdList();
+                                ftchPrdList();
+                                Cookies.set('offlineSales', 'available');
                                 $(`select[class~="customer-select"]`).val('WalkIn').change();
                             }
-
-                        }).catch((err) => {
-                            Toast.fire({
-                                type: 'error',
-                                title: "Error processing the Sale Record."
-                            });
                         });
 
                     } else {
@@ -4266,6 +4259,7 @@ $(function() {
                     });
 
                     if($("span[class~='total-sales']").length) {
+
                         $("span[class~='total-sales']").html(data.message.totalSales.total);
                         $("span[class~='total-sales-trend']").html(data.message.totalSales.trend);
 
@@ -4279,7 +4273,7 @@ $(function() {
                         $("span[class~='total-discounts-trend']").html(data.message.totalDiscount.trend);
 
                         $("span[class~='total-credit-sales']").html(data.message.totalCredit.total);
-                        $("span[class~='total-credit-sales']-trend").html(data.message.totalCredit.trend);
+                        $("span[class~='total-credit-sales-trend'").html(data.message.totalCredit.trend);
 
                         $("span[class~='total-profit']").html(data.message.salesComparison.profit);
                         $("span[class~='total-profit-trend']").html(data.message.salesComparison.profit_trend);
@@ -4536,10 +4530,12 @@ $(function() {
 
             if(offline) {
 
+                $(`div[class~="offline-placeholder"]`).css({'display': 'flex'});
                 $(`select[name="periodSelected"]`).prop('disabled', true);
                 $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`).css({ 'display': 'inline-flex' });
                 $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
                 $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+                
                 dashboardAnalitics().then(async (dashboardInsights) => {
 
                     if($(`table[class~="salesLists"]`).length) {
@@ -4564,12 +4560,16 @@ $(function() {
                     }
 
                     if ($(`div[class~="dashboard-reports"]`).length) {
+
+                        $("span[class~='average-sales']").html(dashboardInsights.averageSale);
+                        $("span[class~='average-sales-trend']").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Average Sales Today</span>`);
+
                         $(".total-sales").html(dashboardInsights.total);
                         $(".total-sales-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Total Sales Today</span>`);
+                        
                         $(".total-served").html(dashboardInsights.orders);
                         $(".total-served-trend").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Customers Served</span>`);
-                        $(".total-products").html(dashboardInsights.averageSale);
-                        $(".total-products-worth").html(`<span class="text-success"><i class="mdi mdi-trending-up"></i> Sold today</span>`);
+                        
                         $(".total-credit-sales").html(dashboardInsights.credit);
                         $(".total-credit-sales-trend").html(dashboardInsights.creditPercent);
 
@@ -5504,21 +5504,22 @@ var fetchAllProducts = (branchID = null, location = branch_type) => {
         beforeSend: function() {},
         success: function(data) {
 
-            $(`table[id="allProducts"]`).dataTable().fnDestroy();
-            $(`table[id="allProducts"]`).dataTable({
+            $(`table[class~="inventoryProductsList"]`).dataTable().fnDestroy();
+            $(`table[class~="inventoryProductsList"]`).dataTable({
                 "aaData": data.message,
                 "iDisplayLength": 10,
                 "buttons": ["copy", "print","csvHtml5"],
                 "lengthChange": !1,
                 "dom": "Bfrtip",
                 "columns": [
-                {"data": 'row_id'},
-                {"data": 'product_name'},
-                {"data": 'category'},
-                {"data": 'price'},
-                {"data": 'quantity'},
-                {"data": 'indicator'},
-                {"data": 'action'}
+                    {"data": 'row_id'},
+                    {"data": 'product_name'},
+                    {"data": 'category'},
+                    {"data": 'cost_price'},
+                    {"data": 'price'},
+                    {"data": 'quantity'},
+                    {"data": 'indicator'},
+                    {"data": 'action'}
                 ]
             });
         },

@@ -152,12 +152,12 @@ $session->insightRequest = [
     </div>
     <div class="col-xl-4">
       
-      
-      <div class="card">
+      <div class="card" style="min-height: 510px">
+        <?= connectionLost(); ?>
         <!-- Card header -->
         <div class="card-header">
           <!-- Title -->
-          <h5 class="h3 mb-0">4 Most Performing Products</h5>
+          <h5 class="h3 mb-0">4 Most Performing Products this Week</h5>
         </div>
         <!-- Card body -->
         <div class="card-body">
