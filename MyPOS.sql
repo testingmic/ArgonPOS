@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 17, 2020 at 12:27 AM
+-- Generation Time: Apr 17, 2020 at 04:40 AM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.10
 
@@ -403,6 +403,7 @@ CREATE TABLE `customers` (
   `date_log` datetime DEFAULT current_timestamp(),
   `preferred_payment_type` varchar(32) COLLATE utf8_unicode_ci DEFAULT NULL,
   `comments` text COLLATE utf8_unicode_ci DEFAULT NULL,
+  `state` enum('MODIFIED','UPLOADED') COLLATE utf8_unicode_ci NOT NULL DEFAULT 'UPLOADED',
   `status` enum('1','0') COLLATE utf8_unicode_ci DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -410,12 +411,12 @@ CREATE TABLE `customers` (
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`id`, `clientId`, `branchId`, `customer_id`, `source`, `title`, `firstname`, `lastname`, `role`, `phone_1`, `phone_2`, `email`, `date_of_birth`, `user_image`, `description`, `residence`, `postal_address`, `country`, `nationality`, `gender`, `city`, `user_type`, `website`, `industry`, `balance`, `rating`, `owner_id`, `date_log`, `preferred_payment_type`, `comments`, `status`) VALUES
-(1, '3OKokdt8wveI', 1, 'POS732143158965', 'Evelyn', 'Mr', 'Asamoah', 'John', NULL, '0908877859', NULL, 'asamoahjohn@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'J7Sa5j8FYPGVXKp', '2020-04-10 21:11:14', NULL, NULL, '1'),
-(2, '3OKokdt8wveI', 1, 'POS499688133725', 'Evelyn', 'Mr', 'Amoah', 'Danso', NULL, '0550107770', NULL, 'emmallob14@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3tYcj10KTedBJ6XsiVqnkN94rFlL', '2020-04-10 21:27:47', NULL, NULL, '1'),
-(3, '3OKokdt8wveI', 1, 'WalkIn', 'Argon', NULL, 'WalkIn', 'Customer', NULL, NULL, NULL, NULL, NULL, 'assets/images/users/user-4.jpg', NULL, NULL, NULL, NULL, NULL, 'Male', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-11 09:13:25', NULL, NULL, '1'),
-(5, '3OKokdt8wveI', 1, '1', 'Argon', 'Mr', 'Asamoah', 'John', NULL, '0908877859', NULL, 'asamoahjohn@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, '   ', NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-12 17:36:25', NULL, NULL, '1'),
-(6, '3OKokdt8wveI', 1, '2', 'Argon', 'Mr', 'Joshua Commey', 'Mental Health', NULL, '0550107770', NULL, 'joshcommey@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'JHS 2', NULL, NULL, NULL, NULL, '   ', NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-12 17:36:25', NULL, NULL, '1');
+INSERT INTO `customers` (`id`, `clientId`, `branchId`, `customer_id`, `source`, `title`, `firstname`, `lastname`, `role`, `phone_1`, `phone_2`, `email`, `date_of_birth`, `user_image`, `description`, `residence`, `postal_address`, `country`, `nationality`, `gender`, `city`, `user_type`, `website`, `industry`, `balance`, `rating`, `owner_id`, `date_log`, `preferred_payment_type`, `comments`, `state`, `status`) VALUES
+(1, '3OKokdt8wveI', 1, 'POS732143158965', 'Evelyn', 'Mr', 'Asamoah', 'John', NULL, '0908877859', NULL, 'asamoahjohn@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'J7Sa5j8FYPGVXKp', '2020-04-10 21:11:14', NULL, NULL, 'UPLOADED', '1'),
+(2, '3OKokdt8wveI', 1, 'POS499688133725', 'Evelyn', 'Mr', 'Amoah', 'Danso', NULL, '0550107770', NULL, 'emmallob14@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '3tYcj10KTedBJ6XsiVqnkN94rFlL', '2020-04-10 21:27:47', NULL, NULL, 'UPLOADED', '1'),
+(3, '3OKokdt8wveI', 1, 'WalkIn', 'Argon', NULL, 'WalkIn', 'Customer', NULL, NULL, NULL, NULL, NULL, 'assets/images/users/user-4.jpg', NULL, NULL, NULL, NULL, NULL, 'Male', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-11 09:13:25', NULL, NULL, 'UPLOADED', '1'),
+(5, '3OKokdt8wveI', 1, '1', 'Argon', 'Mr', 'Asamoah', 'John', NULL, '0908877859', NULL, 'asamoahjohn@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'Accra', NULL, NULL, NULL, NULL, '   ', NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-12 17:36:25', NULL, NULL, 'UPLOADED', '1'),
+(6, '3OKokdt8wveI', 1, '2', 'Argon', 'Mr', 'Joshua Commey', 'Mental Health', NULL, '0550107770', NULL, 'joshcommey@mail.com', NULL, 'assets/images/users/user-4.jpg', NULL, 'JHS 2', NULL, NULL, NULL, NULL, '   ', NULL, NULL, NULL, NULL, NULL, NULL, '2020-04-12 17:36:25', NULL, NULL, 'UPLOADED', '1');
 
 -- --------------------------------------------------------
 
@@ -484,7 +485,8 @@ INSERT INTO `data_monitoring` (`id`, `clientId`, `data_type`, `unique_id`, `data
 (44, 3, 'expenses-category', '1', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"name\":\"Salary\",\"description\":\"This is the salary of all employees. That is good and fair&#39;d. That is what i hate ooo&#39;h please. Do well to say the best &#39;&#39;\\\"of him\\\" thank you\",\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | ::1', '2020-04-15 21:39:52'),
 (45, 3, 'expenses', '2', '{\"id\":\"2\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"category_id\":\"1\",\"start_date\":\"2020-04-15\",\"end_date\":null,\"amount\":\"5400.00\",\"tax\":\"100.00\",\"payment_type\":\"cash\",\"description\":\"This is a dummy expense\",\"created_by\":\"J7Sa5j8FYPGVXKp\",\"date_log\":\"2020-04-16 00:19:48\",\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | ::1', '2020-04-16 23:23:21'),
 (46, 3, 'expenses', '1', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"category_id\":\"1\",\"start_date\":\"2020-04-15\",\"end_date\":null,\"amount\":\"5400.00\",\"tax\":\"100.00\",\"payment_type\":\"cash\",\"description\":\"This is a dummy expense\",\"created_by\":\"J7Sa5j8FYPGVXKp\",\"date_log\":\"2020-04-15 23:51:05\",\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | ::1', '2020-04-16 23:25:53'),
-(47, 3, 'expenses', '2', '{\"id\":\"2\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"category_id\":\"1\",\"start_date\":\"2020-04-30\",\"end_date\":null,\"amount\":\"5400.00\",\"tax\":\"100.00\",\"payment_type\":\"cash\",\"description\":\"This is a dummy expense. And i am trying to edit the content. I am confident it will work well as i am expecting it to work\",\"created_by\":\"J7Sa5j8FYPGVXKp\",\"date_log\":\"2020-04-16 00:19:48\",\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | ::1', '2020-04-16 23:26:05');
+(47, 3, 'expenses', '2', '{\"id\":\"2\",\"clientId\":\"3OKokdt8wveI\",\"branchId\":\"1\",\"category_id\":\"1\",\"start_date\":\"2020-04-30\",\"end_date\":null,\"amount\":\"5400.00\",\"tax\":\"100.00\",\"payment_type\":\"cash\",\"description\":\"This is a dummy expense. And i am trying to edit the content. I am confident it will work well as i am expecting it to work\",\"created_by\":\"J7Sa5j8FYPGVXKp\",\"date_log\":\"2020-04-16 00:19:48\",\"status\":\"1\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | ::1', '2020-04-16 23:26:05'),
+(48, 3, 'settings', '3OKokdt8wveI', '{\"id\":\"1\",\"clientId\":\"3OKokdt8wveI\",\"client_name\":\"Emmallen Networks\",\"client_email\":\"emmallob14@gmail.com\",\"client_website\":\"\",\"client_logo\":\"assets\\/images\\/logo.png\",\"primary_contact\":\"0550107770\",\"secondary_contact\":\"\",\"payment_options\":\"cash,credit,MoMo\",\"shop_opening_days\":\"Monday,Tuesday,Wednesday,Thursday,Friday\",\"address_1\":\"\",\"address_2\":null,\"receipt_message\":\"Thank you for trading with us.\",\"terms_and_conditions\":\"\",\"manager_signature\":null,\"reports_sales_attendant\":\"sales-attendant-performance\",\"reports_period\":\"this-week\",\"total_expenditure\":\"0.00\",\"space_per_square_foot\":\"0.00\",\"default_currency\":\"GHS\",\"print_receipt\":\"yes\",\"expiry_notification_days\":\"1 MONTH\",\"allow_product_return\":\"1\",\"allow_return_days\":\"30\",\"default_discount\":\"0.00\",\"fiscal_year_start\":\"2020-01-01\",\"display_clock\":\"1\",\"theme_color\":\"{\\\"bg_colors\\\":\\\"bg-purple text-white no-border\\\",\\\"bg_color_code\\\":\\\"#8965e0\\\",\\\"bg_color_light\\\":\\\"#97a5f1\\\",\\\"btn_outline\\\":\\\"btn-outline-primary\\\"}\",\"theme_color_code\":\"purple\",\"setup_info\":\"{\\\"type\\\":\\\"trial\\\",\\\"verified\\\":0,\\\"setup_date\\\":\\\"2020-04-06\\\",\\\"expiry_date\\\":\\\"2020-04-20\\\",\\\"outlets\\\":\\\"5\\\"}\",\"deleted\":\"0\"}', 'J7Sa5j8FYPGVXKp', 'Windows 10 | Chrome | ::1', '2020-04-17 00:16:06');
 
 -- --------------------------------------------------------
 
@@ -697,14 +699,14 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `clientId`, `branchId`, `source`, `product_id`, `category_id`, `product_title`, `product_type_id`, `product_description`, `product_image`, `product_price`, `cost_price`, `performance_rating`, `date_added`, `expiry_date`, `added_by`, `status`, `threshold`, `quantity`) VALUES
-(1, '3OKokdt8wveI', 1, 'db', 'PDT00012', 'PCAT85769', 'HP Laptop', NULL, 'This is an HP Laptop that i want to add to the Store', 'assets/images/products/default.png', 1600.00, '1200.00', NULL, '2020-04-10 21:19:51', '2020-08-27', 'J7Sa5j8FYPGVXKp', '1', 5, 10),
+(1, '3OKokdt8wveI', 1, 'db', 'PDT00012', 'PCAT85769', 'HP Laptop', NULL, 'This is an HP Laptop that i want to add to the Store', 'assets/images/products/default.png', 1600.00, '1200.00', NULL, '2020-04-10 21:19:51', '2020-08-27', 'J7Sa5j8FYPGVXKp', '1', 5, 40),
 (2, '3OKokdt8wveI', 2, 'db', 'PDT00012', 'PCAT85769', 'HP Laptop', NULL, 'This is an HP Laptop that i want to add to the Store', 'assets/images/products/default.png', 1600.00, '1200.00', NULL, '2020-04-10 21:23:36', NULL, 'J7Sa5j8FYPGVXKp', '1', 5, 30),
 (3, 'Y7CSuzFLDd6K', 3, 'db', 'PDT00012', 'PC00027', 'The product test', NULL, '', 'assets/images/products/default.png', 350.00, '200.00', NULL, '2020-04-12 16:14:22', '0000-00-00', 'JmtzvChyWXs0ecj', '1', 10, 95),
 (4, 'Y7CSuzFLDd6K', 3, 'db', 'PD00023', 'PC010001', 'Hello product title again', NULL, '', 'assets/images/products/J4QHk8cCoBWP59TKtZsL2iyqI.jpg', 200.00, '100.00', NULL, '2020-04-12 16:22:34', '0000-00-00', 'JmtzvChyWXs0ecj', '1', 20, 115),
-(5, '3OKokdt8wveI', 1, 'db', 'PD00012', 'PCAT63294', 'Hello world', NULL, '', 'assets/images/products/default.png', 4.00, '2.00', NULL, '2020-04-12 17:32:04', '0000-00-00', 'J7Sa5j8FYPGVXKp', '1', 10, 0),
-(6, '3OKokdt8wveI', 1, 'db', 'PD00015', 'PCAT63294', 'Book Templates', NULL, '', 'assets/images/products/default.png', 350.00, '290.00', NULL, '2020-04-13 05:12:46', '0000-00-00', 'J7Sa5j8FYPGVXKp', '1', 5, 10),
+(5, '3OKokdt8wveI', 1, 'db', 'PD00012', 'PCAT63294', 'Hello world', NULL, '', 'assets/images/products/default.png', 4.00, '2.00', NULL, '2020-04-12 17:32:04', '0000-00-00', 'J7Sa5j8FYPGVXKp', '1', 10, 100),
+(6, '3OKokdt8wveI', 1, 'db', 'PD00015', 'PCAT63294', 'Book Templates', NULL, '', 'assets/images/products/default.png', 350.00, '290.00', NULL, '2020-04-13 05:12:46', '0000-00-00', 'J7Sa5j8FYPGVXKp', '1', 5, 40),
 (7, '3OKokdt8wveI', 2, 'db', 'PD00016', 'PCAT63294', 'Vaseline Cream', NULL, '', 'assets/images/products/default.png', 25.00, '12.00', NULL, '2020-04-15 09:10:42', '2020-06-30', 'J7Sa5j8FYPGVXKp', '1', 10, 150),
-(8, '3OKokdt8wveI', 1, 'Argon', 'PD00016', 'PCAT63294', 'Vaseline Cream', NULL, '', 'assets/images/products/default.png', 25.00, '12.00', NULL, '2020-04-15 09:15:35', '2020-06-30', 'J7Sa5j8FYPGVXKp', '1', 10, 40);
+(8, '3OKokdt8wveI', 1, 'Argon', 'PD00016', 'PCAT63294', 'Vaseline Cream', NULL, '', 'assets/images/products/default.png', 25.00, '12.00', NULL, '2020-04-15 09:15:35', '2020-06-30', 'J7Sa5j8FYPGVXKp', '1', 10, 36);
 
 -- --------------------------------------------------------
 
@@ -768,7 +770,10 @@ INSERT INTO `products_stocks` (`id`, `clientId`, `branchId`, `auto_id`, `product
 (7, '3OKokdt8wveI', '1', 'KBDJ9AFwuXrVQMSWkYb5aHGhn', 5, '2.00', '4.00', 14, 20, 34, 10, 'J7Sa5j8FYPGV', '2020-04-13 05:37:29'),
 (8, '3OKokdt8wveI', '2', 'komIVEuTj8Zs', 7, '12.00', '25.00', 0, 200, 200, 10, 'J7Sa5j8FYPGV', '2020-04-15 09:10:42'),
 (9, '3OKokdt8wveI', '2', 'n4w6c0KGde3gfLBoAEjFamYWu', 2, '1200.00', '1600.00', 10, 20, 30, 5, 'J7Sa5j8FYPGV', '2020-04-15 09:11:59'),
-(10, '3OKokdt8wveI', '1', 'xlmRunsDQvye', 8, '12.00', '25.00', 0, 50, 50, 10, 'J7Sa5j8FYPGV', '2020-04-15 09:15:35');
+(10, '3OKokdt8wveI', '1', 'xlmRunsDQvye', 8, '12.00', '25.00', 0, 50, 50, 10, 'J7Sa5j8FYPGV', '2020-04-15 09:15:35'),
+(11, '3OKokdt8wveI', '1', 'rVvWedY9iCjX5oOqaNJUh314Z', 5, '2.00', '4.00', 0, 100, 100, 10, 'J7Sa5j8FYPGV', '2020-04-17 01:25:30'),
+(12, '3OKokdt8wveI', '1', 'I5rwxvkjGCAtSW8e1P6EBna3y', 1, '1200.00', '1600.00', 7, 33, 40, 5, 'J7Sa5j8FYPGV', '2020-04-17 01:25:57'),
+(13, '3OKokdt8wveI', '1', 'I5rwxvkjGCAtSW8e1P6EBna3y', 6, '290.00', '350.00', 7, 33, 40, 5, 'J7Sa5j8FYPGV', '2020-04-17 01:25:57');
 
 -- --------------------------------------------------------
 
@@ -912,7 +917,6 @@ INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `state`, `branchId`, `u
 (44, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100045', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 354.00, 354.00, NULL, '2020-04-14 23:05:45', 'confirmed', '2020-04-14 23:05:45', '0', '0', NULL, 'cash', '198596568442'),
 (45, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100046', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 1979.00, 1979.00, NULL, '2020-04-15 09:31:24', 'confirmed', '2020-04-15 09:31:24', '0', '0', NULL, 'cash', '516745323188'),
 (46, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100047', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 100.00, 6.00, 1979.00, 1879.00, NULL, '2020-04-15 15:32:47', 'confirmed', '2020-04-15 15:32:47', '0', '0', NULL, 'cash', '351948667529'),
-(47, '3OKokdt8wveI', 'Evelyn', 'offline', 'UPLOADED', 1, NULL, 'INV3008709207154', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 8216.00, 0.00, NULL, '2020-04-16 15:29:01', 'confirmed', '2020-04-16 15:35:54', '0', '0', NULL, '', '305862774052'),
 (48, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100049', '2', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 379.00, 379.00, NULL, '2020-04-16 15:36:34', 'confirmed', '2020-04-16 15:36:34', '0', '0', NULL, 'cash', '634594578132'),
 (49, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100050', 'POS499688133725', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 1979.00, 1979.00, NULL, '2020-04-16 15:37:09', 'confirmed', '2020-04-16 15:37:09', '0', '0', NULL, 'cash', '278829165435'),
 (50, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100051', 'POS499688133725', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 100.00, 0.00, 1979.00, 1879.00, NULL, '2020-04-16 15:37:33', 'confirmed', '2020-04-16 15:37:33', '0', '0', NULL, 'cash', '213986584695'),
@@ -927,7 +931,12 @@ INSERT INTO `sales` (`id`, `clientId`, `source`, `mode`, `state`, `branchId`, `u
 (60, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100061', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 2.00, 354.00, 354.00, NULL, '2020-04-16 17:42:08', 'confirmed', '2020-04-16 17:42:08', '0', '0', NULL, 'cash', '114256697833'),
 (61, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100062', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 1954.00, 1954.00, NULL, '2020-04-16 17:44:19', 'confirmed', '2020-04-16 17:44:19', '0', '0', NULL, 'cash', '349715289652'),
 (62, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100063', 'POS499688133725', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '1', 0.00, 375.00, 375.00, 375.00, NULL, '2020-04-16 17:48:58', 'confirmed', '2020-04-16 17:48:58', '0', '0', NULL, 'credit', '489925363177'),
-(63, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100064', '2', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 375.00, 375.00, NULL, '2020-04-16 17:50:11', 'confirmed', '2020-04-16 17:50:11', '0', '0', NULL, 'cash', '176641952549');
+(63, '3OKokdt8wveI', 'Argon', 'online', 'UPLOADED', 1, NULL, 'POS2020040100064', '2', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 375.00, 375.00, NULL, '2020-04-16 17:50:11', 'confirmed', '2020-04-16 17:50:11', '0', '0', NULL, 'cash', '176641952549'),
+(64, '3OKokdt8wveI', 'Evelyn', 'offline', 'UPLOADED', 1, NULL, 'INV6425565167703', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 100.00, 0.00, 1975.00, 1875.00, NULL, '2020-04-16 23:51:19', 'confirmed', '2020-04-16 23:53:09', '0', '0', NULL, 'cash', '686907289401'),
+(65, '3OKokdt8wveI', 'Evelyn', 'offline', 'UPLOADED', 1, NULL, 'INV9852905360378', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 1975.00, 1975.00, NULL, '2020-04-16 23:46:22', 'confirmed', '2020-04-16 23:53:09', '0', '0', NULL, 'cash', '408549117899'),
+(66, '3OKokdt8wveI', 'Argon', 'offline', 'UPLOADED', 1, NULL, 'POS4457414445000', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 120.00, 0.00, 1600.00, 1480.00, NULL, '2020-04-17 00:07:38', 'confirmed', '2020-04-17 00:08:59', '0', '0', NULL, 'cash', '643099726440'),
+(67, '3OKokdt8wveI', 'Argon', 'offline', 'UPLOADED', 1, NULL, 'POS5684396286857', 'WalkIn', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 5.00, 25.00, 30.00, NULL, '2020-04-17 00:06:22', 'confirmed', '2020-04-17 00:08:59', '0', '0', NULL, 'cash', '362687615214'),
+(68, '3OKokdt8wveI', 'Argon', 'offline', 'UPLOADED', 1, NULL, 'POS7819060463992', '1', NULL, 'customer', NULL, 'J7Sa5j8FYPGVXKp', 'GH¢', '0', 0.00, 0.00, 375.00, 375.00, NULL, '2020-04-17 00:08:22', 'confirmed', '2020-04-17 00:08:59', '0', '0', NULL, 'cash', '039455525696');
 
 -- --------------------------------------------------------
 
@@ -946,6 +955,8 @@ CREATE TABLE `sales_details` (
   `product_cost_price` decimal(12,2) NOT NULL DEFAULT 0.00,
   `product_unit_price` double(13,2) DEFAULT 0.00,
   `product_total` double(13,2) DEFAULT 0.00,
+  `product_returns_count` int(11) NOT NULL DEFAULT 0,
+  `product_returns_total` double NOT NULL DEFAULT 0,
   `order_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
@@ -953,120 +964,130 @@ CREATE TABLE `sales_details` (
 -- Dumping data for table `sales_details`
 --
 
-INSERT INTO `sales_details` (`id`, `auto_id`, `clientId`, `branchId`, `order_id`, `product_id`, `product_quantity`, `product_cost_price`, `product_unit_price`, `product_total`, `order_date`) VALUES
-(1, '4T5ESahsZbOr3yWXeY78MUgcu', '3OKokdt8wveI', 1, 'POS2020040100002', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-10 21:24:29'),
-(2, 'FBH4yo2xklMifQ5phKLVawdAs', '3OKokdt8wveI', 1, 'POS2020040100003', '1', 2, '1200.00', 1600.00, 3200.00, '2020-04-10 21:25:40'),
-(3, '0aybnzKCLmiJBO4QEgxDwVGpt', '3OKokdt8wveI', 1, 'POS2020040100004', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-10 21:31:25'),
-(4, 'ouQAdV2JnWp0H6GPhrKZYL7ys', '3OKokdt8wveI', 1, 'POS2020040100005', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-11 17:59:12'),
-(5, 'cDqmwlKb2SfyBj8Frg3zJtOeY', '3OKokdt8wveI', 1, 'POS2020040100006', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 10:29:56'),
-(6, 'Y3Lasz210vip6JQqBFnIw7jOf', '3OKokdt8wveI', 1, 'POS2020040100007', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 10:36:58'),
-(7, 'jlJ14ByK9OmaSsXDzx5AvCGQn', '3OKokdt8wveI', 1, 'POS2020040100008', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 10:40:13'),
-(8, 'ukPgD4VoI1y7MAZGJ9mO8w2Tb', '3OKokdt8wveI', 1, 'POS2020040100009', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:00:54'),
-(9, 'iPNQxbc6DJuSHdUpmLWajq4Ot', '3OKokdt8wveI', 1, 'POS2020040100010', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:03:22'),
-(10, 'RZkKn5a1fxOsjDq2LbMrymPvT', '3OKokdt8wveI', 1, 'POS2020040100011', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:03:48'),
-(11, 'u84qRBahzF1fgciLj5Es29bNY', '3OKokdt8wveI', 1, 'POS2020040100012', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:20:19'),
-(12, 'esIPoNTjhZkfWBAtrDpdm2c0n', '3OKokdt8wveI', 1, 'POS2020040100013', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:44:07'),
-(13, '5LSwmtuQpFUGlaCXNsWEq7jDB', '3OKokdt8wveI', 1, 'POS2020040100014', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 11:45:37'),
-(14, 'L02wlIHMEFJBORkWrKu4vCfbY', '3OKokdt8wveI', 1, 'POS2020040100015', '1', 11, '1200.00', 1600.00, 17600.00, '2020-04-12 11:49:21'),
-(15, 'iS4ksDoVYv6Gbm98HgQMAXCI1', '3OKokdt8wveI', 1, 'POS2020040100016', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 12:22:22'),
-(16, 'c8RZFIGH4mvoQiwg9a6KsUOn0', '3OKokdt8wveI', 1, 'POS2020040100017', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 12:23:12'),
-(17, 'AGDt1VkdxRYm03IwJaCLTlpjc', 'Y7CSuzFLDd6K', 3, 'POS2020040300018', '3', 5, '200.00', 350.00, 1750.00, '2020-04-12 16:31:07'),
-(18, '2IlHa8FzxunJWg0KOsjAL3eD4', 'Y7CSuzFLDd6K', 3, 'POS2020040300018', '4', 5, '100.00', 200.00, 1000.00, '2020-04-12 16:31:07'),
-(19, '5F8P6y3m4epLHZOC2jqdIKnGi', '3OKokdt8wveI', 1, 'POS2020040100019', '5', 1, '2.00', 4.00, 4.00, '2020-04-12 17:33:21'),
-(20, 'jK4La07DqmBvsretiEhzYQUTS', '3OKokdt8wveI', 1, 'POS2020040100020', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-12 18:54:08'),
-(21, 'pK2dXrO8kZyGfbLBemj60Anh1', '3OKokdt8wveI', 1, 'POS2020040100020', '5', 4, '2.00', 4.00, 16.00, '2020-04-12 18:54:08'),
-(22, 'jzerQLmyEt0nsdpRZVKWNoOUX', '3OKokdt8wveI', 1, 'POS2020040100021', '1', 4, '1200.00', 1600.00, 6400.00, '2020-04-12 19:59:00'),
-(23, '0veUnCopAVki2Ir1mZgGNfMlw', '3OKokdt8wveI', 1, 'POS2020040100021', '5', 4, '2.00', 4.00, 16.00, '2020-04-12 19:59:00'),
-(24, 'xXy6wqiosfQmrchFgd8BK9EVM', '3OKokdt8wveI', 1, 'POS2020040100022', '5', 10, '2.00', 4.00, 40.00, '2020-04-12 19:59:30'),
-(25, 'Aa2Ubp34Rwt850yjJDXLWlcBZ', '3OKokdt8wveI', 1, 'POS2020040100023', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-13 04:56:37'),
-(26, 'S7FRV4pJzIoMbwKrgT2NtiXna', '3OKokdt8wveI', 1, 'POS2020040100023', '5', 7, '2.00', 4.00, 28.00, '2020-04-13 04:56:37'),
-(27, 'WXv8UnPgHTZdCfhwcJzq9y7ap', '3OKokdt8wveI', 1, 'POS2020040100024', '5', 40, '2.00', 4.00, 160.00, '2020-04-13 05:25:30'),
-(28, 'GhokLIsYn0RbZi6DCKrQeNJfp', '3OKokdt8wveI', 1, 'POS2020040100024', '6', 8, '290.00', 350.00, 2800.00, '2020-04-13 05:25:30'),
-(29, 'KMYB4qQuFT7YHayOqG06', '3OKokdt8wveI', 1, 'INV8796259791650', '1', 1, '0.00', 1600.00, 1600.00, '2020-04-13 21:37:34'),
-(30, 'X8RLDVKVTED987FsIEyW', '3OKokdt8wveI', 1, 'INV8796259791650', '5', 1, '0.00', 4.00, 4.00, '2020-04-13 21:37:34'),
-(31, 'H7wKp2hUfZXuSYxpavPL', '3OKokdt8wveI', 1, 'INV8796259791650', '6', 1, '0.00', 350.00, 350.00, '2020-04-13 21:37:34'),
-(32, 'tLSZKidfXeO4VtZbA7BA', '3OKokdt8wveI', 1, 'INV8981733221171', '1', 1, '0.00', 1600.00, 1600.00, '2020-04-13 21:37:08'),
-(33, 'hpX8qzLyUl9vKbOrpOlj', '3OKokdt8wveI', 1, 'INV8981733221171', '5', 1, '0.00', 4.00, 4.00, '2020-04-13 21:37:08'),
-(34, 'f6brxQi7dDhlAWgyPeksLwNJq', '3OKokdt8wveI', 1, 'POS2020040100027', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 17:28:43'),
-(35, 'R2zQ1m47bnIiSlkPMHG0Xqfux', '3OKokdt8wveI', 1, 'POS2020040100028', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 17:29:12'),
-(36, 'JTZ79pIV2RNUaCyMEPWscYdOS', '3OKokdt8wveI', 1, 'POS2020040100029', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 17:31:05'),
-(37, '86IMSznN4Y32bCulGrWv0OPAk', '3OKokdt8wveI', 1, 'POS2020040100030', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 17:37:57'),
-(38, 'mwpiUcXJ8KnaqdLr0IBbW7PVY', '3OKokdt8wveI', 1, 'POS2020040100030', '6', 2, '290.00', 350.00, 700.00, '2020-04-14 17:37:57'),
-(39, 'NuJYMw18CWf0tkB7HQLycShd9', '3OKokdt8wveI', 1, 'POS2020040100031', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 17:38:16'),
-(40, 'ICLr12OWQDmzqdhlU0v7FVByH', '3OKokdt8wveI', 1, 'POS2020040100031', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 17:38:16'),
-(41, 'saQh7k1R4K6gPwncmWLt5bVyI', '3OKokdt8wveI', 1, 'POS2020040100032', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 17:58:37'),
-(42, 'FvrMkcGdj19ZwYKOEs3x0QUi5', '3OKokdt8wveI', 1, 'POS2020040100033', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 17:58:54'),
-(43, 'lrHqSdGTuLnw8CheVBo2P7IgA', '3OKokdt8wveI', 1, 'POS2020040100033', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 17:58:54'),
-(44, 'rjox3uk8iYpPUgEMebJDmA0wt', '3OKokdt8wveI', 1, 'POS2020040100034', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-14 18:01:52'),
-(45, 'MCgxlVOeKyIrcP6sjUS87E1bn', '3OKokdt8wveI', 1, 'POS2020040100035', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 18:03:03'),
-(46, '4a0LT27GlmJiORSfoNDdBh6KE', '3OKokdt8wveI', 1, 'POS2020040100035', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:03:03'),
-(47, 'zE5rcThDXj1ZO2JpAlFGMKmko', '3OKokdt8wveI', 1, 'POS2020040100036', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-14 18:03:54'),
-(48, 'oJV9st2vEL1Sw0HRD3c6zgXrn', '3OKokdt8wveI', 1, 'POS2020040100036', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:03:54'),
-(49, 'KrhcmVO42dgT3ECGl86A7LBQ9', '3OKokdt8wveI', 1, 'POS2020040100037', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 18:04:32'),
-(50, 'nwEWXdypMb0UlTGQz2HCts76m', '3OKokdt8wveI', 1, 'POS2020040100037', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:04:32'),
-(51, 'z2IhTSHsvcOlxqVbE4kXKon1J', '3OKokdt8wveI', 1, 'POS2020040100038', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-14 18:07:29'),
-(52, 'uEmxMbLejQU8qJk2YIDnz5Zt7', '3OKokdt8wveI', 1, 'POS2020040100038', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 18:07:29'),
-(53, 'OK09kvuM5pSUcCeogWGRm7ZHQ', '3OKokdt8wveI', 1, 'POS2020040100038', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:07:29'),
-(54, 'ZxfTGCdz5F93OspqRnJlwec6V', '3OKokdt8wveI', 1, 'POS2020040100039', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:08:43'),
-(55, 'wmQicdRJyeHxKPMF8ghGX3jzk', '3OKokdt8wveI', 1, 'POS2020040100040', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 18:09:12'),
-(56, 'U1X6g8PfpBjVr0bZ9dxlSyTGn', '3OKokdt8wveI', 1, 'POS2020040100040', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:09:12'),
-(57, 'QrnL4zpCSoxABlT1P6qItEMc0', '3OKokdt8wveI', 1, 'POS2020040100041', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-14 18:10:11'),
-(58, 'B6abtLQGDEWjV7NvAcroInM94', '3OKokdt8wveI', 1, 'POS2020040100041', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:10:11'),
-(59, '5DWqvFB9ug7eLZP8pd1oMAaJQ', '3OKokdt8wveI', 1, 'POS2020040100042', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 18:11:21'),
-(60, 'VLeSG3xXNwnmskH78QKhMTODB', '3OKokdt8wveI', 1, 'POS2020040100043', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 18:12:16'),
-(61, 's1Ve6ftloTWydZ723GaKOcFSk', '3OKokdt8wveI', 1, 'POS2020040100043', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:12:16'),
-(62, 'u7B8slV4ZGSMKTR1XeLQrfyUi', '3OKokdt8wveI', 1, 'POS2020040100044', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-14 18:14:42'),
-(63, 'owRztkyP3AqmMflJQHKUrLh82', '3OKokdt8wveI', 1, 'POS2020040100044', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 18:14:42'),
-(64, 'RipFAYEU4s8tfzVHZXhrWcg1j', '3OKokdt8wveI', 1, 'POS2020040100044', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 18:14:42'),
-(65, '92MRDrfHs5XPzcehVGiwvOuI3', '3OKokdt8wveI', 1, 'POS2020040100045', '5', 1, '2.00', 4.00, 4.00, '2020-04-14 23:05:45'),
-(66, 'RdeblJ6E437zOMgmaNoV8nYkI', '3OKokdt8wveI', 1, 'POS2020040100045', '6', 1, '290.00', 350.00, 350.00, '2020-04-14 23:05:45'),
-(67, 'Hq0IoTtSrfL68G21RwbeJVMFZ', '3OKokdt8wveI', 1, 'POS2020040100046', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-15 09:31:24'),
-(68, 'XBlyKbUa1uDk7Qwjz9Rmt2Vv4', '3OKokdt8wveI', 1, 'POS2020040100046', '5', 1, '2.00', 4.00, 4.00, '2020-04-15 09:31:24'),
-(69, '4DaL9NnAe3IMPRmtbOsVQyifC', '3OKokdt8wveI', 1, 'POS2020040100046', '6', 1, '290.00', 350.00, 350.00, '2020-04-15 09:31:24'),
-(70, 'bBhvunA65eyEGLNz3wsWdKTMO', '3OKokdt8wveI', 1, 'POS2020040100046', '8', 1, '12.00', 25.00, 25.00, '2020-04-15 09:31:24'),
-(71, 'xPs2RznY4qEriJpS8vTUfbwWM', '3OKokdt8wveI', 1, 'POS2020040100047', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-15 15:32:47'),
-(72, '2XsVovKI4PYrOexw9EBGSQadF', '3OKokdt8wveI', 1, 'POS2020040100047', '5', 1, '2.00', 4.00, 4.00, '2020-04-15 15:32:47'),
-(73, 'suq9vQxXtVA0F2H5I1arECOzn', '3OKokdt8wveI', 1, 'POS2020040100047', '6', 1, '290.00', 350.00, 350.00, '2020-04-15 15:32:47'),
-(74, 'AHSFmap6zf2LBqknMWNTYgrhK', '3OKokdt8wveI', 1, 'POS2020040100047', '8', 1, '12.00', 25.00, 25.00, '2020-04-15 15:32:47'),
-(75, 'WF4iZXwFZl5L2RXFP4Us', '3OKokdt8wveI', 1, 'INV3008709207154', '1', 5, '0.00', 1600.00, 8000.00, '2020-04-16 15:29:01'),
-(76, 'adUK9zll18m2Ycnist2H', '3OKokdt8wveI', 1, 'INV3008709207154', '5', 4, '0.00', 4.00, 16.00, '2020-04-16 15:29:01'),
-(77, 'V34pj598qN2uf6uNySXV', '3OKokdt8wveI', 1, 'INV3008709207154', '6', 5, '0.00', 350.00, 1750.00, '2020-04-16 15:29:01'),
-(78, '4tEHNaQqrpIppUPe5g5G', '3OKokdt8wveI', 1, 'INV3008709207154', '8', 2, '0.00', 25.00, 50.00, '2020-04-16 15:29:01'),
-(79, 'XSE71Lz6KwhiPgQIGZTBYutNV', '3OKokdt8wveI', 1, 'POS2020040100049', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 15:36:34'),
-(80, 'cNL3UCzEKXpu4Ig6xJH7k1eAT', '3OKokdt8wveI', 1, 'POS2020040100049', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 15:36:34'),
-(81, 'JX0SWpmgMEYO8lU2sIBGxQyec', '3OKokdt8wveI', 1, 'POS2020040100049', '8', 1, '12.00', 25.00, 25.00, '2020-04-16 15:36:34'),
-(82, '51j7QkUXYw3taFRfqgOsBKMCy', '3OKokdt8wveI', 1, 'POS2020040100050', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-16 15:37:09'),
-(83, 'xnfPediqtbphoGr0kYNZyWsFA', '3OKokdt8wveI', 1, 'POS2020040100050', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 15:37:09'),
-(84, 'lUps2TYAk81Ghxce4NzfIXuCm', '3OKokdt8wveI', 1, 'POS2020040100050', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 15:37:09'),
-(85, 'lpYrh1daD5m3nbkeVjuGBSQwO', '3OKokdt8wveI', 1, 'POS2020040100050', '8', 1, '12.00', 25.00, 25.00, '2020-04-16 15:37:09'),
-(86, '3VU6JqAGxIOYnkMRHrEbyfgh4', '3OKokdt8wveI', 1, 'POS2020040100051', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-16 15:37:33'),
-(87, 'ZQ0iJhsxl2E9Co8WKYw5HRaeN', '3OKokdt8wveI', 1, 'POS2020040100051', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 15:37:33'),
-(88, '36JNb8UcWefwanlE9Z5MzudTk', '3OKokdt8wveI', 1, 'POS2020040100051', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 15:37:33'),
-(89, 'VuZH7i6WLdwtnrkQ2ypc0qYg3', '3OKokdt8wveI', 1, 'POS2020040100051', '8', 1, '12.00', 25.00, 25.00, '2020-04-16 15:37:33'),
-(90, 'Hj2lQLOim7UE1N8DyPCqoIbwt', '3OKokdt8wveI', 1, 'POS2020040100052', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-16 16:01:35'),
-(91, 'TGqKFNO6yZem7hsPpjXJzadfv', '3OKokdt8wveI', 1, 'POS2020040100052', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 16:01:35'),
-(92, 'DU6EHhk3ln2yjPIbZa1XTdBt9', '3OKokdt8wveI', 1, 'POS2020040100053', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 16:27:30'),
-(93, 'vVQ6iPSjwX5Oktn1sZxg7A098', '3OKokdt8wveI', 1, 'POS2020040100054', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 16:28:57'),
-(94, 'iytIG0JxBCEZ2YKmuHr5QWa1N', '3OKokdt8wveI', 1, 'POS2020040100054', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 16:28:57'),
-(95, 'LXUr4YcG2pqmzOSQFbe1Rjy39', '3OKokdt8wveI', 1, 'POS2020040100055', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-16 17:04:19'),
-(96, 'IfVQLAUh1WGPm3SkctzuOEZx0', '3OKokdt8wveI', 1, 'POS2020040100055', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 17:04:19'),
-(97, 'u635GWHNEtqci1MQYwCBXjxny', '3OKokdt8wveI', 1, 'POS2020040100056', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 17:04:34'),
-(98, 'XwVWDI20gnaC1jfSmbdqQt3iE', '3OKokdt8wveI', 1, 'POS2020040100056', '8', 1, '12.00', 25.00, 25.00, '2020-04-16 17:04:34'),
-(99, 'THg0hmRZNICZ72AoSCym', '3OKokdt8wveI', 1, 'INV4746444401288', '1', 1, '0.00', 1600.00, 1600.00, '2020-04-16 16:38:56'),
-(100, 'xLP9ITh8WCLFInmai6ap', '3OKokdt8wveI', 1, 'INV4746444401288', '5', 1, '0.00', 4.00, 4.00, '2020-04-16 16:38:56'),
-(101, 'MF5EvMbUxLTSUJKLj5x6', '3OKokdt8wveI', 1, 'INV7166064965038', '5', 1, '0.00', 4.00, 4.00, '2020-04-16 16:56:33'),
-(102, 'YgyFdH96d0D5xu5dzDwU', '3OKokdt8wveI', 1, 'INV7166064965038', '1', 1, '0.00', 1600.00, 1600.00, '2020-04-16 16:56:33'),
-(103, 'Wtm3rwKLdolJnuUjqFIsab1BP', '3OKokdt8wveI', 1, 'POS2020040100059', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 17:39:05'),
-(104, 'XPYClRsifUaLJW0wy9qdg56Bc', '3OKokdt8wveI', 1, 'POS2020040100059', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 17:39:05'),
-(105, '03Eyt1b9keVTfunIBRQKHUOwz', '3OKokdt8wveI', 1, 'POS2020040100061', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 17:42:08'),
-(106, 'I0pOsUQg9jwq1dDk27K6tfe3u', '3OKokdt8wveI', 1, 'POS2020040100061', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 17:42:08'),
-(107, 'D15rTRQkBnCbo4hUPWF7pEf6u', '3OKokdt8wveI', 1, 'POS2020040100062', '1', 1, '1200.00', 1600.00, 1600.00, '2020-04-16 17:44:19'),
-(108, 'HoJtZORVWQ19LUTYbKGfp2hvs', '3OKokdt8wveI', 1, 'POS2020040100062', '5', 1, '2.00', 4.00, 4.00, '2020-04-16 17:44:19'),
-(109, 'LjxTFlW592uV17iIkJesBXt40', '3OKokdt8wveI', 1, 'POS2020040100062', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 17:44:19'),
-(110, 'HP2Dt1rm8p03CxjwzJTKq9c6N', '3OKokdt8wveI', 1, 'POS2020040100063', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 17:48:58'),
-(111, 'CjgSpAOGxDNHQJVM3IPW9w8y4', '3OKokdt8wveI', 1, 'POS2020040100063', '8', 1, '12.00', 25.00, 25.00, '2020-04-16 17:48:58'),
-(112, 'HQSWhqj1KtkoyxNCGdwYM9lFE', '3OKokdt8wveI', 1, 'POS2020040100064', '6', 1, '290.00', 350.00, 350.00, '2020-04-16 17:50:11'),
-(113, 'f8P2TJnXrh0pNigwjy6BU59ts', '3OKokdt8wveI', 1, 'POS2020040100064', '8', 1, '12.00', 25.00, 25.00, '2020-04-16 17:50:11');
+INSERT INTO `sales_details` (`id`, `auto_id`, `clientId`, `branchId`, `order_id`, `product_id`, `product_quantity`, `product_cost_price`, `product_unit_price`, `product_total`, `product_returns_count`, `product_returns_total`, `order_date`) VALUES
+(1, '4T5ESahsZbOr3yWXeY78MUgcu', '3OKokdt8wveI', 1, 'POS2020040100002', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-10 21:24:29'),
+(2, 'FBH4yo2xklMifQ5phKLVawdAs', '3OKokdt8wveI', 1, 'POS2020040100003', '1', 2, '1200.00', 1600.00, 3200.00, 0, 0, '2020-04-10 21:25:40'),
+(3, '0aybnzKCLmiJBO4QEgxDwVGpt', '3OKokdt8wveI', 1, 'POS2020040100004', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-10 21:31:25'),
+(4, 'ouQAdV2JnWp0H6GPhrKZYL7ys', '3OKokdt8wveI', 1, 'POS2020040100005', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-11 17:59:12'),
+(5, 'cDqmwlKb2SfyBj8Frg3zJtOeY', '3OKokdt8wveI', 1, 'POS2020040100006', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 10:29:56'),
+(6, 'Y3Lasz210vip6JQqBFnIw7jOf', '3OKokdt8wveI', 1, 'POS2020040100007', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 10:36:58'),
+(7, 'jlJ14ByK9OmaSsXDzx5AvCGQn', '3OKokdt8wveI', 1, 'POS2020040100008', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 10:40:13'),
+(8, 'ukPgD4VoI1y7MAZGJ9mO8w2Tb', '3OKokdt8wveI', 1, 'POS2020040100009', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 11:00:54'),
+(9, 'iPNQxbc6DJuSHdUpmLWajq4Ot', '3OKokdt8wveI', 1, 'POS2020040100010', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 11:03:22'),
+(10, 'RZkKn5a1fxOsjDq2LbMrymPvT', '3OKokdt8wveI', 1, 'POS2020040100011', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 11:03:48'),
+(11, 'u84qRBahzF1fgciLj5Es29bNY', '3OKokdt8wveI', 1, 'POS2020040100012', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 11:20:19'),
+(12, 'esIPoNTjhZkfWBAtrDpdm2c0n', '3OKokdt8wveI', 1, 'POS2020040100013', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 11:44:07'),
+(13, '5LSwmtuQpFUGlaCXNsWEq7jDB', '3OKokdt8wveI', 1, 'POS2020040100014', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 11:45:37'),
+(14, 'L02wlIHMEFJBORkWrKu4vCfbY', '3OKokdt8wveI', 1, 'POS2020040100015', '1', 11, '1200.00', 1600.00, 17600.00, 0, 0, '2020-04-12 11:49:21'),
+(15, 'iS4ksDoVYv6Gbm98HgQMAXCI1', '3OKokdt8wveI', 1, 'POS2020040100016', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 12:22:22'),
+(16, 'c8RZFIGH4mvoQiwg9a6KsUOn0', '3OKokdt8wveI', 1, 'POS2020040100017', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 12:23:12'),
+(17, 'AGDt1VkdxRYm03IwJaCLTlpjc', 'Y7CSuzFLDd6K', 3, 'POS2020040300018', '3', 5, '200.00', 350.00, 1750.00, 0, 0, '2020-04-12 16:31:07'),
+(18, '2IlHa8FzxunJWg0KOsjAL3eD4', 'Y7CSuzFLDd6K', 3, 'POS2020040300018', '4', 5, '100.00', 200.00, 1000.00, 0, 0, '2020-04-12 16:31:07'),
+(19, '5F8P6y3m4epLHZOC2jqdIKnGi', '3OKokdt8wveI', 1, 'POS2020040100019', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-12 17:33:21'),
+(20, 'jK4La07DqmBvsretiEhzYQUTS', '3OKokdt8wveI', 1, 'POS2020040100020', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-12 18:54:08'),
+(21, 'pK2dXrO8kZyGfbLBemj60Anh1', '3OKokdt8wveI', 1, 'POS2020040100020', '5', 4, '2.00', 4.00, 16.00, 0, 0, '2020-04-12 18:54:08'),
+(22, 'jzerQLmyEt0nsdpRZVKWNoOUX', '3OKokdt8wveI', 1, 'POS2020040100021', '1', 4, '1200.00', 1600.00, 6400.00, 0, 0, '2020-04-12 19:59:00'),
+(23, '0veUnCopAVki2Ir1mZgGNfMlw', '3OKokdt8wveI', 1, 'POS2020040100021', '5', 4, '2.00', 4.00, 16.00, 0, 0, '2020-04-12 19:59:00'),
+(24, 'xXy6wqiosfQmrchFgd8BK9EVM', '3OKokdt8wveI', 1, 'POS2020040100022', '5', 10, '2.00', 4.00, 40.00, 0, 0, '2020-04-12 19:59:30'),
+(25, 'Aa2Ubp34Rwt850yjJDXLWlcBZ', '3OKokdt8wveI', 1, 'POS2020040100023', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-13 04:56:37'),
+(26, 'S7FRV4pJzIoMbwKrgT2NtiXna', '3OKokdt8wveI', 1, 'POS2020040100023', '5', 7, '2.00', 4.00, 28.00, 0, 0, '2020-04-13 04:56:37'),
+(27, 'WXv8UnPgHTZdCfhwcJzq9y7ap', '3OKokdt8wveI', 1, 'POS2020040100024', '5', 40, '2.00', 4.00, 160.00, 0, 0, '2020-04-13 05:25:30'),
+(28, 'GhokLIsYn0RbZi6DCKrQeNJfp', '3OKokdt8wveI', 1, 'POS2020040100024', '6', 8, '290.00', 350.00, 2800.00, 0, 0, '2020-04-13 05:25:30'),
+(29, 'KMYB4qQuFT7YHayOqG06', '3OKokdt8wveI', 1, 'INV8796259791650', '1', 1, '0.00', 1600.00, 1600.00, 0, 0, '2020-04-13 21:37:34'),
+(30, 'X8RLDVKVTED987FsIEyW', '3OKokdt8wveI', 1, 'INV8796259791650', '5', 1, '0.00', 4.00, 4.00, 0, 0, '2020-04-13 21:37:34'),
+(31, 'H7wKp2hUfZXuSYxpavPL', '3OKokdt8wveI', 1, 'INV8796259791650', '6', 1, '0.00', 350.00, 350.00, 0, 0, '2020-04-13 21:37:34'),
+(32, 'tLSZKidfXeO4VtZbA7BA', '3OKokdt8wveI', 1, 'INV8981733221171', '1', 1, '0.00', 1600.00, 1600.00, 0, 0, '2020-04-13 21:37:08'),
+(33, 'hpX8qzLyUl9vKbOrpOlj', '3OKokdt8wveI', 1, 'INV8981733221171', '5', 1, '0.00', 4.00, 4.00, 0, 0, '2020-04-13 21:37:08'),
+(34, 'f6brxQi7dDhlAWgyPeksLwNJq', '3OKokdt8wveI', 1, 'POS2020040100027', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 17:28:43'),
+(35, 'R2zQ1m47bnIiSlkPMHG0Xqfux', '3OKokdt8wveI', 1, 'POS2020040100028', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 17:29:12'),
+(36, 'JTZ79pIV2RNUaCyMEPWscYdOS', '3OKokdt8wveI', 1, 'POS2020040100029', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 17:31:05'),
+(37, '86IMSznN4Y32bCulGrWv0OPAk', '3OKokdt8wveI', 1, 'POS2020040100030', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 17:37:57'),
+(38, 'mwpiUcXJ8KnaqdLr0IBbW7PVY', '3OKokdt8wveI', 1, 'POS2020040100030', '6', 2, '290.00', 350.00, 700.00, 0, 0, '2020-04-14 17:37:57'),
+(39, 'NuJYMw18CWf0tkB7HQLycShd9', '3OKokdt8wveI', 1, 'POS2020040100031', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 17:38:16'),
+(40, 'ICLr12OWQDmzqdhlU0v7FVByH', '3OKokdt8wveI', 1, 'POS2020040100031', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 17:38:16'),
+(41, 'saQh7k1R4K6gPwncmWLt5bVyI', '3OKokdt8wveI', 1, 'POS2020040100032', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 17:58:37'),
+(42, 'FvrMkcGdj19ZwYKOEs3x0QUi5', '3OKokdt8wveI', 1, 'POS2020040100033', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 17:58:54'),
+(43, 'lrHqSdGTuLnw8CheVBo2P7IgA', '3OKokdt8wveI', 1, 'POS2020040100033', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 17:58:54'),
+(44, 'rjox3uk8iYpPUgEMebJDmA0wt', '3OKokdt8wveI', 1, 'POS2020040100034', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-14 18:01:52'),
+(45, 'MCgxlVOeKyIrcP6sjUS87E1bn', '3OKokdt8wveI', 1, 'POS2020040100035', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 18:03:03'),
+(46, '4a0LT27GlmJiORSfoNDdBh6KE', '3OKokdt8wveI', 1, 'POS2020040100035', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:03:03'),
+(47, 'zE5rcThDXj1ZO2JpAlFGMKmko', '3OKokdt8wveI', 1, 'POS2020040100036', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-14 18:03:54'),
+(48, 'oJV9st2vEL1Sw0HRD3c6zgXrn', '3OKokdt8wveI', 1, 'POS2020040100036', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:03:54'),
+(49, 'KrhcmVO42dgT3ECGl86A7LBQ9', '3OKokdt8wveI', 1, 'POS2020040100037', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 18:04:32'),
+(50, 'nwEWXdypMb0UlTGQz2HCts76m', '3OKokdt8wveI', 1, 'POS2020040100037', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:04:32'),
+(51, 'z2IhTSHsvcOlxqVbE4kXKon1J', '3OKokdt8wveI', 1, 'POS2020040100038', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-14 18:07:29'),
+(52, 'uEmxMbLejQU8qJk2YIDnz5Zt7', '3OKokdt8wveI', 1, 'POS2020040100038', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 18:07:29'),
+(53, 'OK09kvuM5pSUcCeogWGRm7ZHQ', '3OKokdt8wveI', 1, 'POS2020040100038', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:07:29'),
+(54, 'ZxfTGCdz5F93OspqRnJlwec6V', '3OKokdt8wveI', 1, 'POS2020040100039', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:08:43'),
+(55, 'wmQicdRJyeHxKPMF8ghGX3jzk', '3OKokdt8wveI', 1, 'POS2020040100040', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 18:09:12'),
+(56, 'U1X6g8PfpBjVr0bZ9dxlSyTGn', '3OKokdt8wveI', 1, 'POS2020040100040', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:09:12'),
+(57, 'QrnL4zpCSoxABlT1P6qItEMc0', '3OKokdt8wveI', 1, 'POS2020040100041', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-14 18:10:11'),
+(58, 'B6abtLQGDEWjV7NvAcroInM94', '3OKokdt8wveI', 1, 'POS2020040100041', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:10:11'),
+(59, '5DWqvFB9ug7eLZP8pd1oMAaJQ', '3OKokdt8wveI', 1, 'POS2020040100042', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 18:11:21'),
+(60, 'VLeSG3xXNwnmskH78QKhMTODB', '3OKokdt8wveI', 1, 'POS2020040100043', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 18:12:16'),
+(61, 's1Ve6ftloTWydZ723GaKOcFSk', '3OKokdt8wveI', 1, 'POS2020040100043', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:12:16'),
+(62, 'u7B8slV4ZGSMKTR1XeLQrfyUi', '3OKokdt8wveI', 1, 'POS2020040100044', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-14 18:14:42'),
+(63, 'owRztkyP3AqmMflJQHKUrLh82', '3OKokdt8wveI', 1, 'POS2020040100044', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 18:14:42'),
+(64, 'RipFAYEU4s8tfzVHZXhrWcg1j', '3OKokdt8wveI', 1, 'POS2020040100044', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 18:14:42'),
+(65, '92MRDrfHs5XPzcehVGiwvOuI3', '3OKokdt8wveI', 1, 'POS2020040100045', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-14 23:05:45'),
+(66, 'RdeblJ6E437zOMgmaNoV8nYkI', '3OKokdt8wveI', 1, 'POS2020040100045', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-14 23:05:45'),
+(67, 'Hq0IoTtSrfL68G21RwbeJVMFZ', '3OKokdt8wveI', 1, 'POS2020040100046', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-15 09:31:24'),
+(68, 'XBlyKbUa1uDk7Qwjz9Rmt2Vv4', '3OKokdt8wveI', 1, 'POS2020040100046', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-15 09:31:24'),
+(69, '4DaL9NnAe3IMPRmtbOsVQyifC', '3OKokdt8wveI', 1, 'POS2020040100046', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-15 09:31:24'),
+(70, 'bBhvunA65eyEGLNz3wsWdKTMO', '3OKokdt8wveI', 1, 'POS2020040100046', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-15 09:31:24'),
+(71, 'xPs2RznY4qEriJpS8vTUfbwWM', '3OKokdt8wveI', 1, 'POS2020040100047', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-15 15:32:47'),
+(72, '2XsVovKI4PYrOexw9EBGSQadF', '3OKokdt8wveI', 1, 'POS2020040100047', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-15 15:32:47'),
+(73, 'suq9vQxXtVA0F2H5I1arECOzn', '3OKokdt8wveI', 1, 'POS2020040100047', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-15 15:32:47'),
+(74, 'AHSFmap6zf2LBqknMWNTYgrhK', '3OKokdt8wveI', 1, 'POS2020040100047', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-15 15:32:47'),
+(75, 'WF4iZXwFZl5L2RXFP4Us', '3OKokdt8wveI', 1, 'INV3008709207154', '1', 5, '0.00', 1600.00, 8000.00, 0, 0, '2020-04-16 15:29:01'),
+(76, 'adUK9zll18m2Ycnist2H', '3OKokdt8wveI', 1, 'INV3008709207154', '5', 4, '0.00', 4.00, 16.00, 0, 0, '2020-04-16 15:29:01'),
+(77, 'V34pj598qN2uf6uNySXV', '3OKokdt8wveI', 1, 'INV3008709207154', '6', 5, '0.00', 350.00, 1750.00, 0, 0, '2020-04-16 15:29:01'),
+(78, '4tEHNaQqrpIppUPe5g5G', '3OKokdt8wveI', 1, 'INV3008709207154', '8', 2, '0.00', 25.00, 50.00, 0, 0, '2020-04-16 15:29:01'),
+(79, 'XSE71Lz6KwhiPgQIGZTBYutNV', '3OKokdt8wveI', 1, 'POS2020040100049', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 15:36:34'),
+(80, 'cNL3UCzEKXpu4Ig6xJH7k1eAT', '3OKokdt8wveI', 1, 'POS2020040100049', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 15:36:34'),
+(81, 'JX0SWpmgMEYO8lU2sIBGxQyec', '3OKokdt8wveI', 1, 'POS2020040100049', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-16 15:36:34'),
+(82, '51j7QkUXYw3taFRfqgOsBKMCy', '3OKokdt8wveI', 1, 'POS2020040100050', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-16 15:37:09'),
+(83, 'xnfPediqtbphoGr0kYNZyWsFA', '3OKokdt8wveI', 1, 'POS2020040100050', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 15:37:09'),
+(84, 'lUps2TYAk81Ghxce4NzfIXuCm', '3OKokdt8wveI', 1, 'POS2020040100050', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 15:37:09'),
+(85, 'lpYrh1daD5m3nbkeVjuGBSQwO', '3OKokdt8wveI', 1, 'POS2020040100050', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-16 15:37:09'),
+(86, '3VU6JqAGxIOYnkMRHrEbyfgh4', '3OKokdt8wveI', 1, 'POS2020040100051', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-16 15:37:33'),
+(87, 'ZQ0iJhsxl2E9Co8WKYw5HRaeN', '3OKokdt8wveI', 1, 'POS2020040100051', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 15:37:33'),
+(88, '36JNb8UcWefwanlE9Z5MzudTk', '3OKokdt8wveI', 1, 'POS2020040100051', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 15:37:33'),
+(89, 'VuZH7i6WLdwtnrkQ2ypc0qYg3', '3OKokdt8wveI', 1, 'POS2020040100051', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-16 15:37:33'),
+(90, 'Hj2lQLOim7UE1N8DyPCqoIbwt', '3OKokdt8wveI', 1, 'POS2020040100052', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-16 16:01:35'),
+(91, 'TGqKFNO6yZem7hsPpjXJzadfv', '3OKokdt8wveI', 1, 'POS2020040100052', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 16:01:35'),
+(92, 'DU6EHhk3ln2yjPIbZa1XTdBt9', '3OKokdt8wveI', 1, 'POS2020040100053', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 16:27:30'),
+(93, 'vVQ6iPSjwX5Oktn1sZxg7A098', '3OKokdt8wveI', 1, 'POS2020040100054', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 16:28:57'),
+(94, 'iytIG0JxBCEZ2YKmuHr5QWa1N', '3OKokdt8wveI', 1, 'POS2020040100054', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 16:28:57'),
+(95, 'LXUr4YcG2pqmzOSQFbe1Rjy39', '3OKokdt8wveI', 1, 'POS2020040100055', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-16 17:04:19'),
+(96, 'IfVQLAUh1WGPm3SkctzuOEZx0', '3OKokdt8wveI', 1, 'POS2020040100055', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 17:04:19'),
+(97, 'u635GWHNEtqci1MQYwCBXjxny', '3OKokdt8wveI', 1, 'POS2020040100056', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 17:04:34'),
+(98, 'XwVWDI20gnaC1jfSmbdqQt3iE', '3OKokdt8wveI', 1, 'POS2020040100056', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-16 17:04:34'),
+(99, 'THg0hmRZNICZ72AoSCym', '3OKokdt8wveI', 1, 'INV4746444401288', '1', 1, '0.00', 1600.00, 1600.00, 0, 0, '2020-04-16 16:38:56'),
+(100, 'xLP9ITh8WCLFInmai6ap', '3OKokdt8wveI', 1, 'INV4746444401288', '5', 1, '0.00', 4.00, 4.00, 0, 0, '2020-04-16 16:38:56'),
+(101, 'MF5EvMbUxLTSUJKLj5x6', '3OKokdt8wveI', 1, 'INV7166064965038', '5', 1, '0.00', 4.00, 4.00, 0, 0, '2020-04-16 16:56:33'),
+(102, 'YgyFdH96d0D5xu5dzDwU', '3OKokdt8wveI', 1, 'INV7166064965038', '1', 1, '0.00', 1600.00, 1600.00, 0, 0, '2020-04-16 16:56:33'),
+(103, 'Wtm3rwKLdolJnuUjqFIsab1BP', '3OKokdt8wveI', 1, 'POS2020040100059', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 17:39:05'),
+(104, 'XPYClRsifUaLJW0wy9qdg56Bc', '3OKokdt8wveI', 1, 'POS2020040100059', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 17:39:05'),
+(105, '03Eyt1b9keVTfunIBRQKHUOwz', '3OKokdt8wveI', 1, 'POS2020040100061', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 17:42:08'),
+(106, 'I0pOsUQg9jwq1dDk27K6tfe3u', '3OKokdt8wveI', 1, 'POS2020040100061', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 17:42:08'),
+(107, 'D15rTRQkBnCbo4hUPWF7pEf6u', '3OKokdt8wveI', 1, 'POS2020040100062', '1', 1, '1200.00', 1600.00, 1600.00, 0, 0, '2020-04-16 17:44:19'),
+(108, 'HoJtZORVWQ19LUTYbKGfp2hvs', '3OKokdt8wveI', 1, 'POS2020040100062', '5', 1, '2.00', 4.00, 4.00, 0, 0, '2020-04-16 17:44:19'),
+(109, 'LjxTFlW592uV17iIkJesBXt40', '3OKokdt8wveI', 1, 'POS2020040100062', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 17:44:19'),
+(110, 'HP2Dt1rm8p03CxjwzJTKq9c6N', '3OKokdt8wveI', 1, 'POS2020040100063', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 17:48:58'),
+(111, 'CjgSpAOGxDNHQJVM3IPW9w8y4', '3OKokdt8wveI', 1, 'POS2020040100063', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-16 17:48:58'),
+(112, 'HQSWhqj1KtkoyxNCGdwYM9lFE', '3OKokdt8wveI', 1, 'POS2020040100064', '6', 1, '290.00', 350.00, 350.00, 0, 0, '2020-04-16 17:50:11'),
+(113, 'f8P2TJnXrh0pNigwjy6BU59ts', '3OKokdt8wveI', 1, 'POS2020040100064', '8', 1, '12.00', 25.00, 25.00, 0, 0, '2020-04-16 17:50:11'),
+(114, 'YclGE5pSkDZ0yYROiatY', '3OKokdt8wveI', 1, 'INV6425565167703', '1', 1, '0.00', 1600.00, 1600.00, 0, 0, '2020-04-16 23:51:19'),
+(115, 'Uta1bsCKEMX6jRZEn5us', '3OKokdt8wveI', 1, 'INV6425565167703', '6', 1, '0.00', 350.00, 350.00, 0, 0, '2020-04-16 23:51:19'),
+(116, '2ITMQSuzTMx4I9yaB2Cw', '3OKokdt8wveI', 1, 'INV6425565167703', '8', 1, '0.00', 25.00, 25.00, 0, 0, '2020-04-16 23:51:19'),
+(117, 'pTk7l3kazCW4EnpQ6WUc', '3OKokdt8wveI', 1, 'INV9852905360378', '1', 1, '0.00', 1600.00, 1600.00, 0, 0, '2020-04-16 23:46:22'),
+(118, '6f5r84SGayJCk49GwhqN', '3OKokdt8wveI', 1, 'INV9852905360378', '6', 1, '0.00', 350.00, 350.00, 0, 0, '2020-04-16 23:46:22'),
+(119, 'vzYuOHyUJdbrhZV1mfDS', '3OKokdt8wveI', 1, 'INV9852905360378', '8', 1, '0.00', 25.00, 25.00, 0, 0, '2020-04-16 23:46:22'),
+(120, 'nHsuXd15A6V8BI4GmfwL', '3OKokdt8wveI', 1, 'POS4457414445000', '1', 1, '0.00', 1600.00, 1600.00, 0, 0, '2020-04-17 00:07:38'),
+(121, 'QrEUvfQumly5Z1H7L65T', '3OKokdt8wveI', 1, 'POS5684396286857', '8', 1, '0.00', 25.00, 25.00, 0, 0, '2020-04-17 00:06:22'),
+(122, 'aJxvNFKmYD6rd7eApI7Z', '3OKokdt8wveI', 1, 'POS7819060463992', '6', 1, '0.00', 350.00, 350.00, 0, 0, '2020-04-17 00:08:22'),
+(123, 'TazrV1qL5HRyKm5Z53VK', '3OKokdt8wveI', 1, 'POS7819060463992', '8', 1, '0.00', 25.00, 25.00, 0, 0, '2020-04-17 00:08:22');
 
 -- --------------------------------------------------------
 
@@ -1113,7 +1134,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `clientId`, `client_name`, `client_email`, `client_website`, `client_logo`, `primary_contact`, `secondary_contact`, `payment_options`, `shop_opening_days`, `address_1`, `address_2`, `receipt_message`, `terms_and_conditions`, `manager_signature`, `reports_sales_attendant`, `reports_period`, `total_expenditure`, `space_per_square_foot`, `default_currency`, `print_receipt`, `expiry_notification_days`, `allow_product_return`, `allow_return_days`, `default_discount`, `fiscal_year_start`, `display_clock`, `theme_color`, `theme_color_code`, `setup_info`, `deleted`) VALUES
-(1, '3OKokdt8wveI', 'Emmallen Networks', 'emmallob14@gmail.com', '', 'assets/images/logo.png', '0550107770', '', 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', '', NULL, 'Thank you for trading with us.', '', NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', 'yes', '1 MONTH', '1', 30, 0.00, '2020-01-01', '1', '{\"bg_colors\":\"bg-purple text-white no-border\",\"bg_color_code\":\"#8965e0\",\"bg_color_light\":\"#97a5f1\",\"btn_outline\":\"btn-outline-primary\"}', 'purple', '{\"type\":\"trial\",\"verified\":0,\"setup_date\":\"2020-04-06\",\"expiry_date\":\"2020-04-20\",\"outlets\":\"5\"}', '0'),
+(1, '3OKokdt8wveI', 'Emmallen Networks', 'emmallob14@gmail.com', '', 'assets/images/logo.png', '0550107770', '', 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday,Saturday', '', NULL, 'Thank you for trading with us.', '', NULL, 'sales-attendant-performance', 'this-year', 0.00, 0.00, 'GHS', 'yes', '1 MONTH', '1', 30, 0.00, '2020-01-01', '1', '{\"bg_colors\":\"bg-purple text-white no-border\",\"bg_color_code\":\"#8965e0\",\"bg_color_light\":\"#97a5f1\",\"btn_outline\":\"btn-outline-primary\"}', 'purple', '{\"type\":\"trial\",\"verified\":0,\"setup_date\":\"2020-04-06\",\"expiry_date\":\"2020-04-20\",\"outlets\":\"5\"}', '0'),
 (2, 'Y7CSuzFLDd6K', 'Helena Oduro&#39;s Fashion Shop', 'helenaoduro@mail.com', NULL, 'assets/images/logo.png', '0987654321', NULL, 'cash,credit,MoMo', 'Monday,Tuesday,Wednesday,Thursday,Friday', NULL, NULL, 'Thank you for trading with us.', NULL, NULL, 'sales-attendant-performance', 'this-week', 0.00, 0.00, 'GHS', 'no', '1 MONTH', '1', 30, 0.00, '2020-04-11', '1', '{\"bg_colors\":\"bg-purple text-white no-border\",\"bg_color_code\":\"#8965e0\",\"bg_color_light\":\"#97a5f1\",\"btn_outline\":\"btn-outline-primary\"}', 'purple', '{\"type\":\"trial\",\"verified\":1,\"setup_date\":\"2020-04-11\",\"expiry_date\":\"2020-04-25\",\"outlets\":\"5\",\"initializing\":1,\"setup_initializing\":1}', '0');
 
 -- --------------------------------------------------------
@@ -1250,7 +1271,8 @@ INSERT INTO `users_activity_logs` (`id`, `clientId`, `branchId`, `page`, `itemId
 (14, '3OKokdt8wveI', '1', 'expenses', '2', 'J7Sa5j8FYPGVXKp', 'Deleted the Expenses Category from the system.', 'Windows 10 | Chrome | ::1', '2020-04-16 23:08:45'),
 (15, '3OKokdt8wveI', '1', 'expenses', '2', 'J7Sa5j8FYPGVXKp', 'Updated the expense details already recorded.', 'Windows 10 | Chrome | ::1', '2020-04-16 23:23:22'),
 (16, '3OKokdt8wveI', '1', 'expenses', '1', 'J7Sa5j8FYPGVXKp', 'Updated the expense details already recorded.', 'Windows 10 | Chrome | ::1', '2020-04-16 23:25:53'),
-(17, '3OKokdt8wveI', '1', 'expenses', '2', 'J7Sa5j8FYPGVXKp', 'Updated the expense details already recorded.', 'Windows 10 | Chrome | ::1', '2020-04-16 23:26:05');
+(17, '3OKokdt8wveI', '1', 'expenses', '2', 'J7Sa5j8FYPGVXKp', 'Updated the expense details already recorded.', 'Windows 10 | Chrome | ::1', '2020-04-16 23:26:05'),
+(18, '3OKokdt8wveI', '1', 'settings', '3OKokdt8wveI', 'J7Sa5j8FYPGVXKp', 'Updated the sales details tab of the Company.', 'Windows 10 | Chrome | ::1', '2020-04-17 00:16:06');
 
 -- --------------------------------------------------------
 
@@ -1331,7 +1353,8 @@ INSERT INTO `users_login_history` (`id`, `clientId`, `branchId`, `username`, `lo
 (54, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '::1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36', '2020-04-16 16:34:09'),
 (55, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '::1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36', '2020-04-16 16:36:39'),
 (56, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '::1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36', '2020-04-16 16:38:23'),
-(57, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '::1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36', '2020-04-16 20:50:28');
+(57, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '::1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36', '2020-04-16 20:50:28'),
+(58, '3OKokdt8wveI', '1', 'emmallob14@gmail.com', '::1', 'Chrome|Windows 10', 'J7Sa5j8FYPGVXKp', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.113 Safari/537.36', '2020-04-17 01:21:55');
 
 -- --------------------------------------------------------
 
@@ -1591,7 +1614,7 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `data_monitoring`
 --
 ALTER TABLE `data_monitoring`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -1651,7 +1674,7 @@ ALTER TABLE `products_categories`
 -- AUTO_INCREMENT for table `products_stocks`
 --
 ALTER TABLE `products_stocks`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `requests`
@@ -1669,13 +1692,13 @@ ALTER TABLE `requests_details`
 -- AUTO_INCREMENT for table `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT for table `sales_details`
 --
 ALTER TABLE `sales_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=114;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=124;
 
 --
 -- AUTO_INCREMENT for table `settings`
@@ -1705,13 +1728,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users_activity_logs`
 --
 ALTER TABLE `users_activity_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `users_login_history`
 --
 ALTER TABLE `users_login_history`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `users_reset_request`
