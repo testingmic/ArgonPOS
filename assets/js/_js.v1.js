@@ -4213,7 +4213,6 @@ $(function() {
                         { "data": 'fullname' },
                         { "data": 'orders_count' },
                         { "data": 'total_amount' },
-                        { "data": 'total_balance' },
                         { "data": 'action' }
                         ]
                     });
@@ -4744,11 +4743,12 @@ $(function() {
 
                 if ($(`div[class~="reports-summary"]`).length) {
                     summaryItems(period);
-                    salesOverview(period);
-                    salesAttendantPerformance(period);
-                    topContactsPerformance(period);
-                    branchPerformance(period);
                 }
+
+                salesOverview(period);
+                salesAttendantPerformance(period);
+                topContactsPerformance(period);
+                branchPerformance(period);
 
                 $(`select[name="periodSelected"]`).on('change', function() {
                     sL();

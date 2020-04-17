@@ -53,29 +53,26 @@ function form_loader() {
     </div>';
 }
 
-// show only on the sales analytics and customer-detail page
-if(in_array($SITEURL[0], ["sales", "analytics", "customer-detail"])) {
-  // filters available
-  if($setupInfo->type == "alpha") {
-      // alpha account filters
-      $filterPeriod = [
-          "today" => 'Today',
-          "this-week" => "This Week",
-          "last-30-days" => "Last 30 Days",
-          "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
-          "this-month" => "This Month (".date("F").")",
-          "same-month-last-year" => "Same Month Last Year",
-          "this-year" => "This Year (January - December ".date("Y").")",
-          "all-time" => "All Time (".date("jS M Y", strtotime($setupInfo->setup_date))." - till date)",
-      ];
-  } else {
-      $filterPeriod = [
-          "today" => 'Today',
-          "this-week" => "This Week",
-          "this-month" => "This Month",
-          "this-year" => "This Year"
-      ];
-  }
+// filters available
+if($setupInfo->type == "alpha") {
+    // alpha account filters
+    $filterPeriod = [
+        "today" => 'Today',
+        "this-week" => "This Week",
+        "last-30-days" => "Last 30 Days",
+        "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
+        "this-month" => "This Month (".date("F").")",
+        "same-month-last-year" => "Same Month Last Year",
+        "this-year" => "This Year (January - December ".date("Y").")",
+        "all-time" => "All Time (".date("jS M Y", strtotime($setupInfo->setup_date))." - till date)",
+    ];
+} else {
+    $filterPeriod = [
+        "today" => 'Today',
+        "this-week" => "This Week",
+        "this-month" => "This Month",
+        "this-year" => "This Year"
+    ];
 }
 ?>
 <!DOCTYPE html>
@@ -257,11 +254,30 @@ if(in_array($SITEURL[0], ["sales", "analytics", "customer-detail"])) {
                 </ul>
               </div>
             </li>
-            <li class="nav-item offline-menu">
-              <a class="nav-link <?= (in_array($SITEURL[0], ['analytics', 'customer-detail'])) ? "active" : null; ?>" href="<?= $baseUrl ?>analytics">
+            <li class="nav-item blur-content offline-menu">
+              <a class="nav-link <?= (in_array($SITEURL[0], ['reports-sales', 'reports-inventory', 'reports-customers', 'reports-salespersons', 'reports-outlets'])) ? "active" : null; ?>" href="#navbar-analytics" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="navbar-expenses">
                 <i class="ni ni-chart-pie-35 text-info"></i>
-                <span class="nav-link-text">Analytics</span>
+                <span class="nav-link-text">Reports</span>
               </a>
+              <div class="collapse <?= (in_array($SITEURL[0], ['reports-sales', 'reports-inventory', 'reports-customers', 'reports-salespersons', 'reports-outlets'])) ? "show" : null; ?>" id="navbar-analytics">
+                <ul class="nav nav-sm flex-column">
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>reports-sales" class="nav-link">Sales</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>reports-inventory" class="nav-link">Inventory</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>reports-customers" class="nav-link">Customers</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>reports-salespersons" class="nav-link">Sales Personnel</a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="<?= $baseUrl ?>reports-outlets" class="nav-link">Outlets</a>
+                  </li>
+                </ul>
+              </div>
             </li>
             <?php if($accessObject->hasAccess('view', 'settings')) { ?>    
             <li class="nav-item offline-menu">

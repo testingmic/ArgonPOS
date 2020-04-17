@@ -12,9 +12,9 @@ $session->productsLimit = 50;
 
 // insight to request for
 $session->insightRequest = [
-    "paymentOptionsInsight","productCategoryInsight",
-    "productsPerformanceInsight","actualsCreditInsight",
-    "costSellingProfitInsight","customerOrdersInsight",
+    "paymentOptionsInsight",
+    "actualsCreditInsight",
+    "costSellingProfitInsight",
     "discountEffectInsight"
 ];
 ?>
@@ -159,49 +159,6 @@ $session->insightRequest = [
               </div>
             </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card report-card" data-report="order-discount">
-                    <div class="card-body bg-default">
-                        <div class="float-right">
-                            <i class="report-main-icon"></i>
-                        </div> 
-                        <span class="text-gray">Order Discount</span>
-                        <h3 class="my-3">0.00</h3>
-                        <p class="mb-0 text-muted text-truncate">
-                          <span class="text-success"><i class="mdi mdi-trending-up"></i>0.00%</span> Yesterday
-                        </p>
-                    </div><!--end card-body--> 
-                </div><!--end card--> 
-            </div> <!--end col-->
-            <div class="col-md-6 col-lg-4">
-              <div class="card report-card" data-report="average-unit-per-transaction">
-                  <div class="card-body bg-default">
-                      <div class="float-right">
-                          <i class="report-main-icon"></i>
-                      </div> 
-                      <span class="text-gray">Average Unit Per Transaction</span>
-                      <h3 class="my-3">0.00</h3>
-                      <p class="mb-0 text-muted text-truncate">
-                        <span class="text-danger"><i class="mdi mdi-trending-down"></i>0.00%</span> Yesterday
-                      </p>
-                  </div><!--end card-body--> 
-              </div><!--end card--> 
-            </div> <!--end col-->
-            <div class="col-md-6 col-lg-4">
-                <div class="card report-card" data-report="sales-per-employee">
-                    <div class="card-body bg-default">
-                        <div class="float-right">
-                            <i class="report-main-icon"></i>
-                        </div> 
-                        <span class="text-gray">Sales Per Employee</span>
-                        <h3 class="my-3">0.00</h3>
-                        <p class="mb-0 text-muted text-truncate">
-                          <span class="text-danger"><i class="mdi mdi-trending-down"></i>0.00%</span> Yesterday
-                        </p>
-                    </div><!--end card-body--> 
-                </div><!--end card--> 
-            </div> <!--end col-->
-            
             <div class="col-md-6 col-lg-3">
                 <div class="card report-card" data-report="highest-sales">
                     <div class="card-body bg-default">
@@ -261,35 +218,53 @@ $session->insightRequest = [
                     </div><!--end card-body--> 
                 </div><!--end card--> 
             </div> <!--end col-->
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card report-card" data-report="order-discount">
+                    <div class="card-body bg-default">
+                        <div class="float-right">
+                            <i class="report-main-icon"></i>
+                        </div> 
+                        <span class="text-gray">Order Discount</span>
+                        <h3 class="my-3">0.00</h3>
+                        <p class="mb-0 text-muted text-truncate">
+                          <span class="text-success"><i class="mdi mdi-trending-up"></i>0.00%</span> Yesterday
+                        </p>
+                    </div><!--end card-body--> 
+                </div><!--end card--> 
+            </div> <!--end col-->
             
-            <div class="col-lg-4 offline">
-
-              <div class="card">
-                <?= connectionLost(); ?>
-                <div class="card-body mb-0" style="padding-bottom: 0px" data-report="orders-trend">
-                    <div class="row">
-                        <div class="col-lg-8 align-self-center">
-                            <div class="impressions-data">
-                                <h4 class="mt-0 header-title">Orders Trend</h4>
-                                <h2 class="mn-3">0 <small>total orders</small></h2>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 text-right orders-loader"></div>
-                    </div>
-                </div>
-                <div class="card-body overflow-hidden p-0">
-                    <div class="d-flex mb-0 h-100">
-                        <div class="w-100">
-                            <div class="apexchart-wrapper">
-                                <div id="customer_orders_trend" class="chart-gutters"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-8 offline">
+            <div class="col-md-6 col-lg-4">
+              <div class="card report-card" data-report="average-unit-per-transaction">
+                  <div class="card-body bg-default">
+                      <div class="float-right">
+                          <i class="report-main-icon"></i>
+                      </div> 
+                      <span class="text-gray">Average Unit Per Transaction</span>
+                      <h3 class="my-3">0.00</h3>
+                      <p class="mb-0 text-muted text-truncate">
+                        <span class="text-danger"><i class="mdi mdi-trending-down"></i>0.00%</span> Yesterday
+                      </p>
+                  </div><!--end card-body--> 
+              </div><!--end card--> 
+            </div> <!--end col-->
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card report-card" data-report="sales-per-employee">
+                    <div class="card-body bg-default">
+                        <div class="float-right">
+                            <i class="report-main-icon"></i>
+                        </div> 
+                        <span class="text-gray">Sales Per Employee</span>
+                        <h3 class="my-3">0.00</h3>
+                        <p class="mb-0 text-muted text-truncate">
+                          <span class="text-danger"><i class="mdi mdi-trending-down"></i>0.00%</span> Yesterday
+                        </p>
+                    </div><!--end card-body--> 
+                </div><!--end card--> 
+            </div> <!--end col-->
+            
+            <div class="col-lg-12 offline">
               <div class="card">
                 <?= connectionLost(); ?>
                   <div class="card-body">
@@ -313,31 +288,7 @@ $session->insightRequest = [
                   </div><!--end card-body-->
               </div><!--end card-->
             </div><!--end col-->
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="card report-card" data-report="customers-retention-rate">
-                    <div class="card-body bg-default">
-                        <div class="float-right">
-                            <i class="report-main-icon"></i>
-                        </div> 
-                        <span class="text-gray">Customer Retention Rate</span>
-                        <h3 class="my-3">0.00</h3>
-                    </div><!--end card-body--> 
-                </div><!--end card--> 
-            </div> <!--end col-->
-            
-            <div class="col-md-6 col-lg-4">
-                <div class="card report-card" data-report="sell-through-percentage">
-                    <div class="card-body bg-default" style="padding-left: 10px; padding-right: 10px;">
-                        <div class="float-right">
-                            <i class="report-main-icon"></i>
-                        </div> 
-                        <span class="text-gray">Sell Through Percentage</span>
-                        <h3 class="my-3">0.00</h3>
-                    </div><!--end card-body--> 
-                </div><!--end card--> 
-            </div> <!--end col-->
-
+           
             <div class="col-md-6 col-lg-4">
                 <div class="card report-card" data-report="sales-per-category">
                     <div class="card-body bg-default" style="padding-left: 10px; padding-right: 10px;">
@@ -374,95 +325,10 @@ $session->insightRequest = [
                 </div><!--end card--> 
             </div> <!--end col-->
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card report-card" data-report="year-over-year-growth">
-                    <div class="card-body bg-default">
-                        <div class="float-right">
-                            <i class="report-main-icon"></i>
-                        </div> 
-                        <span class="text-gray">Year over Year Growth</span>
-                        <h3 class="my-3">0</h3>
-                    </div><!--end card-body--> 
-                </div><!--end card--> 
-            </div> <!--end col-->
 
             <div class="clearfix"></div>
 
-            <div class="col-lg-12 sales-attendant-performance <?= ($clientData->reports_sales_attendant != "sales-attendant-performance") ? "hidden" : null ?> offline">
-                <div class="card">
-                  <div class="card-body">
-                      <div class="row justify-content-between">
-                        <div>
-                          <h4 class="header-title mt-0">Top Sales People</h4>  
-                        </div>
-                      </div>
-                      <div class="mt-4 table-responsive">
-                          <table width="100%" class="table mb-0 attendant-performance">
-                              <thead class="thead-light">
-                              <tr>
-                                  <th width="30%">Name</th>
-                                  <th>Revenue</th>
-                                  <th>Sales Count</th>
-                                  <th>Avg. Sale Value</th>
-                                  <th>Target</th>
-                                  <th>% of Target Met</th>
-                                  <th>Items Sold</th>
-                                  <th>Avg. Items per Sale</th>
-                              </tr>
-                              </thead>
-                              <tbody></tbody>
-                          </table>
-                      </div>
-                  </div>
-              </div>
-            </div>
-            <div class="col-lg-4 offline team-performance <?= ($clientData->reports_sales_attendant != "team-performance") ? "hidden" : null ?>">
-              <div class="card">
-                  <div class="card-body">
-                      <div class="row justify-content-between">
-                        <div>
-                          <h4 class="header-title mt-0">Sales Attendant Performance (Sales)</h4>  
-                        </div>
-                      </div>
-                      <div class="attendant-chart">
-                          <div id="attendant-performance" class="apex-charts"></div>
-                      </div>  
-                  </div>
-              </div>
-            </div>
-            
             <div class="col-lg-12 offline">
-              <div class="card">
-                  <div class="card-body">
-                      <div class="row justify-content-between">
-                        <div>
-                          <h4 class="header-title mt-0">Top 50 Best Products Performance (Sales)</h4>  
-                        </div>
-                        <div>
-                          
-                        </div>
-                      </div>
-                      <div class="table-responsive">
-                          <table width="100%" class="table mb-0 products-performance">
-                              <thead class="thead-light">
-                              <tr>
-                                  <th>#</th>
-                                  <th width="30%">Name</th>
-                                  <th>Orders</th>
-                                  <th>Quantity Sold</th>
-                                  <th>Cost</th>
-                                  <th>Revenue</th>
-                                  <th>Profit</th>
-                              </tr>
-                              </thead>
-                              <tbody></tbody>
-                          </table>
-                      </div>
-                    </div>
-              </div>
-            </div>
-
-            <div class="col-lg-8 offline">
               <div class="card">
                   <div class="card-body">
                       <div class="row justify-content-between">
@@ -480,82 +346,13 @@ $session->insightRequest = [
               </div>
             </div>
 
-            <div class="col-lg-4 offline">
-              <div class="card">
-                <div class="card-body sales-category-options">
-                    <h4 class="header-title mt-0">Sales Per Products Category</h4>  
-                    <div class="category-chart">
-                      <div id="category-options" class="apex-charts"></div>
-                    </div> 
-                </div>
-              </div>
-            </div>
-
-            <div class="col-lg-12 branch-performance offline">
-                <div class="card">
-                    <div class="card-body table-responsive">
-                        <h4 class="header-title mt-0">Branch Performance Overview</h4>
-                        <table class="table nowrap branch-overview datatable-buttons">
-                            <thead>
-                                <th>Name</th>
-                                <th>Total Sales</th>
-                                <th>Highest Sale</th>
-                                <th>Lowest Sale</th>
-                                <th>Average Sale</th>
-                                <th>Orders</th>
-                                <th>Sales Per Square Foot</th>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-lg-12 offline">
-                
-              <div class="card">
-                <?= connectionLost(); ?>
-                  <div class="card-body order-list">
-                      <h4 class="header-title mt-0 mb-3">Top 30 Best Performing Customers</h4>
-                      <div class="table-responsive">
-
-                          <table class="table table-hover text-left custPerformance datatable-buttons">
-                              <thead class="thead-light">
-                                  <tr>
-                                      <th class="border-top-0">#</th>
-                                      <th class="border-top-0">Name</th>
-                                      <th class="border-top-0">Total Orders</th>
-                                      <th class="border-top-0">Orders Amount</th>
-                                      <th class="border-top-0">Balance</th>
-                                      <th class="border-top-0">Action</th>
-                                  </tr><!--end tr-->
-                              </thead>
-                              <tbody></tbody>
-                          </table> <!--end table-->                                               
-                      </div><!--end /div-->
-                  </div><!--end card-body-->
-              </div><!--end card-->
-
-            </div><!--end col-->
-
-          </div> 
+        </div> 
 
 
       </div>
     
   </div><!--end row-->
-  
-  <div class="modal fade attendantHistory" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="mt-0">Sales History</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            </div>
-            <div class="modal-body"></div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+
 <?php require_once 'foottags.php'; ?>
 <?php if($session->accountExpired) { ?>
 <script>

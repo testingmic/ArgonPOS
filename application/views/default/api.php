@@ -1010,7 +1010,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$products_stmt = $pos->prepare("
 						SELECT
 							a.id, a.category_id, a.product_title, b.branch_name,
-							a.product_image,
+							a.product_image, a.product_id,
 							(
 								SELECT 
 									COUNT(c.order_id) 
@@ -1082,7 +1082,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							'percentage' => ($product_result->totalProductsRevenue > 0) ? number_format(($product_result->totalProductsRevenue/$overallSale)*100) : 0,
 							'product_id' => $product_result->id,
 							'category_id' => $product_result->category_id,
-							'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
+							'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br>ID: <strong>{$product_result->product_id}</strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
 							'product_image' => $product_result->product_image,
 							'orders_count' => $product_result->orders_count,
 							'quantity_sold' => (int) $product_result->totalQuantitySold,

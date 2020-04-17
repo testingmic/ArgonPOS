@@ -221,7 +221,7 @@
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
 <?php } ?>
-<?php if(in_array($SITEURL[0], ["reports", "customer-detail", "analytics", "dashboard", "index"])) { ?>
+<?php if(in_array($SITEURL[0], ["reports", "customer-detail", 'reports-sales', 'reports-inventory', 'reports-customers', 'reports-salespersons', 'reports-outlets', "dashboard", "index"])) { ?>
 <script src="<?= $baseUrl ?>assets/vendor/apexcharts/apexcharts.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jvectormap/jquery-jvectormap-2.0.2.min.js"></script>
 <script src="<?= $baseUrl ?>assets/vendor/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
