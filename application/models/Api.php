@@ -10,7 +10,6 @@ class Api extends Pos {
 
 		/** get the user full request headers **/
 		$headers = apache_request_headers();
-
 		
 		/** authenticate the headers that have been parsed **/
 		if(isset($headers["Auth-Xkey"])){

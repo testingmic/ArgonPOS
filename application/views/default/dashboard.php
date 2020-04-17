@@ -14,7 +14,7 @@ $session->limitedData = false;
 
 // insight to request for
 $session->insightRequest = [
-  'discountEffectInsight', 'productsPerformanceInsight'
+  'discountEffectInsight', 'productsPerformanceInsight', 'salesOverview'
 ];
 ?>	
 <!-- Header -->

@@ -440,7 +440,7 @@ var syncOfflineData = async (dataToSync) => {
                     data.push(resp[i]);
                 }
             }
-            $.post(baseUrl + `doprocess_db/sync/${dataToSync}`, {syncData: data}, function(data) {
+            $.post(baseUrl + `sync/sync/${dataToSync}`, {syncData: data}, function(data) {
                 if(data.status == 200) {}
             }, 'json');
         }
@@ -451,7 +451,7 @@ var preloadData = async (dataset) => {
     await dOC().then((itResp) => {
         if(itResp == 1) {
             $.ajax({
-                url: `${baseUrl}doprocess_db/preloadData`,
+                url: `${baseUrl}sync/preloadData`,
                 data: {preloadData: true, dataType: dataset},
                 dataType: "json",
                 type: "post",
@@ -2284,7 +2284,7 @@ $("#newCustomer_form").on("submit", async function(event) {
         let customerId = rndInt(12);
 
         var formDetails = [{
-            customer_id: `EV${customerId}`,
+            customer_id: `AR${customerId}`,
             title: $(`select[name="nc_title"]`).val(),
             firstname: $(`input[name="nc_firstname"]`).val(),
             lastname: $(`input[name="nc_lastname"]`).val(),
@@ -4199,19 +4199,19 @@ $(function() {
                 $(`table[class~="salesLists"]`).dataTable().fnDestroy();
                 if (data.status == true) {
                     $(`table[class~="salesLists"]`).dataTable({
-                        "aaData": data.message.table,
+                        "aaData": data.message.sales_history,
                         "iDisplayLength": 10,
                         "buttons": ["copy", "print","csvHtml5"],
                         "lengthChange": !1,
                         "dom": "Bfrtip",
                         "columns": [
-                        { "data": 'row' },
-                        { "data": 'order_id' },
-                        { "data": 'fullname' },
-                        { "data": 'phone' },
-                        { "data": 'date' },
-                        { "data": 'amount' },
-                        { "data": 'action' }
+                            {"data":'row'},
+                            {"data":'order_id'},
+                            {"data":'fullname'},
+                            {"data":'phone'},
+                            {"data":'date'},
+                            {"data":'amount'},
+                            {"data":'action'}
                         ]
                     });
 

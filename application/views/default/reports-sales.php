@@ -13,9 +13,8 @@ $session->productsLimit = 50;
 // insight to request for
 $session->insightRequest = [
     "paymentOptionsInsight",
-    "actualsCreditInsight",
-    "costSellingProfitInsight",
-    "discountEffectInsight"
+    "actualsCreditInsight", "costSellingProfitInsight",
+    "discountEffectInsight", "salesOverview"
 ];
 ?>
 <!-- Page Content-->

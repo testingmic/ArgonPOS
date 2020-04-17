@@ -13,7 +13,7 @@ $session->productsLimit = 50;
 // insight to request for
 $session->insightRequest = [
     "productCategoryInsight",
-    "customerOrdersInsight"
+    "customerOrdersInsight", "salesOverview"
 ];
 ?>
 <!-- Page Content-->

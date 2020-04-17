@@ -24,27 +24,50 @@ $expiredAccount = true;
 //: confirm that the user is logged in
 if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
+	// available insight metricts that can be queried
+	$availableInsights = [
+		"paymentOptionsInsight","productCategoryInsight",
+		"productsPerformanceInsight","actualsCreditInsight",
+		"costSellingProfitInsight","customerOrdersInsight",
+		"discountEffectInsight", "salesOverview"
+	];
+
 	//: if the user accessed the file using an access token
 	if(isset($apiAccessValues->clientId)) {
+		
 		//: create a new object of the notification class
 		$accountNotify = load_class('Notifications', 'controllers', $apiAccessValues->clientId);
 		$posClass->clientId = $apiAccessValues->clientId;
 		$theAccountState = $accountNotify->accountNotification()->hasExpired;
+
+		// get all the parsed data
+		$apiCallData = json_decode(file_get_contents('php://input'), true);
+
+		// set the post as empty
+		$_POST = [];
+
+		// loop through the list and set it as a post data
+		foreach($apiCallData as $postKey => $postData) {
+
+			// add the user parsed data into the post super global array
+			$_POST[$postKey] = xss_clean($postData);
+
+		}
+
+		// print out the post submitted by the user
+		$_POST["insightRequest"] = (isset($_POST["insightRequest"]) && !empty($_POST["insightRequest"])) ? $_POST["insightRequest"] : $availableInsights;
+
+		// check if the insight is not an array
+		if(!is_array($_POST["insightRequest"])) {
+			$_POST["insightRequest"] = $posClass->stringToArray($_POST["insightRequest"]);
+		}
 	}
 
 	//: initializing
 	$loggedUserBranchId = (isset($apiAccessValues->branchId)) ? xss_clean($apiAccessValues->branchId) : $session->branchId;
 	$loggedUserClientId = (isset($apiAccessValues->clientId)) ? xss_clean($apiAccessValues->clientId) : $session->clientId;
 	$loggedUserId = (isset($apiAccessValues->userId)) ? xss_clean($apiAccessValues->userId) : $session->userId;
-	$insightRequest = (isset($_REQUEST["insightRequest"])) ? xss_clean($_REQUEST["insightRequest"]) : $session->insightRequest;
-
-	// available insight metricts that can be queried
-	$availableInsights = [
-		"paymentOptionsInsight","productCategoryInsight",
-		"productsPerformanceInsight","actualsCreditInsight",
-		"costSellingProfitInsight","customerOrdersInsight",
-		"discountEffectInsight",
-	];
+	$insightRequest = (isset($_POST["insightRequest"])) ? $_POST["insightRequest"] : $session->insightRequest;
 
 	//: if the user requested the data from the browser
 	$expiredAccount = $session->accountExpired;
@@ -214,31 +237,32 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$orderDate = date('jS F Y h:iA', strtotime($data->order_date));
 					$totalOrder= $posClass->toDecimal($data->order_amount_paid, 2, ',');
 
-					$results[] = [
-						'row' => "$i.",
-						'order_id' => "<a onclick=\"return getSalesDetails('{$data->order_id}')\" data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$data->order_id}\">#$data->order_id</a> <br> ".ucfirst($data->payment_type),
-						'fullname' => "<a href=\"{$config->base_url('customer-detail/'.$data->customer_id)}\">{$data->title} {$data->firstname} {$data->lastname}</a>",
-						'phone' => $data->phone_1,
-						'date' => $orderDate,
-						'amount' => "{$clientData->default_currency} {$totalOrder}",
-						'action' => "<a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-print\"></i></a> <a data-toggle=\"tooltip\" title=\"Email the Receipt\" href=\"javascript:void(0)\" class=\"btn-outline-info btn btn-sm resend-email\" data-email=\"{$data->email}\" data-name=\"{$data->title} {$data->firstname} {$data->lastname}\" data-customer-id=\"{$data->customer_id}\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-envelope\"></i></a> <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$data->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-download\"></i></a>",
-					];
-
-					// run this section if the user wants more details
-					if(!$session->limitedData) {
-
-						// perform some calculations
-						$totalDiscount += $data->order_discount;
-						$totalCostPrice += $data->totalCostPrice;
-						$totalSellingPrice += $data->totalSellingPrice;
-						$totalProfit += $data->totalProfitMade;
-						$totalSales += $data->order_amount_paid;
-						$totalServed += 1;
-						$creditTotalProfitMade += $data->creditTotalProfitMade;
-						
-						$totalProductsWorth = 0;
-						$totalCreditSales = $data->totalCreditSales;
+					if($rawJSON) {
+						$results[] = $data;
+					} else {
+						// parse this data if the request is from the website
+						$results[] = [
+							'row' => "$i.",
+							'order_id' => "<a onclick=\"return getSalesDetails('{$data->order_id}')\" data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$data->order_id}\">#$data->order_id</a> <br> ".ucfirst($data->payment_type),
+							'fullname' => "<a href=\"{$config->base_url('customer-detail/'.$data->customer_id)}\">{$data->title} {$data->firstname} {$data->lastname}</a>",
+							'phone' => $data->phone_1,
+							'date' => $orderDate,
+							'amount' => "{$clientData->default_currency} {$totalOrder}",
+							'action' => "<a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-print\"></i></a> <a data-toggle=\"tooltip\" title=\"Email the Receipt\" href=\"javascript:void(0)\" class=\"btn-outline-info btn btn-sm resend-email\" data-email=\"{$data->email}\" data-name=\"{$data->title} {$data->firstname} {$data->lastname}\" data-customer-id=\"{$data->customer_id}\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-envelope\"></i></a> <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$data->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$data->order_id}\"><i class=\"fa fa-download\"></i></a>",
+						];
 					}
+
+					// perform some calculations
+					$totalDiscount += $data->order_discount;
+					$totalCostPrice += $data->totalCostPrice;
+					$totalSellingPrice += $data->totalSellingPrice;
+					$totalProfit += $data->totalProfitMade;
+					$totalSales += $data->order_amount_paid;
+					$totalServed += 1;
+					$creditTotalProfitMade += $data->creditTotalProfitMade;
+					
+					$totalProductsWorth = 0;
+					$totalCreditSales = $data->totalCreditSales;
 
 				}
 				$message = $results;
@@ -314,17 +338,16 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			//: print the result
 			$response = [
 				"message" => [
-					"table" => $message
+					"sales_history" => $message
 				],
 				"status"  => $status
 			];
 
-			//: if the user requested for more records then push this as well
-			if(!$session->limitedData) {
 
-				// set the new response to be parsed
+			// set the new response to be parsed
+			if(!$session->limitedData) {
 				$response["message"] = [ 
-					"table" => $message,
+					"sales_history" => $message,
 					"totalSales" => [
 						"total" => $clientData->default_currency . $posClass->toDecimal($totalSales, 2, ','), 
 						"trend" => $totalSalesTrend ." ". $display
@@ -354,7 +377,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						"cost_trend" =>  $totalCostTrend ." ". $display
 					]
 				];
-
 			}
 			
 		} else if (isset($_POST['getSalesDetails']) && confirm_url_id(2, "getSalesDetails")) {
@@ -469,13 +491,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		];
 
 		// process the summary results set
-		if (isset($_REQUEST['generateReport'], $_REQUEST['queryMetric']) && confirm_url_id(2, 'generateReport')) {
+		if (isset($_POST['generateReport'], $_POST['queryMetric']) && confirm_url_id(2, 'generateReport')) {
 
 			// default variables
 			$productLimit = 100;
 
 			// check parsed
-			$postData = (Object) array_map('xss_clean', $_REQUEST);
+			$postData = (Object) array_map('xss_clean', $_POST);
 			$period = (isset($postData->salesPeriod)) ? strtolower($postData->salesPeriod) : "today";
 			$metric = (isset($postData->queryMetric)) ? $postData->queryMetric : null;
 			$productLimit = ((!empty($postData->productsLimit)) ? (int) $postData->productsLimit : (!empty($session->productsLimit) ? $session->productsLimit : $productLimit));
@@ -937,15 +959,16 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$paymentValues[] = round($paymentData->total_amount);
 						
 					}
+					// payment breakdown
+					$paymentBreakdown = [
+						"payment_option" => $paymentKeys,
+						"payment_values" => $paymentValues
+					];
+
 				}
 
-				$paymentBreakdown = [
-					"payment_option" => $paymentKeys,
-					"payment_values" => $paymentValues
-				];
-
 				
-
+				
 				// check if product categories insight is in the insight request array
 				if(in_array("productCategoryInsight", $insightRequest)) {
 
@@ -1341,35 +1364,39 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					ksort($actualReturningCustomersRecord);
 				}
 
-				$labelArray = array_keys($freshData);
-				$labels = [];
-				// confirm which period we are dealing with
-				if($listing == "list-days") {
-					// change the labels to hours of day
-					foreach($labelArray as $key => $value) {
-						$labels[] = date("Y-m-d", strtotime($value));
-					}
-				} elseif($listing == "hour") {
-					// change the labels to hours of day
-					foreach($labelArray as $key => $value) {
-						$labels[] = $dateClass->convertToPeriod("hour", $value);
-					}
-				} elseif($listing == "year-to-months") {
-					// change the labels to hours of day
-					foreach($labelArray as $key => $value) {
-						$labels[] = $dateClass->convertToPeriod("month", $value);
-					}
-				}
+				// if the sales overview was requested
+				if(in_array("salesOverview", $insightRequest)) {
 
-				// Parse the amount into the chart array data
-				$resultData = array();
-				$resultData["type"] = "bar";
-				$resultData["fill"] = false;
-				$resultData["legend"] = false;
-				$resultData["borderColor"] = "#fff";
-				$resultData["borderWidth"] = 2;
-				$resultData["labeling"] = $labels;
-				$resultData["data"] = array_values($freshData);
+					$labelArray = array_keys($freshData);
+					$labels = [];
+					// confirm which period we are dealing with
+					if($listing == "list-days") {
+						// change the labels to hours of day
+						foreach($labelArray as $key => $value) {
+							$labels[] = date("Y-m-d", strtotime($value));
+						}
+					} elseif($listing == "hour") {
+						// change the labels to hours of day
+						foreach($labelArray as $key => $value) {
+							$labels[] = $dateClass->convertToPeriod("hour", $value);
+						}
+					} elseif($listing == "year-to-months") {
+						// change the labels to hours of day
+						foreach($labelArray as $key => $value) {
+							$labels[] = $dateClass->convertToPeriod("month", $value);
+						}
+					}
+
+					// Parse the amount into the chart array data
+					$resultData = array();
+					$resultData["type"] = "bar";
+					$resultData["fill"] = false;
+					$resultData["legend"] = false;
+					$resultData["borderColor"] = "#fff";
+					$resultData["borderWidth"] = 2;
+					$resultData["labeling"] = $labels;
+					$resultData["data"] = array_values($freshData);
+				}
 
 				if(in_array("customerOrdersInsight", $insightRequest)) {
 					// if the metric is orders count
@@ -2803,11 +2830,11 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$baseUrl = $config->base_url();
 
 			//: process inventories
-			if (isset($_REQUEST['request'])) {
+			if (isset($_POST['request'])) {
 
-				if (isset($_REQUEST['branchID'], $_REQUEST['request']) && confirm_url_id(2, "getAllProducts")) {
+				if (isset($_POST['branchID'], $_POST['request']) && confirm_url_id(2, "getAllProducts")) {
 
-					$branchID = (!empty($_REQUEST['branchID'])) ? xss_clean($_REQUEST['branchID']) : null;
+					$branchID = (!empty($_POST['branchID'])) ? xss_clean($_POST['branchID']) : null;
 
 					$allProducts = $productsClass->all(false, $branchID);
 					$session->set_userdata("invSelectedCard", $branchID);
@@ -3746,7 +3773,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		elseif (confirm_url_id(1, "customerManagement")) {
 			
 			//: begin the queries
-			if(isset($_REQUEST["listCustomers"]) && confirm_url_id(2, "listCustomers")) {
+			if(isset($_POST["listCustomers"]) && confirm_url_id(2, "listCustomers")) {
 				
 				//: query for the list of all customers
 				$customersClass = load_class("Customers", "controllers", $loggedUserClientId);

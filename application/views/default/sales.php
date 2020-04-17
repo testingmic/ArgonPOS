@@ -5,6 +5,7 @@ $PAGETITLE = "Sales History";
 require_once "headtags.php";
 
 $session->limitedData = true;
+$session->insightRequest = false;
 ?>
 <!-- Page Content-->
 <!-- Header -->

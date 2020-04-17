@@ -12,9 +12,8 @@ $session->productsLimit = 500;
 
 // insight to request for
 $session->insightRequest = [
-    "productCategoryInsight",
-    "productsPerformanceInsight",
-    "costSellingProfitInsight"
+    "productCategoryInsight", "productsPerformanceInsight",
+    "costSellingProfitInsight", "salesOverview"
 ];
 ?>
 <!-- Page Content-->

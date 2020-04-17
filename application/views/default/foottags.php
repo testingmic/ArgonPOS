@@ -292,9 +292,10 @@ genIds();
       let cSt = Cookies.get('offlineSales');
       if(cSt == 'available') {
         syncOfflineData('sales').then((resp) => {
-          preloadData('sales').then((res) => {
-              preloadData('reports');
-              Cookies.set('offlineSales', 'unavailable');
+          preloadData('sales').then((resp) => {
+              preloadData('reports').then((resp) => {
+                Cookies.set('offlineSales', 'unavailable');
+              });
           });
         });
       }

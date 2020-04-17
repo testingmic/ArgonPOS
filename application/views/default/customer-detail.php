@@ -47,7 +47,7 @@ if(isset($customerDetails->fullname)) {
     // insight to request for
     $session->insightRequest = [
       'discountEffectInsight', 'productsPerformanceInsight',
-      'paymentOptionsInsight'
+      'paymentOptionsInsight', 'salesOverview'
     ];
 
     //: set the customer branchId in a session
