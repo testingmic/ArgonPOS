@@ -158,7 +158,7 @@
     </div><!-- /.modal -->
   <?php } ?>
   
-  <?php if(in_array($SITEURL[0], ['sales', 'index', 'dashboard'])) { ?>
+  <?php if(in_array($SITEURL[0], ['sales', 'index', 'dashboard', 'customer-detail'])) { ?>
   <div class="modal fade sendMailModal" tabindex="-1" id="sendMailModal" role="dialog" aria-hidden="true">
       <div class="modal-dialog modal-dialog">
           <div class="modal-content">

@@ -23,7 +23,7 @@ if(confirm_url_id(1)) {
     $session->set_userdata('reportingCustomerId', $customerId);
 
     $stmt = $pos->prepare("
-        SELECT c.id, c.customer_id, 
+        SELECT c.id, c.customer_id, c.branchId,
             c.title, c.firstname, c.lastname,
             CONCAT(c.firstname, ' ', c.lastname) AS fullname, 
             c.email, c.phone_1, c.phone_2, 
@@ -49,6 +49,9 @@ if(isset($customerDetails->fullname)) {
       'discountEffectInsight', 'productsPerformanceInsight',
       'paymentOptionsInsight'
     ];
+
+    //: set the customer branchId in a session
+    $session->customerBranchId = $customerDetails->branchId;
 ?>
 
   <div class="header pb-6 d-flex align-items-center" style="min-height: 350px; background-image: url(<?= $baseUrl ?>assets/img/theme/bg.jpg); background-size: cover; background-position: center top;">
@@ -275,7 +278,18 @@ if(isset($customerDetails->fullname)) {
                           <div class="modal-header">
                               <h5 class="mt-0">Sales History</h5>
                           </div>
-                          <div class="modal-body"></div>
+                          <table data-content="non-filtered" class="table nowrap datatable-buttons salesLists" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Transaction ID</th>
+                                    <th>Date</th>
+                                    <th>Sales Value</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                       </div><!-- /.modal -->
                   </div>
               </div>
@@ -291,11 +305,18 @@ if(isset($customerDetails->fullname)) {
                         <tr>
                             <th>#</th>
                             <th width="30%">Name</th>
-                            <th>Orders</th>
-                            <th>Purchased</th>
-                            <th>Cost</th>
-                            <th>Revenue</th>
+                            <th>Sale Count</th>
+                            <th>Items Sold</th>
+                            <th>Items Sold Per Day</th>
+                            <th>Closing Inventory</th>
+                            <th>Purchase Price</th>
+                            <th>Selling Price</th>
                             <th>Profit</th>
+                            <th>Return Count</th>
+                            <th>Returns %</th>
+                            <th>Created</th>
+                            <th>First Sale</th>
+                            <th>Last Sale</th>
                         </tr>
                         </thead>
                         <tbody></tbody>
@@ -314,7 +335,7 @@ if(isset($customerDetails->fullname)) {
 <script>
 $(function() {
     cusPurHis();
-    $(`select[name="periodSelect"]`).on('change', function() {
+    $(`select[name="periodSelected"]`).on('change', function() {
         let periodSelected = $(this).val();
         cusPurHis(periodSelected);
     });

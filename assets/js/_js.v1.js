@@ -2033,56 +2033,32 @@ function cusPurHis() {
         beforeSend: function() {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
         }, success: function(resp) {
-            var trData = `<div class="table-responsive"><table width="100%" class="table  orderHistory">`;
-            trData += `<thead>`;
-            trData += `<tr class="text-uppercase">`;
-            trData += `<td>#</td>`;
-            trData += `<td>Order ID</td>`;
-            trData += `<td>Order Amount</td>`;
-            trData += `<td>Date</td>`;
-            trData += `<td>Payment Mode</td>`;
-            trData += `<td></td>`;
-            trData += `</tr>`;
-            trData += `</thead>`;
-            var creditBadge = ``, count=0;
-            $.each(resp.result, function(i, e) {
-
-                count++;
-
-                if(e.payment_type == 'cash') {
-                    creditBadge = `<span class="badge badge-success">Cash Sale</span>`;
-                } else if(e.payment_type == 'momo') {
-                    creditBadge = `<span class="badge badge-primary">Mobile Money</span>`;
-                } else if(e.payment_type == 'card') {
-                    creditBadge = `<span class="badge badge-secondary">Card Payment</span>`;
-                } else if(e.payment_type == 'credit') {
-                    creditBadge = `<span class="badge badge-danger">Credit</span>`;
-                }
-
-                trData += `<tr>`;
-                trData += `<td>${count}</td>`;
-                trData += `<td><a onclick="return getSalesDetails('${e.order_id}')" class="get-sales-details text-success" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a></td>`;
-                trData += `<td>${storeValues.cur} ${e.order_amount_paid}</td>`;
-                trData += `<td>${e.order_date}</td>`;
-                trData += `<td>${creditBadge}</td>`;
-                trData += `<td><a href="javascript:void(0);" class="print-receipt" data-sales-id="${e.order_id}" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
-                trData += `</tr>`;
-            });
-
-            trData += `</table></div>`;
-
-            $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(trData);
-
-            $(`table[class~="orderHistory"]`).dataTable().fnDestroy();
-            $(`table[class~="orderHistory"]`).DataTable({
+            $(`table[class~="salesLists"]`).dataTable().fnDestroy();
+            $(`table[class~="salesLists"]`).dataTable({
+                "aaData": resp.result,
+                "iDisplayLength": 10,
                 "buttons": ["copy", "print","csvHtml5"],
                 "lengthChange": !1,
                 "dom": "Bfrtip",
+                "columns": [
+                    { "data": 'row' },
+                    { "data": 'order_id' },
+                    { "data": 'date' },
+                    { "data": 'amount' },
+                    { "data": 'action' }
+                ]
             });
-
         }, complete: function(data) {
             $(`a[class~="print-receipt"]`).on('click', function() {
                 trgPrtRpt($(this).data('sales-id'));
+            });
+            $(`div[class="main-content"]`).on('click', `a[class~="resend-email"]`, function(e) {
+                $(`div[class~="sendMailModal"] input[name="fullname"]`).val($(this).data('name'));
+                $(`div[class~="sendMailModal"] input[name="send_email"]`).val($(this).data('email'));
+                $(`div[class~="sendMailModal"] input[name="receiptId"]`).val($(this).data('sales-id'));
+                $(`div[class~="sendMailModal"] input[name="request_type"]`).val('invoice');
+                $(`div[class~="sendMailModal"] input[name="customerId"]`).val($(this).data('customer-id'));
+                $(`div[class~="sendMailModal"]`).modal('show');
             });
         }, error: function(err) {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
@@ -3302,11 +3278,9 @@ async function getSalesDetails(salesID) {
         },
         success: function(data) {
             if (data.status == true) {
-                $(".show-modal-body").html(data.message);
+                $(".show-modal-body").html(data.result);
             } else {
-                $(".show-modal-body").html(`
-                    <p class="alert alert-danger text-white text-center">No sales records found</p>
-                    `);
+                $(".show-modal-body").html(`<p class="alert alert-danger text-white text-center">No sales records found</p>`);
             }
         },
         complete: function() {
@@ -4115,48 +4089,22 @@ $(function() {
                 url: `${baseUrl}api/reportsAnalytics/generateReport`,
                 data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
                 dataType: "JSON",
-                beforeSend: function() {
-                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
-                },
                 success: function(resp) {
-                    var trData = `<table width="100%" class="table table-bordered orderHistory">`;
-                    trData += `<thead>`;
-                    trData += `<tr class="text-uppercase">`;
-                    trData += `<td>Order ID</td>`;
-                    trData += `<td>Customer Name</td>`;
-                    trData += `<td>Order Amount</td>`;
-                    trData += `<td>Date</td>`;
-                    trData += `<td></td>`;
-                    trData += `</tr>`;
-                    trData += `</thead>`;
-                    var creditBadge = ``;
-                    $.each(resp.result, function(i, e) {
-
-                        if (e.payment_type == 'cash') {
-                            creditBadge = `<span class="text-gray">Cash Sale</span>`;
-                        } else if (e.payment_type == 'momo') {
-                            creditBadge = `<span class="text-gray">Mobile Money</span>`;
-                        } else if (e.payment_type == 'card') {
-                            creditBadge = `<span class="text-gray">Card Payment</span>`;
-                        } else if (e.payment_type == 'credit') {
-                            creditBadge = `<span class="text-gray">Credit</span>`;
-                        }
-
-                        trData += `<tr>`;
-                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" class="get-sales-details" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Order Details">${e.order_id}</a><br>${creditBadge}</td>`;
-                        trData += `<td><a onclick="getSalesDetails('${e.order_id}');" data-name="${e.fullname}" href="javascript:void(0);" title="Click to list customer orders history" data-value="${e.customer_id}" class="customer-orders">${e.fullname}</a></td>`;
-                        trData += `<td>${storeValues.cur}${e.order_amount_paid}</td>`;
-                        trData += `<td>${e.order_date}</td>`;
-                        trData += `<td><a class="print-receipt" data-sales-id="${e.order_id}" href="javascript:void(0)" title="View Purchase Details"><i class="fa fa-print"></i></a></td>`;
-                        trData += `</tr>`;
+                    $(`table[class~="salesLists"]`).dataTable().fnDestroy();
+                    $(`table[class~="salesLists"]`).dataTable({
+                        "aaData": resp.result,
+                        "iDisplayLength": 10,
+                        "buttons": ["copy", "print","csvHtml5"],
+                        "lengthChange": !1,
+                        "dom": "Bfrtip",
+                        "columns": [
+                            { "data": 'row' },
+                            { "data": 'order_id' },
+                            { "data": 'fullname'},
+                            { "data": 'date' },
+                            { "data": 'amount' }
+                        ]
                     });
-
-                    trData += `</table>`;
-
-                    $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(trData);
-
-                    $(`table[class~="orderHistory"]`).DataTable();
-
                 },
                 complete: function(data) {
                     $(`a[class~="print-receipt"]`).on('click', function() {

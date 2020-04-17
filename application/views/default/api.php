@@ -446,7 +446,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$message .= "</tbody>
 						</table>
 					</div>";
-					$status = true;
+
+					$response->status = true;
+					$response->result = $message;
+
 				}
 
 			}
@@ -988,6 +991,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				// check if products performance insight is in the insight request array
 				if(in_array("productsPerformanceInsight", $insightRequest)) {
 
+					// limit the products list by the branch of the customer if it has been set
+					$branchLimit = null;
+					if(!empty($session->customerBranchId)) {
+						if(empty($branchAccess)) {
+							$branchLimit = "&& a.branchId = '{$session->customerBranchId}'";
+						}
+					}
 					// products performance query
 					$products_stmt = $pos->prepare("
 						SELECT
@@ -1088,7 +1098,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						FROM 
 							products a
 						LEFT JOIN branches b ON b.id = a.branchId
-						WHERE a.status = '1' {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT {$productLimit}
+						WHERE a.status = '1' {$branchLimit} {$branchAccess} {$clientAccess} ORDER BY totalProductsProfit DESC LIMIT {$productLimit}
 
 					");
 					$products_stmt->execute();
@@ -1117,7 +1127,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							'first_sale' => (!empty($product_result->firstSale)) ? date("jS M", strtotime($product_result->firstSale)) : null,
 							'last_sale' => (!empty($product_result->lastSale)) ? date("jS M", strtotime($product_result->lastSale)) : null,
 							'category_id' => $product_result->category_id,
-							'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br>ID: <strong>{$product_result->product_id}</strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
+							'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong> (<strong>{$product_result->product_id})</strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
 							'product_image' => $product_result->product_image,
 							'orders_count' => $product_result->orders_count,
 							'quantity_sold' => (int) $product_result->totalQuantitySold,
@@ -1446,8 +1456,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$salesAttendants = $posClass->getAllRows(
 						"sales a LEFT JOIN customers b ON b.customer_id=a.customer_id",
 						"a.payment_type, a.order_amount_paid, DATE(a.order_date) AS order_date, 
-						a.order_id, b.customer_id,
-						CONCAT(b.firstname, ' ', b.lastname) AS fullname, a.credit_sales
+						a.order_id, b.customer_id, b.phone_1, b.email, b.title, 
+						a.payment_type, CONCAT(b.firstname, ' ', b.lastname) AS fullname, a.credit_sales
 						",
 						"{$where} AND a.order_status='confirmed' AND a.deleted='0'
 							AND (DATE(a.order_date) >= '{$dateFrom}' && 
@@ -1455,7 +1465,26 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					);
 
 					// set the response data
-					$resultData = $salesAttendants;
+					$resultData = [];
+					$i = 0;
+					// loop through the result
+					foreach($salesAttendants as $eachSale) {
+						
+						$i++;
+						$orderDate = $eachSale->order_date;
+						$totalOrder = $eachSale->order_amount_paid;
+
+						$resultData[] = [
+							'row' => $i,
+							'order_id' => "<a onclick=\"return getSalesDetails('{$eachSale->order_id}')\" data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$eachSale->order_id}\">#$eachSale->order_id</a> <br> ".ucfirst($eachSale->payment_type),
+							'fullname' => "<a href=\"{$config->base_url('customer-detail/'.$eachSale->customer_id)}\">{$eachSale->title} {$eachSale->fullname}</a>",
+							'phone' => $eachSale->phone_1,
+							'date' => $orderDate,
+							'amount' => "{$clientData->default_currency} {$totalOrder}",
+							'action' => "<a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-print\"></i></a> <a data-toggle=\"tooltip\" title=\"Email the Receipt\" href=\"javascript:void(0)\" class=\"btn-outline-info btn btn-sm resend-email\" data-email=\"{$eachSale->email}\" data-name=\"{$eachSale->title} {$eachSale->fullname}\" data-customer-id=\"{$eachSale->customer_id}\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-envelope\"></i></a> <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$eachSale->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-download\"></i></a>",
+						];
+					}
+
 
 				} else {
 

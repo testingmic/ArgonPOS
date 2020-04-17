@@ -115,7 +115,22 @@ $session->insightRequest = [];
                 <h5 class="mt-0">Sales History</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
-            <div class="modal-body"></div>
+            <div class="modal-body table-responsive">
+              <div class="card mb-0 p-3">
+                <table data-content="non-filtered" class="table nowrap datatable-buttons salesLists" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Transaction ID</th>
+                            <th>Customer Name</th>
+                            <th>Date</th>
+                            <th>Sales Value</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+              </div>
+            </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->

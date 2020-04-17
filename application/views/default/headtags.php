@@ -74,6 +74,9 @@ if($setupInfo->type == "alpha") {
         "this-year" => "This Year"
     ];
 }
+
+(!confirm_url_id(0, 'customer-detail')) ? $session->unset_userdata("customerBranchId") : null;
+
 ?>
 <!DOCTYPE html>
 <html>
