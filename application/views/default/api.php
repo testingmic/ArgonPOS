@@ -36,7 +36,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		"salesAttendantPerformance", "topCustomersPerformance"
 	];
 
-	
+	$APIEndpoints = [
+		'inventoryManagement' => "/api/inventoryManagement/getAllProducts, /api/inventoryManagement/updateWareHouseStock, /api/inventoryManagement/transferProductQuantity, /api/inventoryManagement/bulkTransferProducts endpoints",
+		'stockUpdates' => "/api/inventoryManagement/updateWareHouseStock, /api/inventoryManagement/transferProductQuantity, /api/inventoryManagement/bulkTransferProducts endpoints",
+	];
 
 	//: if the user accessed the file using an access token
 	if(isset($apiAccessValues->clientId)) {
@@ -2948,133 +2951,247 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$baseUrl = $config->base_url();
 
 			//: process inventories
-			if (isset($_POST['request'])) {
+			if (isset($_POST['request']) && confirm_url_id(2, "getAllProducts")) {
 
-				if (isset($_POST['request']) && confirm_url_id(2, "getAllProducts")) {
+				$branchID = (!empty($_POST['branchId'])) ? xss_clean($_POST['branchId']) : null;
 
-					$branchID = (!empty($_POST['branchId'])) ? xss_clean($_POST['branchId']) : null;
+				$allProducts = $productsClass->all(false, $branchID);
+				$session->set_userdata("invSelectedCard", $branchID);
 
-					$allProducts = $productsClass->all(false, $branchID);
-					$session->set_userdata("invSelectedCard", $branchID);
+				if (!empty($allProducts)) {
+					$i = 0;
+						
+					$message = [];
 
-					if (!empty($allProducts)) {
-						$i = 0;
-							
-						$message = [];
+					foreach ($allProducts as $product) {
 
-						foreach ($allProducts as $product) {
+						// request through api access
+						if($rawJSON) {
+							unset($product->id);
+							$message[] = $product;
+						} else {
+							// request from site
+							$i++;
+							$price = $posClass->toDecimal($product->product_price, 2, ',');
+							$cost_price = $posClass->toDecimal($product->cost_price, 2, ',');
 
-							// request through api access
-							if($rawJSON) {
-								unset($product->id);
-								$message[] = $product;
-							} else {
-								// request from site
-								$i++;
-								$price = $posClass->toDecimal($product->product_price, 2, ',');
-								$cost_price = $posClass->toDecimal($product->cost_price, 2, ',');
-
-								// Check Indicator
-								$calcA = (0.5 * $product->quantity) + $product->quantity;
-								$calcB = (0.5 * $product->quantity);
-								$indicator = ($calcA > $product->threshold) ? "success" : 
+							// Check Indicator
+							$calcA = (0.5 * $product->quantity) + $product->quantity;
+							$calcB = (0.5 * $product->quantity);
+							$indicator = ($calcA > $product->threshold) ? "success" : 
+							(
+								($calcB <= $product->threshold) ? "danger" : 
 								(
-									($calcB <= $product->threshold) ? "danger" : 
-									(
-										($calcA > $product->threshold && $calcB < $product->threshold) ? "warning" : null
-									)
-								);
+									($calcA > $product->threshold && $calcB < $product->threshold) ? "warning" : null
+								)
+							);
 
-								$action = "<div class='text-center'>
-										<a class=\"btn btn-outline-info btn-sm\" href=\"{$baseUrl}products/{$product->pid}\">
-			                                <i class=\"fa fa-edit\"></i></a>";
-					            // ensure the user has the needed permissions
-					            if($accessObject->hasAccess('inventory_branches', 'products')) {
-					            	// show button if the quantity is more than 1
-						            if($product->quantity > 0) {
-						            	$action .= "<a class=\"btn btn-sm btn-outline-success transfer-product\" href=\"javascript:void(0)\" onclick=\"return transferProduct('{$product->product_id}');\"><i class=\"fa fa-share\"></i></a>";
-						            }
-						        }
-					            $action .= "</div>";
+							$action = "<div class='text-center'>
+									<a class=\"btn btn-outline-info btn-sm\" href=\"{$baseUrl}products/{$product->pid}\">
+		                                <i class=\"fa fa-edit\"></i></a>";
+				            // ensure the user has the needed permissions
+				            if($accessObject->hasAccess('inventory_branches', 'products')) {
+				            	// show button if the quantity is more than 1
+					            if($product->quantity > 0) {
+					            	$action .= "<a class=\"btn btn-sm btn-outline-success transfer-product\" href=\"javascript:void(0)\" onclick=\"return transferProduct('{$product->product_id}');\"><i class=\"fa fa-share\"></i></a>";
+					            }
+					        }
+				            $action .= "</div>";
 
-								$message[] = [
-									'row_id' => $i,
-									'product_name' => "
-									<a href=\"{$baseUrl}products/{$product->pid}\" class=\"b-0 product-name\">{$product->product_title}</a><br>
-									ID: <strong>{$product->product_id}</strong>
-									",
-					                'category' => $product->category,
-					                'price' => "{$clientData->default_currency} {$price}",
-					                'cost_price' => "{$clientData->default_currency} {$cost_price}",
-					                'quantity' => "<div class='text-center'>{$product->quantity}</div>",
-					                'indicator' => "<div class='text-center'><span style=\"font-size: 9px;\" class=\"fa fa-circle text-{$indicator}\"></span></div>",
-					                'action' => $action
-								];
-							}
+							$message[] = [
+								'row_id' => $i,
+								'product_name' => "
+								<a href=\"{$baseUrl}products/{$product->pid}\" class=\"b-0 product-name\">{$product->product_title}</a><br>
+								ID: <strong>{$product->product_id}</strong>
+								",
+				                'category' => $product->category,
+				                'price' => "{$clientData->default_currency} {$price}",
+				                'cost_price' => "{$clientData->default_currency} {$cost_price}",
+				                'quantity' => "<div class='text-center'>{$product->quantity}</div>",
+				                'indicator' => "<div class='text-center'><span style=\"font-size: 9px;\" class=\"fa fa-circle text-{$indicator}\"></span></div>",
+				                'action' => $action
+							];
+						}
 
-				        }
-				        $status = true;
-				    }
+			        }
+			        $status = true;
+			    }
 
-				    $response->message = $message;
-				    $response->status = $status;
-				
-				} else if (isset($_POST['transferProductQuantity'], $_POST['branchId']) && confirm_url_id(2, "submitTransferProduct")) {
+			    $response->message = $message;
+			    $response->status = $status;
+			
+			} else if (isset($_POST['transferProductQuantity'], $_POST["transferProductID"], $_POST['branchId']) && confirm_url_id(2, "submitTransferProduct")) {
 
-					// if the session parsed does not match the id sent 
-					// disallow the user to continue with the process
-					if(!$rawJSON && ($session->currentBranchId != $_POST["transferFrom"])) {
+				// if the session parsed does not match the id sent 
+				// disallow the user to continue with the process
+				if(!$rawJSON && ($session->currentBranchId != $_POST["transferFrom"])) {
+					echo json_encode([
+						"message" => "Sorry! Please refresh the page to try again.",
+						"status" => "error",
+					]);
+					exit;
+				}
+
+				// confirm that the product quantity has been set and a branch id has been parsed
+				if (preg_match('/^[0-9]+$/', $_POST['transferProductQuantity']) && !empty($_POST['branchId']) && ($_POST['branchId'] != "null")) {
+
+					$postData = (Object) array_map("xss_clean", $_POST);
+
+					$product = $productsClass->getProduct($postData->transferProductID, "", $postData->transferFrom);
+
+					// check if the product quantity parsed is more than the available
+					if(!isset($product->quantity)) {
+						$response->message = "Sorry! An invalid product id was supplied";
+					} elseif($postData->transferProductQuantity > $product->quantity) {
+						// print error message
+						$response->message = "Sorry! You have entered a quantity higher than what's available of {$product->quantity} items";
+					} else {
+						// assign some more variables
+						$sellPrice = $product->product_price;
+						// Check If Product Exists In Receiving Branch
+						$check = $productsClass->getCountdata(
+							"products", 
+							"product_id = '{$postData->transferProductID}' && branchId = '{$postData->branchId}'"
+						);
+
+						if ($check == 0) {
+							// Get Product Details
+							$product->branchId = $postData->branchId;
+							$product->transferQuantity = $postData->transferProductQuantity;
+							$product->userId = $loggedUserId;
+							// generate a new stock auto id
+							$stockAutoId = random_string('alnum', 12);
+							
+							// set the stock id 
+							$product->stockAutoId = $stockAutoId;
+
+							// Add Quantity To Product Table Stock
+							$query = $productsClass->addStockToBranch($product);
+						} else {
+							$query = $productsClass->updateBranchProductStock($postData, 'product_id');
+						}
+
+						if ($query == true) {
+							// Reduce Sending Shop Product Stock
+							$posClass->updateData(
+								"products", 
+								"quantity = (quantity - $postData->transferProductQuantity)",
+								"product_id = '{$postData->transferProductID}' && branchId = '{$postData->transferFrom}'"
+							);
+
+							// Add Product Transfer To Inventory
+							$postData->clientId = $loggedUserClientId;
+							$postData->userId = $loggedUserId;
+							$postData->selling_price = $sellPrice;
+							$productsClass->addToInventory($postData);
+
+							$response->message = "You have successfully transferred {$postData->transferProductQuantity} items of {$product->product_title} to the specified branch";
+							
+							$response->status = true;
+						} else {
+							$response->message = "Transfer of Product Failed";
+						}
+
+					}
+
+				} else {
+					$response->message = "Please Check All Fields Are Required";
+				}
+
+			}
+
+			//: bulk transfer of products
+			else if (isset($_POST['bulkTransferProducts'], $_POST['productIds'], $_POST["transferFrom"]) && confirm_url_id(2, 'bulkTransferProducts')) {
+
+				// if the session parsed does not match the id sent 
+				// disallow the user to continue with the process
+				if(!$rawJSON && ($session->currentBranchId != $_POST["transferFrom"])) {
+					echo json_encode([
+						"message" => "Sorry! Please refresh the page to try again.",
+						"status" => "error",
+					]);
+					exit;
+				}
+
+				// ensure all required information has been parsed
+				if (!empty($_POST['productIds']) && !empty($_POST['branchId'])) {
+
+					// continue processing the request
+					$products = explode(",", $_POST['productIds']);
+
+					$postData = (Object) array_map("xss_clean", $_POST);
+					
+					$error_state = false;
+
+					foreach ($products as $productToTransfer) {
+
+						$currItem = explode("=", $productToTransfer);
+						$productID = (int) xss_clean($currItem[0]);
+						$productQty= (int) xss_clean($currItem[1]);
+						$postData->transferProductQuantity = $productQty;
+
+						// confirm that at least all products has the value 1
+						if($productQty == 0) {
+							$error_state = true;
+						}
+					}
+
+					if($error_state) {
+						$response->message = "Ensure no item has the quantity of 0";
 						echo json_encode([
-							"message" => "Sorry! Please refresh the page to try again.",
-							"status" => "error",
+							"message" => $message,
+							"status" => $status
 						]);
 						exit;
 					}
 
-					// confirm that the product quantity has been set and a branch id has been parsed
-					if (!empty($_POST['transferProductQuantity']) && !empty($_POST['branchId']) && ($_POST['branchId'] != "null")) {
+					else {
 
-						$postData = (Object) array_map("xss_clean", $_POST);
+						// generate a new stock auto id
+						$stockAutoId = random_string('alnum', 12);
 
-						$product = $productsClass->getProduct($postData->transferProductID, "", $postData->transferFrom);
+						// loop through the list of all products to transfer
+						foreach ($products as $productToTransfer) {
 
-						$sellPrice = $product->product_price;
+							$currItem = explode("=", $productToTransfer);
+							$productID = (int) xss_clean($currItem[0]);
+							$productQty= (int) xss_clean($currItem[1]);
+							$postData->transferProductQuantity = $productQty;
 
-						// check if the product quantity parsed is more than the available
-						if($postData->transferProductQuantity > $product->quantity) {
-							// print error message
-							$response->message = "Sorry! You have entered a quantity higher than what's available";
-						} else {
+							$productData = $posClass->getAllRows("products","product_price, cost_price, product_id", "id='{$productID}'")[0];
 
-							// Check If Product Exists In Receiving Branch
+							$sellPrice = $productData->product_price;
+							$nproductID = $productData->product_id;
+							$costPrice = $productData->cost_price;
+
+							// Check If Product Exists
 							$check = $productsClass->getCountdata(
 								"products", 
-								"product_id = '{$postData->transferProductID}' && branchId = '{$postData->branchId}'"
+								"product_id = '{$nproductID}' && branchId = '{$postData->branchId}'"
 							);
 
 							if ($check == 0) {
 								// Get Product Details
+								$product = $productsClass->getProduct($nproductID, "", $postData->transferFrom);
+
 								$product->branchId = $postData->branchId;
-								$product->transferQuantity = $postData->transferProductQuantity;
+								$product->transferQuantity = $productQty;
 								$product->userId = $loggedUserId;
-								// generate a new stock auto id
-								$stockAutoId = random_string('alnum', 12);
-								
-								// set the stock id 
 								$product->stockAutoId = $stockAutoId;
 
 								// Add Quantity To Product Table Stock
 								$query = $productsClass->addStockToBranch($product);
 							} else {
-								$query = $productsClass->updateBranchProductStock($postData, 'product_id');
+								$postData->transferProductID = $nproductID;
+								$query = $productsClass->updateBranchProductStock($postData);
 							}
 
 							if ($query == true) {
-								// Reduce Sending Shop Product Stock
+								// Reduce Branch Transferring Product Stock
 								$posClass->updateData(
 									"products", 
-									"quantity = (quantity - $postData->transferProductQuantity)",
-									"product_id = '{$postData->transferProductID}' && branchId = '{$postData->transferFrom}'"
+									"quantity = (quantity - $productQty)",
+									"id = '{$productID}' && branchId = '{$postData->transferFrom}'"
 								);
 
 								// Add Product Transfer To Inventory
@@ -3083,129 +3200,14 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 								$postData->selling_price = $sellPrice;
 								$productsClass->addToInventory($postData);
 
-								$status = true;
+								$response->status = true;
+								$response->message = "Products Successfully Transfered";
 							} else {
 								$response->message = "Transfer Failed";
 							}
-
 						}
 
-					} else {
-						$response->message = "Please Check All Fields Are Required";
 					}
-
-				}
-
-				//: bulk transfer of products
-				else if (isset($_POST['bulkTransferProducts'], $_POST['productIds'], $_POST["transferFrom"]) && confirm_url_id(2, 'bulkTransferProducts')) {
-
-					// if the session parsed does not match the id sent 
-					// disallow the user to continue with the process
-					if(!$rawJSON && ($session->currentBranchId != $_POST["transferFrom"])) {
-						echo json_encode([
-							"message" => "Sorry! Please refresh the page to try again.",
-							"status" => "error",
-						]);
-						exit;
-					}
-
-					// ensure all required information has been parsed
-					if (!empty($_POST['productIds']) && !empty($_POST['branchId'])) {
-
-						// continue processing the request
-						$products = explode(",", $_POST['productIds']);
-
-						$postData = (Object) array_map("xss_clean", $_POST);
-						
-						$error_state = false;
-
-						foreach ($products as $productToTransfer) {
-
-							$currItem = explode("=", $productToTransfer);
-							$productID = (int) xss_clean($currItem[0]);
-							$productQty= (int) xss_clean($currItem[1]);
-							$postData->transferProductQuantity = $productQty;
-
-							// confirm that at least all products has the value 1
-							if($productQty == 0) {
-								$error_state = true;
-							}
-						}
-
-						if($error_state) {
-							$response->message = "Ensure no item has the quantity of 0";
-							echo json_encode([
-								"message" => $message,
-								"status" => $status
-							]);
-							exit;
-						}
-
-						else {
-
-							// generate a new stock auto id
-							$stockAutoId = random_string('alnum', 12);
-
-							// loop through the list of all products to transfer
-							foreach ($products as $productToTransfer) {
-
-								$currItem = explode("=", $productToTransfer);
-								$productID = (int) xss_clean($currItem[0]);
-								$productQty= (int) xss_clean($currItem[1]);
-								$postData->transferProductQuantity = $productQty;
-
-								$productData = $posClass->getAllRows("products","product_price, cost_price, product_id", "id='{$productID}'")[0];
-
-								$sellPrice = $productData->product_price;
-								$nproductID = $productData->product_id;
-								$costPrice = $productData->cost_price;
-
-								// Check If Product Exists
-								$check = $productsClass->getCountdata(
-									"products", 
-									"product_id = '{$nproductID}' && branchId = '{$postData->branchId}'"
-								);
-
-								if ($check == 0) {
-									// Get Product Details
-									$product = $productsClass->getProduct($nproductID, "", $postData->transferFrom);
-
-									$product->branchId = $postData->branchId;
-									$product->transferQuantity = $productQty;
-									$product->userId = $loggedUserId;
-									$product->stockAutoId = $stockAutoId;
-
-									// Add Quantity To Product Table Stock
-									$query = $productsClass->addStockToBranch($product);
-								} else {
-									$postData->transferProductID = $nproductID;
-									$query = $productsClass->updateBranchProductStock($postData);
-								}
-
-								if ($query == true) {
-									// Reduce Branch Transferring Product Stock
-									$posClass->updateData(
-										"products", 
-										"quantity = (quantity - $productQty)",
-										"id = '{$productID}' && branchId = '{$postData->transferFrom}'"
-									);
-
-									// Add Product Transfer To Inventory
-									$postData->clientId = $loggedUserClientId;
-									$postData->userId = $loggedUserId;
-									$postData->selling_price = $sellPrice;
-									$productsClass->addToInventory($postData);
-
-									$response->status = true;
-									$response->message = "Products Successfully Transfered";
-								} else {
-									$response->message = "Transfer Failed";
-								}
-							}
-
-						}
-					}
-
 				}
 
 			}
@@ -3383,15 +3385,19 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				}
 
 
-				elseif(isset($_POST['editProduct'], $_POST["product_code"]) && confirm_url_id(2, 'editProduct')){
+				elseif(isset($_POST['editProduct']) && confirm_url_id(2, 'editProduct')){
 
 					// validation
-					$productId = isset($_POST["product_code"]) ? $_POST["product_code"] : null;
+					$postData = (Object) array_map("xss_clean", $_POST);
+
+					$productId = isset($postData->product_code) ? $postData->product_code : $postData->productId;
 
 					// product existence check
-					$branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId;
-					
-					if(!empty($productId) && ($posClass->countRows("products", "product_id='".xss_clean($productId)."' AND branchId='{$branchId}'") != 1)) {
+					$branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : $postData->branchId;
+
+					if(!empty($productId) && ($posClass->countRows("products", "
+						(product_id='".xss_clean($productId)."' OR id='".xss_clean($productId)."') AND branchId='{$branchId}'") != 1)
+					) {
 						$response->message = "An invalid product id was supplied.";
 					}
 					elseif(empty($_POST['category']) || (isset($_POST['category']) && $_POST['category'] == "null")) {
@@ -3413,11 +3419,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$response->message = "Enter a valid product's retail price";	
 					}
 					elseif(isset($_POST['quantity'])) {
-						$response->message = "Sorry the quantity of products can only be updated using the ".$APIEndpoints['inventoryManagement'];
+						$response->message = "Sorry the quantity of products can only be updated using the ".$APIEndpoints['stockUpdates'];
 					}
 					else {
 						// process the file image parsed
-						$postData = (Object) array_map("xss_clean", $_POST);
 						$uploadDir = 'assets/images/products/';
 						$fileName = "default.png";
 
@@ -3451,11 +3456,18 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			                $uploadedFile = null;
 			            }
 
+			            // set more parameters
 			            $postData->threshold = (isset($postData->threshold)) ? (int) $postData->threshold : 10;
 			            $postData->image = $uploadedFile;
+			            $postData->productId = (isset($postData->productId)) ? $postData->productId : $postData->product_code;
+			            // assign some few more variables
+			            $postData->clientId = $loggedUserClientId;
+			            $postData->userId = $loggedUserId;
+			            $postData->description = (isset($postData->description)) ? nl2br($postData->description) : null;
+			            $postData->expiry_date = (isset($postData->expiry_date)) ? nl2br($postData->expiry_date) : null;
 
 			            // save the previous data set
-						$prevData = $posClass->getAllRows("products", "*", "clientId='{$loggedUserClientId}' AND id='{$postData->productId}'")[0];
+						$prevData = $posClass->getAllRows("products", "*", "clientId='{$loggedUserClientId}' AND (id='{$postData->productId}' OR product_id='{$postData->productId}')")[0];
 
 						/* Record the initial data before updating the record */
 						$posClass->dataMonitoring('products', $postData->productId, json_encode($prevData));
@@ -3473,24 +3485,24 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				}
 
 				elseif(isset($_POST['removeProduct'])){
-						$productId = xss_clean($_POST['productId']);
-						if($productsClass->removeProduct($productId)){
-							$response->status = "success";
-							$response->message = "Product has been removed";
-						}
+					$productId = xss_clean($_POST['productId']);
+					if($productsClass->removeProduct($productId)){
+						$response->status = "success";
+						$response->message = "Product has been removed";
+					}
 				}
 
 				elseif(isset($_POST['getProduct'], $_POST['transferFrom'])){
-					$productId = xss_clean($_POST['productId']);
-					$product = $productsClass->getProduct($productId);
-					$categories = $productsClass->getCategories();
+					// $productId = xss_clean($_POST['productId']);
+					// $product = $productsClass->getProduct($productId);
+					// $categories = $productsClass->getCategories();
 
-					if(!empty($product) && !empty($categories)){
-						$response->status = "success";
-						$response->categories = $categories;
-						$response->product = $product;
-						$response->branchId = $_POST['transferFrom'];
-					}
+					// if(!empty($product) && !empty($categories)){
+					// 	$response->status = "success";
+					// 	$response->categories = $categories;
+					// 	$response->product = $product;
+					// 	$response->branchId = $_POST['transferFrom'];
+					// }
 				}
 
 				elseif(isset($_POST['getWarehouseProduct'], $_POST['transferFrom'])){

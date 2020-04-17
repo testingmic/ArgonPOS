@@ -127,6 +127,7 @@ class Products extends Pos {
 	}
 
 	public function getProduct(string $productId, $product = "", $branchId = "", $column = "product_id"){
+
 		if(empty($productId)) return false;
 		$productId = xss_clean($productId);
 
@@ -134,12 +135,16 @@ class Products extends Pos {
 
 		$stmt = $this->db->prepare("
 			SELECT *, id AS pid,
-				IF(source = 'Vend', product_image, CONCAT('', '', IFNULL(product_image, '$this->defaultImg'))) AS image 
-			FROM products WHERE $column = ? {$condition} LIMIT 1");
-
+				IF(source = 'Vend', product_image, 
+				CONCAT('', '', IFNULL(product_image, '$this->defaultImg'))) AS image 
+			FROM products WHERE $column = '{$productId}' {$condition} LIMIT 1
+		");
 		$stmt->execute([$productId]);
 		$result = $stmt->fetch(PDO::FETCH_OBJ);
-		if(!empty($product)) $product = $result;
+		
+		if(!empty($product)) {
+			$product = $result;
+		}
 		else return $result;
 	}
 
@@ -216,15 +221,14 @@ class Products extends Pos {
 		];
 
 		if(!empty($product->image)) array_push($params, $product->image);
-		array_push($params, $product->productId);
-
+		
 		$sql = "UPDATE products SET
 			expiry_date = ?,
 			category_id = ?, product_title = ?, 
 			product_description = ?, 
 			product_price = ?, cost_price = ?, 
 			threshold = ? ".(empty($product->image) ? '' : ', product_image = ?')." 
-			WHERE id = ? LIMIT 1";
+			WHERE (id = '{$product->productId}' OR product_id = '{$product->productId}') AND clientId = '{$product->clientId}' LIMIT 1";
 		return $this->db->prepare($sql)->execute($params);
 	}
 

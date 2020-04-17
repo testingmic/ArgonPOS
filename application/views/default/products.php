@@ -308,6 +308,7 @@ if(!empty($product)) {
                       <div class="row">
                           <div class="col-lg-12 text-right">
                               <input type="hidden" name="productId" value="<?= $productId ?>" class="productId">
+                              <input type="hidden" name="branchId" value="<?= $product->branchId; ?>">
                               <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                               <button type="submit" class="btn <?= $clientData->bg_color; ?>"><i class="fa fa-save"></i> Save</button>  
                               
