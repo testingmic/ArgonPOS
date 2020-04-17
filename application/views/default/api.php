@@ -36,6 +36,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		"salesAttendantPerformance", "topCustomersPerformance"
 	];
 
+	
+
 	//: if the user accessed the file using an access token
 	if(isset($apiAccessValues->clientId)) {
 		
@@ -3281,9 +3283,16 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				// if the user wants to add a new product
 				if(isset($_POST['addProduct']) && confirm_url_id(2, 'addProduct')){
 
+					// validation
+					$productId = isset($_POST["product_code"]) ? $_POST["product_code"] : null;
+
+					// product existence check
+					$branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId;
+
 					// check the product code 
-					if(!empty($_POST["product_code"]) && ($posClass->countRows("products", "product_id='".xss_clean($_POST["product_code"])."' AND branchId='{$loggedUserBranchId}'") > 0)) {
-						$response->message = "A duplicate product is been added to the same branch.";
+					if(!empty($productId) && ($posClass->countRows("products", "product_id='".xss_clean($productId)."' AND branchId='{$branchId}'") > 0)) {
+						// print error message
+						$response->message = "A duplicate product is been added to the same outlet.";
 					}
 					// start the validation process
 					else if(empty($_POST['category']) || ($_POST['category'] == "null")) {
@@ -3374,9 +3383,18 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				}
 
 
-				elseif(isset($_POST['editProduct']) && confirm_url_id(2, 'editProduct')){
-					// validate the user data
-					if((empty($_POST['category']) || ($_POST['category'] == "null"))) {
+				elseif(isset($_POST['editProduct'], $_POST["product_code"]) && confirm_url_id(2, 'editProduct')){
+
+					// validation
+					$productId = isset($_POST["product_code"]) ? $_POST["product_code"] : null;
+
+					// product existence check
+					$branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId;
+					
+					if(!empty($productId) && ($posClass->countRows("products", "product_id='".xss_clean($productId)."' AND branchId='{$branchId}'") != 1)) {
+						$response->message = "An invalid product id was supplied.";
+					}
+					elseif(empty($_POST['category']) || (isset($_POST['category']) && $_POST['category'] == "null")) {
 						$response->message = "Please select product's category";
 					}
 					elseif(empty($_POST['title'])) {
@@ -3385,8 +3403,17 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					elseif(empty($_POST['cost'])) {
 						$response->message = "Please enter product's cost price";
 					}
+					elseif(!preg_match("/^[0-9.]+$/", $_POST["cost"])) {
+						$response->message = "Enter a valid product's cost price";	
+					}
 					elseif(empty($_POST['price'])) {
 						$response->message = "Please enter product's retail price";
+					}
+					elseif(!preg_match("/^[0-9.]+$/", $_POST["price"])) {
+						$response->message = "Enter a valid product's retail price";	
+					}
+					elseif(isset($_POST['quantity'])) {
+						$response->message = "Sorry the quantity of products can only be updated using the ".$APIEndpoints['inventoryManagement'];
 					}
 					else {
 						// process the file image parsed
