@@ -1948,6 +1948,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			// initializing
 			if(count($result) > 0) {
+				
 				// loop through the list of products
 				foreach($result as $results) {
 					// increment
@@ -2253,35 +2254,44 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$row = 0;
 			$results = [];
 
+			$ordersObj = load_class('Orders', 'controllers');
+
 			// loop through the list of items
 			foreach($result as $eachRequest) {
 				// configure the
 				$row++;
 
-				$eachRequest->action = "<div align=\"center\">";
+				if($rawJSON) {
+					$eachRequest->itemLines = $ordersObj->requestDetails($eachRequest->request_id, $loggedUserClientId, $loggedUserBranchId, $loggedUserId);
+
+					$results[] = $eachRequest;
+				} else {
+
+					$eachRequest->action = "<div align=\"center\">";
 		        
-		        $eachRequest->action .= "<a class=\"btn btn-sm btn-outline-primary\" title=\"Export the {$eachRequest->request_type} to PDF\" data-value=\"{$eachRequest->request_id}\" href=\"".$config->base_url('export/'.$eachRequest->request_id)."\" target=\"_blank\"><i class=\"fa fa-file-pdf\"></i> </a> &nbsp;";
+			        $eachRequest->action .= "<a class=\"btn btn-sm btn-outline-primary\" title=\"Export the {$eachRequest->request_type} to PDF\" data-value=\"{$eachRequest->request_id}\" href=\"".$config->base_url('export/'.$eachRequest->request_id)."\" target=\"_blank\"><i class=\"fa fa-file-pdf\"></i> </a> &nbsp;";
 
-		        // check if the user has access to delete this item
-		        if($accessObject->hasAccess('delete', strtolower($eachRequest->request_type.'s'))) {
-		        	// print the delete button
-		        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('api/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
-		        }
+			        // check if the user has access to delete this item
+			        if($accessObject->hasAccess('delete', strtolower($eachRequest->request_type.'s'))) {
+			        	// print the delete button
+			        	$eachRequest->action .= "<a class=\"btn btn-sm delete-item btn-outline-danger\" data-msg=\"Are you sure you want to delete this {$eachRequest->request_type}\" data-request=\"{$eachRequest->request_type}\" data-url=\"{$config->base_url('api/deleteData')}\" data-id=\"{$eachRequest->request_id}\" href=\"javascript:void(0)\"><i class=\"fa fa-trash\"></i> </a>";
+			        }
 
-		        $eachRequest->action .= "</div>";
+			        $eachRequest->action .= "</div>";
 
-				// append to the list of items
-				$results[] = [
-					'row_id' => $row,
-					'request_type' => $eachRequest->request_type,
-					'request_id' => "<a target=\"_blank\" class=\"text-success\" title=\"Click to view full details\" href=\"{$config->base_url('export/'.$eachRequest->request_id)}\">{$eachRequest->request_id}</a>",
-					'branch_name' => $eachRequest->branch_name,
-					'customer_name' => $eachRequest->customer_name,
-					'quote_value' => "{$clientData->default_currency} ". number_format($eachRequest->request_sum, 2),
-					'recorded_by' => $eachRequest->recorded_by,
-					'request_date' => $eachRequest->request_date,
-					'action' => $eachRequest->action
-				];
+					// append to the list of items
+					$results[] = [
+						'row_id' => $row,
+						'request_type' => $eachRequest->request_type,
+						'request_id' => "<a target=\"_blank\" class=\"text-success\" title=\"Click to view full details\" href=\"{$config->base_url('export/'.$eachRequest->request_id)}\">{$eachRequest->request_id}</a>",
+						'branch_name' => $eachRequest->branch_name,
+						'customer_name' => $eachRequest->customer_name,
+						'quote_value' => "{$clientData->default_currency} ". number_format($eachRequest->request_sum, 2),
+						'recorded_by' => $eachRequest->recorded_by,
+						'request_date' => $eachRequest->request_date,
+						'action' => $eachRequest->action
+					];
+				}
 			}
 
 			$response = [
