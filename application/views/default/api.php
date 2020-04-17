@@ -123,6 +123,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	$loggedUserClientId = (isset($apiAccessValues->clientId)) ? xss_clean($apiAccessValues->clientId) : $session->clientId;
 	$loggedUserId = (isset($apiAccessValues->userId)) ? xss_clean($apiAccessValues->userId) : $session->userId;
 	$insightRequest = (isset($_POST["insightRequest"])) ? $_POST["insightRequest"] : $session->insightRequest;
+	$limit = (isset($_POST["limit"])) ? (int) $_POST["limit"] : 100000;
 
 	//: if the user requested the data from the browser
 	$expiredAccount = $session->accountExpired;
@@ -2247,7 +2248,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					us.name AS recorded_by
 				", 
 				"rq.deleted = '0' {$accessLevelClause} AND 
-					rq.clientId = '{$loggedUserClientId}' AND rq.request_type = '{$postData->requestType}' ORDER BY rq.id DESC"
+					rq.clientId = '{$loggedUserClientId}' AND rq.request_type = '{$postData->requestType}' ORDER BY rq.id DESC LIMIT {$limit}"
 			);
 
 			// initializing
@@ -2373,6 +2374,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 				// confirm the user permission to perform this action
 				if($accessObject->hasAccess('view', 'branches')) {
+
+					// append the request
+					$response->request = "branchesList";
+
 					// fetch the branch information
 					$query = $pos->prepare("
 						SELECT * 
@@ -2384,35 +2389,39 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						while ($data = $query->fetch(PDO::FETCH_OBJ)) {
 							$i++;
 
-							$branch_type = "<br><span class='badge text-white ".(($data->branch_type == 'Store') ? "badge-dark" : "badge-primary")."'>{$data->branch_type}</span>";
+							if($rawJSON) {
+								$message[] = $data;
+							} else {
+								$branch_type = "<br><span class='badge text-white ".(($data->branch_type == 'Store') ? "badge-dark" : "badge-primary")."'>{$data->branch_type}</span>";
 
-							$action = '<div width="100%" align="center">';
-							if($accessObject->hasAccess('update', 'branches')) {
-								$action .=  "<button class=\"btn btn-sm btn-outline-success edit-branch\" data-branch-id=\"{$data->branch_id}\">
-									<i class=\"fa fa-edit\"></i>
-								</button> ";
+								$action = '<div width="100%" align="center">';
+								if($accessObject->hasAccess('update', 'branches')) {
+									$action .=  "<button class=\"btn btn-sm btn-outline-success edit-branch\" data-branch-id=\"{$data->branch_id}\">
+										<i class=\"fa fa-edit\"></i>
+									</button> ";
+								}
+
+								if($accessObject->hasAccess('delete', 'branches')) {
+									$action .= "<button class=\"btn btn-sm ".(($data->status == 1) ? "btn-outline-danger" : "btn-outline-primary")." delete-item\" data-url=\"".$config->base_url('api/branchManagment/updateStatus')."\" data-state=\"{$data->status}\" data-msg=\"".(($data->status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")."\" data-request=\"branch-status\" data-id=\"{$data->id}\">
+										<i class=\"fa ".(($data->status == 1) ? "fa-stop" : "fa-play")."\"></i>
+									</button> ";
+								}
+
+								$action .= "</div>";
+
+								$message[] = [
+									'row_id' => $i,
+									'branch_id' => $data->branch_id,
+									'branch_type' => $data->branch_type,
+									'branch_name_text' => $data->branch_name,
+									'branch_name' => $data->branch_name.$branch_type,
+									'location' => $data->location,
+									'email' => $data->branch_email,
+									'contact' => $data->branch_contact,
+									'status' => "<div align='center'>".(($data->status == 1) ? "<span class='badge badge-success'>Active</span>" : "<span class='badge badge-danger'>Inactive</span>")."</div>",
+									'action' => $action
+								];
 							}
-
-							if($accessObject->hasAccess('delete', 'branches')) {
-								$action .= "<button class=\"btn btn-sm ".(($data->status == 1) ? "btn-outline-danger" : "btn-outline-primary")." delete-item\" data-url=\"".$config->base_url('api/branchManagment/updateStatus')."\" data-state=\"{$data->status}\" data-msg=\"".(($data->status == 1) ? "Are you sure you want to set the {$data->branch_name} as inactive?" : "Do you want to proceed and set the {$data->branch_name} as active?")."\" data-request=\"branch-status\" data-id=\"{$data->id}\">
-									<i class=\"fa ".(($data->status == 1) ? "fa-stop" : "fa-play")."\"></i>
-								</button> ";
-							}
-
-							$action .= "</div>";
-
-							$message[] = [
-								'row_id' => $i,
-								'branch_id' => $data->branch_id,
-								'branch_type' => $data->branch_type,
-								'branch_name_text' => $data->branch_name,
-								'branch_name' => $data->branch_name.$branch_type,
-								'location' => $data->location,
-								'email' => $data->branch_email,
-								'contact' => $data->branch_contact,
-								'status' => "<div align='center'>".(($data->status == 1) ? "<span class='badge badge-success'>Active</span>" : "<span class='badge badge-danger'>Inactive</span>")."</div>",
-								'action' => $action
-							];
 						}
 						$status = true;
 					}
@@ -2903,10 +2912,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			}
 
-			$response = [
-				"message"	=> $message,
-				"status"	=> $status
-			];
+			$response->message = $message;
+			$response->status = $status;
 		}
 
 		//: inventory management
@@ -3467,7 +3474,9 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						ON a.access_level = b.id
 				INNER JOIN branches c
 						ON c.id = a.branchId
-					 WHERE a.clientId = ? && a.status = ? {$condition}");
+					 WHERE a.clientId = ? && a.status = ? {$condition}
+				LIMIT {$limit}
+				");
 
 				if ($query->execute([$loggedUserClientId, '1'])) {
 					$i = 0;
@@ -3870,7 +3879,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				//: query for the list of all customers
 				$customersClass = load_class("Customers", "controllers", $loggedUserClientId);
 				$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, b.branch_name", "AND a.customer_id != 'WalkIn' {$branchAccess}",
-					"LEFT JOIN branches b ON b.id = a.branchId"
+					"LEFT JOIN branches b ON b.id = a.branchId", $limit
 				);
 
 				// fetch the data
@@ -4014,30 +4023,33 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				//: run the query
 				$i = 0;
 	            # list categories
-	            $categoryList = $posClass->getAllRows("products_categories a", "a.*, (SELECT COUNT(*) FROM products b WHERE a.category_id = b.category_id) AS products_count", "a.clientId='{$loggedUserClientId}'");
+	            $categoryList = $posClass->getAllRows("products_categories a", "a.*, (SELECT COUNT(*) FROM products b WHERE a.category_id = b.category_id) AS products_count", "a.clientId='{$loggedUserClientId}' LIMIT {$limit}");
 
 	            $categories = [];
 	            // loop through the branches list
 	            foreach($categoryList as $eachCategory) {
 	            	$i++;
 	            	
-	            	$eachCategory->row = $i;
-	            	$eachCategory->action = "";
+	            	if($rawJSON) {
+	            		$categories[] = $eachCategory;
+	            	} else {
+		            	$eachCategory->row = $i;
+		            	$eachCategory->action = "";
 
-	            	if($accessObject->hasAccess('category_update', 'products')) {
+		            	if($accessObject->hasAccess('category_update', 'products')) {
 
-	            		$eachCategory->action .= "<a data-content='".json_encode($eachCategory)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-category\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-edit\"></i></a>";
-	            	}
-	            	
-	            	if($accessObject->hasAccess('category_delete', 'products')) {
-	            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('api/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
-	            	}
+		            		$eachCategory->action .= "<a data-content='".json_encode($eachCategory)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-category\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-edit\"></i></a>";
+		            	}
+		            	
+		            	if($accessObject->hasAccess('category_delete', 'products')) {
+		            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Product Category?\" data-request=\"category\" data-url=\"{$config->base_url('api/categoryManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
+		            	}
 
-	            	if(empty($eachCategory->action)) {
-	            		$eachCategory->action = "---";
-	            	}
-
-	                $categories[] = $eachCategory;
+		            	if(empty($eachCategory->action)) {
+		            		$eachCategory->action = "---";
+		            	}
+		            	$categories[] = $eachCategory;
+		            }	                
 	           	}
 
 	           	$response = [
@@ -4420,38 +4432,42 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				//: run the query
 				$i = 0;
 	            # list categories
-	            $categoryList = $posClass->getAllRows("expenses_category a", "a.*", "a.clientId='{$loggedUserClientId}' AND status='1'");
+	            $categoryList = $posClass->getAllRows("expenses_category a", "a.*", "a.clientId='{$loggedUserClientId}' AND status='1' LIMIT {$limit}");
 
 	            $categories = [];
 	            // loop through the branches list
 	            foreach($categoryList as $eachCategory) {
 	            	$i++;
-	            	
-	            	$eachCategory->row = $i;
-	            	$eachCategory->action = "";
 
-	            	if($accessObject->hasAccess('category_update', 'expenses')) {
+	            	if($rawJSON) {
+	            		$categories[] = $eachCategory;
+	            	} else {	            	
+		            	$eachCategory->row = $i;
+		            	$eachCategory->action = "";
 
-	            		$eachCategory->action .= "<a data-content='".json_encode($eachCategory)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-category\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-edit\"></i></a>";
-	            	}
-	            	
-	            	if($accessObject->hasAccess('category_delete', 'expenses')) {
-	            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Expense Category?\" data-request=\"category\" data-url=\"{$config->base_url('api/expensesManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
-	            	}
+		            	if($accessObject->hasAccess('category_update', 'expenses')) {
 
-	            	if(empty($eachCategory->action)) {
-	            		$eachCategory->action = "---";
-	            	}
+		            		$eachCategory->action .= "<a data-content='".json_encode($eachCategory)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-category\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-edit\"></i></a>";
+		            	}
+		            	
+		            	if($accessObject->hasAccess('category_delete', 'expenses')) {
+		            		$eachCategory->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Expense Category?\" data-request=\"category\" data-url=\"{$config->base_url('api/expensesManagement/deleteCategory')}\" data-id=\"{$eachCategory->id}\"><i class=\"fa fa-trash\"></i></a>";
+		            	}
 
-	            	$eachCategory->description = limit_words($eachCategory->description, 10)."...";
+		            	if(empty($eachCategory->action)) {
+		            		$eachCategory->action = "---";
+		            	}
 
-	                $categories[] = $eachCategory;
-	           	}
+		            	$eachCategory->description = limit_words($eachCategory->description, 10)."...";
 
-	           	$response = [
-	           		'status' => 200,
-	           		'result' => $categories
-	           	];
+		                $categories[] = $eachCategory;
+		           	}
+
+		           	$response = [
+		           		'status' => 200,
+		           		'result' => $categories
+		           	];
+		        }
 			}
 
 			elseif(isset($_POST["name"], $_POST["dataset"], $_POST["description"]) && confirm_url_id(2, 'saveCategory')) {
@@ -4548,7 +4564,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	            	LEFT JOIN users d ON d.user_id = a.created_by
 	            	", 
 	            	"a.*, c.branch_name, c.branch_contact, b.name AS category, d.name AS created_by", 
-	            	"a.clientId='{$loggedUserClientId}' AND a.status='1' {$branchAccess}"
+	            	"a.clientId='{$loggedUserClientId}' AND a.status='1' {$branchAccess}  LIMIT {$limit}"
 	        	);
 
 	            $expenses = [];
@@ -4556,30 +4572,35 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 	            $tax = 0;
 	            // loop through the branches list
 	            foreach($expensesList as $eachExpense) {
-	            	$i++;
-	            	
-	            	$totals += $eachExpense->amount;
-	            	$tax += $eachExpense->tax;
+					
+					$totals += $eachExpense->amount;
+		            $tax += $eachExpense->tax;
+		            
+		            if($rawJSON) {
+		            	$expenses[] = $eachExpense;
+		            } else {
+		            	$i++;
 
-	            	$eachExpense->row = $i;
-	            	$eachExpense->action = "";
+		            	$eachExpense->row = $i;
+		            	$eachExpense->action = "";
 
-	            	if($accessObject->hasAccess('expenses_update', 'expenses')) {
+		            	if($accessObject->hasAccess('expenses_update', 'expenses')) {
 
-	            		$eachExpense->action .= "<a data-content='".json_encode($eachExpense)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-expense\" data-id=\"{$eachExpense->id}\"><i class=\"fa fa-edit\"></i></a>";
-	            	}
-	            	
-	            	if($accessObject->hasAccess('expenses_delete', 'expenses')) {
-	            		$eachExpense->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Expense?\" data-request=\"expense\" data-url=\"{$config->base_url('api/expensesManagement/deleteExpense')}\" data-id=\"{$eachExpense->id}\"><i class=\"fa fa-trash\"></i></a>";
-	            	}
+		            		$eachExpense->action .= "<a data-content='".json_encode($eachExpense)."' href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary edit-expense\" data-id=\"{$eachExpense->id}\"><i class=\"fa fa-edit\"></i></a>";
+		            	}
+		            	
+		            	if($accessObject->hasAccess('expenses_delete', 'expenses')) {
+		            		$eachExpense->action .= "<a href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-danger delete-item\" data-msg=\"Are you sure you want to delete this Expense?\" data-request=\"expense\" data-url=\"{$config->base_url('api/expensesManagement/deleteExpense')}\" data-id=\"{$eachExpense->id}\"><i class=\"fa fa-trash\"></i></a>";
+		            	}
 
-	            	if(empty($eachExpense->action)) {
-	            		$eachExpense->action = "---";
-	            	}
+		            	if(empty($eachExpense->action)) {
+		            		$eachExpense->action = "---";
+		            	}
 
-	            	$eachExpense->description = limit_words($eachExpense->description, 10)."...";
+		            	$eachExpense->description = limit_words($eachExpense->description, 10)."...";
 
-	                $expenses[] = $eachExpense;
+		            	$expenses[] = $eachExpense;
+		            }
 	           	}
 
 	           	$response = [
@@ -4697,12 +4718,14 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 	$response = (Object) $response;
 
-	$response->metrics = $insightRequest;
+	if(!empty($insightRequest)) {
+		$response->metrics = $insightRequest;
+	}
 
 	if($expiredAccount) {
 		$response->state = 'Account Expired: Showing Limited Data.';
 	}
-
+	$response->requestUri = $_SERVER["REQUEST_URI"];
 }
 
 echo json_encode($response);

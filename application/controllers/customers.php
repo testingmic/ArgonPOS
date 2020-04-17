@@ -14,8 +14,8 @@ class Customers extends Pos {
 		$this->clientId = (!empty($clientId)) ? $clientId : $this->clientId;
 	}
 
-	public function fetch($columns = "*", $whereClause = null, $leftJoin = null){
-		$sql = "SELECT $columns FROM customers a {$leftJoin} WHERE a.clientId = ? AND a.status = ? {$whereClause} ORDER BY a.id DESC";
+	public function fetch($columns = "*", $whereClause = null, $leftJoin = null, $limit = 100000){
+		$sql = "SELECT $columns FROM customers a {$leftJoin} WHERE a.clientId = ? AND a.status = ? {$whereClause} ORDER BY a.id DESC LIMIT {$limit}";
 		$stmt = $this->db->prepare($sql);
 		$stmt->execute([$this->clientId, 1]);
 		return $stmt->fetchAll(PDO::FETCH_OBJ);	
