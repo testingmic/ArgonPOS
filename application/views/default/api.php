@@ -32,6 +32,11 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 		"discountEffectInsight", "salesOverview"
 	];
 
+	$availableQueryMetrics = [
+		"summaryItems", "salesOverview", "branchPerformance", 
+		"salesAttendantPerformance", "topCustomersPerformance"
+	];
+
 	//: if the user accessed the file using an access token
 	if(isset($apiAccessValues->clientId)) {
 		
@@ -45,22 +50,72 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 		// set the post as empty
 		$_POST = [];
+		$bugs = false;
 
 		// loop through the list and set it as a post data
 		foreach($apiCallData as $postKey => $postData) {
-
-			// add the user parsed data into the post super global array
-			$_POST[$postKey] = xss_clean($postData);
-
+			// confirm that the postdata is not an array
+			if(!is_array($postData)) {
+				// add the user parsed data into the post super global array
+				$_POST[$postKey] = xss_clean($postData);
+			}
+			// run this section if it is an array
+			elseif(is_array($postData)) {
+				// loop through the list
+				foreach($postData as $hKey => $hValue) {
+					// add the data to the array list
+					$_POST[$postKey][$hKey] = $hValue;
+				}
+			}
 		}
 
-		// print out the post submitted by the user
-		$_POST["insightRequest"] = (isset($_POST["insightRequest"]) && !empty($_POST["insightRequest"])) ? $_POST["insightRequest"] : $availableInsights;
+		// if the reportsanalytics endpoint was parsed
+		if(confirm_url_id(1, "reportsAnalytics") && confirm_url_id(2, "generateReport")) {
 
-		// check if the insight is not an array
-		if(!is_array($_POST["insightRequest"])) {
-			$_POST["insightRequest"] = $posClass->stringToArray($_POST["insightRequest"]);
+			// confirm if query metric was not parsed
+			if(!isset($_POST["queryMetric"])) {
+				// set a bug
+				$bugs = true;
+				// set the message
+				$response->message = "Sorry! The metric parsed is invalid. The metric can be one or all of the following: ".implode(", ", $availableQueryMetrics);
+			} elseif((isset($_POST["queryMetric"]) && $_POST["queryMetric"] != "salesOverview") && isset($_POST["insightRequest"])) {
+				// set a bug
+				$bugs = true;
+				// set the message
+				$response->message = "Sorry! The 'insightRequest' parameter can only be used with the 'queryMetric' has the value 'salesOverview'";
+			} else {
+				// assign the request insight metric 
+				$_POST["insightRequest"] = (isset($_POST["insightRequest"]) && !empty($_POST["insightRequest"])) ? $_POST["insightRequest"] : ["salesOverview"];
+
+				// check if the insight is not an array
+				if(!is_array($_POST["insightRequest"])) {
+					// convert the string to an array
+					$_POST["insightRequest"] = $posClass->stringToArray($_POST["insightRequest"]);
+				}
+
+				// check if an invalid metric was supplied
+				if(isset($_POST["productsLimit"])) {
+					// check if the insight metric contains product performance
+					if(!in_array("productsPerformanceInsight", $_POST["insightRequest"])) {
+						// set the bugs to true
+						$bugs = true;
+						// set the error message
+						$response->message = "Sorry! The parameter 'productsLimit' should be parsed with the metric 'productsPerformanceInsight'";
+					}
+				}
+			}
+
+			// if(isset($_POST[""]))
 		}
+
+		// confirm that a bug was found
+		if($bugs) {
+			// print the error message
+			echo json_encode($response);
+			exit;
+		}
+
+		// print_r($_POST); exit;
 	}
 
 	//: initializing
@@ -132,6 +187,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$session->set_userdata("reportPeriod", $period);
 
 			$period = ($expiredAccount) ? "this-week" : $period;
+
+			$ordersObj = load_class('Orders', 'controllers');
 
 			// Check Sales Period
 			switch ($period) {
@@ -238,7 +295,14 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$totalOrder= $posClass->toDecimal($data->order_amount_paid, 2, ',');
 
 					if($rawJSON) {
-						$results[] = $data;
+						$results[] = [
+							'id' => $data->id,
+							'source' => $data->source,
+							'branchId' => $data->branchId,
+							'customer_id' => $data->customer_id,
+							'order_status' => $data->order_status,
+							'saleDetails' => $ordersObj->saleDetails($data->order_id, $loggedUserClientId, $loggedUserBranchId, $loggedUserId)
+						];
 					} else {
 						// parse this data if the request is from the website
 						$results[] = [
@@ -501,6 +565,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			$period = (isset($postData->salesPeriod)) ? strtolower($postData->salesPeriod) : "today";
 			$metric = (isset($postData->queryMetric)) ? $postData->queryMetric : null;
 			$productLimit = ((!empty($postData->productsLimit)) ? (int) $postData->productsLimit : (!empty($session->productsLimit) ? $session->productsLimit : $productLimit));
+			$customerListLimit = (isset($postData->customersLimit)) ? $postData->customersLimit : 30;
 
 			//: if account expired then show only the weeks data
 			$period = ($expiredAccount) ? "this-week" : $period;
@@ -1462,6 +1527,9 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			// if the metric is to fetch the sales attendants perfomance 
 			elseif($metric == 'salesAttendantPerformance') {
 
+				// create a new orders object
+				$ordersObj = load_class("Orders", "controllers");
+
 				// if the sales records of attendant is being fetched
 				if(isset($_POST['salesAttendantHistory'])) {
 
@@ -1472,12 +1540,12 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					// check which details to fetch
 					if($recordType == "customer") {
 						$where = "a.customer_id = '{$userId}'";
-					} else {
+					} elseif($recordType == "attendant") {
 						$where = "a.recorded_by='{$userId}'";
 					}
 
-					$dateFrom = $session->queryRange['start'];
-					$dateTo = $session->queryRange['end'];
+					$dateFrom = $dateFrom;
+					$dateTo = $dateTo;
 					
 					// run this query
 					$salesAttendants = $posClass->getAllRows(
@@ -1498,18 +1566,24 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					foreach($salesAttendants as $eachSale) {
 						
 						$i++;
-						$orderDate = $eachSale->order_date;
-						$totalOrder = $eachSale->order_amount_paid;
+						$eachSale->order_date = $eachSale->order_date;
+						$eachSale->totalOrder = $eachSale->order_amount_paid;
 
-						$resultData[] = [
-							'row' => $i,
-							'order_id' => "<a onclick=\"return getSalesDetails('{$eachSale->order_id}')\" data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$eachSale->order_id}\">#$eachSale->order_id</a> <br> ".ucfirst($eachSale->payment_type),
-							'fullname' => "<a href=\"{$config->base_url('customer-detail/'.$eachSale->customer_id)}\">{$eachSale->title} {$eachSale->fullname}</a>",
-							'phone' => $eachSale->phone_1,
-							'date' => $orderDate,
-							'amount' => "{$clientData->default_currency} {$totalOrder}",
-							'action' => "<a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-print\"></i></a> <a data-toggle=\"tooltip\" title=\"Email the Receipt\" href=\"javascript:void(0)\" class=\"btn-outline-info btn btn-sm resend-email\" data-email=\"{$eachSale->email}\" data-name=\"{$eachSale->title} {$eachSale->fullname}\" data-customer-id=\"{$eachSale->customer_id}\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-envelope\"></i></a> <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$eachSale->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-download\"></i></a>",
-						];
+						if($rawJSON) {
+							$eachSale->saleDetails = $ordersObj->saleDetails($eachSale->order_id, $loggedUserClientId, $loggedUserBranchId, $loggedUserId);
+							$resultData[] = $eachSale;
+						} else {
+							$resultData[] = [
+								'row' => $i,
+								'order_id' => "<a onclick=\"return getSalesDetails('{$eachSale->order_id}')\" data-toggle=\"tooltip\" title=\"View Trasaction Details\" href=\"javascript:void(0)\" type=\"button\" class=\"get-sales-details text-success\" data-sales-id=\"{$eachSale->order_id}\">#$eachSale->order_id</a> <br> ".ucfirst($eachSale->payment_type),
+								'fullname' => "<a href=\"{$config->base_url('customer-detail/'.$eachSale->customer_id)}\">{$eachSale->title} {$eachSale->fullname}</a>",
+								'phone' => $eachSale->phone_1,
+								'date' => $eachSale->order_date,
+								'amount' => "{$clientData->default_currency} {$eachSale->totalOrder}",
+								'action' => "<a title=\"Print Transaction Details\" href=\"javascript:void(0);\" class=\"btn btn-sm btn-outline-primary print-receipt\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-print\"></i></a> <a data-toggle=\"tooltip\" title=\"Email the Receipt\" href=\"javascript:void(0)\" class=\"btn-outline-info btn btn-sm resend-email\" data-email=\"{$eachSale->email}\" data-name=\"{$eachSale->title} {$eachSale->fullname}\" data-customer-id=\"{$eachSale->customer_id}\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-envelope\"></i></a> <a data-toggle=\"tooltip\" title=\"Download Trasaction Details\" href=\"{$config->base_url('export/'.$eachSale->order_id)}\" target=\"_blank\" class=\"btn-outline-success btn btn-sm get-sales-details\" data-sales-id=\"{$eachSale->order_id}\"><i class=\"fa fa-download\"></i></a>",
+							];
+						}
+
 					}
 
 
@@ -1610,13 +1684,14 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			}
 
 			// if the metric is to fetch the top contacts performance
-			elseif($metric == 'topContactsPerformance') {
+			elseif($metric == 'topCustomersPerformance') {
 
 				if(empty($session->reportingCustomerId)) {
 					// Fetch the list of contacts and order total amounts
 					$contactsPerformance = $pos->prepare("
 						SELECT
-							a.customer_id, CONCAT(a.firstname, ' ', a.lastname) AS customer_name,
+							a.customer_id, CONCAT(a.firstname, ' ', a.lastname) AS customer_name, c.branch_name AS outlet_name, 
+							a.phone_1, a.phone_2, a.email, 
 							(
 							    SELECT 
 							    	CASE WHEN SUM(b.order_amount_paid) IS NULL THEN 0.00 ELSE SUM(b.order_amount_paid) END
@@ -1659,9 +1734,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 						FROM
 							customers a
+						LEFT JOIN branches c ON c.id = a.branchId
 						WHERE
 							1 {$branchAccess} {$clientAccess}
-						ORDER BY total_amount DESC LIMIT 30
+						ORDER BY total_amount DESC LIMIT {$customerListLimit}
 					");
 					$contactsPerformance->execute();
 
@@ -1669,16 +1745,22 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$row = 0;
 					// set the response data
 					while($result = $contactsPerformance->fetch(PDO::FETCH_OBJ)) {
-						if($result->total_amount > 0) {
-							$row++;
-							$result->row_id = $row;
-							$result->fullname = "<a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$result->customer_id}\" class=\"customer-orders\" data-name=\"{$result->customer_name}\">{$result->customer_name}</a>";
-
-							$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
-
-							$result->total_amount = "{$clientData->default_currency} ".number_format($result->total_amount, 2);
+						
+						if($rawJSON) {
 							$resultData[] = $result;
+						} else {
+							if($result->total_amount > 0) {
+								$row++;
+								$result->row_id = $row;
+								$result->fullname = "<a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$result->customer_id}\" class=\"customer-orders\" data-name=\"{$result->customer_name}\">{$result->customer_name}</a>";
+
+								$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
+
+								$result->total_amount = "{$clientData->default_currency} ".number_format($result->total_amount, 2);
+								$resultData[] = $result;
+							}
 						}
+
 					}
 				}
 

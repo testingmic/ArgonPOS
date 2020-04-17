@@ -165,22 +165,27 @@ class Orders extends Pos {
 
 	}
 
-	public function saleDetails($orderId) {
+	public function saleDetails($orderId, $clientId = null, $branchId = null, $userId = null) {
 		// global variables
 		global $accessObject;
+
+		// assign variables
+		$clientId = (!empty($clientId)) ? $clientId : $this->session->clientId;
+		$branchId = (!empty($branchId)) ? $branchId : $this->session->branchId;
+		$userId = (!empty($userId)) ? $userId : $this->session->userId;
 
 		// where clause for the user role
 		$branchAccess = '';
 		$accessLimit = '';
-		$clientAccess = " AND a.clientId = '{$this->session->clientId}'";
+		$clientAccess = " AND a.clientId = '{$clientId}'";
 
 		// create new objects
 		$accessObject->userId = $this->session->userId;
 
 		// parse the access information
 		if(!$accessObject->hasAccess('monitoring', 'branches')) {
-			$branchAccess = " AND a.branchId = '{$this->session->branchId}'";
-			$accessLimit = " AND a.recorded_by = '{$this->userId}'";
+			$branchAccess = " AND a.branchId = '{$branchId}'";
+			$accessLimit = " AND a.recorded_by = '{$userId}'";
 		}
 
 		//: search for the product details

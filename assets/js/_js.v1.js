@@ -4146,13 +4146,13 @@ $(function() {
         }
     }
 
-    var topContactsPerformance = (periodSelected = 'today') => {
+    var topCustomersPerformance = (periodSelected = 'today') => {
 
         if ($(`table[class~="custPerformance"]`).length) {
             $.ajax({
                 type: "POST",
                 url: `${baseUrl}api/reportsAnalytics/generateReport`,
-                data: { generateReport: true, queryMetric: "topContactsPerformance", salesPeriod: periodSelected },
+                data: { generateReport: true, queryMetric: "topCustomersPerformance", salesPeriod: periodSelected },
                 dataType: "JSON",
                 beforeSend: function() {},
                 success: function(resp) {
@@ -4705,7 +4705,7 @@ $(function() {
 
                 salesOverview(period);
                 salesAttendantPerformance(period);
-                topContactsPerformance(period);
+                topCustomersPerformance(period);
                 branchPerformance(period);
 
                 $(`select[name="periodSelected"]`).on('change', function() {
@@ -4714,7 +4714,7 @@ $(function() {
                     summaryItems(periodSelected);
                     salesOverview(periodSelected);
                     salesAttendantPerformance(periodSelected);
-                    topContactsPerformance(periodSelected);
+                    topCustomersPerformance(periodSelected);
                     branchPerformance(periodSelected);
                 });
 
