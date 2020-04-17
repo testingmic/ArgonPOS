@@ -1674,7 +1674,15 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							WHERE b.branchId = a.id AND b.deleted='0'
 								AND (DATE(b.order_date) >= '{$dateFrom}' && DATE(b.order_date) <= '{$dateTo}') AND order_status='confirmed'
 								{$accessLimitInner} {$clientAccessInner}
-						) AS average_sales
+						) AS average_sales,
+						(
+							SELECT COUNT(*) FROM customers b  
+							WHERE b.branchId = a.id AND b.status='1'
+						) AS customers_count,
+						(
+							SELECT COUNT(*) FROM products b  
+							WHERE b.branchId = a.id AND b.status='1'
+						) AS products_count
 					FROM branches a
 					WHERE 1 {$branchAccess2} {$clientAccess}
 						ORDER BY total_sales ASC
@@ -1724,6 +1732,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				while($result = $stmt->fetch(PDO::FETCH_OBJ)) {
 					$result->square_feet_sales = ($result->square_feet_area > 0) ? $clientData->default_currency.number_format(($result->total_sales / $result->square_feet_area), 2) : 0;
 					$result->lowest_sales = $clientData->default_currency.number_format($result->lowest_sales, 2);
+					$result->average_sale_per_customer = $clientData->default_currency.(($result->total_sales > 0) ? number_format($result->total_sales/$result->customers_count, 2) : 0.00);
 					$result->highest_sales = $clientData->default_currency.number_format($result->highest_sales, 2);
 					$result->average_sales = $clientData->default_currency.number_format($result->average_sales, 2);
 					$result->total_sales = $clientData->default_currency.number_format($result->total_sales, 2);

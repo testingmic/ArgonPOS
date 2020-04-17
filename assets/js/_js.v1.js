@@ -3329,13 +3329,16 @@ $(function() {
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-            { "data": 'branch_name' },
-            { "data": 'total_sales' },
-            { "data": 'highest_sales' },
-            { "data": 'lowest_sales' },
-            { "data": 'average_sales' },
-            { "data": 'orders_count'},
-            { "data": 'square_feet_sales'}
+                {"data":'branch_name'},
+                {"data":'total_sales'},
+                {"data":'highest_sales'},
+                {"data":'lowest_sales'},
+                {"data":'average_sales'},
+                {"data":'orders_count'},
+                {"data":'square_feet_sales'},
+                {"data": 'customers_count'},
+                {"data": 'average_sale_per_customer'},
+                {"data": 'products_count'}
             ]
         });
     }
