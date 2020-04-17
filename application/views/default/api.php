@@ -302,14 +302,14 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$totalPercent = (!empty($totalCreditSales) && !empty($totalSales)) ? round(($totalCreditSales/$totalSales)*100, 2) : 0.00;
 					$averageSalesTrend = $posClass->percentDifference(floatval($averageSalesValue), floatval($prevSales->averageSalesValue));
 					$totalDiscountTrend = $posClass->percentDifference(floatval($totalDiscount), floatval($prevSales->totalDiscountGiven));
-
-					$status = true;
 				}
 			
 				//: additional calculations
 				$creditProfitPercentage = ($creditTotalProfitMade > 0) ? (($creditTotalProfitMade / $totalProfit) * 100) : 0;
 				$creditProfitPercentage = number_format($creditProfitPercentage, 2);
 			}
+
+			$status = true;
 			
 			//: print the result
 			$response = [

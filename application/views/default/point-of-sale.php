@@ -178,7 +178,7 @@ a[href="#finish"] {
                             <input type="text" placeholder="0.00" readonly="readonly" name="amount_to_pay" id="amount_to_pay" class="form-control">
                           </div>
                           <div class="cash-process-container text-center">
-                            <label for="amount_paying"><strong>Amount Paid</strong></label>
+                            <label for="amount_paying"><strong>Tendered Amount</strong></label>
                             <input onkeypress="return isNumber(event);" type="text" name="amount_paying" id="amount_paying" style="padding: 25px; border: solid 1px #ccc; font-size: 30px" class="form-control">
                           </div>
                           <div class="cash-process-container text-center">

@@ -11,7 +11,7 @@ $accessObject->userId = $session->userId;
 
 // use the access level for limit contents that is displayed
 if(!$accessObject->hasAccess('monitoring', 'branches')) {
-    $where = "AND customers.branchId = '{$session->branchId}'";
+    $where = "AND c.branchId = '{$session->branchId}'";
 }
 // confirm if a customer id has been parsed
 if(confirm_url_id(1)) {
