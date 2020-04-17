@@ -255,7 +255,7 @@ $session->insightRequest = [
         </div>
         <div class="table-responsive">
           <!-- Projects table -->
-            <table class="table salesLists table-flush">
+            <table class="table salesLists datatable-buttons table-flush">
             <thead class="thead-light">
               <tr>
                 <th>#</th>

@@ -3467,13 +3467,20 @@ $(function() {
                 "lengthChange": !1,
                 "dom": "Bfrtip",
                 "columns": [
-                { "data": 'row_id'},
-                { "data": 'product_title'},
-                { "data": 'orders_count'},
-                { "data": 'quantity_sold'},
-                { "data": 'total_selling_cost'},
-                { "data": 'total_selling_revenue'},
-                { "data": 'product_profit'}
+                    {"data":'row_id'},
+                    {"data":'product_title'},
+                    {"data":'orders_count'},
+                    {"data":'quantity_sold'},
+                    {"data":'items_sold_per_day'},
+                    {"data": 'current_stock'},
+                    {"data":'total_selling_cost'},
+                    {"data":'total_selling_revenue'},
+                    {"data":'product_profit'},
+                    {"data":'returns_count'},
+                    {"data":'returns_percentage'},
+                    {"data":'created'},
+                    {"data":'first_sale'},
+                    {"data":'last_sale'},
                 ]
             });
         }

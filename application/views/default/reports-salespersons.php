@@ -66,12 +66,7 @@ $session->insightRequest = [];
             <div class="col-lg-12 sales-attendant-performance <?= ($clientData->reports_sales_attendant != "sales-attendant-performance") ? "hidden" : null ?> offline">
                 <div class="card">
                   <div class="card-body">
-                      <div class="row justify-content-between">
-                        <div>
-                          <h4 class="header-title mt-0">Top Sales People</h4>  
-                        </div>
-                      </div>
-                      <div class="mt-4 table-responsive">
+                      <div class="table-responsive">
                           <table width="100%" class="table mb-0 datatable-buttons attendant-performance">
                               <thead class="thead-light">
                               <tr>

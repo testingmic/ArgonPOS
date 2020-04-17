@@ -653,6 +653,12 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							FROM products b WHERE status='1'
 						) AS productQuantity,
 						(
+							SELECT 
+								SUM(b.amount)
+							FROM expenses b
+							WHERE b.status = '1' AND (DATE(b.start_date) >= '{$dateFrom}' AND DATE(b.start_date) <= '{$dateTo}') {$branchAccessInner} {$clientAccessInner}
+						) AS totalExpenditure,
+						(
 							SELECT SUM(b.order_amount_paid)/(SELECT COUNT(*) FROM users b WHERE b.status='1' && b.access_level NOT IN (1) {$clientAccessInner} {$branchAccessInner})
 							FROM sales b WHERE b.deleted='0' AND (DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') {$branchAccessInner} {$clientAccessInner} {$accessLimit}
 						) AS salesPerEmployee
@@ -661,6 +667,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				);
 
 				$productQuantity = 0;
+				$allExpenses = 0;
 
 				if ($sales != false) {
 					$i = 0;
@@ -680,34 +687,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$totalQuantitiesSold += $data->totalQuantitiesSold;
 						$totalRevenue += $data->overall_order_amount;
 						$costOfGoodsSold += $data->costOfGoodsSold;
+						$allExpenses += $data->totalExpenditure;
 					}
 
 					$status = true;
-				}
-
-				// expenses calculation
-				if(!$accessObject->hasAccess('monitoring', 'branches')) {
-					$squareFeetArea = $branchData->square_feet_area;
-					$allExpenses = ($branchData->recurring_expenses + $branchData->fixed_expenses);
-					$fixedCost = $branchData->fixed_expenses;
-				} else {
-					// square feet area calculation
-					$squareFeetArea = $clientData->space_per_square_foot;
-					$allExpenses = $clientData->total_expenditure;
-					$fixedCost = $branchData->fixed_expenses;
-				}
-
-				$salesPerSquareFeet = ($totalSales > 0 && $squareFeetArea > 0) ? $totalSales / $squareFeetArea : 0;
-
-				if($period == "today") {
-					$fixedCost = ($fixedCost / date("t"));
-					$allExpenses = ($allExpenses / date("t"));
-				} elseif($period == "this-week") {
-					$fixedCost = ($fixedCost / 4);
-					$allExpenses = ($allExpenses / 4);
-				} elseif($period == "this-year") {
-					$fixedCost = ($fixedCost * 12);
-					$allExpenses = ($allExpenses * 12);
 				}
 
 				// gross and net revenue calculation
@@ -738,7 +721,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				$averageUnitPerTransaction = ($totalQuantitiesSold > 0) ? ($totalQuantitiesSold / $totalServed) : 0;
 
 				//: count the number of products available
-				// $inventoryCount = $posClass->countRows("products a", "a.status='1' {$branchAccess} {$clientAccess}");
 				$inventoryCount = $posClass->countRows("products_categories a","1 {$clientAccess}");
 
 				// customer retention rate
@@ -773,6 +755,12 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							SELECT SUM(b.product_cost_price * b.product_quantity) FROM sales_details b WHERE b.order_id = a.order_id
 							AND (DATE(b.order_date) >= '{$datePrevFrom}' AND DATE(b.order_date) <= '{$datePrevTo}') {$branchAccessInner} {$clientAccessInner} {$accessLimit}
 						) AS costOfGoodsSold,
+						(
+							SELECT 
+								SUM(b.amount)
+							FROM expenses b
+							WHERE b.status = '1' AND (DATE(b.start_date) >= '{$datePrevFrom}' AND DATE(b.start_date) <= '{$datePrevTo}') {$branchAccessInner} {$clientAccessInner}
+						) AS totalExpenditure,
 						(
 							SELECT 
 								CASE WHEN SUM(b.product_quantity) IS NULL THEN 0.001 ELSE SUM(b.product_quantity) END
@@ -814,9 +802,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$salesPerEmployeeTrend = $posClass->percentDifference(floatval($salesPerEmployee), floatval($prevSales->salesPerEmployee));
 					$grossProfitTrend = $posClass->percentDifference(floatval($grossProfit), (floatval($prevSales->totalRevenue)-$prevSales->costOfGoodsSold));
 					$grossProfitMarginTrend = ($prevSales->totalRevenue > 0) ? $posClass->percentDifference(floatval($grossProfitMargin), (((floatval($prevSales->totalRevenue)-floatval($prevSales->costOfGoodsSold))/floatval($prevSales->totalRevenue)) * 100)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
-					$netProfitTrend = $posClass->percentDifference(floatval($netProfit), (floatval($prevSales->totalRevenue)-($allExpenses+$prevSales->costOfGoodsSold)));
-					$netProfitMarginTrend = ($prevSales->totalRevenue > 0) ? $posClass->percentDifference(floatval($netProfitMargin), (((floatval($prevSales->totalRevenue)-($allExpenses+$prevSales->costOfGoodsSold))/floatval($prevSales->totalRevenue)) * 100)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
-					$salesPerSquareFeetTrend = ($prevSales->totalPrevSales > 0 && $salesPerSquareFeet > 0) ? $posClass->percentDifference(floatval($salesPerSquareFeet), (floatval($prevSales->totalPrevSales)/($salesPerSquareFeet))) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
+					$netProfitTrend = $posClass->percentDifference(floatval($netProfit), (floatval($prevSales->totalRevenue)-($prevSales->totalExpenditure+$prevSales->costOfGoodsSold)));
+					$netProfitMarginTrend = ($prevSales->totalRevenue > 0) ? $posClass->percentDifference(floatval($netProfitMargin), (((floatval($prevSales->totalRevenue)-($prevSales->totalExpenditure+$prevSales->costOfGoodsSold))/floatval($prevSales->totalRevenue)) * 100)) : '<span class="text-success"><i class="mdi mdi-trending-up"></i> 100%</span>';
 				}
 
 				// show this section if the main analytics is been requested
@@ -876,11 +863,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						"column" => "net-profit-margin",
 						"total" => number_format($netProfitMargin, 2). "%",
 						"trend" => $netProfitMarginTrend . " " .$display
-					];
-					$resultData[] = [
-						"column" => "sales-per-square-feet",
-						"total" => $clientData->default_currency . number_format($salesPerSquareFeet, 2),
-						"trend" => $salesPerSquareFeetTrend . " " .$display
 					];
 					$resultData[] = [
 						"column" => "customers-retention-rate",
@@ -1010,7 +992,29 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$products_stmt = $pos->prepare("
 						SELECT
 							a.id, a.category_id, a.product_title, b.branch_name,
-							a.product_image, a.product_id,
+							a.product_image, a.product_id, a.date_added, a.quantity,
+							(
+								SELECT 
+									b.order_date
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+								ORDER BY b.id ASC LIMIT 1
+							) AS firstSale,
+							(
+								SELECT 
+									b.order_date
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+								ORDER BY b.id DESC LIMIT 1
+							) AS lastSale,
 							(
 								SELECT 
 									COUNT(c.order_id) 
@@ -1031,6 +1035,26 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
 									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
 							) AS totalQuantitySold,
+							(
+								SELECT 
+									SUM(b.product_returns_count) 
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+							) AS totalReturnsCount,
+							(
+								SELECT 
+									SUM(b.product_returns_count*b.product_unit_price) 
+								FROM sales_details b
+								LEFT JOIN sales c ON b.order_id = c.order_id
+								WHERE 
+									c.deleted='0' AND b.product_id = a.id AND
+									(DATE(b.order_date) >= '{$dateFrom}' AND DATE(b.order_date) <= '{$dateTo}') 
+									{$branchAccessInner} {$customerLimitInner2} {$clientAccessInner} {$accessLimitInner2}
+							) AS totalReturnsValue,
 							(
 								SELECT 
 									SUM(b.product_quantity*b.product_cost_price) 
@@ -1072,6 +1096,9 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					// initializing
 					$productsArray = [];
 					$overallSale = array_sum($paymentValues);
+					
+					$numberOfDays = $dateClass->listDays($dateFrom, $dateTo, $posClass->stringToArray($clientData->shop_opening_days));
+
 					$iv = 0;
 
 					// loop through the product information that have been fetched
@@ -1080,7 +1107,15 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$productsArray[] = [
 							'row_id' => $iv,
 							'percentage' => ($product_result->totalProductsRevenue > 0) ? number_format(($product_result->totalProductsRevenue/$overallSale)*100) : 0,
+							'returns_count' => (int) $product_result->totalReturnsCount,
+							'returns_value' => $product_result->totalReturnsValue,
+							'returns_percentage' => (($product_result->totalReturnsCount > 0) ? number_format(($product_result->totalReturnsCount/$product_result->totalQuantitySold), 2) : 0)."%",
 							'product_id' => $product_result->id,
+							'created' => date("jS M", strtotime($product_result->date_added)),
+							'items_sold_per_day' => ($product_result->totalQuantitySold > 0) ? round($product_result->totalQuantitySold/count($numberOfDays)) : 0,
+							'current_stock' => $product_result->quantity,
+							'first_sale' => (!empty($product_result->firstSale)) ? date("jS M", strtotime($product_result->firstSale)) : null,
+							'last_sale' => (!empty($product_result->lastSale)) ? date("jS M", strtotime($product_result->lastSale)) : null,
 							'category_id' => $product_result->category_id,
 							'product_title' => "<strong class='text-dark'><a href='".$config->base_url('products/'.$product_result->id)."'>{$product_result->product_title}</a></strong><br>ID: <strong>{$product_result->product_id}</strong><br><span class='text-gray'>({$product_result->branch_name})</span>",
 							'product_image' => $product_result->product_image,
@@ -2625,49 +2660,6 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							"reports_sales_attendant='".xss_clean($postData->attendantPerformance)."'",
 							"clientId='{$loggedUserClientId}'"
 						);
-					}
-				}
-
-				// save the reports data
-				elseif(isset($_POST["updateReportDetails"]) && confirm_url_id(3, "updateReportsDetails")) {
-					// assign variables to the data that have been parsed
-					$postData = (Object) $_POST;
-
-					if(isset($postData->squareFeetArea)) {
-
-						// initializing
-						$squareArea = $postData->squareFeetArea;
-						$totalExpenses = 0;
-						$totalSquareFoot = 0;
-
-						// loop through the list of records parsed
-						foreach ($squareArea as $key => $value) {
-							// sum up the total expenses
-							$totalExpenses += ($postData->recurringExpense[$key] + $postData->fixedExpense[$key]);
-							$totalSquareFoot += $value;
-
-							// update the branch information
-							$posClass->updateData(
-								"branches",
-								"square_feet_area='".xss_clean($value)."', 
-								recurring_expenses='".$postData->recurringExpense[$key]."',
-								fixed_expenses='".$postData->fixedExpense[$key]."'",
-								"clientId='{$loggedUserClientId}' AND id='{$key}'"
-							);
-
-						}
-
-						$posClass->updateData(
-							"settings",
-							"total_expenditure='".xss_clean($totalExpenses)."',
-							space_per_square_foot='".xss_clean($totalSquareFoot)."'",
-							"clientId='{$loggedUserClientId}'"
-						);
-
-						// Record user activity
-						$posClass->userLogs('settings', $loggedUserClientId, 'Updated the reports details tab of the Company.');
-
-						$status = 201;
 					}
 				}
 

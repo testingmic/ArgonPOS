@@ -72,14 +72,6 @@ $session->insightRequest = [
             <div class="col-lg-12 offline">
               <div class="card">
                   <div class="card-body">
-                      <div class="row justify-content-between">
-                        <div>
-                          <h4 class="header-title mt-0">Inventory Report</h4>  
-                        </div>
-                        <div>
-                          
-                        </div>
-                      </div>
                       <div class="table-responsive slim-scroll">
                           <table width="100%" class="table mb-0 datatable-buttons products-performance">
                               <thead class="thead-light">
@@ -92,9 +84,9 @@ $session->insightRequest = [
                                   <th>Closing Inventory</th>
                                   <th>Purchase Price</th>
                                   <th>Selling Price</th>
+                                  <th>Profit</th>
                                   <th>Return Count</th>
                                   <th>Returns %</th>
-                                  <th>Profit</th>
                                   <th>Created</th>
                                   <th>First Sale</th>
                                   <th>Last Sale</th>

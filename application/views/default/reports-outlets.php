@@ -126,7 +126,6 @@ $session->insightRequest = [];
                 <div class="card">
                     <?= connectionLost(); ?>
                     <div class="card-body table-responsive slim-scroll">
-                        <h4 class="header-title mt-0">Outlets Performance</h4>
                         <table class="table nowrap branch-overview datatable-buttons">
                             <thead>
                                 <th>Name</th>
