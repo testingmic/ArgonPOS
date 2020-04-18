@@ -3275,11 +3275,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			} else {
 				
-				$response = (Object) [
-					'status' => 'error', 
-					'message' => 'Error Processing Request',
-					'branchId' => $loggedUserBranchId
-				];
+				// set default data
+				$response->branchId = $loggedUserBranchId;
+
+				// set the image directory
 				$imgDir = "assets/images/products";
 
 				// if the user wants to add a new product
