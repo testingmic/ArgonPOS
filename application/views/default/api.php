@@ -3086,7 +3086,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							$productsClass->addToInventory($postData);
 
 							$response->message = "You have successfully transferred {$postData->transferProductQuantity} items of {$product->product_title} to the specified branch";
-							
+
 							$response->status = true;
 						} else {
 							$response->message = "Transfer of Product Failed";
@@ -3484,25 +3484,56 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					}
 				}
 
-				elseif(isset($_POST['removeProduct'])){
+				elseif(isset($_POST['removeProduct']) && confirm_url_id(2, 'removeProduct')){
+					// clean the user data supplied
 					$productId = xss_clean($_POST['productId']);
-					if($productsClass->removeProduct($productId)){
+					$branchId = (isset($_POST['branchId'])) ? xss_clean($_POST['branchId']) : $loggedUserBranchId;
+
+					// check if the product really exists
+					$product = $productsClass->getProduct($productId, null, $branchId);
+
+					// check if the product data is not empty
+					if(empty($product)) {
+						// print the error message
+						$response->message = "Sorry! The supplied product id does not exist.";
+					} else {
+						// continue and remove the product from the system
+						if($productsClass->removeProduct($productId, $branchId)){
+							$response->status = "success";
+							$response->message = "Product has been removed";
+						}
+					}
+				}
+
+				elseif(isset($_POST['productId']) && confirm_url_id(2, "productDetails")){
+					// clean the user data
+					$productId = xss_clean($_POST['productId']);
+					$branchId = (isset($_POST['branchId'])) ? xss_clean($_POST['branchId']) : $loggedUserBranchId;
+
+					// fetch the product content
+					$product = $productsClass->getProduct($productId, null, $branchId);
+					
+					// confirm that the product data is not empty
+					if(!empty($product)){
 						$response->status = "success";
-						$response->message = "Product has been removed";
+						unset($product->id);
+						$response->message = $product;
+					} else {
+						$response->message = "Sorry! The product id supplied does not exist.";
 					}
 				}
 
 				elseif(isset($_POST['getProduct'], $_POST['transferFrom'])){
-					// $productId = xss_clean($_POST['productId']);
-					// $product = $productsClass->getProduct($productId);
-					// $categories = $productsClass->getCategories();
+					$productId = xss_clean($_POST['productId']);
+					$product = $productsClass->getProduct($productId);
+					$categories = $productsClass->getCategories();
 
-					// if(!empty($product) && !empty($categories)){
-					// 	$response->status = "success";
-					// 	$response->categories = $categories;
-					// 	$response->product = $product;
-					// 	$response->branchId = $_POST['transferFrom'];
-					// }
+					if(!empty($product) && !empty($categories)){
+						$response->status = "success";
+						$response->categories = $categories;
+						$response->product = $product;
+						$response->branchId = $_POST['transferFrom'];
+					}
 				}
 
 				elseif(isset($_POST['getWarehouseProduct'], $_POST['transferFrom'])){

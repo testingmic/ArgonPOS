@@ -137,7 +137,7 @@ class Products extends Pos {
 			SELECT *, id AS pid,
 				IF(source = 'Vend', product_image, 
 				CONCAT('', '', IFNULL(product_image, '$this->defaultImg'))) AS image 
-			FROM products WHERE $column = '{$productId}' {$condition} LIMIT 1
+			FROM products WHERE status='1' AND $column = '{$productId}' {$condition} LIMIT 1
 		");
 		$stmt->execute([$productId]);
 		$result = $stmt->fetch(PDO::FETCH_OBJ);
@@ -145,22 +145,6 @@ class Products extends Pos {
 		if(!empty($product)) {
 			$product = $result;
 		}
-		else return $result;
-	}
-
-	public function getWarehouseProduct($productId, &$product = null, $branchId = ""){
-		if(empty($productId)) return false;
-		$productId = xss_clean($productId);
-
-		$condition = (!empty($branchId)) ? " && branchId = '".xss_clean($branchId)."'" : null;
-
-		$stmt = $this->db->prepare("SELECT *, id AS pid,
-			IF(source = 'Vend', product_image, CONCAT('$this->imagesUrl', '/', IFNULL(product_image, '$this->defaultImg'))) AS image 
-			FROM warehouse WHERE product_id = ? LIMIT 1");
-
-		$stmt->execute([$productId]);
-		$result = $stmt->fetch(PDO::FETCH_OBJ);
-		if(isset($product)) $product = $result;
 		else return $result;
 	}
 
@@ -194,6 +178,9 @@ class Products extends Pos {
 		$this->db->prepare($sql)->execute($params);
 
 		$productId = $this->lastRowId("products");
+
+		// Record user activity
+		$this->userLogs('products', $product->productId, 'Added a new product into the database.');
 
 		// record the stock quantity of the products
 		$stockInput = $this->db->prepare("
@@ -229,6 +216,10 @@ class Products extends Pos {
 			product_price = ?, cost_price = ?, 
 			threshold = ? ".(empty($product->image) ? '' : ', product_image = ?')." 
 			WHERE (id = '{$product->productId}' OR product_id = '{$product->productId}') AND clientId = '{$product->clientId}' LIMIT 1";
+
+		// Record user activity
+		$this->userLogs('products', $product->productId, 'Updated the details of the product in the database.');
+		
 		return $this->db->prepare($sql)->execute($params);
 	}
 
@@ -249,9 +240,16 @@ class Products extends Pos {
 		return empty($res->product_image) ? $this->defaultImg : $res->image;
 	}
 
-	function removeProduct($productId){
-		return $this->db->prepare("UPDATE products SET deleted='0' WHERE product_id = ? LIMIT 1")
-			->execute([$productId]);
+	function removeProduct($productId, $branchId){
+
+		// Record user activity
+		$this->userLogs('products', $productId, 'Deleted the product from the database.');
+
+		// update the product details
+		return $this->db->prepare("
+			UPDATE products SET status='0' 
+			WHERE product_id = ? AND branchId = ? LIMIT 1
+		")->execute([$productId, $branchId]);
 	}
 
 	public function addStockToBranch(stdClass $product){
