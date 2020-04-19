@@ -227,6 +227,7 @@ if(isset($branch->branch_name)) {
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                      <input type="hidden" name="branchId" value="<?= $session->currentBranchId ?>">
                       <button type="submit" class="btn <?=  $clientData->btn_outline; ?>"><i  class="fa fa-save"></i> Add Product</button>
                   </div>
                   <div class="form-results text-center"></div>

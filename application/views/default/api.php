@@ -1565,8 +1565,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$where = "a.recorded_by='{$userId}'";
 					}
 
-					$dateFrom = $dateFrom;
-					$dateTo = $dateTo;
+					$dateFrom = (!empty($session->queryRange['start'])) ? $session->queryRange['start'] : $dateFrom;
+					$dateTo = (!empty($session->queryRange['end'])) ? $session->queryRange['end'] : $dateTo;
 					
 					// run this query
 					$salesAttendants = $posClass->getAllRows(
@@ -1648,7 +1648,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 								(DATE(b.order_date) >= '{$dateFrom}' && DATE(b.order_date) <= '{$dateTo}') 
 								{$branchAccessInner} {$clientAccessInner}
 						) AS orders",
-						"a.status='1' {$userLimit} {$branchAccess} {$clientAccess} ORDER BY amnt DESC LIMIT 10"
+						"a.status='1' {$userLimit} {$branchAccess} {$clientAccess} ORDER BY amnt DESC LIMIT 100"
 					);
 					
 					$personnelNames = array();
@@ -1776,7 +1776,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 								$result->fullname = "<a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-value=\"{$result->customer_id}\" class=\"customer-orders\" data-name=\"{$result->customer_name}\">{$result->customer_name}</a>";
 
 								$result->action = "<a href=\"javascript:void(0);\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"view-user-sales btn btn-sm btn-outline-success\"><i class=\"fa fa-list\"></i></a> <a href=\"{$config->base_url('customer-detail/'.$result->customer_id)}\" title=\"Click to list customer orders history\" data-name=\"{$result->customer_name}\" data-record=\"customer\" data-value=\"{$result->customer_id}\" class=\"btn btn-sm btn-outline-primary\"><i class=\"fa fa-chart-bar\"></i></a>";
-
+								// calculate the average purchase amount
+								$result->average_purchase = "{$clientData->default_currency} ".(($result->total_amount > 0) ? number_format(($result->total_amount/$result->orders_count),2) : 0);
 								$result->total_amount = "{$clientData->default_currency} ".number_format($result->total_amount, 2);
 								$resultData[] = $result;
 							}
@@ -2079,38 +2080,47 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				// validate the data submitted by the user
 				if(!filter_var($email->thisEmail, FILTER_VALIDATE_EMAIL)) {
 					$response->message = "Please enter a valid email address";
-				} elseif(strlen($email->receiptId) < 12) {
-					$response->message = "An invalid Order ID was submitted";
 				}
 				else {
 
-					// additional data
-					$email->branchId = (isset($email->branchId)) ? $email->branchId : $loggedUserBranchId;
-					$email->template_type = (isset($email->thisRequest)) ? $email->thisRequest : "invoice";
-					$email->itemId = $email->receiptId;
-					$email->fullname = (isset($email->fullname)) ? str_replace(["\t", "\n"], "", trim($email->fullname)) : null;
+					// receipt id
+					$email->receiptId = isset($email->receiptId) ? $email->receiptId : (!empty($session->_oid_Generated) ? $session->_oid_Generated : null);
 
-					// generate the recipient list
-					$email->recipients_list = [
-						"recipients_list" => [
-							[
-								"fullname" => $email->fullname,
-								"email" => $email->thisEmail,
-								"customer_id" => $email->customerId,
-								"branchId" => $loggedUserBranchId
+					if(strlen($email->receiptId) < 12) {
+						$response->message = "An invalid Order ID was submitted";
+					} else {
+						// additional data
+						$email->branchId = (isset($email->branchId)) ? $email->branchId : (!empty($session->_oid_BranchId) ? $session->_oid_BranchId : $loggedUserBranchId);
+
+						$email->template_type = (isset($email->thisRequest)) ? $email->thisRequest : "invoice";
+						$email->itemId = $email->receiptId;
+						
+						// check the fullname
+						$email->fullname = (isset($email->fullname)) ? str_replace(["\t", "\n"], "", trim($email->fullname)) : null;
+						$email->customerId = (isset($email->customerId)) ? $email->customerId : (!empty($session->_uid_Generated) ? $session->_uid_Generated : null);
+
+						// generate the recipient list
+						$email->recipients_list = [
+							"recipients_list" => [
+								[
+									"fullname" => $email->fullname,
+									"email" => $email->thisEmail,
+									"customer_id" => $email->customerId,
+									"branchId" => $loggedUserBranchId
+								]
 							]
-						]
-					];
+						];
 
-					// submit the data for insertion into the mail sending list
-					$ordersObj = load_class("Orders", "controllers");
-					$newMail = $ordersObj->quickMail($email);
+						// submit the data for insertion into the mail sending list
+						$ordersObj = load_class("Orders", "controllers");
+						$newMail = $ordersObj->quickMail($email);
 
-					// get the response
-					if(!empty($newMail)){
-						$response->status = "success";
-						$response->message = "Invoice successfully sent via Email";
-						$response->data = $newMail;
+						// get the response
+						if(!empty($newMail)){
+							$response->status = "success";
+							$response->message = "Invoice successfully sent via Email";
+							$response->data = $newMail;
+						}
 					}
 				}
 			}
@@ -2502,7 +2512,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					} elseif(!empty($branchData->phone) && !preg_match('/^[0-9+]+$/', $branchData->phone)) {
 						$message = "Please enter a valid contact number";
 					} elseif(!in_array($branchData->branchType, ['Store', 'Warehouse'])) {
-						$message = "Invalid branch type was submitted";
+						$message = "Invalid Store type was submitted";
 					} else {
 						
 						// if the user wants to add a new record
@@ -2519,7 +2529,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									$branch_id = random_string('alnum', 12);
 
 									// Add Record To Database
-									$response = $posClass->addData(
+									$query = $posClass->addData(
 										"branches" ,
 										"clientId='{$loggedUserClientId}', branch_type='{$branchData->branchType}', branch_name='{$branchData->branchName}', location='{$branchData->location}', branch_email='{$branchData->email}', branch_contact='{$branchData->phone}', branch_logo='{$clientData->client_logo}', branch_id = '{$branch_id}'"
 									);
@@ -2527,9 +2537,9 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									// Record user activity
 									$posClass->userLogs('branches', $branch_id, 'Added a new Store Outlet into the System.');
 
-									if ($response == true) {
+									if ($query == true) {
 										// Show Success Message
-										$message = "Branch Have Been Successfully Registered.";
+										$message = "Store Outlet Have Been Successfully Registered.";
 										$status = true;
 									} else {
 										$message = "Error encountered while processing request.";
@@ -2538,7 +2548,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									$message = "Sorry! You do not have the required permissions to perform this action.";
 								}
 							} else {
-								$message = "Sorry! This branch already exist.";
+								$message = "Sorry! This Store Outlet already exist.";
 							}
 						} else if ($branchData->record_type == "update-record") {
 							// CHeck If User ID Exists
@@ -2558,7 +2568,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									$posClass->dataMonitoring('branches', $branchData->branchId, json_encode($prevData));
 
 									// update user data
-									$response = $posClass->updateData(
+									$query = $posClass->updateData(
 										"branches",
 										"branch_name='{$branchData->branchName}', location='{$branchData->location}', branch_type='{$branchData->branchType}', branch_email='{$branchData->email}', branch_contact='{$branchData->phone}'",
 										"branch_id='{$branchData->branchId}' && clientId='{$loggedUserClientId}'"
@@ -2567,7 +2577,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 									// Record user activity
 									$posClass->userLogs('branches', $branchData->branchId, 'Updated the details of the Store Outlet.');
 
-									if ($response == true) {
+									if ($query == true) {
 
 										$message = "Store Outlet Details Have Been Successfully Updated.";
 										$status = true;
@@ -2731,7 +2741,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				            $theme_color = (in_array($postData->theme_color, array_keys($themeColors))) ? $themeColors[$postData->theme_color] : $themeColors[$postData->theme_color];
 
 				            // update user data
-							$response = $posClass->updateData(
+							$query = $posClass->updateData(
 								"settings",
 								"client_name='{$postData->company_name}', client_email='{$postData->email}', client_website='{$postData->website}', primary_contact='{$postData->primary_contact}', secondary_contact='{$postData->secondary_contact}', address_1='{$postData->address}', display_clock='{$display_clock}', theme_color_code='{$postData->theme_color}', theme_color='".json_encode($theme_color)."'
 								",
@@ -2783,7 +2793,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$print_receipt = isset($postData->print_receipt) ? xss_clean($postData->print_receipt) : null;
 
 					// update user data
-					$response = $posClass->updateData(
+					$query = $posClass->updateData(
 						"settings",
 						"print_receipt='{$print_receipt}',
 						expiry_notification_days='".xss_clean($postData->exp_notifi_days)."', 
@@ -3288,7 +3298,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$productId = isset($_POST["product_code"]) ? $_POST["product_code"] : null;
 
 					// product existence check
-					$branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId;
+					$branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : ((!$rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId);
 
 					// check the product code 
 					if(!empty($productId) && ($posClass->countRows("products", "product_id='".xss_clean($productId)."' AND branchId='{$branchId}'") > 0)) {
@@ -3328,7 +3338,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						$fileName = "default.png";
 
 						// File path config 
-						if(isset($_FILES["product_image"])) {
+						if(isset($_FILES["product_image"]["tmp_name"]) && !empty($_FILES["product_image"])) {
 				            $fileName = basename($_FILES["product_image"]["name"]); 
 				        }
 
@@ -3337,7 +3347,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
 			            // if the query was made by an api call and the 
-			            $postData->branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId;
+			            $postData->branchId = ($rawJSON && isset($postData->branchId)) ? $postData->branchId : ((!$rawJSON && isset($postData->branchId)) ? $postData->branchId : $loggedUserBranchId);
 
 			            // assign some few more variables
 			            $postData->clientId = $loggedUserClientId;
@@ -3349,7 +3359,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			            $allowTypes = array('jpg', 'png', 'jpeg'); 
 			            
 			            // check if its a valid image
-			            if(!empty($fileName) && in_array($fileType, $allowTypes) && isset($_FILES["product_image"])) {
+			            if(!empty($fileName) && in_array($fileType, $allowTypes) && isset($_FILES["product_image"]["tmp_name"]) && !empty($_FILES["product_image"])) {
 			            	
 			               	// set a new filename
 			               	$fileName = random_string('alnum', 25).'.'.$fileType;
@@ -3541,12 +3551,9 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 					$product = $productsClass->getProduct($productId, null, $transferFrom);
 
-					$categories = $productsClass->getCategories();
-
-					if(!empty($product) && !empty($categories)){
+					if(!empty($product)){
 						$response->status = "success";
 						$response->message = "Displaying product content";
-						$response->categories = $categories;
 						$response->product = $product;			
 					}
 				}
@@ -3702,14 +3709,15 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 								$getUserId   = random_string('alnum', mt_rand(20, 30));
 								$getPassword = random_string('alnum', mt_rand(8, 10));
 								$hashPassword= password_hash($getPassword, PASSWORD_DEFAULT);
+								$username = explode("@", $email)[0];
 
-								$response = $posClass->addData(
+								$query = $posClass->addData(
 									"users" ,
-									"clientId='{$loggedUserClientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}'
+									"clientId='{$loggedUserClientId}', user_id='{$getUserId}', name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', password='{$hashPassword}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}', login='{$userData->email}'
 									"
 								);
 
-								if ($response == true) {
+								if ($query == true) {
 
 									// Record user activity
 									$posClass->userLogs('users', $getUserId, 'Added a new user.');
@@ -3733,13 +3741,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							if ($checkData != false && $checkData[0]->userTotal == '1') {
 
 								// update user data
-								$response = $posClass->updateData(
+								$query = $posClass->updateData(
 									"users",
 									"name='{$userData->fullName}', gender='{$userData->gender}', email='{$userData->email}', phone='{$userData->phone}', access_level='{$userData->access_level}', branchId='{$userData->branchId}', daily_target='{$userData->daily_target}', weekly_target='{$userData->weekly_target}', monthly_target='{$userData->monthly_target}'",
 									"user_id='{$userData->userId}' && clientId='{$loggedUserClientId}'"
 								);
 
-								if ($response == true) {
+								if ($query == true) {
 
 									// Record user activity
 									$posClass->userLogs('users', $userData->userId, 'Update the user details.');
@@ -3786,7 +3794,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			} 
 
 			//: load the user access level details
-			else if (isset($_POST['fetchAccessLevelPermissions']) && (isset($_POST['access_level'])) || (isset($_POST['user_id']) && $_POST['getUserAccessLevels']) && confirm_url_id(2, "permissionManagement")) {
+			elseif((isset($_POST['fetchAccessLevelPermissions']) && (isset($_POST['access_level']))) || (isset($_POST['user_id'], $_POST['getUserAccessLevels']) && confirm_url_id(2, "permissionManagement"))) {
 
 				if (isset($_POST["getUserAccessLevels"]) ||(isset($_POST['access_level']) && !empty($_POST['access_level']) && $_POST['access_level'] != "null")) {
 
@@ -4849,6 +4857,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 		}
 
+	} else {
+		$response->message = "Sorry! Your Account has expired, hence cannot perform the requested action";
 	}
 
 	// convert the response to an object to allow extension

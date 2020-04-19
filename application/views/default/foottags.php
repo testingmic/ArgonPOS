@@ -293,9 +293,9 @@ genIds();
       if(cSt == 'available') {
         syncOfflineData('sales').then((resp) => {
           preloadData('sales').then((resp) => {
-              preloadData('reports').then((resp) => {
-                Cookies.set('offlineSales', 'unavailable');
-              });
+            Cookies.set('offlineSales', 'unavailable');
+            preloadData('reports').then((resp) => {
+            });
           });
         });
       }

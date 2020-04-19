@@ -11,9 +11,7 @@ class Accesslevel {
     private $_message = '';
 
     public function __construct(){
-        
         global $pos;
-
         $this->db = $pos;
     }
 

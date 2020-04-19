@@ -1578,12 +1578,12 @@ var editUserAccessLevel = () => {
                         });
 
                         displayPermission += `
-                        </div>
-                        <div class="col-12 mb-3">
-                        <button data-user-id="${user_id}" class="btn btn-primary float-right access-level-submit-btn">
-                        Save Settings
-                        </button>
-                        </div>
+                            </div>
+                            <div class="col-12 mb-3">
+                            <button data-user-id="${user_id}" class="btn btn-primary float-right access-level-submit-btn">
+                            Save Settings
+                            </button>
+                            </div>
                         `;
 
                         $(`div[class~="launchModal"] div[class~="show-modal-body"]`).html(displayPermission);
@@ -2565,7 +2565,10 @@ if($(".make-online-payment").length) {
                                 if(storeValues.prt == "yes") {
                                     qPrt();
                                 }
-                                ftchPrdList();
+                                upIDB('sales', res.data._oData).then(() => {
+                                    Cookies.set('offlineSales', 'unavailable');
+                                    ftchPrdList();
+                                });
                                 $(`div[class="svon"]`).attr('data-value', 1);
                                 $(`select[class~="customer-select"]`).val('WalkIn').change();
                                 $(".cash-process-loader").removeClass("d-flex");

@@ -100,7 +100,6 @@ $session->insightRequest = [
                   <div class="card-body order-list">
                       <h4 class="header-title mt-0 mb-3">Top 30 Best Performing Customers</h4>
                       <div class="table-responsive">
-
                           <table class="table table-hover text-left custPerformance datatable-buttons">
                               <thead class="thead-light">
                                   <tr>
@@ -133,7 +132,22 @@ $session->insightRequest = [
                 <h5 class="mt-0">Sales History</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
-            <div class="modal-body"></div>
+            <div class="modal-body">
+              <div class="card mb-0 p-3">
+                <table class="table table-hover datatable-buttons salesLists">
+                      <thead class="thead-light">
+                          <tr>
+                              <th class="border-top-0">#</th>
+                              <th class="border-top-0">Order ID</th>
+                              <th class="border-top-0">Fullname</th>
+                              <th class="border-top-0">Date</th>
+                              <th class="border-top-0">Amount</th>
+                          </tr><!--end tr-->
+                      </thead>
+                      <tbody></tbody>
+                  </table>
+                </div>
+            </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->

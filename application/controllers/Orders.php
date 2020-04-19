@@ -125,7 +125,9 @@ class Orders extends Pos {
 				return (object) [
 					"orderId" => $computed->transactionId,
 					"_oid" => $computed->orderId,
-					"orderTotal" => $amountPayable
+					"orderTotal" => $amountPayable,
+					"_otime" => date("d M Y h:ia"),
+					"_oData" => $this->saleDetails($computed->orderId)
 				];
 			}
 
@@ -200,11 +202,13 @@ class Orders extends Pos {
 				CONCAT(b.firstname, ' ', b.lastname) AS customer_fullname,
 				b.phone_1 AS customer_contact,
 				HOUR(a.order_date) AS hour_of_day,
-				(SELECT SUM(c.product_cost_price*c.product_quantity) FROM sales_details c WHERE c.order_id = a.order_id) AS total_cost_price,
-				(SELECT SUM(c.product_unit_price*c.product_quantity) FROM sales_details c WHERE c.order_id = a.order_id) AS total_expected_selling_price
+				(SELECT SUM(c.product_cost_price*c.product_quantity) FROM sales_details c WHERE c.order_id = a.order_id) AS total_cost_price, a.state,
+				(SELECT SUM(c.product_unit_price*c.product_quantity) FROM sales_details c WHERE c.order_id = a.order_id) AS total_expected_selling_price,
+				c.branch_name
 			FROM
 				sales a 
 			LEFT JOIN customers b ON b.customer_id = a.customer_id
+			LEFT JOIN branches c ON c.id = a.branchId
 			WHERE 
 				a.order_id LIKE '%{$orderId}%'
 			AND 
