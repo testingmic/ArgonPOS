@@ -1,0 +1,138 @@
+.evelyn-wrapper {
+	width: 97%;
+	font: 16px/1.5em "Overpass", "Open Sans", Helvetica, sans-serif;
+	color: #333;
+	font-weight: 300;
+	margin: auto auto;
+	background: #fff;
+	padding: 30px;
+  padding-top: 10px;
+}
+
+/*
+ CSS for the main interaction
+*/
+.evelyn-wrapper .tabset > input[type="radio"] {
+  position: absolute;
+  left: -200vw;
+}
+
+.evelyn-wrapper .tabset .tab-panel {
+  display: none;
+}
+
+.evelyn-wrapper .tabset > input:first-child:checked ~ .tab-panels > .tab-panel:first-child,
+.evelyn-wrapper .tabset > input:nth-child(3):checked ~ .tab-panels > .tab-panel:nth-child(2),
+.evelyn-wrapper .tabset > input:nth-child(5):checked ~ .tab-panels > .tab-panel:nth-child(3),
+.evelyn-wrapper .tabset > input:nth-child(7):checked ~ .tab-panels > .tab-panel:nth-child(4),
+.evelyn-wrapper .tabset > input:nth-child(9):checked ~ .tab-panels > .tab-panel:nth-child(5),
+.evelyn-wrapper .tabset > input:nth-child(11):checked ~ .tab-panels > .tab-panel:nth-child(6) {
+  display: block;
+}
+
+.evelyn-wrapper .tabset > label {
+  position: relative;
+  display: inline-block;
+  padding: 15px 15px 25px;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.evelyn-wrapper .tabset > label::after {
+  content: "";
+  position: absolute;
+  left: 15px;
+  bottom: 10px;
+  width: 22px;
+  height: 4px;
+  background: #8d8d8d;
+}
+
+.evelyn-wrapper .tabset > label:hover,
+.evelyn-wrapper .tabset > input:focus + label {
+  color: #06c;
+}
+
+.evelyn-wrapper .tabset > label:hover::after,
+.evelyn-wrapper .tabset > input:focus + label::after,
+.evelyn-wrapper .tabset > input:checked + label::after {
+  background: #06c;
+}
+
+.evelyn-wrapper .tabset > input:checked + label {
+  border-color: #ccc;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+}
+
+.tab-panel {
+  padding: 30px 0;
+  border-top: 1px solid #ccc;
+}
+
+/*
+ Demo purposes only
+*/
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+.evelyn-wrapper .text-center {
+  text-align: center;
+}
+
+.evelyn-wrapper .mt-2 {
+  margin-top: 20px;
+}
+
+.evelyn-wrapper .mt-3 {
+  margin-top: 30px;
+}
+
+.evelyn-wrapper input {
+  min-width: 100%;
+}
+
+.evelyn-wrapper .row {
+  width: 100%;
+  display: inline-flex;
+  flex-direction: row;
+}
+
+.evelyn-wrapper .col-md-6 {
+  width: 50%;
+  max-width: 50%;
+  margin-bottom: 20px;
+}
+
+.evelyn-wrapper .col-md-4 {
+  max-width: 25%;
+  margin-bottom: 20px;
+}
+
+.evelyn-wrapper .form-group  {
+  padding: 20px;
+}
+
+.evelyn-wrapper .notice, .evelyn-wrapper .error {
+  margin-left: 0px;
+  margin-bottom: 10px;
+}
+
+.evelyn-wrapper .notice {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.evelyn-wrapper h2 {
+  margin-top: 0px;
+}
+
+.evelyn-wrapper .button-success {
+  color: #4CAF50;
+  border: solid 1px #4CAF50;
+}

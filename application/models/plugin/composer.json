@@ -1,0 +1,19 @@
+{
+    "name": "analiticainnovare/evelynapi",
+    "description": "An Api to connect to the EvelynPOS Application",
+    "type": "project",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "Emmanuel",
+            "email": "emmallob14@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Inc\\": "./inc"
+        }
+    }
+}

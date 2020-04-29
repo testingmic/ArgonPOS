@@ -5421,6 +5421,7 @@ var submitTransferProduct = () => {
 
                         clearAllRows();
                         fetchAllProducts(branchID);
+                        Cookies.set('offlineProductsData', 'available');
                         setTimeout(function() {
                             $(".transferProductModal").modal("hide");
                         }, 2000);
@@ -5587,6 +5588,7 @@ $(`form[id="updateWareHouseStock"]`).on('submit', function(e) {
                     $(`form[id="updateWareHouseStock"] select[name="product_id_1"]`).val('null').change();
                     fetchAllProducts(currentBranchId);
                     clearStockUpdateRows();
+                    Cookies.set('offlineProductsData', 'available');
                 }
             },
             complete: function(resp) {
@@ -5812,6 +5814,7 @@ $("form[class~='submit-bulk-transfer-product']").on("submit", function(e) {
                         $(".submit-bulk-transfer-product")[0].reset();
                         $(".submit-bulk-transfer-product select").val('null').change();
                         clearAllRows();
+                        Cookies.set('offlineProductsData', 'available');
                         setTimeout(function() {
                             window.location.href=`${baseUrl}inventory/inventory-details/${branchID}`;
                         }, 1500);
