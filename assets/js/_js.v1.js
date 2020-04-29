@@ -2642,6 +2642,8 @@ var initPrdSelt = () => {
                 let subTotalBox = $(".row-subtotal", $(`tr.products-row[data-row-id='${row.productId}']`));
                 let receipt_subTotal = $(".receipt-row-subtotal", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
                 let receipt_qty = $(".receipt-row-quantity", $(`tr.receipt-product-row[data-row-id='${row.productId}']`));
+                $(`input[id="products-search-input"]`).val('');
+                $(`table[id="products-table"] tbody tr`).show();
                 $(`.product-quantity[data-row='${row.productId}']`).on("input", function(){
                     let currentInput = $(this);
                     let selectedQty = currentInput.val().length ? parseInt(currentInput.val()) : 0;
