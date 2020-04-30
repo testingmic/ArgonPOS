@@ -1,5 +1,6 @@
 .evelyn-wrapper {
-	width: 97%;
+	width: 94%;
+  margin-left: 0px!important;
 	font: 16px/1.5em "Overpass", "Open Sans", Helvetica, sans-serif;
 	color: #333;
 	font-weight: 300;
@@ -9,9 +10,6 @@
   padding-top: 10px;
 }
 
-/*
- CSS for the main interaction
-*/
 .evelyn-wrapper .tabset > input[type="radio"] {
   position: absolute;
   left: -200vw;
@@ -72,17 +70,12 @@
   border-top: 1px solid #ccc;
 }
 
-/*
- Demo purposes only
-*/
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
-}
-
 .evelyn-wrapper .text-center {
   text-align: center;
+}
+
+.evelyn-wrapper .text-right {
+  text-align: right;
 }
 
 .evelyn-wrapper .mt-2 {
@@ -99,18 +92,23 @@
 
 .evelyn-wrapper .row {
   width: 100%;
-  display: inline-flex;
-  flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
 }
 
-.evelyn-wrapper .col-md-6 {
-  width: 50%;
+.evelyn-wrapper .col-lg-12 {
+  width: 100%;
+}
+.evelyn-wrapper .col-lg-6 {
+  flex: 0 0 50%;
   max-width: 50%;
   margin-bottom: 20px;
 }
 
-.evelyn-wrapper .col-md-4 {
-  max-width: 25%;
+.evelyn-wrapper .col-lg-4 {
+  max-width: 33%;
+  flex: 0 0 33.333333%;
   margin-bottom: 20px;
 }
 
@@ -134,5 +132,134 @@
 
 .evelyn-wrapper .button-success {
   color: #4CAF50;
+  background: #fff;
   border: solid 1px #4CAF50;
+}
+
+.evelyn-wrapper .button-success:hover {
+  background: #4CAF50;
+  color: #fff;
+  border: solid 1px #4CAF50;
+}
+
+.evelyn-wrapper .button-danger {
+  color: #F44336;
+  background: #fff;
+  border: solid 1px #F44336;
+}
+
+.evelyn-wrapper .button-danger:hover {
+  background: #F44336;
+  color: #fff;
+  border: none;
+}
+
+.evelyn-wrapper hr {
+  margin-bottom: 30px;
+  border: dashed 1px #ccc;
+}
+
+.evelyn-wrapper table {
+  width: 100%;
+}
+
+.evelyn-wrapper .strong {
+  font-weight: bold;
+}
+
+.evelyn-wrapper .form-content-loader {
+  display: flex;
+  /*align-items: center;*/
+  width: 98.25%;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.85);
+  position: absolute;
+  z-index: 999;
+  left: 0;
+}
+
+.evelyn-wrapper .form-content-loader .offline-content {
+  width: 100%;
+  font-size: 17px;
+  font-weight: bolder;
+}
+
+.evelyn-wrapper .form-content-loader i.fa{
+  display: block !important;
+  margin: auto !important;;
+}
+
+/* The Modal (background) */
+.evelyn-wrapper .modal {
+  display: block; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 9999; /* Sit on top */
+  left: 0;
+  top: 32px;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+.evelyn-wrapper .modal p {
+  font-size: 16px;
+}
+/* The Close Button */
+.evelyn-wrapper .close {
+  color: #fff;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.evelyn-wrapper .close:hover,
+.evelyn-wrapper .close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Modal Header */
+.evelyn-wrapper .modal-header {
+  padding: 15px;
+  background-color: #5e2572;
+  color: #fff!important;
+}
+
+.evelyn-wrapper .modal h2, .evelyn-wrapper .modal h3 {
+  margin: 0px!important;
+  color: #fff!important;
+} 
+
+/* Modal Body */
+.evelyn-wrapper .modal-body {padding: 2px 16px;}
+
+/* Modal Footer */
+.evelyn-wrapper .modal-footer {
+  padding: 15px;
+  background-color: #5e2572;
+  color: white;
+}
+
+/* Modal Content */
+.evelyn-wrapper .modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  width: 600px;
+  max-width: 750px;
+  min-height: 200px;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  animation-name: animatetop;
+  animation-duration: 0.4s
+}
+
+/* Add Animation */
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
 }

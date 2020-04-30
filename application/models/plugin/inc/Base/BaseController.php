@@ -14,6 +14,8 @@ class BaseController {
 	public $plugin_url;
 	public $plugin_path;
 	public $user_data;
+	public $do_verify;
+	public $app_name;
 
 	public function __construct() {
 		
@@ -21,22 +23,26 @@ class BaseController {
 		$this->plugin_path = plugin_dir_path(dirname(__FILE__, 2));
 		$this->plugin = plugin_basename(dirname(__FILE__, 3)) . '/evelynapi.php';
 		$this->user_data = get_option('evelynpos_api');
+		$this->app_name = 'EvelynPOS';
 
-		add_action('init', array($this, 'validationCookie'));
+		add_action( 'init', array($this, 'validationCookie') );
 	}
 	
-	public function verifyKey() {
+	public function verifyKey($pushedPayload = null) {
 
-		if(empty($this->user_data)) {
+		if(empty($this->user_data) && empty($pushedPayload)) {
 			return;
 		}
 
-		$payload = [
+		$dbPayload = [
 			'api_uname' => $this->user_data['message']['username'],
 			'api_key' => $this->user_data['apikey']
 		];
+
+		$payload = !(empty($pushedPayload)) ? $pushedPayload : $dbPayload;
+		$verify = !empty($pushedPayload) ? true : $this->do_verify;
 		
-		if($this->validationCookie()) {
+		if($verify) {
 
 			$validate = Curl::curlHander($payload, 'auth', 'POST');
 
@@ -54,23 +60,25 @@ class BaseController {
 	}
 
 	public function validationCookie() { 
+		
 		// Time of user's visit
 		$currentTime = time();
 
 		// Check if cookie is already set
-		if(isset($_COOKIE['wpb_evlyn_validation_cookie'])) {
+		if(isset($_COOKIE['wordpress_evlyn_validation_cookie'])) {
 		 	// check if the expiry time is up
-		 	if(base64_decode($_COOKIE['wpb_evlyn_validation_cookie']) >= time()) {
-		 		return false;
+		 	if(base64_decode($_COOKIE['wordpress_evlyn_validation_cookie']) >= time()) {
+		 		$this->do_verify = false;
 		 	} else {
-		 		@setcookie('wpb_evlyn_validation_cookie',  base64_encode(time()+(60*60)), 'Session', "/");
-		 		return true;
+		 		setcookie('wordpress_evlyn_validation_cookie',  base64_encode(time()+(60*60)), 'Session', ABSPATH);
+		 		$this->do_verify = true;
 		 	}
+		} else {
+			setcookie('wordpress_evlyn_validation_cookie',  base64_encode(time()+(60*60)), 'Session', ABSPATH);
+			$this->do_verify = true;
 		}
 
-		@setcookie('wpb_evlyn_validation_cookie',  base64_encode(time()+(60*60)), 'Session', "/");
-
-		return true;
+		return $this->do_verify;
 
 		wp_die();
 	} 

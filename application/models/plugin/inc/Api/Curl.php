@@ -10,7 +10,7 @@ class Curl {
 
 	final static function curlHander($payload, $endpoint, $method = 'GET', $userdata = null) {
 		
-		$api_url = 'http://localhost/analitica_innovare/evelynpos/api/';
+		$api_url = "http://localhost/analitica_innovare/evelynpos/api/{$endpoint}";
 
 		$curl = curl_init();
 		switch ($method){
@@ -20,17 +20,19 @@ class Curl {
 				break;
 			case "PUT":
 				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-				if ($payload) curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));			 					
+				if ($payload) curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));				
 				break;
 			default:
-				if ($payload)
-					$url = sprintf("%s?%s", $api_url, http_build_query($payload));
+				curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+				if ($payload) curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($payload));
+				$api_url = sprintf("%s?%s", $api_url, http_build_query($payload));
+				break;
 		}
 
-	   	curl_setopt($curl, CURLOPT_URL, $api_url.$endpoint.$url);
+	   	curl_setopt($curl, CURLOPT_URL, $api_url);
 	   	curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-	   		($endpoint == 'auth') ? null : 'Authorization: Bearer '.base64_encode($userdata->username.':'.$userdata->apikey),
-	   		'Content-Type: '. ($endpoint == 'auth') ? 'application/json' : 'application/x-www-form-urlencoded',
+	   		($endpoint == 'auth') ? null : 'Authorization: Bearer '.base64_encode($userdata['message']['username'].':'.$userdata['apikey']),
+	   		'Content-Type: '. ($endpoint == 'auth') ? 'application/x-www-form-urlencoded' : 'application/json',
 	   	));
 	   	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 	   	curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);

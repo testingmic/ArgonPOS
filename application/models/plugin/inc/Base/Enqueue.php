@@ -18,7 +18,8 @@ class Enqueue extends BaseController {
 	public function enqueue() {
 		// enqueue all our scripts
 		wp_enqueue_style('evelynpos', $this->plugin_url. 'assets/css/style.css');
-		wp_enqueue_script('evelynpos2', $this->plugin_url . 'assets/js/script.js', array('jquery'));
+		wp_enqueue_script('evelynpos-script', $this->plugin_url . 'assets/js/script.js', array('jquery'));
+		wp_enqueue_script('evelynpos-cookies', $this->plugin_url . 'assets/js/js_cookies.js', array('jquery'));
 	}
 
 	public function thankyou() {
