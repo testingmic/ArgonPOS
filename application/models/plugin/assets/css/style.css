@@ -136,6 +136,13 @@
   border: solid 1px #4CAF50;
 }
 
+.badge-success {
+  background: #4CAF50;
+  color: #fff;
+  padding: 3px;
+  border-radius: 5px;
+}
+
 .evelyn-wrapper .button-success:hover {
   background: #4CAF50;
   color: #fff;

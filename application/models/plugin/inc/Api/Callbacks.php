@@ -7,6 +7,7 @@
 namespace Inc\Api;
 
 use \Inc\Api\Curl;
+use \Inc\Base\ImportHandler;
 use \Inc\Base\BaseController;
 use \Inc\Base\SessionManager;
 
@@ -19,8 +20,10 @@ class Callbacks extends BaseController {
 
 		session_start();
 
-		add_action( 'wp_ajax_updateAccountDetails', Callbacks::updateAccountDetails() );
-		add_action( 'wp_ajax_loadInventory', Callbacks::loadInventory() );
+		add_action('wp_ajax_updateAccountDetails', Callbacks::updateAccountDetails());
+		add_action('wp_ajax_loadInventory', Callbacks::loadInventory());
+		add_action('wp_ajax_deleteProduct', Callbacks::deleteProduct());
+		add_action('wp_ajax_importData', Callbacks::importData());
 	}
 
 	public function adminDashboard() {
@@ -138,7 +141,6 @@ class Callbacks extends BaseController {
 
 	}
 
-
 	public function loadInventory() {
 
 		// initializing
@@ -160,7 +162,7 @@ class Callbacks extends BaseController {
 			// set the payload
 			$payload = [
 				'request' => true,
-				'limit' => "{$startIndex},".($endIndex-$startIndex)
+				'limit' => "{$startIndex},".($endIndex)
 			];
 
 			$queryString = "inventoryManagement/getAllProducts?request=true&limit={$startIndex},{$endIndex}";
@@ -211,15 +213,34 @@ class Callbacks extends BaseController {
 				if($response->result != 'Limit Exceeded') {
 
 					// show button if the query is at least $this->user_data['limit'] 
-					$next = "<a href=\"admin.php?page=evelynpos_inventory&start=".($endIndex)."&end=".($endIndex+$this->user_data['limit'])."\">View More</a>";
+					$next = "<a href=\"admin.php?page=evelynpos_inventory&start=".($endIndex)."&end=".($this->user_data['limit'])."\">View More</a>";
 				}
 			} else {
-				$prev = "<a href=\"admin.php?page=evelynpos_inventory&start=".($startIndex-$this->user_data['limit'])."&end=".($endIndex-$this->user_data['limit'])."\">Previous</a>";
+				$prev = "<a href=\"admin.php?page=evelynpos_inventory&start=".($startIndex-$this->user_data['limit'])."&end=".($this->user_data['limit'])."\">Previous</a>";
 				
 				// show the next button if the limit has not been exceeded
 				if($response->result != 'Limit Exceeded') {
-					$next = "<a href=\"admin.php?page=evelynpos_inventory&start={$endIndex}&end=".($endIndex+$this->user_data['limit'])."\">View More</a>";
+					$next = "<a href=\"admin.php?page=evelynpos_inventory&start=".($startIndex+$this->user_data['limit'])."&end=".($this->user_data['limit'])."\">View More</a>";
 				}
+			}
+
+			// confirm that each product has already been uploaded
+			if($response->status) {
+				$products = [];
+
+				// loop through the list of items
+				foreach($response->result as $e) {
+
+					// confirm if the product has been imported
+					if(in_array($e['product_id']."_".$e['branchId'], $this->user_data['inventory']['uniqueIds'])) {
+						$e['imported'] = true;
+					} else {
+						$e['imported'] = false;
+					}
+					$products[] = $e;
+				}
+
+				$response->result = $products;
 			}
 
 			$response->navLink = '<tr>
@@ -236,4 +257,60 @@ class Callbacks extends BaseController {
 		
 	}
 
+	public function importData() {
+
+		// initializing
+		$response = (Object) [
+			'status' => 'error',
+			'result' => []
+		];
+
+		// convert to object
+		$postData = (Object) array_map('sanitize_text_field', $_POST);
+
+		// confirm that the form has been submitted
+		// this function will handle the import of multiple dataset 
+		// from EvelynPOS into the store
+		if(isset($postData->action) && ($postData->action == "importData")) {
+
+			// set the payload 
+			$payload = [
+				'request' => true,
+				'limit' => "0,1000"
+			];
+
+			// make a curl call for the inventory list
+			$loadInventory = Curl::curlHander(
+				$payload, 'inventoryManagement/getAllProducts', 
+				'GET', $this->user_data
+			);
+
+			// // push it to the import handler for processing
+			$importClass = new ImportHandler($this->woocommerce_state, $this->user_data, $this->userId);
+
+			// // confirm that inventory query returned true
+			if($loadInventory['status'] == true) {
+				
+				$response->result = 'This is the inventory records';
+				// if($importClass->importInventory($loadInventory['result'])) {
+				// 	array_push($response->result, 'Inventory Records was successful imported.');
+				// }
+
+				$response->result = $importClass->importInventory($loadInventory['result']);
+
+			}
+
+			$response->status = 'success';
+
+			print json_encode($response);
+			wp_die();
+
+		}
+
+	}
+
+	public function deleteProduct() {
+
+	}
+	
 }

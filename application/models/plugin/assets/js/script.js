@@ -24,6 +24,26 @@ $(function() {
 		$(`div[class="tabset"] input[id="tab1"]`).trigger('click');
 	});
 
+	$(`div[class~="importModal"] button[class~="confirm-import"]`).on('click', function(evt) {
+		$(`div[class~="importModal"] button`).prop('disabled', true);
+		$(`div[class~="importModal"] button[class~="confirm-import"]`).html(`Processing request...`);
+
+		var formData = {
+			'action': 'importData'
+		}
+
+		$.post(ajaxurl, formData, function(resp) {
+			$(`div[class~="importModal"] button`).prop('disabled', false);
+			$(`div[class~="importModal"] button[class~="confirm-import"]`).html(`Confirm`);
+
+			if(resp.status == 'success') {
+				alert('Data was successfully imported! Proceed to import the images.');
+				window.location.href = $(`input[name="admin_pg_url"]`).val() + "admin.php?page=evelynpos_api&import_images";
+			}
+		}, 'json');
+
+	});
+
 	$(`form[id="apiValidateForm"]`).on('submit', function(evt) {
 		evt.preventDefault();
 
@@ -31,13 +51,13 @@ $(function() {
 			'action': 'validateApiKeys',
 			'username': $(`input[name="Username"]`).val(),
 			'api_key': $(`input[name="apiKey"]`).val(),
-		}
+		};
 
 		$.post(ajaxurl, formData, function(resp) {
 			if(resp.status == 'success') {
 	    		$(`div[class="account-results"]`).html(`<div class="notice notice-success settings-error">Api Key was successfully validated!</div>`);
 	    		setTimeout(function() {
-	    			window.location.href = '';
+	    			// window.location.href = '';
 	    		}, 1000);
 	    	} else if(resp.status == 'error') {
 	    		$(`div[class="account-results"]`).html(`<div class="error">Error! Validating Api Keys</div>`);
@@ -95,22 +115,28 @@ $(function() {
 				<td colspan="7" class="text-center">No data found beyond this limit.</td>
 			</tr>`;
 		} else {
-			let row_id = startIndex;
+			let row_id = startIndex,
+				importBadge = ``;
 			$.each(inventoryData, function(i, e) {
 				row_id++;
+
+				if(e.imported == true) {
+					importBadge = '<span class="badge badge-success">Imported</span>';
+				}
 
 				tableHtml += `<tr>
 					<td>${row_id}</td>
 					<td>${e.product_title}
 						<br><div class="badge">${e.branch_name}</div>
+						${importBadge}
 					</td>
 					<td>${e.category}</td>
 					<td>${e.cost_price}</td>
 					<td>${e.product_price}</td>
 					<td>${e.quantity}</td>
 					<td>
-						<a href="javascript:void(0)" class="edit-product button button-success">Edit</a> 
-						<a class="button button-danger delete-product" href="javascript:void(0)">Delete</a>
+						<a href="javascript:void(0)" data-product-id="${e.pid}_${e.product_id}" class="edit-product button button-success">Edit</a> 
+						<a class="button button-danger delete-product" data-product-id="${e.pid}_${e.product_id}" href="javascript:void(0)">Delete</a>
 					</td>
 				</tr>`; 
 			});
@@ -121,6 +147,14 @@ $(function() {
 		$(`div[class="inventory-listing"] table[class~="inventory"] tbody`).html(tableHtml);
 		$(`div[class="form-content-loader"]`).css('display', 'none');
 		$(`div[class="inventory-listing"] table[class~="inventory"] tbody`).slideDown();
+
+		$(`div[class="inventory-listing"] a[class~="delete-product"]`).on('click', function() {
+			let productId = $(this).attr('data-product-id');
+
+			$(`div[class~="deleteModal"] [id="productId"]`).val(productId);
+			$(`div[class~="deleteModal"]`).css("display","block");
+
+		});
 	}
 
 
@@ -143,6 +177,7 @@ $(function() {
 			$(`div[class="inventory-listing"] table[class~="inventory"] tbody`)
 				.html(`<tr><td colspan="7" class="text-center"><em>Sorry! An error was encountered while processing the request.</em></td></tr>`)
 		});
+
 	}
 
 	if($(`div[class="inventory-listing"] table[class~="inventory"]`).length) {

@@ -10,7 +10,7 @@ class Curl {
 
 	final static function curlHander($payload, $endpoint, $method = 'GET', $userdata = null) {
 		
-		$api_url = "http://localhost/analitica_innovare/evelynpos/api/{$endpoint}";
+		$api_url = "http://localhost/analitica_innovare/evelynpos3/api/{$endpoint}";
 
 		$curl = curl_init();
 		switch ($method){

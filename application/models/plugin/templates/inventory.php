@@ -4,6 +4,7 @@ ob_start();
 $verifiedKey = $this->verifyKey();
 $limit = (!empty($this->user_data) && isset($this->user_data['limit'])) ? $this->user_data['limit'] : 10;
 ?>
+<?= $this->woocommerce_check; ?>
 <div class="evelyn-wrapper">
 	<h2>Inventory<?= !empty($this->user_data) ? ': '.$this->user_data['message']['client_name'] : null ?></h2>
 	<hr>
@@ -44,5 +45,22 @@ $limit = (!empty($this->user_data) && isset($this->user_data['limit'])) ? $this-
 			<input type="hidden" name="endIndex" value="<?= isset($_GET['end']) ? (int) $_GET['end'] : $limit ?>" class="endIndex">
 		</div>
 	</div>
-
+	<div class="modal myModal deleteModal text-center" style="display: none;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="close">&times;</span>
+				<h2>Delete Inventory Record</h2>
+			</div>
+			<div class="modal-body">
+				<p>
+					You have opted to delete this Product from your inventory list. This will remove the product permanently from your product list. Do you wish to continue with the process?
+				</p>
+				<p>
+					<input type="hidden" name="productId" id="productId" class="productId">
+					<button class="button button-success confirm-delete">Yes</button>
+					<button class="button button-danger closeModal">Cancel</button>
+				</p>
+			</div>
+		</div>
+	</div>
 </div>

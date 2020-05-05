@@ -41,14 +41,6 @@ class Admin extends BaseController {
 				'capability' => 'manage_options',
 				'menu_slug' => 'evelynpos_inventory',
 				'callback' => array($this->callbacks, 'inventoryDashboard'),
-			),
-			array(
-				'parent_slug' => 'evelynpos_api',
-				'page_title' => 'Customers',
-				'menu_title' => 'Manage Customers',
-				'capability' => 'manage_options',
-				'menu_slug' => 'evelynpos_customers',
-				'callback' => array($this->callbacks, 'customersDashboard'),
 			)
 		);
 
