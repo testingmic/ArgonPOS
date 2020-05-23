@@ -75,10 +75,9 @@ $SITEURL = (($URL == '') || ($URL == 'index.php') || ($URL == 'index.html')) ? A
 */
 
 // call the user logged in class
-$hrClass = load_class('Pos', 'models');
+$posClass = load_class('Pos', 'models');
 $admin_user = load_class('Users', 'controllers');
 $accessObject = load_class('Accesslevel', 'controllers');
-$posClass = load_class('Pos', 'models');
 
 $includeFile = config_item('default_view_path').strtolower(PREG_REPLACE('/[^\w_]-/','',$SITEURL[0])).'.php';
 

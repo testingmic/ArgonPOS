@@ -2703,6 +2703,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 				            // clock display
 				            $display_clock = isset($postData->display_clock) ? (int)$postData->display_clock : 0;
+				            
 				            // available colors
 				            $themeColors = [
 				            	"danger" => ["bg_colors"=>"bg-danger text-white no-border","bg_color_code"=>"#f5365c", "bg_color_light"=>"#f3adbb",
