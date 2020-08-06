@@ -9,7 +9,7 @@ date_default_timezone_set('Africa/Accra');
 defined('DB_HOST')  OR define('DB_HOST', "localhost");
 defined('DB_USER')  OR define('DB_USER', "root");
 defined('DB_PASS')  OR define('DB_PASS', "");
-defined('DB_NAME')  OR define('DB_NAME', "argon_pos");
+defined('DB_NAME')  OR define('DB_NAME', "pos");
 
 define('TIME_PERIOD', 60);
 define('ATTEMPTS_NUMBER', 7);

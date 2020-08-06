@@ -73,6 +73,16 @@ if($setupInfo->type == "alpha") {
         "this-month" => "This Month",
         "this-year" => "This Year"
     ];
+    $filterPeriod = [
+        "today" => 'Today',
+        "this-week" => "This Week",
+        "last-30-days" => "Last 30 Days",
+        "last-month" => "Last Month (".date("F", strtotime("-1 month")).")",
+        "this-month" => "This Month (".date("F").")",
+        "same-month-last-year" => "Same Month Last Year",
+        "this-year" => "This Year (January - December ".date("Y").")",
+        "all-time" => "All Time (".date("jS M Y", strtotime($setupInfo->setup_date))." - till date)",
+    ];
 }
 
 (!confirm_url_id(0, 'customer-detail')) ? $session->unset_userdata("customerBranchId") : null;

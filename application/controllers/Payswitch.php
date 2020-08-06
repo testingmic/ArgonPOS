@@ -65,6 +65,8 @@ class Payswitch extends Pos
                 CURLOPT_MAXREDIRS => 10,
                 CURLOPT_TIMEOUT => 30,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CAINFO => dirname(__FILE__)."\cacert.pem",
+                CURLOPT_SSL_VERIFYPEER => false,
                 CURLOPT_CUSTOMREQUEST => "POST",
                 CURLOPT_POSTFIELDS => $payload,
                 CURLOPT_HTTPHEADER => array(
@@ -104,6 +106,7 @@ class Payswitch extends Pos
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CAINFO => dirname(__FILE__)."\cacert.pem",
           CURLOPT_CUSTOMREQUEST => "POST",
           CURLOPT_POSTFIELDS => $payload,
           CURLOPT_HTTPHEADER => array(
@@ -138,6 +141,7 @@ class Payswitch extends Pos
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CAINFO => dirname(__FILE__)."\cacert.pem",
           CURLOPT_CUSTOMREQUEST => "POST",
           CURLOPT_POSTFIELDS => $payload,
           CURLOPT_HTTPHEADER => array(
@@ -172,6 +176,7 @@ class Payswitch extends Pos
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CAINFO => dirname(__FILE__)."\cacert.pem",
           CURLOPT_CUSTOMREQUEST => "POST",
           CURLOPT_POSTFIELDS => $payload,
           CURLOPT_HTTPHEADER => array(
@@ -200,6 +205,7 @@ class Payswitch extends Pos
           CURLOPT_MAXREDIRS => 10,
           CURLOPT_TIMEOUT => 30,
           CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CAINFO => dirname(__FILE__)."\cacert.pem",
           CURLOPT_CUSTOMREQUEST => "GET",
           CURLOPT_HTTPHEADER => array(
             "Cache-Control: no-cache",
