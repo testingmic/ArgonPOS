@@ -1575,9 +1575,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						a.order_id, b.customer_id, b.phone_1, b.email, b.title, 
 						a.payment_type, CONCAT(b.firstname, ' ', b.lastname) AS fullname, a.credit_sales
 						",
-						"{$where} AND a.order_status='confirmed' AND a.deleted='0'
-							AND (DATE(a.order_date) >= '{$dateFrom}' && 
-							DATE(a.order_date) <= '{$dateTo}') {$branchAccess} {$accessLimit} {$clientAccess} ORDER BY DATE(a.order_date) ASC"
+						"{$where} AND a.order_status='confirmed' AND a.deleted='0' AND (DATE(a.order_date) >= '{$dateFrom}' && 
+						DATE(a.order_date) <= '{$dateTo}') {$branchAccess} {$accessLimit} {$clientAccess} ORDER BY DATE(a.order_date) ASC"
 					);
 
 					// set the response data

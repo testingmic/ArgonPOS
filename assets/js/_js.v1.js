@@ -5,7 +5,7 @@ var storeValues = $.parseJSON($(`link[rel="prc"]`).attr('_cl'));
 $(".overlay").css('display', 'block');
 
 const menuItems = $('.left-sidenav ul.metismenu'),
-menuItemsPlaceholder = $('.menu-items-placeholder');
+    menuItemsPlaceholder = $('.menu-items-placeholder');
 menuItemsPlaceholder.show();
 
 $(() => {
@@ -27,11 +27,11 @@ const Toast = Swal.mixin({
 var sL = () => {
     menuItems.show();
     menuItemsPlaceholder.hide();
-    $(".main-content-loader.main-body-loader").css({display: "flex"});
+    $(".main-content-loader.main-body-loader").css({ display: "flex" });
 }
 
 var hL = () => {
-    $(".main-content-loader.main-body-loader").css({display: "none"}); 
+    $(".main-content-loader.main-body-loader").css({ display: "none" });
     menuItemsPlaceholder.hide();
     menuItems.show();
 }
@@ -52,7 +52,7 @@ function cOS() {
         };
         var store;
         $.each(obST, function(sN, storeUniqueId) {
-            if(sN == "reports") {
+            if (sN == "reports") {
                 store = evt.currentTarget.result.createObjectStore(
                     sN, { keyPath: storeUniqueId, autoIncrement: true });
             } else {
@@ -115,12 +115,12 @@ function upIDB(sN, obDet) {
             } catch (e) {
                 if (e.name == 'DataCloneError') {}
             }
-        req.onsuccess = function(evt) {
-            resolve(200);
+            req.onsuccess = function(evt) {
+                resolve(200);
+            };
+            req.onerror = function() {};
         };
-        req.onerror = function() {};
-    };
-});
+    });
 }
 
 function aIDB(sN, obDet) {
@@ -139,12 +139,12 @@ function aIDB(sN, obDet) {
             } catch (e) {
                 if (e.name == 'DataCloneError') {}
             }
-        req.onsuccess = function(evt) {
-            resolve(200);
+            req.onsuccess = function(evt) {
+                resolve(200);
+            };
+            req.onerror = function() {};
         };
-        req.onerror = function() {};
-    };
-});
+    });
 }
 
 function clearDBStore(sN) {
@@ -160,7 +160,7 @@ function clearDBStore(sN) {
                 req = store.clear();
             } catch (e) {
                 if (e.name == 'DataCloneError') {}
-                    throw e;
+                throw e;
             }
             req.onsuccess = function(evt) {
                 resolve(200);
@@ -194,9 +194,10 @@ function sPIDB() {
     return new Promise((resolve, reject) => {
 
         var response = new Array();
-        var status = 'error', disAmt = 0,
-        result, amtP, credit = 0,
-        amountBalance = 0;
+        var status = 'error',
+            disAmt = 0,
+            result, amtP, credit = 0,
+            amountBalance = 0;
 
         var log_date = jsDate();
         var discountAmt = 0.00;
@@ -214,7 +215,7 @@ function sPIDB() {
         var customerContact = $(`h6[class~="selected-customer-name"] span[class="customer-contact"]`).text();
 
         var discountType = $(`input[name="discount_type"]:checked`).val();
-        if($(`input[name="discount_amount"]`).val().length > 0) {
+        if ($(`input[name="discount_amount"]`).val().length > 0) {
             disAmt = parseFloat($(`input[name="discount_amount"]`).val());
         } else {
             disAmt = 0;
@@ -229,10 +230,10 @@ function sPIDB() {
             amountBalance = (paidAmount - totalToPay);
         }
 
-        if(discountType == "cash") {
+        if (discountType == "cash") {
             totalToPay = totalToPay - disAmt;
         } else {
-            disAmt = parseFloat((disAmt/100)*totalToPay).toFixed(2);
+            disAmt = parseFloat((disAmt / 100) * totalToPay).toFixed(2);
             totalToPay = (totalToPay - disAmt);
         }
 
@@ -326,21 +327,21 @@ function sPIDB() {
                 } catch (e) {
                     if (e.name == 'DataCloneError') {}
                 }
-            req.onsuccess = function(evt) {
-                result = 'Payment Recorded';
-                status = 'success';
+                req.onsuccess = function(evt) {
+                    result = 'Payment Recorded';
+                    status = 'success';
 
-                response = { status: status, result: result, orderId: orderId };
-                resolve(response);
+                    response = { status: status, result: result, orderId: orderId };
+                    resolve(response);
+                };
+                req.onerror = function() {
+                    result = 'Error processing request';
+                    response = { status: status, result: result };
+                    resolve(response);
+                };
             };
-            req.onerror = function() {
-                result = 'Error processing request';
-                response = { status: status, result: result };
-                resolve(response);
-            };
-        };
-    }
-});
+        }
+    });
 }
 
 function gIDBR(sN, recordId) {
@@ -374,15 +375,15 @@ function isNumber(evt) {
 
 async function dOC() {
     return $.ajax({
-        url : `${baseUrl}users/onlineCheck`,
-        type : "POST",
+        url: `${baseUrl}users/onlineCheck`,
+        type: "POST",
         data: { onlineCheck: true },
-        timeout : 5000
+        timeout: 5000
     });
 }
 
-if($(`table[class~="simple-table"]`).length) {
-    $(`table[class~="simple-table"]`).dataTable({iDisplayLength: 5});
+if ($(`table[class~="simple-table"]`).length) {
+    $(`table[class~="simple-table"]`).dataTable({ iDisplayLength: 5 });
 }
 
 var recon;
@@ -391,37 +392,37 @@ function rConInt() {
 
     $(`div[class~="offline-placeholder"] button[type="button"]`).on('click', async function() {
 
-        $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnecting &nbsp; <i class="fa fa-spin fa-spinner"></i>`).css({'display':'inline-flex'});
+        $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnecting &nbsp; <i class="fa fa-spin fa-spinner"></i>`).css({ 'display': 'inline-flex' });
         $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', true);
         $(`div[class~="offline-placeholder"] button[type="reset"]`).removeClass('hidden');
         recon = setInterval(function() {
             dOC().then((itResp) => {
-                if(itResp == 1) {
+                if (itResp == 1) {
                     clearInterval(recon);
                     noInternet = false;
-                    $(`div[class="connection-lost"]`).css('display','none');
+                    $(`div[class="connection-lost"]`).css('display', 'none');
                     $(`div[class~="offline-placeholder"] div[class~="offline-content"] p`).html(``);
-                    $(`div[class="connection-restored"]`).css('display','block');
+                    $(`div[class="connection-restored"]`).css('display', 'block');
                     $(`div[class~="offline-placeholder"] button[type="reset"]`).addClass('hidden');
                     $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Connection Restored`).removeClass('btn-warning').addClass('btn-success');
                     $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
                     setTimeout(function() {
-                        window.location.href='';
+                        window.location.href = '';
                     }, 2000);
                 } else {
-                    $(`div[class~="offline-placeholder"]`).css({'display':'flex'});
-                    $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnecting &nbsp; <i class="fa fa-spin fa-spinner"></i>`).css({'display':'inline-flex'});
+                    $(`div[class~="offline-placeholder"]`).css({ 'display': 'flex' });
+                    $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnecting &nbsp; <i class="fa fa-spin fa-spinner"></i>`).css({ 'display': 'inline-flex' });
                     $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
                 }
             }).catch((err) => {
-                $(`div[class~="offline-placeholder"]`).css({'display':'flex'});
-                $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnecting &nbsp; <i class="fa fa-spin fa-spinner"></i>`).css({'display':'inline-flex'});
+                $(`div[class~="offline-placeholder"]`).css({ 'display': 'flex' });
+                $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnecting &nbsp; <i class="fa fa-spin fa-spinner"></i>`).css({ 'display': 'inline-flex' });
                 $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', true);
             });
         }, 3000);
     });
 
-    $(`div[class~="offline-placeholder"] button[type="reset"]`).on('click', function(){
+    $(`div[class~="offline-placeholder"] button[type="reset"]`).on('click', function() {
         $(`div[class~="offline-placeholder"] button[type="reset"]`).addClass('hidden');
         $(`div[class~="offline-placeholder"] button[type="button"]`).html(`Reconnect`);
         $(`div[class~="offline-placeholder"] button[type="button"]`).prop('disabled', false);
@@ -431,33 +432,33 @@ function rConInt() {
 }
 rConInt();
 
-var syncOfflineData = async (dataToSync) => {
+var syncOfflineData = async(dataToSync) => {
     await listIDB(dataToSync).then((resp) => {
         let data = [];
-        if(resp.length > 0) {
-            for(var i = 0; i < resp.length; i++) {
-                if(resp[i].state == 'MODIFIED') {
+        if (resp.length > 0) {
+            for (var i = 0; i < resp.length; i++) {
+                if (resp[i].state == 'MODIFIED') {
                     data.push(resp[i]);
                 }
             }
-            $.post(baseUrl + `sync/sync/${dataToSync}`, {syncData: data}, function(data) {
-                if(data.status == 200) {}
+            $.post(baseUrl + `sync/sync/${dataToSync}`, { syncData: data }, function(data) {
+                if (data.status == 200) {}
             }, 'json');
         }
     });
 }
 
-var preloadData = async (dataset) => {
+var preloadData = async(dataset) => {
     await dOC().then((itResp) => {
-        if(itResp == 1) {
+        if (itResp == 1) {
             $.ajax({
                 url: `${baseUrl}sync/preloadData`,
-                data: {preloadData: true, dataType: dataset},
+                data: { preloadData: true, dataType: dataset },
                 dataType: "json",
                 type: "post",
                 success: function(resp) {
-                    if(resp.status == 200) {
-                        if(resp.request == "reports")  {
+                    if (resp.status == 200) {
+                        if (resp.request == "reports") {
                             var queryResult = resp.result;
                             $.each(queryResult, function(i, e) {
                                 upIDB("reports", e);
@@ -514,7 +515,7 @@ function inpCont() {
 
         $(`span[data-row-value="${row_id}"]`).html(fmtCurr(calculate));
 
-        if($(`input[id="product_price_${row_id}"]`).parents(`tr`).hasClass('selected')) {
+        if ($(`input[id="product_price_${row_id}"]`).parents(`tr`).hasClass('selected')) {
             $(`button[data-row-value="${row_id}"]`).html('Update').addClass('btn-primary update-button').removeClass('btn-success');
         }
     });
@@ -533,8 +534,8 @@ function dismissModal(sessionName, modalWindow) {
 
         $(`div[class="form-result"]`).html('');
 
-        if(modalDiv == 'productsListModalWindow') {
-            setTimeout(function(){
+        if (modalDiv == 'productsListModalWindow') {
+            setTimeout(function() {
                 $(`body[class~="main-body"]`).addClass('modal-open');
             }, 1000);
         }
@@ -547,18 +548,18 @@ var popReqLst = (requestsData, tableName) => {
     $(`table[id="${tableName}"]`).dataTable({
         "aaData": requestsData,
         "iDisplayLength": 10,
-        "buttons": ["copy", "print","csvHtml5"],
+        "buttons": ["copy", "print", "csvHtml5"],
         "lengthChange": !1,
         "dom": "Bfrtip",
         "columns": [
-        {"data": 'row_id'},
-        {"data": 'request_id'},
-        {"data": 'branch_name'},
-        {"data": 'customer_name'},
-        {"data": 'quote_value'},
-        {"data": 'recorded_by'},
-        {"data": 'request_date'},
-        {"data": 'action'}
+            { "data": 'row_id' },
+            { "data": 'request_id' },
+            { "data": 'branch_name' },
+            { "data": 'customer_name' },
+            { "data": 'quote_value' },
+            { "data": 'recorded_by' },
+            { "data": 'request_date' },
+            { "data": 'action' }
         ]
     });
 
@@ -579,34 +580,34 @@ var discountCalculator = () => {
 
         let discount_amt = 0;
 
-        if(discount.length > 0) {
-            if(discountType == "cash") {
-                if(discount > subTotal) {
+        if (discount.length > 0) {
+            if (discountType == "cash") {
+                if (discount > subTotal) {
                     discount = subTotal;
                     $(`input[name="discount_amount"]`).val(subTotal);
                 }
                 discount_amt = parseFloat(discount);
-            } else if(discountType == "percentage") {
-                if(discount > 100) {
+            } else if (discountType == "percentage") {
+                if (discount > 100) {
                     discount = 100;
                     $(`input[name="discount_amount"]`).val(100);
                 }
-                discount_amt = (parseFloat(discount)/100)*subTotal;
+                discount_amt = (parseFloat(discount) / 100) * subTotal;
             }
         }
 
         let overallTotal = parseFloat(subTotal - discount_amt).toFixed();
         $(`span[class="discount_total"]`)
-        .attr('data-discount_total', discount_amt)
-        .html(discount_amt.toFixed(2));
+            .attr('data-discount_total', discount_amt)
+            .html(discount_amt.toFixed(2));
         $(`span[class="overalltotal"]`)
-        .attr('data-overalltotal', overallTotal)
-        .html(fmtCurr(overallTotal));
+            .attr('data-overalltotal', overallTotal)
+            .html(fmtCurr(overallTotal));
         $(`td[data-overalltotal]`).attr('data-overalltotal', overallTotal);
     });
 }
 
-if($(`table[class~="productsList"]`).length) {
+if ($(`table[class~="productsList"]`).length) {
 
     $(`div[class="main-content"]`).on('click', `a[class~="add-category"]`, function(e) {
         $(`input[name="category_name"]`).val('');
@@ -621,32 +622,32 @@ if($(`table[class~="productsList"]`).length) {
         let id = $(`input[name="categoryId"]`).val();
         let request = $(`input[name="request"]`).val();
 
-        $(`div[class="form-content-loader"]`).css("display","none");
+        $(`div[class="form-content-loader"]`).css("display", "none");
 
-        $.post(baseUrl+"api/categoryManagement/saveCategory", {name: name, id: id, dataset: request}, (res) => {
-            if(res.status == 200){
-                $(`div[class~="categoryModal"]`).modal('hide');
-                Toast.fire({
-                    type: 'success',
-                    title: res.message
-                });
-                $(`div[class="form-content-loader"]`).css("display","none");
-                listCatLst();
-            } else {
+        $.post(baseUrl + "api/categoryManagement/saveCategory", { name: name, id: id, dataset: request }, (res) => {
+                if (res.status == 200) {
+                    $(`div[class~="categoryModal"]`).modal('hide');
+                    Toast.fire({
+                        type: 'success',
+                        title: res.message
+                    });
+                    $(`div[class="form-content-loader"]`).css("display", "none");
+                    listCatLst();
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: res.message
+                    });
+                    $(`div[class="form-content-loader"]`).css("display", "none");
+                }
+            }, 'json')
+            .catch((err) => {
                 Toast.fire({
                     type: 'error',
-                    title: res.message
-                });
-                $(`div[class="form-content-loader"]`).css("display","none");                 
-            }
-        }, 'json')
-        .catch((err) => {
-            Toast.fire({
-                type: 'error',
-                title: "Error Processing Request"
-            })      
-            $(`div[class="form-content-loader"]`).css("display","none");
-        });
+                    title: "Error Processing Request"
+                })
+                $(`div[class="form-content-loader"]`).css("display", "none");
+            });
     });
 
     var popCatLst = (productsCategoryData) => {
@@ -655,15 +656,15 @@ if($(`table[class~="productsList"]`).length) {
         $(`table[class~="productsList"]`).dataTable({
             "aaData": productsCategoryData,
             "iDisplayLength": 10,
-            "buttons": ["copy", "print","csvHtml5"],
+            "buttons": ["copy", "print", "csvHtml5"],
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-            {"data": 'row'},
-            {"data": 'category_id'},
-            {"data": 'category'},
-            {"data": 'products_count'},
-            {"data": 'action'}
+                { "data": 'row' },
+                { "data": 'category_id' },
+                { "data": 'category' },
+                { "data": 'products_count' },
+                { "data": 'action' }
             ]
         });
 
@@ -671,7 +672,7 @@ if($(`table[class~="productsList"]`).length) {
 
         $(`div[class="main-content"]`).on('click', `a[class~="edit-category"]`, function(e) {
             let categoryId = $(this).data('id');
-            let categoryData = $(this).data('content');    
+            let categoryData = $(this).data('content');
             $(`input[name="category_name"]`).val(categoryData.category);
             $(`input[name="categoryId"]`).val(categoryData.id);
             $(`input[name="request"]`).val("update");
@@ -683,13 +684,15 @@ if($(`table[class~="productsList"]`).length) {
         $.ajax({
             method: "POST",
             url: `${baseUrl}api/categoryManagement/listProductCategories`,
-            data: { listProductCategories: true},
+            data: { listProductCategories: true },
             dataType: "JSON",
             success: function(resp) {
                 popCatLst(resp.result);
-            }, complete: function(data) {
+            },
+            complete: function(data) {
                 hL();
-            }, error: function(err) {
+            },
+            error: function(err) {
                 hL();
             }
         });
@@ -711,7 +714,7 @@ function genIds() {
     $(`div[class="default-variables"]`).attr('data-unique-id', unqStr(55));
 }
 
-if($(`table[class~="expensesList"]`).length) {
+if ($(`table[class~="expensesList"]`).length) {
 
     $(`div[class="main-content"]`).on('click', `a[class~="add-expense"]`, function(e) {
         $(`div[class~="expensesModal"] form`)[0].reset();
@@ -724,7 +727,7 @@ if($(`table[class~="expensesList"]`).length) {
     $(`form[class="expenseForm"]`).on('submit', function(evt) {
         evt.preventDefault();
         let formData = $(this).serialize();
-        $(`div[class="form-content-loader"]`).css("display","flex");
+        $(`div[class="form-content-loader"]`).css("display", "flex");
 
         $.post(`${baseUrl}api/expensesManagement/manageExpenses`, formData, function(resp) {
             Toast.fire({
@@ -732,14 +735,14 @@ if($(`table[class~="expensesList"]`).length) {
                 title: resp.result
             });
 
-            if(resp.clearform == true) {
+            if (resp.clearform == true) {
                 $(`form[class="expenseForm"]`)[0].reset();
             }
             listExpenses();
-            $(`div[class="form-content-loader"]`).css("display","none");
+            $(`div[class="form-content-loader"]`).css("display", "none");
         }, 'json').catch((err) => {
             toastError('Sorry! Error encountered while processing the form');
-            $(`div[class="form-content-loader"]`).css("display","none");
+            $(`div[class="form-content-loader"]`).css("display", "none");
         });
     });
 
@@ -749,19 +752,19 @@ if($(`table[class~="expensesList"]`).length) {
         $(`table[class~="expensesList"]`).dataTable({
             "aaData": expensesData,
             "iDisplayLength": 10,
-            "buttons": ["copy", "print","csvHtml5"],
+            "buttons": ["copy", "print", "csvHtml5"],
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-                {"data": 'row'},
-                {"data": 'start_date'},
-                {"data": 'category'},
-                {"data": 'amount'},
-                {"data": 'tax'},
-                {"data": 'payment_type'},
-                {"data": 'description'},
-                {"data": 'created_by'},
-                {"data": 'action'}
+                { "data": 'row' },
+                { "data": 'start_date' },
+                { "data": 'category' },
+                { "data": 'amount' },
+                { "data": 'tax' },
+                { "data": 'payment_type' },
+                { "data": 'description' },
+                { "data": 'created_by' },
+                { "data": 'action' }
             ]
         });
 
@@ -787,13 +790,15 @@ if($(`table[class~="expensesList"]`).length) {
         $.ajax({
             method: "POST",
             url: `${baseUrl}api/expensesManagement/listExpenses`,
-            data: { listExpenses: true},
+            data: { listExpenses: true },
             dataType: "JSON",
             success: function(resp) {
                 popCatLst(resp.result.list);
-            }, complete: function(data) {
+            },
+            complete: function(data) {
                 hL();
-            }, error: function(err) {
+            },
+            error: function(err) {
                 hL();
             }
         });
@@ -802,7 +807,7 @@ if($(`table[class~="expensesList"]`).length) {
     listExpenses();
 }
 
-if($(`table[class~="expenseCategories"]`).length) {
+if ($(`table[class~="expenseCategories"]`).length) {
 
     $(`div[class="main-content"]`).on('click', `a[class~="add-category"]`, function(e) {
         $(`input[name="name"]`).val('');
@@ -818,32 +823,32 @@ if($(`table[class~="expenseCategories"]`).length) {
         let id = $(`input[name="categoryId"]`).val();
         let request = $(`input[name="request"]`).val();
 
-        $(`div[class="form-content-loader"]`).css("display","none");
+        $(`div[class="form-content-loader"]`).css("display", "none");
 
-        $.post(baseUrl+"api/expensesManagement/saveCategory", {name: name, description:description, id: id, dataset: request}, (res) => {
-            if(res.status == 200){
-                $(`div[class~="categoryModal"]`).modal('hide');
-                Toast.fire({
-                    type: 'success',
-                    title: res.message
-                });
-                $(`div[class="form-content-loader"]`).css("display","none");
-                listCatLst();
-            } else {
+        $.post(baseUrl + "api/expensesManagement/saveCategory", { name: name, description: description, id: id, dataset: request }, (res) => {
+                if (res.status == 200) {
+                    $(`div[class~="categoryModal"]`).modal('hide');
+                    Toast.fire({
+                        type: 'success',
+                        title: res.message
+                    });
+                    $(`div[class="form-content-loader"]`).css("display", "none");
+                    listCatLst();
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: res.message
+                    });
+                    $(`div[class="form-content-loader"]`).css("display", "none");
+                }
+            }, 'json')
+            .catch((err) => {
                 Toast.fire({
                     type: 'error',
-                    title: res.message
-                });
-                $(`div[class="form-content-loader"]`).css("display","none");                 
-            }
-        }, 'json')
-        .catch((err) => {
-            Toast.fire({
-                type: 'error',
-                title: "Error Processing Request"
-            })      
-            $(`div[class="form-content-loader"]`).css("display","none");
-        });
+                    title: "Error Processing Request"
+                })
+                $(`div[class="form-content-loader"]`).css("display", "none");
+            });
     });
 
     var popCatLst = (expensesCategoryData) => {
@@ -855,10 +860,10 @@ if($(`table[class~="expenseCategories"]`).length) {
             "dom": "Bfrtip",
             "autoWidth": false,
             "columns": [
-            {"data": 'row'},
-            {"data": 'name'},
-            {"data": 'description'},
-            {"data": 'action'}
+                { "data": 'row' },
+                { "data": 'name' },
+                { "data": 'description' },
+                { "data": 'action' }
             ]
         });
 
@@ -879,13 +884,15 @@ if($(`table[class~="expenseCategories"]`).length) {
         $.ajax({
             method: "POST",
             url: `${baseUrl}api/expensesManagement/listExpenseCategories`,
-            data: { listExpenseCategories: true},
+            data: { listExpenseCategories: true },
             dataType: "JSON",
             success: function(resp) {
                 popCatLst(resp.result);
-            }, complete: function(data) {
+            },
+            complete: function(data) {
                 hL();
-            }, error: function(err) {
+            },
+            error: function(err) {
                 hL();
             }
         });
@@ -900,19 +907,19 @@ async function listRequests(requestType, tableName) {
     sL();
 
     await dOC().then((itResp) => {
-        if(itResp == 1) {
+        if (itResp == 1) {
             noInternet = false;
-            $(`div[class="connection"]`).css('display','none');
-            $(`div[class~="offline-placeholder"]`).css('display','none');
+            $(`div[class="connection"]`).css('display', 'none');
+            $(`div[class~="offline-placeholder"]`).css('display', 'none');
         } else {
             noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
         }
     }).catch((err) => {
         noInternet = true;
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
-        $(`div[class="connection"]`).css('display','block');
+        $(`div[class~="offline-placeholder"]`).css('display', 'flex');
+        $(`div[class="connection"]`).css('display', 'block');
     });
 
     $.ajax({
@@ -923,10 +930,12 @@ async function listRequests(requestType, tableName) {
         beforeSend: function() {},
         success: function(resp) {
             popReqLst(resp.result, `${tableName}`);
-        }, complete: function(data) {
+        },
+        complete: function(data) {
             inpCont();
             hL();
-        }, error: function(err) {
+        },
+        error: function(err) {
             hL();
         }
     });
@@ -940,10 +949,10 @@ function removeItem(sessionName) {
         $.ajax({
             type: "POST",
             url: `${baseUrl}doprocess_sales/removeItem`,
-            data: { removeItem: "true", sessionName: sessionName, productId:productId },
+            data: { removeItem: "true", sessionName: sessionName, productId: productId },
             dataType: "JSON",
-            success: function(resp) {
-            }, complete: function(data) {
+            success: function(resp) {},
+            complete: function(data) {
                 $(`tr[data-row="${productId}"]`).remove();
                 let overAll = $(`td[data-overall]`).attr('data-total');
                 let curTotal = (parseInt(overAll) - parseInt(thisSum));
@@ -968,7 +977,7 @@ function serealizeSelects(select) {
 
 function fmtCurr(total) {
     var neg = false;
-    if(total < 0) {
+    if (total < 0) {
         neg = true;
         total = Math.abs(total);
     }
@@ -976,30 +985,30 @@ function fmtCurr(total) {
 }
 
 function rndInt(length = 10) {
-    var result           = '';
-    var characters       = '0123456789';
+    var result = '';
+    var characters = '0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    for (var i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
 }
 
 function rndStr(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    for (var i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
 }
 
 function unqStr(length) {
-    var result           = '';
-    var characters       = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var result = '';
+    var characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
     var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
+    for (var i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
@@ -1007,30 +1016,30 @@ function unqStr(length) {
 
 function jsDate(dateType = 'datetime') {
     var d = new Date(),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear(),
-    hour = d.getHours(),
-    minute = d.getMinutes(),
-    seconds = d.getSeconds();
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear(),
+        hour = d.getHours(),
+        minute = d.getMinutes(),
+        seconds = d.getSeconds();
 
-    if (month.length < 2) 
+    if (month.length < 2)
         month = '0' + month;
-    if (day.length < 2) 
+    if (day.length < 2)
         day = '0' + day;
 
-    if(dateType == 'datetime') {
-        return [year, month, day].join('-') + " " + [hour, minute, seconds].join(':'); 
-    } else if(dateType == 'fulldate') {
-        return [year, month, day].join('-'); 
-    } else if(dateType == 'hour') {
-        return hour; 
+    if (dateType == 'datetime') {
+        return [year, month, day].join('-') + " " + [hour, minute, seconds].join(':');
+    } else if (dateType == 'fulldate') {
+        return [year, month, day].join('-');
+    } else if (dateType == 'hour') {
+        return hour;
     }
 }
 
 $(`.send-to-list div:last`).css({
-    'border-radius':'0px 5px 5px 0px',
-    'margin-right':'0px'
+    'border-radius': '0px 5px 5px 0px',
+    'margin-right': '0px'
 });
 
 function htmlEntities(str) {
@@ -1044,22 +1053,22 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
     var href = $(this).attr('href');
 
     await dOC().then((itResp) => {
-        if(itResp == 1) {
+        if (itResp == 1) {
             offline = false;
-            $(`div[class="connection"]`).css('display','none');
-            $(`div[class~="offline-placeholder"]`).css('display','none');
+            $(`div[class="connection"]`).css('display', 'none');
+            $(`div[class~="offline-placeholder"]`).css('display', 'none');
         } else {
             offline = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
         }
     }).catch((err) => {
         offline = true;
-        $(`div[class="connection"]`).css('display','block');
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
+        $(`div[class="connection"]`).css('display', 'block');
+        $(`div[class~="offline-placeholder"]`).css('display', 'flex');
     });
 
-    if(offline) {
+    if (offline) {
         $(`div[class~="clearCache"]`).modal('show');
 
         $(`button[class~="confirm-clear-cache"]`).on('click', function(e) {
@@ -1072,10 +1081,10 @@ $(`div[class="main-content"]`).on('click', `a[class~="logout"]`, async function(
     $.ajax({
         type: "POST",
         url: `${baseUrl}al/dLg`,
-        data: {doLogout: true, toPerform: toPerform},
+        data: { doLogout: true, toPerform: toPerform },
         dataType: "json",
         success: function(e) {
-            if(e.status == 200) {
+            if (e.status == 200) {
                 window.location.href = baseUrl;
             }
         }
@@ -1088,7 +1097,7 @@ function stripHtml(html) {
 
 var popCustLst = (data) => {
     $(`select[class~="customer-select"]`).find('option').remove().end();
-    if(!$(`span[class="hide-walk-in-customer"]`).length) {
+    if (!$(`span[class="hide-walk-in-customer"]`).length) {
         $(`select[class~="customer-select"]`).append('<option value="WalkIn" data-prefered-payment="" data-contact="No Contact" selected="selected">Walk In Customer</option>');
     } else {
         $(`select[class~="customer-select"]`).append('<option value="null" data-contact="No Contact" selected="selected">-- Select Customer --</option>');
@@ -1098,33 +1107,34 @@ var popCustLst = (data) => {
     });
 }
 
-var ftchCutLst = async () => {
+var ftchCutLst = async() => {
 
     await dOC().then((itResp) => {
-        if(itResp == 1) {
+        if (itResp == 1) {
             noInternet = false;
-            $(`div[class="connection"]`).css('display','none');
-            $(`div[class~="offline-placeholder"]`).css('display','none');
+            $(`div[class="connection"]`).css('display', 'none');
+            $(`div[class~="offline-placeholder"]`).css('display', 'none');
         } else {
             noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
-            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
+            $(`a[class~="shortcut-offline"]`).css({ 'filter': 'blur(4px)', 'pointer-events': 'none' });
+            $(`li[class~="offline-menu"]`).css({ 'background-color': '#f6f9fc', 'filter': 'blur(3px)', 'pointer-events': 'none' });
         }
     }).catch((err) => {
         noInternet = true;
-        $(`div[class="connection"]`).css('display','block');
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
-        $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
-        $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+        $(`div[class="connection"]`).css('display', 'block');
+        $(`div[class~="offline-placeholder"]`).css('display', 'flex');
+        $(`a[class~="shortcut-offline"]`).css({ 'filter': 'blur(4px)', 'pointer-events': 'none' });
+        $(`li[class~="offline-menu"]`).css({ 'background-color': '#f6f9fc', 'filter': 'blur(3px)', 'pointer-events': 'none' });
     });
 
-    if(noInternet) {
+    if (noInternet) {
         var info = await listIDB('customers').then((resp) => {
-            var row_id = 0, newResults = [];
+            var row_id = 0,
+                newResults = [];
             $.each(resp, function(i, e) {
-                if(e.deleted != 1) {
+                if (e.deleted != 1) {
                     row_id++;
                     e.row_id = row_id;
                     newResults.push(e);
@@ -1136,10 +1146,10 @@ var ftchCutLst = async () => {
     }
 
     await syncOfflineData('customers').then((resp) => {
-        $.post(baseUrl + "api/fetchCustomersOptionsList", {fetchCustomersOptionsList: true}, async function(data) {
+        $.post(baseUrl + "api/fetchCustomersOptionsList", { fetchCustomersOptionsList: true }, async function(data) {
             await clearDBStore('customers').then((resp) => {
                 popCustLst(data.result);
-                if(data.result.length) {
+                if (data.result.length) {
                     upIDB('customers', data.result);
                 }
             });
@@ -1148,7 +1158,7 @@ var ftchCutLst = async () => {
 
 }
 
-if($(`select[class~="customer-select"]`).length) {
+if ($(`select[class~="customer-select"]`).length) {
     ftchCutLst();
 }
 
@@ -1167,13 +1177,13 @@ var popPrdLst = (data) => {
     $.each(data, function(i, e) {
 
         var trClass,
-        checkbox = `<div class="checkbox checkbox-primary checkbox-single">
+            checkbox = `<div class="checkbox checkbox-primary checkbox-single">
         <input type="checkbox" style="zoom:1.7" name="products[${e.product_id}][id]" value="${e.product_id}" data-product_max="${e.product_quantity}" class="product-select d-block" id="productCheck-${e.product_id}" data-product-id="${e.product_id}" data-product-name="${e.product_title}" data-product-code="${e.product_code}" data-product-price="${e.price}" data-product-img="${e.image}">
         <label for="productCheck-${e.product_id}">
         </label>
         </div>`;
 
-        if(e.product_quantity < 1) {
+        if (e.product_quantity < 1) {
             checkbox = ``;
             trClass = `class="text-danger" title="Out of Stock"`;
         } else {
@@ -1197,33 +1207,34 @@ var popPrdLst = (data) => {
     initPrdSelt();
 }
 
-var ftchPrdList = async () => {
+var ftchPrdList = async() => {
 
     await dOC().then((itResp) => {
-        if(itResp == 1) {
+        if (itResp == 1) {
             noInternet = false;
-            $(`div[class="connection"]`).css('display','none');
-            $(`div[class~="offline-placeholder"]`).css('display','none');
+            $(`div[class="connection"]`).css('display', 'none');
+            $(`div[class~="offline-placeholder"]`).css('display', 'none');
         } else {
             noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-            $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
-            $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
+            $(`a[class~="shortcut-offline"]`).css({ 'filter': 'blur(4px)', 'pointer-events': 'none' });
+            $(`li[class~="offline-menu"]`).css({ 'background-color': '#f6f9fc', 'filter': 'blur(3px)', 'pointer-events': 'none' });
         }
     }).catch((err) => {
         noInternet = true;
-        $(`div[class="connection"]`).css('display','block');
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
-        $(`a[class~="shortcut-offline"]`).css({'filter': 'blur(4px)', 'pointer-events': 'none'});
-        $(`li[class~="offline-menu"]`).css({'background-color': '#f6f9fc','filter': 'blur(3px)','pointer-events': 'none'});
+        $(`div[class="connection"]`).css('display', 'block');
+        $(`div[class~="offline-placeholder"]`).css('display', 'flex');
+        $(`a[class~="shortcut-offline"]`).css({ 'filter': 'blur(4px)', 'pointer-events': 'none' });
+        $(`li[class~="offline-menu"]`).css({ 'background-color': '#f6f9fc', 'filter': 'blur(3px)', 'pointer-events': 'none' });
     });
 
-    if(noInternet) {
+    if (noInternet) {
         var info = await listIDB('request_products').then((resp) => {
-            var row_id = 0, newResults = [];
+            var row_id = 0,
+                newResults = [];
             $.each(resp, function(i, e) {
-                if(e.deleted != 1) {
+                if (e.deleted != 1) {
                     row_id++;
                     e.row_id = row_id;
                     newResults.push(e);
@@ -1234,10 +1245,10 @@ var ftchPrdList = async () => {
         return false;
     }
 
-    $.post(baseUrl + "api/fetchPOSProductsList", {fetchPOSProductsList: true}, async function(data) {
+    $.post(baseUrl + "api/fetchPOSProductsList", { fetchPOSProductsList: true }, async function(data) {
         await clearDBStore('request_products').then((resp) => {
             popPrdLst(data.result);
-            if(data.result.length) {
+            if (data.result.length) {
                 upIDB('request_products', data.result);
             }
         });
@@ -1245,7 +1256,7 @@ var ftchPrdList = async () => {
 
 }
 
-if($(`tbody[class="pos-products-list"]`).length) {
+if ($(`tbody[class="pos-products-list"]`).length) {
     ftchPrdList();
 }
 
@@ -1255,18 +1266,18 @@ var populateUsersList = (usersObject) => {
     $(`table[class~="usersAccounts"]`).dataTable({
         "aaData": usersObject,
         "iDisplayLength": 10,
-        "buttons": ["copy", "print","csvHtml5"],
+        "buttons": ["copy", "print", "csvHtml5"],
         "lengthChange": !1,
         "dom": "Bfrtip",
         "columns": [
-        {"data": 'row_id'},
-        {"data": 'fullname'},
-        {"data": 'branch_name'},
-        {"data": 'access_level'},
-        {"data": 'contact'},
-        {"data": 'email'},
-        {"data": 'registered_date'},
-        {"data": 'action'}
+            { "data": 'row_id' },
+            { "data": 'fullname' },
+            { "data": 'branch_name' },
+            { "data": 'access_level' },
+            { "data": 'contact' },
+            { "data": 'email' },
+            { "data": 'registered_date' },
+            { "data": 'action' }
         ]
     });
 
@@ -1276,7 +1287,7 @@ var populateUsersList = (usersObject) => {
     hL();
 }
 
-var fetchUsersLists = async () => {
+var fetchUsersLists = async() => {
 
     if ($("table[class~='usersAccounts']").length) {
 
@@ -1312,22 +1323,22 @@ async function deleteMyItem(itemId, page, callBack = "") {
     if (itemId != "") {
 
         await dOC().then((itResp) => {
-            if(itResp == 1) {
+            if (itResp == 1) {
                 noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-                $(`div[class~="offline-placeholder"]`).css('display','none');
+                $(`div[class="connection"]`).css('display', 'none');
+                $(`div[class~="offline-placeholder"]`).css('display', 'none');
             } else {
                 noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-                $(`div[class~="offline-placeholder"]`).css('display','flex');
+                $(`div[class="connection"]`).css('display', 'block');
+                $(`div[class~="offline-placeholder"]`).css('display', 'flex');
             }
         }).catch((err) => {
             noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
         });
 
-        if(noInternet) {
+        if (noInternet) {
             Toast.fire({
                 type: 'error',
                 title: 'Error Processing Request'
@@ -1396,16 +1407,16 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                     }
                     fetchUsersLists();
                     fetchBranchLists();
-                    if($(`table[class~="productsList"]`).length) {
+                    if ($(`table[class~="productsList"]`).length) {
                         listCatLst();
                     }
-                    if($(`table[class~="customersList"]`).length) {
+                    if ($(`table[class~="customersList"]`).length) {
                         listCustomers();
                     }
-                    if($(`table[class~="expensesList"]`).length) {
+                    if ($(`table[class~="expensesList"]`).length) {
                         listExpenses();
                     }
-                    if((data.thisRequest == 'Quote') || (data.thisRequest == 'Order')) {
+                    if ((data.thisRequest == 'Quote') || (data.thisRequest == 'Order')) {
                         listRequests(data.thisRequest, data.tableName);
                     }
                 } else {
@@ -1420,14 +1431,14 @@ $(`form[class~="submitThisForm"]`).on("submit", async function(e) {
                     type: "error",
                     title: "Error Processing Request"
                 });
-                $(`div[class="form-content-loader"]`).css("display","none");
+                $(`div[class="form-content-loader"]`).css("display", "none");
             },
             complete: function(data) {
                 $(`div[class~="delete-modal"]`).modal('hide');
                 setTimeout(function() {
                     $(".form-result").empty();
                 }, 1200);
-                $(`div[class="form-content-loader"]`).css("display","none");
+                $(`div[class="form-content-loader"]`).css("display", "none");
                 $(".submit-form").prop("disabled", false);
             }
         });
@@ -1462,22 +1473,22 @@ var editUserDetails = () => {
         var userId = $(this).data("user-id");
 
         await dOC().then((itResp) => {
-            if(itResp == 1) {
+            if (itResp == 1) {
                 noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-                $(`div[class~="offline-placeholder"]`).css('display','none');
+                $(`div[class="connection"]`).css('display', 'none');
+                $(`div[class~="offline-placeholder"]`).css('display', 'none');
             } else {
                 noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-                $(`div[class~="offline-placeholder"]`).css('display','flex');
+                $(`div[class="connection"]`).css('display', 'block');
+                $(`div[class~="offline-placeholder"]`).css('display', 'flex');
             }
         }).catch((err) => {
             noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
         });
 
-        if(noInternet) {
+        if (noInternet) {
 
             var info = await gIDBR('users', userId).then((resp) => {
                 populateUserDetails(resp);
@@ -1506,8 +1517,8 @@ var editUserDetails = () => {
                         })
                     }
                 },
-                error: function(err) {
-                }, complete: function(data) {
+                error: function(err) {},
+                complete: function(data) {
                     hL();
                 }
             })
@@ -1817,7 +1828,7 @@ $(`button[class~="add-new-modal"], a[class~="add-new-modal"]`).on('click', funct
     $(`[name="record_type"]`).val("new-record");
     $("div[id='newModalWindow'] form")[0].reset();
 
-    if($(`select[name="branchType"]`).length) {
+    if ($(`select[name="branchType"]`).length) {
         $(`div[id='newModalWindow'] form select[name="branchType"]`).val('Store').change();
         $(`div[id='newModalWindow'] form select[name="status"]`).val('Active').change();
     } else {
@@ -1839,7 +1850,7 @@ var populateBranchesDetails = (data) => {
     $("#newModalWindow").modal("show");
 
     hL();
-    $(`div[class="form-content-loader"]`).css("display","none");
+    $(`div[class="form-content-loader"]`).css("display", "none");
 }
 
 var editBranchDetails = () => {
@@ -1847,29 +1858,29 @@ var editBranchDetails = () => {
     $(`div[class="main-content"]`).on("click", `button[class~="edit-branch"]`, async function(e) {
         e.preventDefault();
 
-        $(`div[class="form-content-loader"]`).css("display","flex");
+        $(`div[class="form-content-loader"]`).css("display", "flex");
 
         var branchId = $(this).data("branch-id");
 
         sL();
 
         await dOC().then((itResp) => {
-            if(itResp == 1) {
+            if (itResp == 1) {
                 noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-                $(`div[class~="offline-placeholder"]`).css('display','none');
+                $(`div[class="connection"]`).css('display', 'none');
+                $(`div[class~="offline-placeholder"]`).css('display', 'none');
             } else {
                 noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-                $(`div[class~="offline-placeholder"]`).css('display','flex');
+                $(`div[class="connection"]`).css('display', 'block');
+                $(`div[class~="offline-placeholder"]`).css('display', 'flex');
             }
         }).catch((err) => {
             noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
         });
 
-        if(noInternet) {
+        if (noInternet) {
             await gIDBR('branches', branchId).then((res) => {
                 populateBranchesDetails(res);
                 hL();
@@ -1884,12 +1895,12 @@ var editBranchDetails = () => {
                 dataType: "json",
                 type: "POST",
                 cache: false,
-                beforeSend: function() {
-                },
+                beforeSend: function() {},
                 success: function(data) {
                     populateBranchesDetails(data.message);
-                }, error: function(err) {
-                    $(`div[class="form-content-loader"]`).css("display","none");
+                },
+                error: function(err) {
+                    $(`div[class="form-content-loader"]`).css("display", "none");
                 }
             })
         }
@@ -1903,21 +1914,21 @@ var populateBranchesList = (data) => {
     $(`table[class~="branchesLists"]`).dataTable({
         "aaData": data,
         "iDisplayLength": 10,
-        "buttons": ["copy", "print","csvHtml5"],
+        "buttons": ["copy", "print", "csvHtml5"],
         "lengthChange": !1,
         "dom": "Bfrtip",
         "columns": [
-        {"data": 'row_id'},
-        {"data": 'branch_name'},
-        {"data": 'location'},
-        {"data": 'contact'},
-        {"data": 'email'},
-        {"data": 'status'},
-        {"data": 'action'}
+            { "data": 'row_id' },
+            { "data": 'branch_name' },
+            { "data": 'location' },
+            { "data": 'contact' },
+            { "data": 'email' },
+            { "data": 'status' },
+            { "data": 'action' }
         ]
     });
 
-    $(`div[class="form-content-loader"]`).css("display","none");
+    $(`div[class="form-content-loader"]`).css("display", "none");
     editBranchDetails();
     hL();
     delI();
@@ -1931,31 +1942,32 @@ async function fetchBranchLists() {
         let colspan = "6";
 
         sL();
-        $(`div[class="form-content-loader"]`).css("display","flex");
+        $(`div[class="form-content-loader"]`).css("display", "flex");
 
         $(`div[class~="delete-modal"]`).modal('hide');
 
         await dOC().then((itResp) => {
-            if(itResp == 1) {
+            if (itResp == 1) {
                 noInternet = false;
-                $(`div[class="connection"]`).css('display','none');
-                $(`div[class~="offline-placeholder"]`).css('display','none');
+                $(`div[class="connection"]`).css('display', 'none');
+                $(`div[class~="offline-placeholder"]`).css('display', 'none');
             } else {
                 noInternet = true;
-                $(`div[class="connection"]`).css('display','block');
-                $(`div[class~="offline-placeholder"]`).css('display','flex');
+                $(`div[class="connection"]`).css('display', 'block');
+                $(`div[class~="offline-placeholder"]`).css('display', 'flex');
             }
         }).catch((err) => {
             noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
+            $(`div[class="connection"]`).css('display', 'block');
+            $(`div[class~="offline-placeholder"]`).css('display', 'flex');
         });
 
-        if(noInternet) {
+        if (noInternet) {
             var info = await listIDB('branches').then((resp) => {
-                var row_id = 0, newResults = [];
+                var row_id = 0,
+                    newResults = [];
                 $.each(resp, function(i, e) {
-                    if(e.deleted != 1) {
+                    if (e.deleted != 1) {
                         row_id++;
                         e.row_id = row_id;
 
@@ -1983,10 +1995,10 @@ async function fetchBranchLists() {
                 upIDB('branches', data.message);
             },
             error: function(err) {
-                $(`div[class="form-content-loader"]`).css("display","none");
+                $(`div[class="form-content-loader"]`).css("display", "none");
             },
             complete: function() {}
-        });        
+        });
 
     }
 
@@ -1997,23 +2009,23 @@ var trgPrtRpt = (saleId = null) => {
 
     let thisSaleId = saleId;
 
-    if(saleId == null) {
+    if (saleId == null) {
         thisSaleId = $(`span[class="generated_order"]`).html();
     }
     window.open(
         `${baseUrl}receipt/${thisSaleId}`,
         `Sales Receipt - #${thisSaleId}`,
         `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-        );
+    );
 }
 
 function qPrt() {
     let orderId = $(`span[class="generated_order"]`).html();
     let rcpContent = $(`div[class="pwizard-fieldset"]`).html();
     var printWn = window.open(
-        ``, `Sales Receipt - #${orderId}`, 
+        ``, `Sales Receipt - #${orderId}`,
         `width=650,height=750,left=200,resizable,scrollbars=yes,status=1,left=${($(window).width())*0.25}`
-        );
+    );
     printWn.document.write(rcpContent);
     printWn.window.print();
     printWn.window.close();
@@ -2023,21 +2035,22 @@ function cusPurHis() {
 
     let userId = $(`a[class="view-user-sales"]`).attr('data-value');
     let fullname = $(`a[class="view-user-sales"]`).attr('data-name');
-    var recordType = $(`a[class="view-user-sales"]`).attr('data-record');           
+    var recordType = $(`a[class="view-user-sales"]`).attr('data-record');
 
     $.ajax({
         type: "POST",
         url: `${baseUrl}api/reportsAnalytics/generateReport`,
-        data: {generateReport: true, salesAttendantHistory: true, queryMetric:"salesAttendantPerformance", userId: userId, recordType: recordType},
+        data: { generateReport: true, salesAttendantHistory: true, queryMetric: "salesAttendantPerformance", userId: userId, recordType: recordType },
         dataType: "JSON",
         beforeSend: function() {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`<div align="center">Loading records <i class="fa fa-spin fa-spinner"></i></div>`);
-        }, success: function(resp) {
+        },
+        success: function(resp) {
             $(`table[class~="salesLists"]`).dataTable().fnDestroy();
             $(`table[class~="salesLists"]`).dataTable({
                 "aaData": resp.result,
                 "iDisplayLength": 10,
-                "buttons": ["copy", "print","csvHtml5"],
+                "buttons": ["copy", "print", "csvHtml5"],
                 "lengthChange": !1,
                 "dom": "Bfrtip",
                 "columns": [
@@ -2048,7 +2061,8 @@ function cusPurHis() {
                     { "data": 'action' }
                 ]
             });
-        }, complete: function(data) {
+        },
+        complete: function(data) {
             $(`a[class~="print-receipt"]`).on('click', function() {
                 trgPrtRpt($(this).data('sales-id'));
             });
@@ -2060,7 +2074,8 @@ function cusPurHis() {
                 $(`div[class~="sendMailModal"] input[name="customerId"]`).val($(this).data('customer-id'));
                 $(`div[class~="sendMailModal"]`).modal('show');
             });
-        }, error: function(err) {
+        },
+        error: function(err) {
             $(`div[class~="attendantHistory"] div[class~="modal-body"]`).html(`
                 <p align="center">No records found.</p>
                 `);
@@ -2079,24 +2094,25 @@ $(`form[id="updateProductForm"]`).on('submit', function(e) {
         dataType: 'JSON',
         contentType: false,
         cache: false,
-        processData:false,
-        beforeSend: function(){
-            $(`div[class="form-content-loader"]`).css("display","flex");
+        processData: false,
+        beforeSend: function() {
+            $(`div[class="form-content-loader"]`).css("display", "flex");
         },
-        success: function(resp){
+        success: function(resp) {
             Toast.fire({
                 type: resp.status,
                 title: resp.message.result
             });
 
-            if(resp.status == "success") {
+            if (resp.status == "success") {
                 setTimeout(function() {
                     window.location.href = `${baseUrl}products/${resp.message.productId}`;
                 }, 1500);
             }
-            $(`div[class="form-content-loader"]`).css("display","none");
-        }, error: function(err) {
-            $(`div[class="form-content-loader"]`).css("display","none");
+            $(`div[class="form-content-loader"]`).css("display", "none");
+        },
+        error: function(err) {
+            $(`div[class="form-content-loader"]`).css("display", "none");
         }
     });
 
@@ -2104,38 +2120,40 @@ $(`form[id="updateProductForm"]`).on('submit', function(e) {
 
 $(`button[class~="resend-email-button"]`).on('click', function(evt) {
     let thisBtn = $(this),
-    thisEmail = $(`div[class~="sendMailModal"] input[name="send_email"]`),
-    fullname = $(`div[class~="sendMailModal"] input[name="fullname"]`).val(),
-    thisRequest = $(`div[class~="sendMailModal"] input[name="request_type"]`).val(),
-    receiptId = $(`div[class~="sendMailModal"] input[name="receiptId"]`).val(),
-    customerId = $(`div[class~="sendMailModal"] input[name="customerId"]`).val();
+        thisEmail = $(`div[class~="sendMailModal"] input[name="send_email"]`),
+        fullname = $(`div[class~="sendMailModal"] input[name="fullname"]`).val(),
+        thisRequest = $(`div[class~="sendMailModal"] input[name="request_type"]`).val(),
+        receiptId = $(`div[class~="sendMailModal"] input[name="receiptId"]`).val(),
+        customerId = $(`div[class~="sendMailModal"] input[name="customerId"]`).val();
 
-    if(thisEmail.val().length > 5) {
+    if (thisEmail.val().length > 5) {
         thisBtn.prop('disabled', true)
-        .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
+            .html(`Sending <i class="fa fa-spinner fa-spin"></i>`);
         thisEmail.prop('disabled', true);
 
         $.ajax({
             url: `${baseUrl}api/pointOfSaleProcessor/sendMail`,
             type: `POST`,
-            data: {sendMail: true, thisEmail: thisEmail.val(), fullname: fullname, thisRequest: thisRequest, receiptId: receiptId, customerId: customerId},
+            data: { sendMail: true, thisEmail: thisEmail.val(), fullname: fullname, thisRequest: thisRequest, receiptId: receiptId, customerId: customerId },
             dataType: "json",
             success: function(resp) {
                 Toast.fire({
                     type: resp.status,
                     title: resp.message
                 });
-                if(resp.status == "success") {
+                if (resp.status == "success") {
                     $(`div[class~="sendMailModal"]`).modal('hide');
                 }
-            }, error: function(err) {
+            },
+            error: function(err) {
                 Toast.fire({
                     type: 'error',
                     title: 'Error processing request!'
                 });
                 thisEmail.prop('disabled', false);
                 thisBtn.prop('disabled', false).html(`Send`);
-            }, complete: function(data) {
+            },
+            complete: function(data) {
                 thisEmail.prop('disabled', false);
                 thisBtn.prop('disabled', false).html(`Send`);
             }
@@ -2150,43 +2168,43 @@ $(`button[class~="resend-email-button"]`).on('click', function(evt) {
     }
 });
 
-if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
+if ($(`table[class~="customersList"], span[class~="customersList"]`).length) {
 
     $("#updateCustomerForm").on("submit", async function(event) {
 
         event.preventDefault();
         let formData = $(this).serialize();
 
-        $.post(baseUrl+"api/customerManagement/manageCustomers", formData, (res) => {
-            if(res.status == 200){
-                Toast.fire({
-                    type: 'success',
-                    title: res.message
-                });
-                if($(`span[class~="customersList"]`).length) {
-                    setTimeout(() => {
+        $.post(baseUrl + "api/customerManagement/manageCustomers", formData, (res) => {
+                if (res.status == 200) {
+                    Toast.fire({
+                        type: 'success',
+                        title: res.message
+                    });
+                    if ($(`span[class~="customersList"]`).length) {
+                        setTimeout(() => {
 
-                    }, 1200);
-                } else  {
-                    listCustomers();
+                        }, 1200);
+                    } else {
+                        listCustomers();
+                    }
+                    $("#updateCustomerForm").parents(".modal").modal("hide");
+                    $("#updateCustomerForm").trigger("reset");
+                } else {
+                    Toast.fire({
+                        type: 'error',
+                        title: res.message
+                    });
                 }
-                $("#updateCustomerForm").parents(".modal").modal("hide");
-                $("#updateCustomerForm").trigger("reset");
-            } else {
+                $(".content-loader", $("#updateCustomerForm")).css({ display: "none" });
+            })
+            .catch((err) => {
                 Toast.fire({
                     type: 'error',
-                    title: res.message
-                });                 
-            }
-            $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
-        })
-        .catch((err) => {
-            Toast.fire({
-                type: 'error',
-                title: "Error Processing Request"
-            })      
-            $(".content-loader", $("#updateCustomerForm")).css({display: "none"});
-        })
+                    title: "Error Processing Request"
+                })
+                $(".content-loader", $("#updateCustomerForm")).css({ display: "none" });
+            })
     });
 
     $(`div[class="main-content"]`).on('click', `a[class~="add-customer"]`, function(e) {
@@ -2220,16 +2238,16 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
         $(`table[class~="customersList"]`).dataTable({
             "aaData": customerData,
             "iDisplayLength": 10,
-            "buttons": ["copy", "print","csvHtml5"],
+            "buttons": ["copy", "print", "csvHtml5"],
             "lengthChange": !1,
             "dom": "Bfrtip",
             "columns": [
-            {"data": 'row_id'},
-            {"data": 'fullname'},
-            {"data": 'email'},
-            {"data": 'phone_1'},
-            {"data": 'date_log'},
-            {"data": 'action'}
+                { "data": 'row_id' },
+                { "data": 'fullname' },
+                { "data": 'email' },
+                { "data": 'phone_1' },
+                { "data": 'date_log' },
+                { "data": 'action' }
             ]
         });
 
@@ -2241,84 +2259,86 @@ if($(`table[class~="customersList"], span[class~="customersList"]`).length) {
         $.ajax({
             method: "POST",
             url: `${baseUrl}api/customerManagement/listCustomers`,
-            data: { listCustomers: true},
+            data: { listCustomers: true },
             dataType: "JSON",
             success: function(resp) {
                 populateCustomersList(resp.result);
-            }, complete: function(data) {
+            },
+            complete: function(data) {
                 hL();
-            }, error: function(err) {
+            },
+            error: function(err) {
                 hL();
             }
         });
     }
 
-    if($(`table[class~="customersList"]`).length) {
+    if ($(`table[class~="customersList"]`).length) {
         listCustomers();
     }
 }
 
 $("#newCustomer_form").on("submit", async function(event) {
-    event.preventDefault();
-    let formData = $(this).serialize();
-    $(".content-loader", $("#newCustomerModal")).css({display: "flex"});
+            event.preventDefault();
+            let formData = $(this).serialize();
+            $(".content-loader", $("#newCustomerModal")).css({ display: "flex" });
 
-    await dOC().then((itResp) => {
-        if(itResp == 1) {
-            noInternet = false;
-            $(`div[class="connection"]`).css('display','none');
-            $(`div[class~="offline-placeholder"]`).css('display','none');
-        } else {
-            noInternet = true;
-            $(`div[class="connection"]`).css('display','block');
-            $(`div[class~="offline-placeholder"]`).css('display','flex');
-        }
-    }).catch((err) => {
-        noInternet = true;
-        $(`div[class="connection"]`).css('display','block');
-        $(`div[class~="offline-placeholder"]`).css('display','flex');
-    });
-
-    if(noInternet) {
-
-        let customerId = rndInt(12);
-
-        var formDetails = [{
-            customer_id: `AR${customerId}`,
-            title: $(`select[name="nc_title"]`).val(),
-            firstname: $(`input[name="nc_firstname"]`).val(),
-            lastname: $(`input[name="nc_lastname"]`).val(),
-            phone_1: $(`input[name="nc_contact"]`).val(),
-            email: $(`input[name="nc_email"]`).val(),
-            clientId: storeValues.clientId,
-            state: 'MODIFIED',
-            branchId: storeValues.branchId,
-            fullname: $(`input[name="nc_firstname"]`).val() + ' ' + $(`input[name="nc_lastname"]`).val() 
-        }];
-
-        if($(`input[name="nc_firstname"]`).val().length < 2) {
-            Toast.fire({
-                type: 'error',
-                title: `Please enter customer's firstname`
+            await dOC().then((itResp) => {
+                if (itResp == 1) {
+                    noInternet = false;
+                    $(`div[class="connection"]`).css('display', 'none');
+                    $(`div[class~="offline-placeholder"]`).css('display', 'none');
+                } else {
+                    noInternet = true;
+                    $(`div[class="connection"]`).css('display', 'block');
+                    $(`div[class~="offline-placeholder"]`).css('display', 'flex');
+                }
+            }).catch((err) => {
+                noInternet = true;
+                $(`div[class="connection"]`).css('display', 'block');
+                $(`div[class~="offline-placeholder"]`).css('display', 'flex');
             });
-            $(".content-loader", $("#newCustomerModal")).css({display: "none"});
 
-            return false;
-        } else if($(`input[name="nc_lastname"]`).val().length < 2) {
-            Toast.fire({
-                type: 'error',
-                title: `Please enter customer's lastname`
-            });
-            $(".content-loader", $("#newCustomerModal")).css({display: "none"});
+            if (noInternet) {
 
-            return false;
-        } else {
-            var details = await aIDB('customers', formDetails).then((resp) => {
+                let customerId = rndInt(12);
 
-                $("#newCustomer_form").parents(".modal").modal("hide");
-                $(".content-loader", $("#newCustomerModal")).css({display: "none"});
+                var formDetails = [{
+                    customer_id: `AR${customerId}`,
+                    title: $(`select[name="nc_title"]`).val(),
+                    firstname: $(`input[name="nc_firstname"]`).val(),
+                    lastname: $(`input[name="nc_lastname"]`).val(),
+                    phone_1: $(`input[name="nc_contact"]`).val(),
+                    email: $(`input[name="nc_email"]`).val(),
+                    clientId: storeValues.clientId,
+                    state: 'MODIFIED',
+                    branchId: storeValues.branchId,
+                    fullname: $(`input[name="nc_firstname"]`).val() + ' ' + $(`input[name="nc_lastname"]`).val()
+                }];
 
-                $(".customer-select").children("option:first").after(`<option selected data-email='${$(`input[name="nc_email"]`).val()}' data-contact='${$(`input[name="nc_contact"]`).val()}' value=${customerId}>${$(`input[name="nc_firstname"]`).val()} ${$(`input[name="nc_lastname"]`).val()}</option>`)
+                if ($(`input[name="nc_firstname"]`).val().length < 2) {
+                    Toast.fire({
+                        type: 'error',
+                        title: `Please enter customer's firstname`
+                    });
+                    $(".content-loader", $("#newCustomerModal")).css({ display: "none" });
+
+                    return false;
+                } else if ($(`input[name="nc_lastname"]`).val().length < 2) {
+                    Toast.fire({
+                        type: 'error',
+                        title: `Please enter customer's lastname`
+                    });
+                    $(".content-loader", $("#newCustomerModal")).css({ display: "none" });
+
+                    return false;
+                } else {
+                    var details = await aIDB('customers', formDetails).then((resp) => {
+
+                                $("#newCustomer_form").parents(".modal").modal("hide");
+                                $(".content-loader", $("#newCustomerModal")).css({ display: "none" });
+
+                                $(".customer-select").children("option:first").after(`<option selected data-email='${$(`input[name="nc_email"]`).val()}' data-contact='${$(`input[name="nc_contact"]`).val()}' value=${customerId}>${$(`input[name="nc_firstname"]`).val()} ${$(`input[name="nc_lastname"]`).val()}</option>`)
                 if($(`input[name="nc_email"]`).length){
                     $("#receipt-email").val($(`input[name="nc_email"]`).val());
                 }
@@ -2527,31 +2547,31 @@ if($(".make-online-payment").length) {
                         $(`div[class="connection"]`).css('display','block');
                     });
 
-                    if(!noInternet) {
+                    if(noInternet) {
 
-                        sPIDB().then((resp) => {
-                            if(resp.status == 'error') {
-                                Toast.fire({
-                                    type: 'error',
-                                    title: resp.result
-                                });
-                            } else {
-                                $("[data-bind-html='orderId']").html(resp.orderId);
-                                $(`span[class="generated_order"]`).html(resp.orderId);
-                                $(`div[class="svon"]`).attr('data-value', 0);
-                                Toast.fire({
-                                    type: 'success',
-                                    title: "Payment Successfully Recorded"
-                                });
-                                $(".cash-process-loader").removeClass("d-flex");
-                                if(storeValues.prt == "yes") {
-                                    qPrt();
-                                }
-                                ftchPrdList();
-                                Cookies.set('offlineSales', 'available');
-                                $(`select[class~="customer-select"]`).val('WalkIn').change();
-                            }
-                        });
+                        // sPIDB().then((resp) => {
+                        //     if(resp.status == 'error') {
+                        //         Toast.fire({
+                        //             type: 'error',
+                        //             title: resp.result
+                        //         });
+                        //     } else {
+                        //         $("[data-bind-html='orderId']").html(resp.orderId);
+                        //         $(`span[class="generated_order"]`).html(resp.orderId);
+                        //         $(`div[class="svon"]`).attr('data-value', 0);
+                        //         Toast.fire({
+                        //             type: 'success',
+                        //             title: "Payment Successfully Recorded"
+                        //         });
+                        //         $(".cash-process-loader").removeClass("d-flex");
+                        //         if(storeValues.prt == "yes") {
+                        //             qPrt();
+                        //         }
+                        //         ftchPrdList();
+                        //         Cookies.set('offlineSales', 'available');
+                        //         $(`select[class~="customer-select"]`).val('WalkIn').change();
+                        //     }
+                        // });
 
                     } else {
                         svReg().then((res) => {
@@ -4137,9 +4157,7 @@ $(function() {
 
                 },
                 success: function(resp) {
-
                     populateSalesTeamData(resp.result.list, resp.result.names, resp.result.sales);
-
                 },
                 complete: function(data) {
                     salesAttendantHistory();

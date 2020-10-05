@@ -179,11 +179,11 @@ if(!$found) {
 	</div>
 	<script>
 		window.onload = (evt) => {
-			// window.print();
+			window.print();
 		}
 
 		window.onafterprint = (evt) => {
-			// window.close();
+			window.close();
 		}
 	</script>
 </body>

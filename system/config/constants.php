@@ -3,7 +3,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 // set thee default date/time for the php.ini to use
-date_default_timezone_set('Africa/Accra');
+date_default_timezone_set('Europe/Lisbon');
 
 # set the constants for the database connection
 defined('DB_HOST')  OR define('DB_HOST', "localhost");

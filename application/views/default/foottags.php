@@ -255,6 +255,7 @@ var clock_tick = function clock_tick() {
 }
 clock_tick();
 <?php } ?>
+hL();
 $(async function() {
 <?php
 // check the welcome notice
@@ -277,7 +278,6 @@ if(!empty($Notification)) {
   }
 }
 ?>
-hL();
 <?php if(confirm_url_id(1, 'inventory-details')) { ?>
   var identifyCurrentBranch = () => {
       var site2 = branchID;
