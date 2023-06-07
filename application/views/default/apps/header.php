@@ -22,6 +22,11 @@ $baseUrl = $config->base_url('app/');
    <!-- Page plugins -->
    <!-- Argon CSS -->
    <link rel="stylesheet" href="<?= $config->base_url('assets/css/argon.min9f1e.css?v=1.1.0'); ?>" type="text/css">
+   <style>
+    .cursor {
+      cursor: pointer;
+    }
+  </style>
  </head>
  <body>
 	<nav id="navbar-main" class="navbar navbar-horizontal navbar-main navbar-expand-lg navbar-dark bg-primary">

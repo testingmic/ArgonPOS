@@ -65,7 +65,7 @@ $rootDir = $config->base_url();
 
                   if(strlen($code) > 29) {
 
-                    $stmt = $pos->query("SELECT * FROM users_reset_request WHERE request_token='$code' AND token_status='PENDING'");
+                    $stmt = $pos->query("SELECT * FROM users_reset_request WHERE request_token='{$code}' AND token_status='PENDING' LIMIT 1");
 
                     if($stmt->rowCount()) {
 
@@ -166,14 +166,8 @@ $rootDir = $config->base_url();
                 <h3 class="text-center">Account Verification</h3>
                 <?php
                 if(strlen($code) >= 40) {
-                  $stmt = $pos->query("
-                    SELECT 
-                      a.clientId, a.branchId, a.name, a.email, a.verify_token,
-                      b.setup_info, a.id, a.user_id
-                    FROM users a
-                    LEFT JOIN settings b ON b.clientId = a.clientId
-                    WHERE a.verify_token='$code'
-                  ");
+                  $stmt = $pos->query("SELECT a.clientId, a.branchId, a.name, a.email, a.verify_token, b.setup_info, a.id, a.user_id
+                    FROM users a LEFT JOIN settings b ON b.clientId = a.clientId WHERE a.verify_token='{$code}' LIMIT 1");
                   if($stmt->rowCount()) {
                     while($results = $stmt->fetch(PDO::FETCH_OBJ)) {
                       // update the user information
@@ -181,10 +175,10 @@ $rootDir = $config->base_url();
                       $setupInfo->verified = 1;
 
                       // unset the access token
-                      $pos->query("UPDATE settings SET setup_info='".json_encode($setupInfo)."' WHERE clientId = '{$results->clientId}'");
+                      $pos->query("UPDATE settings SET setup_info='".json_encode($setupInfo)."' WHERE clientId = '{$results->clientId}' LIMIT 1");
 
                       // update the user status
-                      $pos->query("UPDATE users SET status='1', verify_token=NULL WHERE id = '{$results->id}'");
+                      $pos->query("UPDATE users SET status='1', verify_token = NULL WHERE id = '{$results->id}' LIMIT 1");
 
                       // log the user activity
                       $posClass->userLogs("setup-verify", $results->clientId, "Has verified the Store Details submitted and activated the Admin User Account for the Store.", $results->clientId, $results->branchId, $results->user_id);

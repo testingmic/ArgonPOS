@@ -12,6 +12,9 @@
 
 class Downloads extends Pos {
 
+	public $file_path;
+	public $file_name;
+
 	# start the construct
 	public function __construct() {
 		parent::__construct();		

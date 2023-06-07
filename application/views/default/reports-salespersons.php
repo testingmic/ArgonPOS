@@ -67,7 +67,7 @@ $session->insightRequest = [];
                 <div class="card">
                   <div class="card-body">
                       <div class="table-responsive">
-                          <table width="100%" class="table mb-0 datatable-buttons attendant-performance">
+                          <table width="100%" class="table mb-0 datatable-buttons attendant-performance" width="100%">
                               <thead class="thead-light">
                               <tr>
                                   <th width="30%">Name</th>
@@ -117,7 +117,7 @@ $session->insightRequest = [];
             </div>
             <div class="modal-body table-responsive">
               <div class="card mb-0 p-3">
-                <table data-content="non-filtered" class="table nowrap datatable-buttons salesLists" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <table data-content="non-filtered" class="table nowrap datatable-buttons salesLists" style="border-collapse: collapse; border-spacing: 0; width: 100%;" width="100%">
                     <thead class="thead-light">
                         <tr>
                             <th>ID</th>

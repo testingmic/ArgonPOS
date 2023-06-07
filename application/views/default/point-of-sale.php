@@ -302,8 +302,8 @@ a[href="#finish"] {
                     <th>#</th>
                     <th>Product</th>
                     <th>Unit Price</th>
-                    <th width="10%">Quantity</th>
-                    <th>Subtotal</th>
+                    <th width="14%">Quantity</th>
+                    <th width="10%">Subtotal</th>
                     <th width="1"></th>
                   </tr>
                 </thead>
@@ -412,7 +412,6 @@ a[href="#finish"] {
                 <div class="card mb-0 p-3">
                     <div class="form-group mb-3 details-pane">
                         <p>Are you sure you want to discard this sale transaction?</p>
-                    </div><!--end form-group-->
                     <div class="form-group mb-3 text-right">
                       <a href="javascript:void(0)" data-dismiss="modal" aria-label="Close" class="btn btn-danger">Cancel</a>
                       <a href="javascript:void(0)" class="discard-sale btn btn-success">Yes Confirm</a>

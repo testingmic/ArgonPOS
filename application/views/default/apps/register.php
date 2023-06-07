@@ -24,7 +24,7 @@ if(isset($_GET["v"])) {
       <div class="row justify-content-center">
         <div class="col-lg-12 text-center">
           <h1 class="text-white" style="font-size: 40px;">Let's get started</h1>
-          <p class="text-white">Try <strong><?= config_item('site_name') ?></strong> for 14days. No credit card, no payments</p>
+          <p class="text-white">Try <strong><?= config_item('site_name') ?></strong> for 14 days. No credit card, no payments</p>
         </div>
         <div class="col-lg-6 col-md-8">
           <div class="card bg-secondary border-0">
@@ -73,6 +73,7 @@ if(isset($_GET["v"])) {
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
                     <input class="form-control" name="password" placeholder="Password" type="password">
+                    <span class="input-group-text cursor" data-default="password" title="Show Password" id="showPassword"><i class="ni ni-atom"></i></span>
                   </div>
                 </div>
                 <div class="text-center">

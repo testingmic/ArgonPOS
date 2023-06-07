@@ -7,6 +7,7 @@ class Accesslevel {
     private $_status = false;
     public $userId;
     public $currentPage;
+    public $db;
 
     private $_message = '';
 
@@ -20,7 +21,7 @@ class Accesslevel {
      *
      * @param String $accessLevel Pass level id to fetch details
      *
-     * @return String $this->_message
+     * @return array
      */
     public function getPermissions($accessLevel = false)
     {
@@ -44,7 +45,7 @@ class Accesslevel {
      *
      * @param String $accessLevel Pass level user_id to fetch details
      *
-     * @return String $this->_message
+     * @return array
      */
     public function getUserPermissions()
     {

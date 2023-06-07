@@ -4,10 +4,6 @@ if( !defined( 'SITE_URL' ) && !defined( 'SITE_DATE_FORMAT' ) ) die( 'Restricted 
 
 class Customers extends Pos {
 
-	# Main PDO Connection Instance
-	protected $db;
-	protected $session;
-
 	public function __construct($clientId = null){
 		parent::__construct();
 

@@ -2596,7 +2596,7 @@ if($(".make-online-payment").length) {
             <td style="padding-top:20px">${rowData.productName}</td>
             <td style="padding-top:20px">${rowData.productPrice}</td>
             <td>
-            <input type='number' style="width:75px;text-align:center" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
+            <input type='number' style="width:100px;text-align:center" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][qty]" min="1" data-max='${rowData.product_max}' data-row='${rowData.productId}' class='form-control product-quantity' value="${qty}">
             <input type="hidden" data-name="${rowData.productName}" form="pos-form-horizontal" name="products[${rowData.productId}][price]" value="${rowData.productPrice}"></td>
             <td style="padding-top:20px" class='row-subtotal'>${subTotal}</td>
             <td class='p-0'><button class='btn btn-sm mb-1 mt-4 btn-outline-danger remove-row' data-row='${rowData.productId}'><i class='fa fa-times'></i></button></td>

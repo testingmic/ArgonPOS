@@ -32,32 +32,38 @@ if(isset($_POST["fullname"], $_POST["store_name"], $_POST["store_email"], $_POST
 		if(isset($postData->store_email) and filter_var($postData->store_email, FILTER_VALIDATE_EMAIL)) {
 			
 			// check for the various items
-			$check = $posClass->getAllRows(
-			"settings", "COUNT(*) AS rows_count", "client_email = '{$postData->store_email}'")[0];
+			$check = $posClass->getAllRows("settings", "COUNT(*) AS rows_count", "client_email = '{$postData->store_email}' LIMIT 1")[0] ?? null;
 
-			$check2 = $posClass->getAllRows(
-			"users", "COUNT(*) AS rows_count", "email = '{$postData->store_email}'")[0];
-			
-			// count the number of rows found
-			if($check->rows_count != 0 || $check2->rows_count != 0) {
-				$response->result = 'Sorry! This Email Address already exist.';
-			} else {
-				// password test
-				if(!passwordTest($postData->password)) {
-					$response->result = $password_ErrorMessage;
+			$proceed = true;
+			if($check->rows_count != 0) {
+				$proceed = false;
+				$response->result = 'Sorry! This email address already exists.';
+			}
+
+			if($proceed) {
+				$check2 = $posClass->getAllRows("users", "COUNT(*) AS rows_count", "email = '{$postData->store_email}' LIMIT 1")[0] ?? null;
+				
+				// count the number of rows found
+				if($check2->rows_count != 0) {
+					$response->result = 'Sorry! This email address already exists.';
 				} else {
+					// password test
+					if(!passwordTest($postData->password)) {
+						$response->result = $password_ErrorMessage;
+					} else {
 
-					// create a new object
-					$setupObject = load_class('Setup', 'controllers');
-					$postData->subscribeTo = $session->subscriptionPack;
+						// create a new object
+						$setupObject = load_class('Setup', 'controllers');
+						$postData->subscribeTo = $session->subscriptionPack;
 
-					// insert the record into the database
-					$setup = $setupObject->initialSetup($postData);
+						// insert the record into the database
+						$setup = $setupObject->initialSetup($postData);
 
-					// check if the response is true
-					if($setup) {
-						$response->status = 'success';
-						$response->result = 'Store Setup was successfully processed. Please check your email for further instructions.';
+						// check if the response is true
+						if($setup) {
+							$response->status = 'success';
+							$response->result = 'Store Setup was successfully processed. Please check your email for further instructions.';
+						}
 					}
 				}
 			}

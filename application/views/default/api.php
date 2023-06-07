@@ -207,17 +207,17 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 			// Check Sales Period
 			switch ($period) {
 				case 'this-week':
-					$dateFrom = $dateClass->get_week("this_wkstart", date('Y-m-d'));
-					$dateTo = $dateClass->get_week("this_wkend", date('Y-m-d'));
-					$datePrevFrom = $dateClass->get_week("last_wkstart", date('Y-m-d'));
-					$datePrevTo = $dateClass->get_week("last_wkend", date('Y-m-d'));
+					$dateFrom = date("Y-m-d", strtotime("monday this week"));
+					$dateTo = date("Y-m-d", strtotime("sunday this week"));
+					$datePrevFrom = date("Y-m-d", strtotime("monday last week"));
+					$datePrevTo = date("Y-m-d", strtotime("sunday last week"));
 					$display = "Last Week";
 					break;
 				case 'this-month':
-					$dateFrom = $dateClass->get_month("this_mntstart", date('m'), date('Y'));
-					$dateTo = $dateClass->get_month("this_mntend", date('m'), date('Y'));
-					$datePrevFrom = $dateClass->get_month("last_mntstart", date('m'), date('Y'));
-					$datePrevTo = $dateClass->get_month("last_mntend", date('m'), date('Y'));
+					$dateFrom = date("Y-m-01");
+					$dateTo = date("Y-m-t");
+					$datePrevFrom = date("Y-m-01", strtotime("last month"));
+					$datePrevTo = date("Y-m-t", strtotime("last month"));
 					$display = "Last Month";
 					break;
 				case 'this-year':
@@ -476,8 +476,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					"c.product_title, b.*, a.order_discount,
 					CONCAT(d.firstname ,' ', d.lastname) AS fullname,
 					a.order_date, a.order_id, d.phone_1 AS contact,
-					a.payment_type, e.branch_name, f.name AS sales_person
-					", 
+					a.payment_type, e.branch_name, f.name AS sales_person", 
 					"a.clientId = '{$loggedUserClientId}' && b.order_id = '{$postData->salesID}' ORDER BY b.id"
 				);
 
@@ -611,10 +610,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$format = "jS M Y";
 					$groupByClause = "GROUP BY DATE(a.order_date)";
 					$groupByInnerClause = "GROUP BY DATE(b.order_date)";
-					$dateFrom = $dateClass->get_week("this_wkstart", date('Y-m-d'));
-					$dateTo = $dateClass->get_week("this_wkend", date('Y-m-d'));
-					$datePrevFrom = $dateClass->get_week("last_wkstart", date('Y-m-d'));
-					$datePrevTo = $dateClass->get_week("last_wkend", date('Y-m-d'));
+					$dateFrom = date("Y-m-d", strtotime("monday this week"));
+					$dateTo = date("Y-m-d", strtotime("sunday this week"));
+					$datePrevFrom = date("Y-m-d", strtotime("monday last week"));
+					$datePrevTo = date("Y-m-d", strtotime("sunday last week"));
 					$current = "This Week";
 					$display = "Compared to Last Week";
 					break;
@@ -623,10 +622,10 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 					$format = "jS M Y";
 					$groupByClause = "GROUP BY DATE(a.order_date)";
 					$groupByInnerClause = "GROUP BY DATE(b.order_date)";
-					$dateFrom = $dateClass->get_month("this_mntstart", date('m'), date('Y'));
-					$dateTo = $dateClass->get_month("this_mntend", date('m'), date('Y'));
-					$datePrevFrom = $dateClass->get_month("last_mntstart", date('m'), date('Y'));
-					$datePrevTo = $dateClass->get_month("last_mntend", date('m'), date('Y'));
+					$dateFrom = date("Y-m-01");
+					$dateTo = date("Y-m-t");
+					$datePrevFrom = date("Y-m-01", strtotime("last month"));
+					$datePrevTo = date("Y-m-t", strtotime("last month"));
 					$current = "This Month";
 					$display = "Compared to Last Month";
 					break;
@@ -1943,7 +1942,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 			// fetch the data
 			$customersClass = load_class("Customers", "controllers");
-			$customers = $customersClass->fetch("id, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, branchId, phone_1, state, phone_2, email, residence", "AND customer_id != 'WalkIn'");
+			$customers = $customersClass->fetch("id, customer_id, firstname, lastname, CONCAT(firstname, ' ', lastname) AS fullname, preferred_payment_type, date_log, clientId, 
+				branchId, phone_1, state, phone_2, email, residence", "AND customer_id != 'WalkIn'");
 
 			// fetch the data
 			$customers_list = [];
@@ -1956,9 +1956,13 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 
 		//: fetch customers list for json
 		elseif(isset($_POST["fetchPOSProductsList"]) && confirm_url_id (1, "fetchPOSProductsList")) {
+
+			$branchFilter = $accessObject->hasAccess('monitoring', 'branches') ? null : "AND branchId = '{$loggedUserBranchId}'";
+
 			// query the database
 			$result = $posClass->getAllRows("products", 
-				"id, product_image, category_id, product_title, source, quantity, category_id, product_image AS image, product_id, product_price, date_added, product_description, product_price, cost_price, threshold", "status = '1' AND branchId = '{$loggedUserBranchId}' AND clientId = '{$loggedUserClientId}'");
+				"id, product_image, category_id, product_title, source, quantity, category_id, product_image AS image, product_id, product_price, 
+				date_added, product_description, product_price, cost_price, threshold", "status = '1' {$branchFilter} AND clientId = '{$loggedUserClientId}'");
 
 			// data
 			$productsList = [];
@@ -3059,10 +3063,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 						// assign some more variables
 						$sellPrice = $product->product_price;
 						// Check If Product Exists In Receiving Branch
-						$check = $productsClass->getCountdata(
-							"products", 
-							"product_id = '{$postData->transferProductID}' && branchId = '{$postData->branchId}'"
-						);
+						$check = $productsClass->getCountdata("products", "product_id = '{$postData->transferProductID}' AND branchId = '{$postData->branchId}'");
 
 						if ($check == 0) {
 							// Get Product Details
@@ -3085,8 +3086,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							// Reduce Sending Shop Product Stock
 							$posClass->updateData(
 								"products", 
-								"quantity = (quantity - $postData->transferProductQuantity)",
-								"product_id = '{$postData->transferProductID}' && branchId = '{$postData->transferFrom}'"
+								"quantity = (quantity - {$postData->transferProductQuantity})",
+								"product_id = '{$postData->transferProductID}' AND branchId = '{$postData->transferFrom}'"
 							);
 
 							// Add Product Transfer To Inventory
@@ -3177,7 +3178,7 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 							// Check If Product Exists
 							$check = $productsClass->getCountdata(
 								"products", 
-								"product_id = '{$nproductID}' && branchId = '{$postData->branchId}'"
+								"product_id = '{$nproductID}' AND branchId = '{$postData->branchId}'"
 							);
 
 							if ($check == 0) {
@@ -3986,7 +3987,8 @@ if($admin_user->logged_InControlled() || isset($apiAccessValues->clientId)) {
 				
 				//: query for the list of all customers
 				$customersClass = load_class("Customers", "controllers", $loggedUserClientId);
-				$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, a.postal_address, b.branch_name", 
+				$customersList = $customersClass->fetch("a.id, a.title, a.customer_id, a.firstname, a.lastname, CONCAT(a.firstname, ' ', a.lastname) AS fullname, 
+					a.preferred_payment_type, a.date_log, a.clientId, a.branchId, a.phone_1, a.phone_2, a.email, a.residence, a.postal_address, b.branch_name", 
 					"AND a.customer_id != 'WalkIn' {$branchAccess}",
 					"LEFT JOIN branches b ON b.id = a.branchId", $limit
 				);

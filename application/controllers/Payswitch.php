@@ -8,6 +8,7 @@ class Payswitch extends Pos
     public $userId;
     private $_status = false;
     private $_message = '';
+    public $call_type;
 
     private $pass_code = 'hellow';
     private $teller_merchant_id = "TTM-00000261";
@@ -126,8 +127,6 @@ class Payswitch extends Pos
     
     public function initiateBankTransfer($transactionId, $acc_number, $acc_bank, $desc, $amount) {
         
-        $this->call_type = $call_type;
-        
         $payload = json_encode([
             "account_number"=>"$acc_number", "account_bank"=>"$acc_bank", "account_issuer"=>"GIP", "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$transactionId", "processing_code"=>"404020", "amount"=>"$amount",  "r-switch"=>"FLT", "desc"=>"$desc", "pass_code"=>"{$this->pass_code}"
         ]);
@@ -160,8 +159,6 @@ class Payswitch extends Pos
     }
     
     public function completeBankTransfer($transactionId) {
-        
-        $this->call_type = $call_type;
         
         $payload = json_encode([
             "merchant_id"=>$this->teller_merchant_id, "transaction_id"=>"$transactionId"
@@ -224,8 +221,8 @@ class Payswitch extends Pos
     
     
     public function format_amount($amount) {
-        $this->pre_amount = str_pad($amount, 10, '0', STR_PAD_LEFT);
-        return $this->pre_amount."00";
+        $pre_amount = str_pad($amount, 10, '0', STR_PAD_LEFT);
+        return $pre_amount."00";
     }
 
     public function getOrderDetails($transactionId)

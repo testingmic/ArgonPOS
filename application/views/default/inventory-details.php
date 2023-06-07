@@ -182,7 +182,7 @@ if(isset($branch->branch_name)) {
                                   <input type="number" step="1" value="" class="form-control" min="0" name="quantity">
                               </div>
                               <div class="col-md-12 mb-3">
-                                  <label for="threshold" class="text-primary-light">Threshold</label>
+                                  <label for="threshold" class="text-primary-light">Threshold <small>(At what quantity do you want to see an alert.)</small></label>
                                   <input type="number" step="1" value="" class="form-control" min="0" name="threshold">
                               </div>
                           </div>

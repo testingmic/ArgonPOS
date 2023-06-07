@@ -12,14 +12,14 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-$config['base_url'] = 'http://localhost/pos';
-$config['manager_dashboard'] = 'http://localhost/pos/app';
+$config['base_url'] = 'http://localhost:89/';
+$config['manager_dashboard'] = 'http://localhost:89/';
 $config['rowsperpage'] = 40;
 $config['version'] = 'v1';
-$config['site_url'] = 'https://www.visaminetsolutions.com';
+$config['site_url'] = 'http://localhost:89';
 $config['site_name'] = 'Argon POS';
-$config['site_email'] = 'info@analiticainnovare.net';
-$config['developer'] = 'Visami Net Solutions';
+$config['site_email'] = 'info@emmallextech.com';
+$config['developer'] = 'Emmallex Technologies';
 $config['update_folder'] = '/analitica/company/backups/';
 $config['sionoff'] = 'Off';
 $config['index_page'] = 'index.php';
@@ -44,9 +44,9 @@ $config['encryption_key'] = 'I99_Obeng_F109';
 $config['sess_driver'] = 'files';
 $config['sess_cookie_name'] = 'pos_session';
 $config['sess_expiration'] = 3600;
-$config['sess_save_path'] = "/VisaminetSolutions/WebApplication/sessions/";
+$config['sess_save_path'] = "/home/visamine/public_html/pos.visaminetsolutions.com/application/sessions/";
 $config['sess_match_ip'] = FALSE;
-$config['sess_time_to_update'] = 600;
+$config['sess_time_to_update'] = 3600;
 $config['sess_regenerate_destroy'] = FALSE;
 
 /*

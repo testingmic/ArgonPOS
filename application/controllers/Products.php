@@ -1,19 +1,16 @@
 <?php
 // ensure this file is being included by a parent file
-if( !defined( 'SITE_URL' ) && !defined( 'SITE_DATE_FORMAT' ) ) die( 'Restricted access' );
+if( !defined( 'SITE_URL' ) AND !defined( 'SITE_DATE_FORMAT' ) ) die( 'Restricted access' );
 
 class Products extends Pos {
 	const PRODUCTID_PREFIX = "PDT";
 
 	protected $imagesUrl;
 	protected $defaultImg;
-
-
-	# Main PDO Connection Instance
-	protected $session;
+	private $_message;
 
 	public function __construct($clientId = null){
-		global $session, $config, $pos;
+		global $config, $pos;
 		
 		parent::__construct();
 
@@ -57,10 +54,7 @@ class Products extends Pos {
     {
         $this->_message = 0;
 
-        $stmt = $this->db->prepare(
-            "SELECT COUNT(*) AS total FROM {$tableName} WHERE {$whereClause}"
-        );
-
+        $stmt = $this->db->prepare("SELECT COUNT(*) AS total FROM {$tableName} WHERE {$whereClause}");
         if ($stmt->execute()) {
             $this->_message = $stmt->fetch(PDO::FETCH_OBJ)->total;
         }
@@ -70,7 +64,7 @@ class Products extends Pos {
 
 	public function all($returnCount = false, $branchId = null) {
 
-		$condition = (empty($branchId)) ? null : " &&  p.branchId = '{$branchId}'";
+		$condition = (empty($branchId)) ? null : " AND  p.branchId = '{$branchId}'";
 
 		$stmt = $this->db->query("
 			SELECT *, p.id AS pid, 
@@ -131,15 +125,18 @@ class Products extends Pos {
 		if(empty($productId)) return false;
 		$productId = xss_clean($productId);
 
-		$condition = (!empty($branchId)) ? " && branchId = '".xss_clean($branchId)."'" : null;
+		$condition = (!empty($branchId)) ? " AND a.branchId = '".xss_clean($branchId)."'" : null;
 
 		$stmt = $this->db->prepare("
-			SELECT *, id AS pid,
-				IF(source = 'Vend', product_image, 
-				CONCAT('', '', IFNULL(product_image, '$this->defaultImg'))) AS image 
-			FROM products WHERE status='1' AND $column = '{$productId}' {$condition} LIMIT 1
+			SELECT a.*, a.id AS pid,
+				IF(a.source = 'Vend', a.product_image, 
+				CONCAT('', '', IFNULL(a.product_image, '{$this->defaultImg}'))) AS image,
+				b.branch_name
+			FROM products a
+			LEFT JOIN branches b ON b.id = a.branchId
+			WHERE a.status='1' AND a.{$column} = '{$productId}' {$condition} LIMIT 1
 		");
-		$stmt->execute([$productId]);
+		$stmt->execute();
 		$result = $stmt->fetch(PDO::FETCH_OBJ);
 		
 		if(!empty($product)) {
@@ -312,7 +309,7 @@ class Products extends Pos {
 
 	public function updateBranchProductStock(stdClass $product){
 		
-		$sql = "UPDATE products SET quantity = (quantity + $product->transferProductQuantity) WHERE product_id = '{$product->transferProductID}' && branchId = '{$product->branchId}'";
+		$sql = "UPDATE products SET quantity = (quantity + $product->transferProductQuantity) WHERE product_id = '{$product->transferProductID}' AND branchId = '{$product->branchId}'";
 
 		return $this->db->prepare($sql)->execute();
 	}

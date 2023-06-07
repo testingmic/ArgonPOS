@@ -1,6 +1,6 @@
 <?php
 
-class Authenticate {
+class Authenticate extends Pos {
 
     public $status = false;
     public $redirect_url;
@@ -9,11 +9,9 @@ class Authenticate {
 
     public function processLogin($username, $password, $href) {
 
-        global $pos, $session, $config;
-
         try {
 
-            $stmt = $pos->prepare("
+            $stmt = $this->pos->prepare("
                 SELECT * FROM users
                 WHERE
                     (login='$username' OR email='$username') AND status='1'
@@ -33,15 +31,15 @@ class Authenticate {
                         $this->status = true;
 
                         // set the user sessions for the person to continue
-                        $session->set_userdata("puserLoggedIn", random_string('alnum', 50));
-                        $session->set_userdata("branchId", $results["branchId"]);
-                        $session->set_userdata("clientId", $results["clientId"]);
-                        $session->set_userdata("userId", $results["user_id"]);
-                        $session->set_userdata("userName", $results["login"]);
-                        $session->set_userdata("userEmail", $results["email"]);
-                        $session->set_userdata("accessLevel", $results["access_level"]);
+                        $this->session->set_userdata("puserLoggedIn", random_string('alnum', 50));
+                        $this->session->set_userdata("branchId", $results["branchId"]);
+                        $this->session->set_userdata("clientId", $results["clientId"]);
+                        $this->session->set_userdata("userId", $results["user_id"]);
+                        $this->session->set_userdata("userName", $results["login"]);
+                        $this->session->set_userdata("userEmail", $results["email"]);
+                        $this->session->set_userdata("accessLevel", $results["access_level"]);
                         // unset session locked
-                        $session->userSessionLocked = null;
+                        $this->session->userSessionLocked = null;
 
                         $user_agent = load_class('User_agent', 'libraries');
 
@@ -49,7 +47,8 @@ class Authenticate {
                         $ip = ip_address();
                         $br = $user_agent->browser."|".$user_agent->platform;
 
-                        $stmt = $pos->prepare("INSERT INTO users_login_history SET branchId='{$results["branchId"]}', clientId='{$results["clientId"]}', username='$username', log_ipaddress='$ip', log_browser='$br', user_id='".$session->userId."', log_platform='".$user_agent->agent."'");
+                        $stmt = $this->pos->prepare("INSERT INTO users_login_history SET branchId='{$results["branchId"]}', clientId='{$results["clientId"]}', 
+                            username='$username', log_ipaddress='$ip', log_browser='$br', user_id='".$this->session->userId."', log_platform='".$user_agent->agent."'");
                         $stmt->execute();
 
                         // redirect the user

@@ -100,7 +100,7 @@ $session->insightRequest = [
                   <div class="card-body order-list">
                       <h4 class="header-title mt-0 mb-3">Top 30 Best Performing Customers</h4>
                       <div class="table-responsive">
-                          <table class="table table-hover text-left custPerformance datatable-buttons">
+                          <table class="table table-hover text-left custPerformance datatable-buttons" width="100%">
                               <thead class="thead-light">
                                   <tr>
                                       <th class="border-top-0">#</th>
@@ -134,7 +134,7 @@ $session->insightRequest = [
             </div>
             <div class="modal-body">
               <div class="card mb-0 p-3">
-                <table class="table table-hover datatable-buttons salesLists">
+                <table class="table table-hover datatable-buttons salesLists" width="100%">
                       <thead class="thead-light">
                           <tr>
                               <th class="border-top-0">#</th>

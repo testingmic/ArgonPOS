@@ -313,7 +313,7 @@ a.current .card {
 }
 
 .cash-processing .cash-process-container {
-  width:160px;
+  width:150px;
   padding:2px;
 }
 
@@ -334,18 +334,6 @@ a.current .card {
   .cash-processing .cash-process-container {
     width:110px;
     padding:2px;
-  }
-}
-
-.custom-steps-actions {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-@media (max-width: 768px) {
-  .custom-steps-actions {
-    padding-left: 0px;
-    padding-right: 0px;
   }
 }
 
@@ -532,8 +520,4 @@ table#product-select-table thead tr th {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-}
-
-.products-table-card {
-  max-height: 330px;overflow-y: auto; padding: 0px;
 }

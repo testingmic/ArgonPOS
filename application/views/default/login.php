@@ -25,6 +25,11 @@ if($admin_user->logged_InControlled()) {
   <link rel="stylesheet" href="<?= $rootDir; ?>assets/vendor/nucleo/css/nucleo.css" type="text/css">
   <link rel="stylesheet" href="<?= $rootDir; ?>assets/vendor/%40fortawesome/fontawesome-free/css/all.min.css" type="text/css">
   <link rel="stylesheet" href="<?= $rootDir; ?>assets/css/argon.min9f1e.css?v=1.1.0" type="text/css">
+  <style>
+    .cursor {
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body class="bg-default">
@@ -71,6 +76,7 @@ if($admin_user->logged_InControlled()) {
                       <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                     </div>
                     <input name="password" class="form-control" placeholder="Password" type="password">
+                    <span class="input-group-text cursor" data-default="password" title="Show Password" id="showPassword"><i class="ni ni-atom"></i></span>
                   </div>
                 </div>
                 <div class="text-center">
@@ -97,6 +103,16 @@ if($admin_user->logged_InControlled()) {
   <script src="<?= $rootDir; ?>assets/vendor/jquery/dist/jquery.min.js"></script>
   <script src="<?= $rootDir; ?>assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    $(`span[id="showPassword"]`).on('click',function() {
+      let def = $(`span[id="showPassword"]`).attr("data-default");
+      if(def == "password") {
+        $(`input[name="password"]`).attr("type", "text");
+        $(`span[id="showPassword"]`).attr({"data-default": "text", "title": "Hide Password"});
+      } else {
+        $(`span[id="showPassword"]`).attr({"data-default": "password", "title": "Show Password"});
+        $(`input[name="password"]`).attr("type", "password");
+      }
+    });
     $(`form[class~="sF"]`).on('submit', function(e) {
         e.preventDefault();
         var fb = $(`form[class~="sF"] [type="submit"]`);

@@ -2,6 +2,9 @@
 
 class Api extends Pos {
 
+	public $apiUsername;
+	public $accessToken;
+	
 	public function __construct() {
 		parent::__construct();
 	}

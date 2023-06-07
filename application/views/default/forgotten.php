@@ -75,7 +75,7 @@ if($admin_user->logged_InControlled()) {
             </div>
           </div>
           <div class="row mt-3">
-            <div class="col-6">
+            <div class="col-12 text-center">
               <a href="<?= $config->base_url('login') ?>" class="text-light"><small>Sign into your Account</small></a>
             </div>
             <!-- <div class="col-6 text-right">

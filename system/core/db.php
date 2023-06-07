@@ -12,7 +12,13 @@
 
 class DB {
 	
-	private $evelyn;
+	private $pos;
+	private $conn;
+
+	private $hostname;
+	private $username;
+	private $password;
+	private $database;
 	
 	public function __construct() {
 		
@@ -21,27 +27,27 @@ class DB {
 		$this->password = DB_PASS;
 		$this->database = DB_NAME;
 		
-		if($this->evelyn == null) {
-			$this->evelyn = $this->db_connect($this->hostname, $this->username, $this->password, $this->database);
+		if($this->pos == null) {
+			$this->pos = $this->db_connect($this->hostname, $this->username, $this->password, $this->database);
 		}
 	}
 	public function get_database(){
-		return $this->evelyn;
+		return $this->pos;
 	}
 
 	private function db_connect($hostname, $username, $password, $database) {
 		
 		try {
-			$this->conn = "mysql:host=$hostname; dbname=$database; charset=utf8";
+			$this->conn = "mysql:host={$hostname}; dbname={$database}; charset=utf8";
 			
-			$evelyn = new PDO($this->conn, $username, $password);
-			$evelyn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$evelyn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_BOTH);
+			$pos = new PDO($this->conn, $username, $password);
+			$pos->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$pos->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_BOTH);
 			
-			return $evelyn;
+			return $pos;
 			
 		} catch(PDOException $e) {
-			//die("It seems there was an error.  Please refresh your browser and try again. ".$e->getMessage());
+			die("It seems there was an error.  Please refresh your browser and try again. " . $e->getMessage());
 		}
 		
 	}
@@ -50,7 +56,7 @@ class DB {
 		
 		try {
 					
-			$stmt = $this->evelyn->prepare("$sql");
+			$stmt = $this->pos->prepare("$sql");
 			$stmt->execute();
 			$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			return $results;
@@ -61,7 +67,7 @@ class DB {
 	public function execute($sql) {
 		
 		try {
-			$stmt = $this->evelyn->prepare("$sql");
+			$stmt = $this->pos->prepare("$sql");
 			$stmt->execute();
 		} catch(PDOException $e) {return 0;}
 	}

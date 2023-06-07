@@ -6,6 +6,9 @@ class Crons {
 	public $storeContent;
 	public $pdfAttachment = null;
 
+	public $baseUrl;
+	public $siteName;
+
 	public function __construct() {
 		$this->baseUrl = "https://pos.visaminetsolutions.com/";
 		$this->siteName = "EvelynPOS - Analitica Innovare";

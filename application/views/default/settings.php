@@ -181,7 +181,8 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
                 <div class="card" style="background: none;">
                   <?= connectionLost(); ?>
                   <div class="row">
-                    <div class="col-lg-4">
+
+                    <div class="col-lg-3 col-md-6">
                       <div class="card">
 
                         <div class="card-body">
@@ -210,63 +211,7 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
                       </div>
                     </div>
 
-                    <div class="col-lg-4">
-                      <div class="card">
-                        <div class="card-body">
-                          <div class="media setting-card">
-                            <span class="sett-card-icon set-icon-danger">
-                              <i class="mdi mdi-database"></i>
-                            </span>
-                            <div class="media-body align-self-center"> 
-                              <div class="setting-detail">
-                                <h3 class="mb-0 mt-0">Debit/Credit Card</h3>
-                                <p class="text-muted mb-0">Allow customers to pay with their Visa / Master Cards at the various Stores.</p>
-                              </div> 
-                              <div class="mt-2">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                  <label class="btn <?= $clientData->btn_outline ?> btn-sm">
-                                    <input style="cursor: pointer;" data-module="card" data-value="checked" type="radio" name="options"> Enable
-                                  </label>                                            
-                                  <label class="btn btn-outline-danger btn-sm">
-                                    <input style="cursor: pointer;" data-module="card" data-value="unchecked" type="radio" name="options"> Disable
-                                  </label>
-                                </div>
-                              </div>                                                  
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4">
-                      <div class="card">
-                        <div class="card-body">
-                          <div class="media setting-card">
-                            <span class="sett-card-icon set-icon-purple">
-                              <i class="mdi mdi-cellphone-iphone"></i>
-                            </span>
-                            <div class="media-body align-self-center"> 
-                              <div class="setting-detail">
-                                <h3 class="mb-0 mt-0">Mobile Money</h3>
-                                <p class="text-muted mb-0">Enabling this option will allow customers to Pay for items with their MoMo Accounts</p>
-                              </div> 
-                              <div class="mt-2">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                  <label class="btn <?= $clientData->btn_outline ?> btn-sm">
-                                    <input style="cursor: pointer;" data-module="MoMo" data-value="checked" type="radio" name="options"> Enable
-                                  </label>                                            
-                                  <label class="btn btn-outline-danger btn-sm">
-                                    <input style="cursor: pointer;" data-module="MoMo" data-value="unchecked" type="radio" name="options"> Disable
-                                  </label>
-                                </div>
-                              </div>                                                  
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-lg-4">
+                    <div class="col-lg-3 col-md-6">
                       <div class="card">
                         <div class="card-body">
                           <div class="media setting-card">
@@ -293,6 +238,64 @@ $themeColors = ["danger", "indigo", "orange", "blue", "purple", "green", "teal",
                         </div>
                       </div>
                     </div>
+
+                    <div class="col-lg-3 col-md-6">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="media setting-card">
+                            <span class="sett-card-icon set-icon-purple">
+                              <i class="mdi mdi-cellphone-iphone"></i>
+                            </span>
+                            <div class="media-body align-self-center"> 
+                              <div class="setting-detail">
+                                <h3 class="mb-0 mt-0">Mobile Money</h3>
+                                <p class="text-muted mb-0">Enabling this option to allow customers Pay with their MoMo Accounts. <span class="text-danger">Real payment coming soon</span></p>
+                              </div> 
+                              <div class="mt-2">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                  <label class="btn <?= $clientData->btn_outline ?> btn-sm">
+                                    <input style="cursor: pointer;" data-module="MoMo" data-value="checked" type="radio" name="options"> Enable
+                                  </label>                                            
+                                  <label class="btn btn-outline-danger btn-sm">
+                                    <input style="cursor: pointer;" data-module="MoMo" data-value="unchecked" type="radio" name="options"> Disable
+                                  </label>
+                                </div>
+                              </div>                                                  
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="media setting-card">
+                            <span class="sett-card-icon set-icon-danger">
+                              <i class="mdi mdi-database"></i>
+                            </span>
+                            <div class="media-body align-self-center"> 
+                              <div class="setting-detail">
+                                <h3 class="mb-0 mt-0">Debit/Credit Card</h3>
+                                <p class="text-muted mb-0">Allow customers to pay with their Visa / Master Cards at the various Stores.</p>
+                              </div> 
+                              <div class="mt-2">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                  <label class="btn hidden <?= $clientData->btn_outline ?> btn-sm">
+                                    <input style="cursor: pointer;" data-module="card" data-value="checked" type="radio" name="options"> Enable
+                                  </label>                                            
+                                  <label class="btn hidden btn-outline-danger btn-sm">
+                                    <input style="cursor: pointer;" data-module="card" data-value="unchecked" type="radio" name="options"> Disable
+                                  </label>
+                                  <label for="btn btn-sm"><span class="text-danger">Coming Soon</span></label>
+                                </div>
+                              </div>                                                  
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
 
                 </div>  

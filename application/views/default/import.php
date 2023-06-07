@@ -29,7 +29,7 @@ $validRequests = [
         "fa fa-users",
         "Import Customers List in Bulk"
     ],
-    "product" => [
+    "storeproduct" => [
         "fa fa-shopping-cart",
         "Import Products List in Bulk"
     ],
@@ -64,7 +64,7 @@ if($valid) {
                 "The <strong>Date of Birth</strong> should be in the format <strong>YYYY-MM-DD</strong> eg 1990-10-03"
             ]
         ];
-    } elseif($currentData == "product") {
+    } elseif($currentData == "storeproduct") {
         // accepted column names for the products
         $acpCols = [
              "data" => [
@@ -115,11 +115,6 @@ require_once "headtags.php";
             </ol>
           </nav>
         </div>
-        <?php if($accessObject->hasAccess('category_add', 'products')) { ?>
-        <div class="col-lg-6 col-5 text-right">
-          <a href="javascript:void(0)" class="btn btn-sm add-category btn-neutral"><i class="fa fa-plus"></i> New Product Type</a>
-        </div>
-        <?php } ?>
       </div>
     </div>
   </div>
@@ -223,11 +218,7 @@ require_once "headtags.php";
             <div class="modal-body row justify-content-center">
                 <?php 
                 // query for the list of branches
-                $branchesList = $pos->prepare("
-                    SELECT * 
-                    FROM branches 
-                    WHERE clientId = ? AND deleted=? ORDER BY id
-                ");
+                $branchesList = $pos->prepare("SELECT * FROM branches WHERE clientId = ? AND deleted=? ORDER BY id");
                 if ($branchesList->execute([$session->clientId, 0])) {
                     $i = 0;
                     // count the number of rows found
@@ -247,9 +238,7 @@ require_once "headtags.php";
                             </div>
                             <?php
                         }
-                    } else {
-                        // print error message
-                        ?>
+                    } else { ?>
                         <div class="col-lg-8 col-md-8">
                             <div class="card">
                                 <div class="card-body text-center branch-select">
@@ -293,13 +282,13 @@ require_once "headtags.php";
 <?php } ?>
 <?php require_once 'foottags.php'; ?>
 <script>
-<?php if(empty($session->curBranchId) && $valid) { ?> 
-  $(`div[class~="importModal"]`).modal('show');
-<?php } ?>
-<?php if(!empty($session->curBranchId) && $valid) { ?>
-var currentData = "<?= $currentData ?>";
-var acceptedArray = <?= json_encode($acpCols["data"]); ?>;
-<?php } ?>
+    <?php if(empty($session->curBranchId) && $valid) { ?> 
+        $(`div[class~="importModal"]`).modal('show');
+    <?php } ?>
+    <?php if(!empty($session->curBranchId) && $valid) { ?>
+        var currentData = "<?= $currentData ?>";
+        var acceptedArray = <?= json_encode($acpCols["data"]); ?>;
+    <?php } ?>
 </script>
 </body>
 </html>

@@ -19,6 +19,10 @@ class Notifications extends Pos {
 	public $message = null;
 	public $hasExpired = false;
 
+	public $clientInfo;
+	public $setupInfo;
+	public $themeColors;
+
 	// This is the global variable that checks if a notification is available for display
 	public $notificationAvailable = false;
 
@@ -85,7 +89,8 @@ class Notifications extends Pos {
 	 * @method systemNotification
 	 * Query the database table and submit the information that the user requests
 	 * @param string $columnName This is the name of the column to return its value
-	 * @return string
+	 * 
+	 * @return array|object
 	 **/
 	private function systemNotification($clientId) {
 
@@ -245,22 +250,17 @@ class Notifications extends Pos {
 
 		$this->session->accountExpired = false;
 
-		/* Confirm the user type */
-		if($this->setupInfo->type == self::TRIAL) {
+		/* Check the date span */
+		$daysRemaining = $this->daysDiff(date("Y-m-d"), $this->setupInfo->expiry_date);
 
-			/* Check the date span */
-			$daysRemaining = $this->daysDiff(date("Y-m-d"), $this->setupInfo->expiry_date);
-
+		if($daysRemaining <= 14) {
 			/* Print the notice */
-			$this->message = "<div class='text-danger'>You have <strong>{$daysRemaining} days left</strong> to end your <strong>trial version.</strong></div><br><a href=\"{$this->config->base_url('billing')}\" class=\"btn {$this->themeColors->bg_colors}\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
+			$this->message = "<div class='text-danger'>You have <strong>{$daysRemaining} days left</strong> to end your <strong>{$this->setupInfo->type}</strong> plan.</div>";
 
 			/* If the user has expired usage */
 			if($daysRemaining <= 0) {
-				// if($daysRemaining > 0) {
-
 				/* Set the expiry message */
-				$this->message = "<span class='text-danger'>Your trial version has expired.</span>";
-				$this->message .= "<a href=\"{$this->config->base_url('billing')}\" class=\"btn {$this->themeColors->bg_colors}\"><i class=\"fa fa-shopping-cart\"></i> Checkout</a>";
+				$this->message = "<span class='text-danger'>Your {$this->setupInfo->type} plan has expired.</span>";
 				/* Set a session in motion */
 				$this->session->accountExpired = true;
 				$this->hasExpired = true;

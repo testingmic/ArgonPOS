@@ -347,13 +347,14 @@ if ( ! function_exists('send_email'))
 	 * @param	array	$cc
 	 * @param	int		$temp_id
 	 * @param	(bool)	$save_copy	default=true
+	 * 
 	 * @return	(bool)
 	 */
 	function send_email($_recipients, $_subject, $_message, $name=NULL, $cc = NULL) {
 		
 		// send the email
-		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Phpmailer.php";
-		require "C:\\xampp\htdocs\\analitica_innovare\\einventory\\system\\libraries\\Smtp.php";
+		require "C:\\xampp\htdocs\\pos\\system\\libraries\\Phpmailer.php";
+		require "C:\\xampp\htdocs\\pos\\system\\libraries\\Smtp.php";
 
 		$mail = new Phpmailer();
 		$smtp = new Smtp();

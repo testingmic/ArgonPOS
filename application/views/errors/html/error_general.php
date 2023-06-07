@@ -65,7 +65,7 @@ $rootDir = $config->base_url();
                   <a href="<?= $config->base_url('dashboard'); ?>" class="btn btn-primary"><i class="fa fa-home"></i> Back to Dashboard</a>
                   <?php } ?>
                 <?php } else { ?>
-                  <a href="<?= $config->base_url('billing'); ?>" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Activate Now</a>
+                  <a href="<?= $config->base_url('dashboard'); ?>" class="btn btn-primary"><i class="fa fa-shopping-cart"></i> Go to Dashboard</a>
                 <?php } ?>
               </div>
             </div>

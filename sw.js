@@ -1,10 +1,10 @@
 var cacheName = 'argonPOS-IDB';
-var appUrl = 'http://localhost/pos/';
+var appUrl = 'http://localhost:89/';
 
 var dc = [
   `${appUrl}`,
   `${appUrl}dashboard`,
-  `${appUrl}point-of-sale`,
+  `${appUrl}pos`,
   `${appUrl}sales`,
   `${appUrl}assets/img/brand/favicon.png`,
   `${appUrl}assets/vendor/nucleo/css/nucleo.css`,
@@ -39,8 +39,7 @@ var dc = [
   `${appUrl}assets/vendor/chart.js/dist/Chart.extension.js`,
   `${appUrl}assets/vendor/moment/min/moment.min.js`,
   `${appUrl}assets/js/argon.min9f1e.js`,
-  `${appUrl}assets/vendor/sweetalert2/dist/sweetalert2.min.js`,
-  `${appUrl}assets/js/_js.v1.js`
+  `${appUrl}assets/vendor/sweetalert2/dist/sweetalert2.min.js`
 ];
 
 self.addEventListener('install', (e) => {
@@ -61,7 +60,6 @@ self.addEventListener('fetch', (evt) => {
     evt.respondWith(
       fetch(evt.request).then((response) => {
         return caches.open(cacheName).then((cache) => {
-          // cache.put(evt.request, response.clone());
           return response;
         })
       }).catch((err) => {

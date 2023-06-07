@@ -21,10 +21,13 @@ load_file(
 	)
 );
 
+global $pos, $config, $session;
+
 $dbconn = load_class('db', 'core');	
 $pos = $dbconn->get_database();
 $config = load_class('config', 'core');
 $session = load_class('Session', 'libraries/Session');
+
 load_helpers(
 	ARRAY(
 		'string_helper',
@@ -35,5 +38,3 @@ load_helpers(
 		'upload_helper'
 	)
 );
-
-global $pos, $config, $session;

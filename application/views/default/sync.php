@@ -136,7 +136,8 @@ if($admin_user->logged_InControlled()) {
 					$orderId = xss_clean($eachData['order_id']);
 
 					//: check if the user already exists
-					$checkData = $posClass->getAllRows("sales", "COUNT(*) AS proceed", "order_id='{$orderId}'");
+					$checkData = $posClass->getAllRows("sales", "COUNT(*) AS proceed", "order_id='{$orderId}'
+					");
 
 					//: if the record does not already exist
 					if ($checkData != false && $checkData[0]->proceed == '0') {
@@ -183,7 +184,8 @@ if($admin_user->logged_InControlled()) {
 								$autoId = xss_clean($eachDetail['auto_id']);
 
 								//: check if the user already exists
-								$checkData2 = $posClass->getAllRows("sales_details", "COUNT(*) AS proceed", "auto_id='{$autoId}'");
+								$checkData2 = $posClass->getAllRows("sales_details", "COUNT(*) AS proceed", "auto_id='{$autoId}'
+								");
 
 								//: if the record does not already exist
 								if ($checkData2 != false && $checkData2[0]->proceed == '0') {

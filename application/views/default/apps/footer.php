@@ -17,6 +17,16 @@
  <script src="<?= $config->base_url('assets/vendor/onscreen/dist/on-screen.umd.min.js'); ?>"></script>
  <script src="<?= $config->base_url('assets/js/argon.min9f1e.js'); ?>?v=1.1.0"></script>
  <script>
+	$(`span[id="showPassword"]`).on('click',function() {
+      let def = $(`span[id="showPassword"]`).attr("data-default");
+      if(def == "password") {
+        $(`input[name="password"]`).attr("type", "text");
+        $(`span[id="showPassword"]`).attr({"data-default": "text", "title": "Hide Password"});
+      } else {
+        $(`span[id="showPassword"]`).attr({"data-default": "password", "title": "Show Password"});
+        $(`input[name="password"]`).attr("type", "password");
+      }
+    });
  	$(`form[class="setup"]`).on('submit', function(e) {
  		e.preventDefault();
  		var formData = $(this).serialize();

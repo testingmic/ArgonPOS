@@ -9,6 +9,15 @@ class Pos {
 	public $editURL;
 	public $permitPage;
 
+	public $_total;
+	public $db;
+	public $config;
+	public $pos;
+	public $session;
+	public $ip_address;
+	public $ur;
+	public $curl_url;
+
 	/* This is the global value for the browser and platform to use by all methods */
 	public $browser;
 	public $platform;
@@ -230,11 +239,10 @@ class Pos {
 	 * @desc Receives user query and returns the full data array
 	 * @return array
 	 **/
-	public function pushQuery($columns = "*", $tableName, $whereClause = null) {
+	public function pushQuery($columns = "*", $tableName = null, $whereClause = null) {
 		try {
 
 			$stmt = $this->pos->prepare("SELECT {$columns} FROM {$tableName} WHERE $whereClause");
-			// print ("SELECT {$columns} FROM {$tableName} WHERE $whereClause");
 			$stmt->execute();
 
 			return $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -263,7 +271,7 @@ class Pos {
 	 * @return null
 	 *
 	 **/
-	public function userLogs($page, $itemId = null, $description, $clientId = null, $branchId = null, $userId = null) {
+	public function userLogs($page, $itemId = null, $description = null, $clientId = null, $branchId = null, $userId = null) {
 		
 		try {
 
@@ -353,7 +361,7 @@ class Pos {
 	 * @param $message - This will contain the actual content of the email
 	 * @return bool
 	 **/
-	public function sendEmail($unique_id, $template = 'default', $fullname = null, $subject, $sent_to, $message, $copy_to = null) : bool {
+	public function sendEmail($unique_id, $template = 'default', $fullname = null, $subject = null, $sent_to = null, $message = null, $copy_to = null) : bool {
 
 		$stmt = $this->pos->prepare("
 			INSERT INTO emails SET unique_id = ?, template=?, subject = ?, fullname = ?, sent_to = ?, message = ?, copy_to = ?, clientId = ?
@@ -391,7 +399,6 @@ class Pos {
 	public function getAllRows($table, $columns, $where_clause = 1) {
 		$response = false;
 		$stmt = $this->pos->prepare("SELECT {$columns} FROM {$table} WHERE {$where_clause}");
-		//print ("SELECT {$columns} FROM {$table} WHERE {$where_clause}");
 		if ($stmt->execute()) {
 			$response = $stmt->fetchAll(PDO::FETCH_OBJ);
 		}
@@ -403,7 +410,8 @@ class Pos {
 	 * @desc Converts a string to an array
 	 * @param $string The string that will be converted to the array
 	 * @param $delimeter The character for the separation
-	 * @return bool
+	 * 
+	 * @return array
 	 */
 	public function stringToArray($string, $delimiter = ",") {
 		$array = [];

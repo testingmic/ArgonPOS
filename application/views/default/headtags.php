@@ -156,12 +156,12 @@ if($setupInfo->type == "alpha") {
       background-color: <?= $clientData->bg_color_code; ?>;
       border: solid 1px #fff;
     }
+    <?php if($session->accountExpired) { ?>
     .blur-content {
-      <?php if($session->accountExpired) { ?>
         pointer-events: none;
         filter: blur(4px);
-      <?php } ?>
     }
+    <?php } ?>
   </style>
 </head>
 <body>
@@ -175,7 +175,7 @@ if($setupInfo->type == "alpha") {
         </a>
         <div class="ml-auto">
           <!-- Sidenav toggler -->
-          <div class="sidenav-toggler d-none d-xl-block <?= (in_array($SITEURL[0], ["requests", "point-of-sale"])) ? "acitve" : null; ?>" data-action="sidenav-unpin" data-target="#sidenav-main">
+          <div class="sidenav-toggler d-none d-xl-block <?= (in_array($SITEURL[0], ["requestse", "point-of-sale"])) ? "acitve" : null; ?>" data-action="sidenav-unpin" data-target="#sidenav-main">
             <div class="sidenav-toggler-inner">
               <i class="sidenav-toggler-line"></i>
               <i class="sidenav-toggler-line"></i>

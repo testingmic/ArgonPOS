@@ -17,11 +17,11 @@ DEFINE('VIEWPATH', $application_folder.DIRECTORY_SEPARATOR);
 
 function forceHttps() {
 	if($_SERVER["SERVER_PORT"] !==433 && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"]=="off")) {
-		// header("Location: https://dev.".$_SERVER["HTTP_HOST"].'.com'.$_SERVER["REQUEST_URI"]."");
+		header("Location: https://".$_SERVER["HTTP_HOST"].''.$_SERVER["REQUEST_URI"]."");
 	}
 }
 
-forceHttps();
+// forceHttps();
 
 /*
 	replace array indexes:
@@ -75,9 +75,10 @@ $SITEURL = (($URL == '') || ($URL == 'index.php') || ($URL == 'index.html')) ? A
 */
 
 // call the user logged in class
-$posClass = load_class('Pos', 'models');
+$hrClass = load_class('Pos', 'models');
 $admin_user = load_class('Users', 'controllers');
 $accessObject = load_class('Accesslevel', 'controllers');
+$posClass = load_class('Pos', 'models');
 
 $includeFile = config_item('default_view_path').strtolower(PREG_REPLACE('/[^\w_]-/','',$SITEURL[0])).'.php';
 
@@ -87,7 +88,6 @@ GLOBAL $SITEURL, $session;
 # Run some checks on the URL
 // set the dashboard main file
 $dashboard = config_item('default_view_path').strtolower(PREG_REPLACE('/[^\w_]-/','', "dashboard")).'.php';
-
 // set the main file to display
 $parent_file = config_item('default_view_path').strtolower(PREG_REPLACE('/[^\w_]-/','',$SITEURL[0])).'.php';
 

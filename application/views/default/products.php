@@ -93,6 +93,7 @@ if(!empty($product)) {
                             <div class="custom-border mb-3"></div>
                             <h3 class="pro-title"><?= $product->product_title ?></h3>
                             <h4><strong>Product ID</strong>: <?= $product->product_id ?> </h4>
+                            <h4><strong>Branch</strong>: <?= $product->branch_name ?> </h4>
                             <hr class="mt-0 mb-2">
                             <p class="mb-0"><strong>Stock Quantity</strong>: <?= $product->quantity ?></p>
                             <?php if($accessObject->hasAccess('inventory_branches', 'products')) { ?>

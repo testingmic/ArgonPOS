@@ -72,7 +72,7 @@ $session->insightRequest = [
               <div class="card">
                   <div class="card-body">
                       <div class="table-responsive slim-scroll">
-                          <table width="100%" class="table mb-0 datatable-buttons products-performance">
+                          <table width="100%" class="table mb-0 datatable-buttons products-performance" width="100%">
                               <thead class="thead-light">
                               <tr>
                                   <th>#</th>
